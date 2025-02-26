@@ -179,15 +179,15 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
                 <div className="flex justify-between max-w-md">
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="1" id={`q${question.id}-1`} />
-                    <Label htmlFor={`q${question.id}-1`}>Rarely</Label>
+                    <Label htmlFor={`q${question.id}-1`}>Nearly Never</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="2" id={`q${question.id}-2`} />
-                    <Label htmlFor={`q${question.id}-2`}>Sometimes</Label>
+                    <Label htmlFor={`q${question.id}-2`}>Rarely</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="3" id={`q${question.id}-3`} />
-                    <Label htmlFor={`q${question.id}-3`}>Often</Label>
+                    <Label htmlFor={`q${question.id}-3`}>Sometimes</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="4" id={`q${question.id}-4`} />
@@ -195,7 +195,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="5" id={`q${question.id}-5`} />
-                    <Label htmlFor={`q${question.id}-5`}>Always</Label>
+                    <Label htmlFor={`q${question.id}-5`}>Almost Always</Label>
                   </div>
                 </div>
               </RadioGroup>
