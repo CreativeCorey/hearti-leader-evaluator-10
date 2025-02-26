@@ -49,7 +49,7 @@ const Index = () => {
 
   const dimensionDescriptions: Record<HEARTIDimension, string> = {
     humility: 'Recognize your limitations, be open to feedback, and show a willingness to learn and grow.',
-    empathy: 'Understand others' perspectives and feelings, respond with compassion, and build meaningful connections.',
+    empathy: 'Understand others\' perspectives and feelings, respond with compassion, and build meaningful connections.',
     accountability: 'Take responsibility for your actions, meet commitments, and hold yourself to high standards.',
     resiliency: 'Adapt to change, bounce back from setbacks, and maintain positivity through challenges.',
     transparency: 'Communicate openly, share information freely, and explain the reasoning behind decisions.',
