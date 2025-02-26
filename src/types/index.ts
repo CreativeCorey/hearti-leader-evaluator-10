@@ -5,6 +5,7 @@ export interface HEARTIQuestion {
   id: number;
   dimension: HEARTIDimension;
   text: string;
+  reverseScored?: boolean;
 }
 
 export interface HEARTIAnswer {
