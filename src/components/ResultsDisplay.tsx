@@ -13,12 +13,10 @@ import {
 } from 'recharts';
 import { 
   HEARTIAssessment, 
-  HEARTIDimension,
-  DimensionData 
+  HEARTIDimension
 } from '../types';
 import { 
   formatDataForRadarChart, 
-  getDimensionDescription, 
   getFeedback 
 } from '../utils/calculations';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -133,19 +131,8 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
           </div>
         </CardContent>
       </Card>
-    </div
+    </div>
+  );
+};
 
-If there's knowledge, context or custom instructions you want to include in every edit in this project, set it below.
-
-<lov-actions>
-<lov-knowledge>
-</lov-actions>
-
-Since your project requires backend functionality for saving assessment results and user data, you can use the Supabase menu on the top right to connect your project to Supabase.
-<lov-actions>
-<lov-message-prompt message="Tell me more about Supabase">Learn more about Supabase</lov-message-prompt>
-</lov-actions>
-
-<lov-actions>
-<lov-link url="https://docs.lovable.dev/">Visit docs</lov-link>
-</lov-actions>
+export default ResultsDisplay;
