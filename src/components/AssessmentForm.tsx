@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from 'uuid';
 import { 
@@ -88,14 +88,14 @@ const questions: HEARTIQuestion[] = [
   { id: 59, dimension: 'inclusivity', text: 'I collaborate with diverse talent to ensure our workplace programs and policies are inclusive.' },
 ];
 
-// Group questions by dimension
-const questionsByDimension: Record<HEARTIDimension, HEARTIQuestion[]> = {
-  humility: questions.filter(q => q.dimension === 'humility'),
-  empathy: questions.filter(q => q.dimension === 'empathy'),
-  accountability: questions.filter(q => q.dimension === 'accountability'),
-  resiliency: questions.filter(q => q.dimension === 'resiliency'),
-  transparency: questions.filter(q => q.dimension === 'transparency'),
-  inclusivity: questions.filter(q => q.dimension === 'inclusivity'),
+// Function to shuffle an array
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
 };
 
 interface AssessmentFormProps {
@@ -104,17 +104,23 @@ interface AssessmentFormProps {
 
 const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
   const { toast } = useToast();
-  const [currentDimensionIndex, setCurrentDimensionIndex] = useState(0);
-  const dimensions: HEARTIDimension[] = [
-    'humility', 
-    'empathy', 
-    'accountability', 
-    'resiliency', 
-    'transparency', 
-    'inclusivity'
-  ];
-  const currentDimension = dimensions[currentDimensionIndex];
+  const [currentPage, setCurrentPage] = useState(0);
+  const [shuffledQuestions, setShuffledQuestions] = useState<HEARTIQuestion[]>([]);
   const [answers, setAnswers] = useState<HEARTIAnswer[]>([]);
+  
+  const questionsPerPage = 10;
+  const totalPages = Math.ceil(questions.length / questionsPerPage);
+  
+  // Shuffle questions once when component mounts
+  useEffect(() => {
+    setShuffledQuestions(shuffleArray(questions));
+  }, []);
+  
+  // Get questions for current page
+  const currentQuestions = shuffledQuestions.slice(
+    currentPage * questionsPerPage, 
+    (currentPage + 1) * questionsPerPage
+  );
 
   const handleAnswerChange = (questionId: number, score: number, isReversed: boolean = false) => {
     // For reverse-scored items, we need to invert the score (1 becomes 5, 2 becomes 4, etc.)
@@ -131,33 +137,34 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     });
   };
 
-  const isCurrentSectionComplete = () => {
-    const currentQuestions = questionsByDimension[currentDimension];
+  const isCurrentPageComplete = () => {
     return currentQuestions.every(q => 
       answers.some(a => a.questionId === q.id)
     );
   };
 
   const handleNext = () => {
-    if (!isCurrentSectionComplete()) {
+    if (!isCurrentPageComplete()) {
       toast({
         title: "Please answer all questions",
-        description: "All questions must be answered before proceeding.",
+        description: "All questions on this page must be answered before proceeding.",
         variant: "destructive"
       });
       return;
     }
 
-    if (currentDimensionIndex < dimensions.length - 1) {
-      setCurrentDimensionIndex(prev => prev + 1);
+    if (currentPage < totalPages - 1) {
+      setCurrentPage(prev => prev + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       completeAssessment();
     }
   };
 
   const handlePrevious = () => {
-    if (currentDimensionIndex > 0) {
-      setCurrentDimensionIndex(prev => prev - 1);
+    if (currentPage > 0) {
+      setCurrentPage(prev => prev - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -182,37 +189,23 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     });
   };
 
-  const dimensionTitleMap: Record<HEARTIDimension, string> = {
-    humility: 'Humility',
-    empathy: 'Empathy',
-    accountability: 'Accountability',
-    resiliency: 'Resiliency',
-    transparency: 'Transparency',
-    inclusivity: 'Inclusivity'
-  };
-
-  const dimensionDescriptionMap: Record<HEARTIDimension, string> = {
-    humility: 'Recognizing one\'s limitations and being open to growth',
-    empathy: 'Understanding and sharing the feelings of others',
-    accountability: 'Taking responsibility for actions and commitments',
-    resiliency: 'Recovering from setbacks and adapting to change',
-    transparency: 'Being open, honest, and clear in communications',
-    inclusivity: 'Creating environments where all feel welcomed and valued'
-  };
+  if (shuffledQuestions.length === 0) {
+    return <div className="flex justify-center p-6">Loading assessment questions...</div>;
+  }
 
   return (
     <Card className="w-full appear-animate shadow-sm">
       <CardHeader>
         <CardTitle className="text-2xl">
-          {dimensionTitleMap[currentDimension]}
+          HEARTI Leadership Assessment
         </CardTitle>
         <CardDescription>
-          {dimensionDescriptionMap[currentDimension]}
+          Answer each question based on how frequently you exhibit the described behavior
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-8">
-          {questionsByDimension[currentDimension].map((question) => (
+          {currentQuestions.map((question) => (
             <div key={question.id} className="space-y-3">
               <div className="font-medium">{question.text}</div>
               <RadioGroup 
@@ -250,15 +243,15 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
         <Button 
           variant="outline" 
           onClick={handlePrevious}
-          disabled={currentDimensionIndex === 0}
+          disabled={currentPage === 0}
         >
           Previous
         </Button>
         <div className="text-sm text-muted-foreground">
-          {currentDimensionIndex + 1} of {dimensions.length}
+          {currentPage + 1} of {totalPages}
         </div>
         <Button onClick={handleNext}>
-          {currentDimensionIndex === dimensions.length - 1 ? 'Complete' : 'Next'}
+          {currentPage === totalPages - 1 ? 'Complete' : 'Next'}
         </Button>
       </CardFooter>
     </Card>
