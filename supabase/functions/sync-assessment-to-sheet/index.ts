@@ -1,10 +1,11 @@
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4'
 import { GoogleSpreadsheet } from 'npm:google-spreadsheet@4.1.1'
-import { JWT } from 'npm:google-auth-library@9.0.0'
+import { GaxiosOptions } from 'npm:gaxios@5.1.0'
+import { AuthClient, ExternalAccountClient } from 'npm:google-auth-library@9.0.0'
 
-const GOOGLE_SERVICE_ACCOUNT_EMAIL = Deno.env.get('GOOGLE_SERVICE_ACCOUNT_EMAIL')
-const GOOGLE_PRIVATE_KEY = Deno.env.get('GOOGLE_PRIVATE_KEY')
+// Workload Identity Federation configuration
+const GOOGLE_WORKLOAD_IDENTITY_CONFIG = Deno.env.get('GOOGLE_WORKLOAD_IDENTITY_CONFIG')
 const GOOGLE_SHEET_ID = Deno.env.get('GOOGLE_SHEET_ID')
 
 // Create a new client
@@ -50,6 +51,61 @@ function formatDemographics(demographics: any) {
   }
 }
 
+// Create an auth client using Workload Identity Federation
+async function getAuthClient(): Promise<AuthClient> {
+  if (!GOOGLE_WORKLOAD_IDENTITY_CONFIG) {
+    throw new Error('Missing Workload Identity Federation configuration');
+  }
+  
+  try {
+    // Parse the workload identity configuration
+    const workloadIdentityConfig = JSON.parse(GOOGLE_WORKLOAD_IDENTITY_CONFIG);
+    
+    // Create the auth client with the configuration
+    const client = new ExternalAccountClient(
+      {
+        audience: workloadIdentityConfig.audience,
+        subject_token_type: workloadIdentityConfig.subject_token_type,
+        token_url: workloadIdentityConfig.token_url,
+        service_account_impersonation_url: workloadIdentityConfig.service_account_impersonation_url,
+        client_id: workloadIdentityConfig.client_id,
+        client_secret: workloadIdentityConfig.client_secret,
+        credential_source: workloadIdentityConfig.credential_source,
+        quota_project_id: workloadIdentityConfig.quota_project_id,
+        workforce_pool_user_project: workloadIdentityConfig.workforce_pool_user_project,
+        scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+      },
+    );
+    
+    return client;
+  } catch (error) {
+    console.error('Error creating auth client:', error);
+    throw new Error(`Failed to create auth client: ${error.message}`);
+  }
+}
+
+// Custom auth for GoogleSpreadsheet using Workload Identity Federation
+class WorkloadIdentityAuthForGoogleSpreadsheet {
+  private client: AuthClient;
+  
+  constructor(client: AuthClient) {
+    this.client = client;
+  }
+  
+  async authorizeRequest(request: GaxiosOptions): Promise<GaxiosOptions> {
+    // Get access token
+    const token = await this.client.getAccessToken();
+    
+    // Set authorization header
+    if (!request.headers) {
+      request.headers = {};
+    }
+    request.headers.Authorization = `Bearer ${token.token}`;
+    
+    return request;
+  }
+}
+
 Deno.serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -66,10 +122,10 @@ Deno.serve(async (req) => {
     }
     
     // Validate Google credentials
-    if (!GOOGLE_SERVICE_ACCOUNT_EMAIL || !GOOGLE_PRIVATE_KEY || !GOOGLE_SHEET_ID) {
-      console.error('Missing Google API credentials')
+    if (!GOOGLE_WORKLOAD_IDENTITY_CONFIG || !GOOGLE_SHEET_ID) {
+      console.error('Missing Google configuration')
       return new Response(
-        JSON.stringify({ error: 'Server configuration error - missing Google credentials' }),
+        JSON.stringify({ error: 'Server configuration error - missing Google configuration' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
@@ -154,48 +210,51 @@ Deno.serve(async (req) => {
       'Race/Ethnicity': demographics.raceEthnicity
     }
     
-    // Configure auth for Google Sheets
-    const serviceAccountAuth = new JWT({
-      email: GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      key: GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-      scopes: [
-        'https://www.googleapis.com/auth/spreadsheets',
-      ],
-    })
+    // Initialize auth client using Workload Identity Federation
+    console.log('Initializing auth client with Workload Identity Federation...');
+    const authClient = await getAuthClient();
+    const authForGoogleSpreadsheet = new WorkloadIdentityAuthForGoogleSpreadsheet(authClient);
     
     // Initialize the spreadsheet
-    const doc = new GoogleSpreadsheet(GOOGLE_SHEET_ID, serviceAccountAuth)
-    await doc.loadInfo()
+    console.log('Initializing Google Spreadsheet...');
+    const doc = new GoogleSpreadsheet(GOOGLE_SHEET_ID);
+    // @ts-ignore - The type definitions don't include this authentication method
+    doc.useRawAccessToken(authForGoogleSpreadsheet);
+    await doc.loadInfo();
     
     // Get the first sheet or create it if it doesn't exist
-    let sheet = doc.sheetsByIndex[0]
+    let sheet = doc.sheetsByIndex[0];
     if (!sheet) {
-      sheet = await doc.addSheet({ title: 'HEARTI Assessment Results' })
+      console.log('Creating new sheet...');
+      sheet = await doc.addSheet({ title: 'HEARTI Assessment Results' });
     }
     
     // Check if headers exist, if not add them
-    const rows = await sheet.getRows()
+    console.log('Checking if headers exist...');
+    const rows = await sheet.getRows();
     if (rows.length === 0) {
-      await sheet.setHeaderRow(Object.keys(rowData))
+      console.log('Adding headers to sheet...');
+      await sheet.setHeaderRow(Object.keys(rowData));
     }
     
     // Add the new row
-    await sheet.addRow(rowData)
+    console.log('Adding new row to sheet...');
+    await sheet.addRow(rowData);
     
-    console.log('Successfully added assessment to Google Sheet')
+    console.log('Successfully added assessment to Google Sheet');
     
     // Return success response
     return new Response(
       JSON.stringify({ success: true, message: 'Assessment added to Google Sheet' }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+    );
     
   } catch (error) {
-    console.error('Error processing request:', error)
+    console.error('Error processing request:', error);
     
     return new Response(
       JSON.stringify({ error: 'Internal server error', details: error.message }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
+    );
   }
-})
+});
