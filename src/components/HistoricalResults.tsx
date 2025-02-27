@@ -17,9 +17,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface HistoricalResultsProps {
   assessments: HEARTIAssessment[];
+  onSelect?: (assessment: HEARTIAssessment) => void;
 }
 
-const HistoricalResults: React.FC<HistoricalResultsProps> = ({ assessments }) => {
+const HistoricalResults: React.FC<HistoricalResultsProps> = ({ assessments, onSelect }) => {
   // If no assessments or only one, show a message
   if (assessments.length <= 1) {
     return (

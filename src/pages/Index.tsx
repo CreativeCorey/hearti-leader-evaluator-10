@@ -23,11 +23,11 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Toggle } from '@/components/ui/toggle';
 import { Loader2 } from 'lucide-react';
-import { useMobile } from '../hooks/use-mobile';
+import { useIsMobile } from '../hooks/use-mobile';
 
 const Index: React.FC = () => {
   const { toast } = useToast();
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
   const [activeTab, setActiveTab] = useState<'take' | 'results'>('take');
   const [latestAssessment, setLatestAssessment] = useState<HEARTIAssessment | null>(null);
   const [userAssessments, setUserAssessments] = useState<HEARTIAssessment[]>([]);
@@ -234,7 +234,10 @@ const Index: React.FC = () => {
                 <div>
                   <Separator className="my-8" />
                   <h2 className="text-xl font-bold mb-4">Assessment History</h2>
-                  <HistoricalResults assessments={userAssessments} onSelect={setLatestAssessment} />
+                  <HistoricalResults 
+                    assessments={userAssessments} 
+                    onSelect={(assessment) => setLatestAssessment(assessment)} 
+                  />
                 </div>
               )}
             </div>

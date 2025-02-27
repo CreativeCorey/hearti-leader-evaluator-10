@@ -1,6 +1,6 @@
 
 import { supabase } from '../integrations/supabase/client';
-import { HEARTIAssessment, UserProfile, Organization, HEARTIAnswer, HEARTIDimension } from '../types';
+import { HEARTIAssessment, UserProfile, Organization, HEARTIAnswer, HEARTIDimension, Demographics } from '../types';
 import { Json } from '../integrations/supabase/types';
 
 // Type guard to ensure safe conversion from Json to our application types
@@ -15,6 +15,10 @@ function isValidDimensionScores(data: any): data is Record<HEARTIDimension, numb
   
   const validDimensions = ['humility', 'empathy', 'accountability', 'resiliency', 'transparency', 'inclusivity'];
   return validDimensions.every(dim => dim in data && typeof data[dim] === 'number');
+}
+
+function isValidDemographics(data: any): data is Demographics {
+  return typeof data === 'object' && data !== null;
 }
 
 // Assessment Management with Supabase
@@ -65,6 +69,10 @@ export const getAssessmentsFromSupabase = async (): Promise<HEARTIAssessment[]> 
         ? item.dimension_scores as Record<HEARTIDimension, number>
         : {} as Record<HEARTIDimension, number>;
         
+      const demographics = isValidDemographics(item.demographics)
+        ? item.demographics as Demographics
+        : undefined;
+        
       return {
         id: item.id,
         userId: item.user_id,
@@ -73,7 +81,7 @@ export const getAssessmentsFromSupabase = async (): Promise<HEARTIAssessment[]> 
         answers: answers,
         dimensionScores: dimensionScores,
         overallScore: item.overall_score,
-        demographics: item.demographics || undefined
+        demographics: demographics
       };
     });
   } catch (error) {
@@ -103,6 +111,10 @@ export const getUserAssessmentsFromSupabase = async (userId: string): Promise<HE
       const dimensionScores = isValidDimensionScores(item.dimension_scores)
         ? item.dimension_scores as Record<HEARTIDimension, number>
         : {} as Record<HEARTIDimension, number>;
+      
+      const demographics = isValidDemographics(item.demographics)
+        ? item.demographics as Demographics
+        : undefined;
         
       return {
         id: item.id,
@@ -112,7 +124,7 @@ export const getUserAssessmentsFromSupabase = async (userId: string): Promise<HE
         answers: answers,
         dimensionScores: dimensionScores,
         overallScore: item.overall_score,
-        demographics: item.demographics || undefined
+        demographics: demographics
       };
     });
   } catch (error) {
@@ -143,6 +155,10 @@ export const getOrganizationAssessmentsFromSupabase = async (organizationId: str
       const dimensionScores = isValidDimensionScores(item.dimension_scores)
         ? item.dimension_scores as Record<HEARTIDimension, number>
         : {} as Record<HEARTIDimension, number>;
+      
+      const demographics = isValidDemographics(item.demographics)
+        ? item.demographics as Demographics
+        : undefined;
         
       return {
         id: item.id,
@@ -152,7 +168,7 @@ export const getOrganizationAssessmentsFromSupabase = async (organizationId: str
         answers: answers,
         dimensionScores: dimensionScores,
         overallScore: item.overall_score,
-        demographics: item.demographics || undefined
+        demographics: demographics
       };
     });
   } catch (error) {
