@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from 'uuid';
@@ -8,7 +9,7 @@ import {
   HEARTIDimension
 } from '../types';
 import { calculateDimensionScores, calculateOverallScore } from '../utils/calculations';
-import { saveAssessment } from '../utils/localStorage';
+import { saveAssessment, ensureUserExists } from '../utils/localStorage';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
@@ -161,6 +162,9 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
   };
 
   const completeAssessment = () => {
+    // Make sure we have a user
+    const user = ensureUserExists();
+    
     const finalAnswers = answers.map(answer => {
       const question = questions.find(q => q.id === answer.questionId);
       if (question?.reverseScored) {
@@ -174,6 +178,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     
     const assessment: HEARTIAssessment = {
       id: uuidv4(),
+      userId: user.id,
       date: new Date().toISOString(),
       answers: finalAnswers,
       dimensionScores,

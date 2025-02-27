@@ -15,10 +15,18 @@ export interface HEARTIAnswer {
 
 export interface HEARTIAssessment {
   id: string;
+  userId: string;
   date: string;
   answers: HEARTIAnswer[];
   dimensionScores: Record<HEARTIDimension, number>;
   overallScore: number;
+}
+
+export interface UserProfile {
+  id: string;
+  createdAt: string;
+  name?: string;
+  email?: string;
 }
 
 export type DimensionData = {
