@@ -1,1 +1,5 @@
+
 project_id = "odwkgxdkjyccnkydxvjw"
+
+[functions.sync-assessment-to-sheet]
+verify_jwt = false
