@@ -179,6 +179,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     const assessment: HEARTIAssessment = {
       id: uuidv4(),
       userId: user.id,
+      organizationId: user.organizationId, // Include the organization ID if available
       date: new Date().toISOString(),
       answers: finalAnswers,
       dimensionScores,

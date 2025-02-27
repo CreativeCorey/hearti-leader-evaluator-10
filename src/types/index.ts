@@ -16,6 +16,7 @@ export interface HEARTIAnswer {
 export interface HEARTIAssessment {
   id: string;
   userId: string;
+  organizationId?: string;
   date: string;
   answers: HEARTIAnswer[];
   dimensionScores: Record<HEARTIDimension, number>;
@@ -27,6 +28,15 @@ export interface UserProfile {
   createdAt: string;
   name?: string;
   email?: string;
+  organizationId?: string;
+  role?: 'user' | 'admin';
+}
+
+export interface Organization {
+  id: string;
+  createdAt: string;
+  name: string;
+  description?: string;
 }
 
 export type DimensionData = {
