@@ -285,10 +285,11 @@ export const saveAssessment = async (assessment: Omit<HEARTIAssessment, 'id'>): 
     user_id: assessment.userId,
     organization_id: assessment.organizationId || null,
     date: assessment.date,
-    answers: assessment.answers as Json,
-    dimension_scores: assessment.dimensionScores as Json,
+    // Use type assertions with unknown as an intermediate step to satisfy TypeScript
+    answers: assessment.answers as unknown as Json,
+    dimension_scores: assessment.dimensionScores as unknown as Json,
     overall_score: assessment.overallScore,
-    demographics: assessment.demographics as Json || null
+    demographics: assessment.demographics ? (assessment.demographics as unknown as Json) : null
   };
   
   const { data, error } = await supabase
