@@ -9,16 +9,131 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      assessments: {
+        Row: {
+          answers: Json
+          date: string
+          demographics: Json | null
+          dimension_scores: Json
+          id: string
+          organization_id: string | null
+          overall_score: number
+          user_id: string
+        }
+        Insert: {
+          answers: Json
+          date?: string
+          demographics?: Json | null
+          dimension_scores: Json
+          id?: string
+          organization_id?: string | null
+          overall_score: number
+          user_id: string
+        }
+        Update: {
+          answers?: Json
+          date?: string
+          demographics?: Json | null
+          dimension_scores?: Json
+          id?: string
+          organization_id?: string | null
+          overall_score?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assessments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string | null
+          organization_id: string | null
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id: string
+          name?: string | null
+          organization_id?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string | null
+          organization_id?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_organization_assessments: {
+        Args: {
+          org_id: string
+        }
+        Returns: {
+          answers: Json
+          date: string
+          demographics: Json | null
+          dimension_scores: Json
+          id: string
+          organization_id: string | null
+          overall_score: number
+          user_id: string
+        }[]
+      }
     }
     Enums: {
-      [_ in never]: never
+      user_role: "user" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
