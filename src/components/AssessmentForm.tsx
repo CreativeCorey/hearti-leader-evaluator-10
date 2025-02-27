@@ -109,12 +109,33 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
   const [answers, setAnswers] = useState<HEARTIAnswer[]>([]);
   const [assessmentComplete, setAssessmentComplete] = useState(false);
   const [tempAssessment, setTempAssessment] = useState<HEARTIAssessment | null>(null);
+  const [currentUser, setCurrentUser] = useState<{ id: string, organizationId?: string } | null>(null);
   
   const questionsPerPage = 10;
   const totalPages = Math.ceil(questions.length / questionsPerPage);
   
   useEffect(() => {
     setShuffledQuestions(shuffleArray(questions));
+    
+    // Initialize user
+    const initUser = async () => {
+      try {
+        const user = await ensureUserExists();
+        setCurrentUser({
+          id: user.id,
+          organizationId: user.organizationId
+        });
+      } catch (error) {
+        console.error("Failed to get user:", error);
+        toast({
+          title: "Error",
+          description: "Failed to initialize user. Please try again.",
+          variant: "destructive"
+        });
+      }
+    };
+    
+    initUser();
   }, []);
   
   const currentQuestions = shuffledQuestions.slice(
@@ -167,8 +188,14 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
 
   // Modified to set assessment as complete and store temp assessment
   const completeAssessmentQuestions = () => {
-    // Make sure we have a user
-    const user = ensureUserExists();
+    if (!currentUser) {
+      toast({
+        title: "Error",
+        description: "User not initialized. Please refresh and try again.",
+        variant: "destructive"
+      });
+      return;
+    }
     
     const finalAnswers = answers.map(answer => {
       const question = questions.find(q => q.id === answer.questionId);
@@ -183,8 +210,8 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     
     const assessment: HEARTIAssessment = {
       id: uuidv4(),
-      userId: user.id,
-      organizationId: user.organizationId,
+      userId: currentUser.id,
+      organizationId: currentUser.organizationId,
       date: new Date().toISOString(),
       answers: finalAnswers,
       dimensionScores,
@@ -196,7 +223,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDemographicsComplete = (demographics: Demographics) => {
+  const handleDemographicsComplete = async (demographics: Demographics) => {
     if (!tempAssessment) return;
     
     const finalAssessment: HEARTIAssessment = {
@@ -204,20 +231,43 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
       demographics
     };
     
-    saveAssessment(finalAssessment);
-    onComplete(finalAssessment);
+    try {
+      await saveAssessment(finalAssessment);
+      onComplete(finalAssessment);
+      
+      toast({
+        title: "Assessment completed!",
+        description: "Your HEARTI leadership assessment has been saved with demographics.",
+      });
+    } catch (error) {
+      console.error("Failed to save assessment:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save assessment. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
-  const handleSkipDemographics = () => {
+  const handleSkipDemographics = async () => {
     if (!tempAssessment) return;
     
-    saveAssessment(tempAssessment);
-    onComplete(tempAssessment);
-    
-    toast({
-      title: "Assessment completed!",
-      description: "Your HEARTI leadership assessment has been saved.",
-    });
+    try {
+      await saveAssessment(tempAssessment);
+      onComplete(tempAssessment);
+      
+      toast({
+        title: "Assessment completed!",
+        description: "Your HEARTI leadership assessment has been saved.",
+      });
+    } catch (error) {
+      console.error("Failed to save assessment:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save assessment. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   if (shuffledQuestions.length === 0) {

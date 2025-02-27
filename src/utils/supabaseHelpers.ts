@@ -1,6 +1,21 @@
 
 import { supabase } from '../integrations/supabase/client';
-import { HEARTIAssessment, UserProfile, Organization } from '../types';
+import { HEARTIAssessment, UserProfile, Organization, HEARTIAnswer, HEARTIDimension } from '../types';
+import { Json } from '../integrations/supabase/types';
+
+// Type guard to ensure safe conversion from Json to our application types
+function isValidAnswersArray(data: any): data is HEARTIAnswer[] {
+  return Array.isArray(data) && data.every(item => 
+    typeof item === 'object' && 'questionId' in item && 'score' in item
+  );
+}
+
+function isValidDimensionScores(data: any): data is Record<HEARTIDimension, number> {
+  if (typeof data !== 'object' || data === null) return false;
+  
+  const validDimensions = ['humility', 'empathy', 'accountability', 'resiliency', 'transparency', 'inclusivity'];
+  return validDimensions.every(dim => dim in data && typeof data[dim] === 'number');
+}
 
 // Assessment Management with Supabase
 export const saveAssessmentToSupabase = async (assessment: HEARTIAssessment): Promise<boolean> => {
@@ -8,14 +23,13 @@ export const saveAssessmentToSupabase = async (assessment: HEARTIAssessment): Pr
     const { error } = await supabase
       .from('assessments')
       .insert({
-        id: assessment.id,
         user_id: assessment.userId,
         organization_id: assessment.organizationId || null,
         date: assessment.date,
-        answers: assessment.answers,
-        dimension_scores: assessment.dimensionScores,
+        answers: assessment.answers as unknown as Json,
+        dimension_scores: assessment.dimensionScores as unknown as Json,
         overall_score: assessment.overallScore,
-        demographics: assessment.demographics || null
+        demographics: assessment.demographics as unknown as Json || null
       });
 
     if (error) {
@@ -42,16 +56,26 @@ export const getAssessmentsFromSupabase = async (): Promise<HEARTIAssessment[]> 
     }
     
     // Transform the data structure from Supabase format to application format
-    return data.map(item => ({
-      id: item.id,
-      userId: item.user_id,
-      organizationId: item.organization_id || undefined,
-      date: item.date,
-      answers: item.answers,
-      dimensionScores: item.dimension_scores,
-      overallScore: item.overall_score,
-      demographics: item.demographics || undefined
-    }));
+    return data.map(item => {
+      const answers = isValidAnswersArray(item.answers) 
+        ? item.answers 
+        : [] as HEARTIAnswer[];
+      
+      const dimensionScores = isValidDimensionScores(item.dimension_scores)
+        ? item.dimension_scores as Record<HEARTIDimension, number>
+        : {} as Record<HEARTIDimension, number>;
+        
+      return {
+        id: item.id,
+        userId: item.user_id,
+        organizationId: item.organization_id || undefined,
+        date: item.date,
+        answers: answers,
+        dimensionScores: dimensionScores,
+        overallScore: item.overall_score,
+        demographics: item.demographics || undefined
+      };
+    });
   } catch (error) {
     console.error('Failed to get assessments from Supabase:', error);
     return [];
@@ -71,16 +95,26 @@ export const getUserAssessmentsFromSupabase = async (userId: string): Promise<HE
     }
     
     // Transform the data structure from Supabase format to application format
-    return data.map(item => ({
-      id: item.id,
-      userId: item.user_id,
-      organizationId: item.organization_id || undefined,
-      date: item.date,
-      answers: item.answers,
-      dimensionScores: item.dimension_scores,
-      overallScore: item.overall_score,
-      demographics: item.demographics || undefined
-    }));
+    return data.map(item => {
+      const answers = isValidAnswersArray(item.answers) 
+        ? item.answers 
+        : [] as HEARTIAnswer[];
+      
+      const dimensionScores = isValidDimensionScores(item.dimension_scores)
+        ? item.dimension_scores as Record<HEARTIDimension, number>
+        : {} as Record<HEARTIDimension, number>;
+        
+      return {
+        id: item.id,
+        userId: item.user_id,
+        organizationId: item.organization_id || undefined,
+        date: item.date,
+        answers: answers,
+        dimensionScores: dimensionScores,
+        overallScore: item.overall_score,
+        demographics: item.demographics || undefined
+      };
+    });
   } catch (error) {
     console.error('Failed to get user assessments from Supabase:', error);
     return [];
@@ -101,16 +135,26 @@ export const getOrganizationAssessmentsFromSupabase = async (organizationId: str
     }
     
     // Transform the data structure from Supabase format to application format
-    return data.map(item => ({
-      id: item.id,
-      userId: item.user_id,
-      organizationId: item.organization_id || undefined,
-      date: item.date,
-      answers: item.answers,
-      dimensionScores: item.dimension_scores,
-      overallScore: item.overall_score,
-      demographics: item.demographics || undefined
-    }));
+    return data.map(item => {
+      const answers = isValidAnswersArray(item.answers) 
+        ? item.answers 
+        : [] as HEARTIAnswer[];
+      
+      const dimensionScores = isValidDimensionScores(item.dimension_scores)
+        ? item.dimension_scores as Record<HEARTIDimension, number>
+        : {} as Record<HEARTIDimension, number>;
+        
+      return {
+        id: item.id,
+        userId: item.user_id,
+        organizationId: item.organization_id || undefined,
+        date: item.date,
+        answers: answers,
+        dimensionScores: dimensionScores,
+        overallScore: item.overall_score,
+        demographics: item.demographics || undefined
+      };
+    });
   } catch (error) {
     console.error('Failed to get organization assessments from Supabase:', error);
     return [];
