@@ -129,6 +129,66 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
               </div>
             </div>
           </div>
+
+          {assessment.demographics && Object.keys(assessment.demographics).length > 0 && (
+            <>
+              <Separator className="my-6" />
+              
+              <div>
+                <h3 className="text-lg font-medium mb-4">Demographic Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {assessment.demographics.managementLevel && (
+                    <div>
+                      <p className="font-medium">Management Level</p>
+                      <p className="text-muted-foreground">{assessment.demographics.managementLevel}</p>
+                    </div>
+                  )}
+                  
+                  {assessment.demographics.companySize && (
+                    <div>
+                      <p className="font-medium">Company Size</p>
+                      <p className="text-muted-foreground">{assessment.demographics.companySize}</p>
+                    </div>
+                  )}
+                  
+                  {assessment.demographics.jobRole && (
+                    <div>
+                      <p className="font-medium">Job Role</p>
+                      <p className="text-muted-foreground">{assessment.demographics.jobRole}</p>
+                    </div>
+                  )}
+                  
+                  {assessment.demographics.location && (
+                    <div>
+                      <p className="font-medium">Location</p>
+                      <p className="text-muted-foreground">{assessment.demographics.location}</p>
+                    </div>
+                  )}
+                  
+                  {assessment.demographics.ageRange && (
+                    <div>
+                      <p className="font-medium">Age Range</p>
+                      <p className="text-muted-foreground">{assessment.demographics.ageRange}</p>
+                    </div>
+                  )}
+                  
+                  {assessment.demographics.genderIdentity && (
+                    <div>
+                      <p className="font-medium">Gender Identity</p>
+                      <p className="text-muted-foreground">{assessment.demographics.genderIdentity}</p>
+                    </div>
+                  )}
+                  
+                  {assessment.demographics.raceEthnicity && assessment.demographics.raceEthnicity.length > 0 && (
+                    <div>
+                      <p className="font-medium">Race/Ethnicity</p>
+                      <p className="text-muted-foreground">{assessment.demographics.raceEthnicity.join(', ')}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>

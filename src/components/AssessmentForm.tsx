@@ -6,7 +6,8 @@ import {
   HEARTIQuestion, 
   HEARTIAnswer, 
   HEARTIAssessment,
-  HEARTIDimension
+  HEARTIDimension,
+  Demographics
 } from '../types';
 import { calculateDimensionScores, calculateOverallScore } from '../utils/calculations';
 import { saveAssessment, ensureUserExists } from '../utils/localStorage';
@@ -14,6 +15,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import DemographicForm from './DemographicForm';
 
 const questions: HEARTIQuestion[] = [
   // Humility
@@ -105,6 +107,8 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [shuffledQuestions, setShuffledQuestions] = useState<HEARTIQuestion[]>([]);
   const [answers, setAnswers] = useState<HEARTIAnswer[]>([]);
+  const [assessmentComplete, setAssessmentComplete] = useState(false);
+  const [tempAssessment, setTempAssessment] = useState<HEARTIAssessment | null>(null);
   
   const questionsPerPage = 10;
   const totalPages = Math.ceil(questions.length / questionsPerPage);
@@ -150,7 +154,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
       setCurrentPage(prev => prev + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      completeAssessment();
+      completeAssessmentQuestions();
     }
   };
 
@@ -161,7 +165,8 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     }
   };
 
-  const completeAssessment = () => {
+  // Modified to set assessment as complete and store temp assessment
+  const completeAssessmentQuestions = () => {
     // Make sure we have a user
     const user = ensureUserExists();
     
@@ -179,15 +184,35 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     const assessment: HEARTIAssessment = {
       id: uuidv4(),
       userId: user.id,
-      organizationId: user.organizationId, // Include the organization ID if available
+      organizationId: user.organizationId,
       date: new Date().toISOString(),
       answers: finalAnswers,
       dimensionScores,
       overallScore
     };
     
-    saveAssessment(assessment);
-    onComplete(assessment);
+    setTempAssessment(assessment);
+    setAssessmentComplete(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleDemographicsComplete = (demographics: Demographics) => {
+    if (!tempAssessment) return;
+    
+    const finalAssessment: HEARTIAssessment = {
+      ...tempAssessment,
+      demographics
+    };
+    
+    saveAssessment(finalAssessment);
+    onComplete(finalAssessment);
+  };
+
+  const handleSkipDemographics = () => {
+    if (!tempAssessment) return;
+    
+    saveAssessment(tempAssessment);
+    onComplete(tempAssessment);
     
     toast({
       title: "Assessment completed!",
@@ -197,6 +222,15 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
 
   if (shuffledQuestions.length === 0) {
     return <div className="flex justify-center p-6">Loading assessment questions...</div>;
+  }
+
+  if (assessmentComplete) {
+    return (
+      <DemographicForm 
+        onComplete={handleDemographicsComplete} 
+        onSkip={handleSkipDemographics} 
+      />
+    );
   }
 
   return (
