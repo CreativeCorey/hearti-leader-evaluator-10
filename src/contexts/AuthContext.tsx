@@ -55,7 +55,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
-        password
+        password,
+        options: {
+          data: {
+            name: name || null
+          }
+        }
       });
 
       if (error) {
@@ -68,8 +73,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return;
       }
 
-      // If successful, create a profile with the name
+      // If successful registration
       if (data.user) {
+        // Try to manually create the profile
         const { error: profileError } = await supabase
           .from('profiles')
           .insert({
@@ -82,7 +88,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           console.error("Error creating profile:", profileError);
           toast({
             title: "Profile creation failed",
-            description: "Your account was created but we couldn't set up your profile.",
+            description: "Your account was created but we couldn't set up your profile. This won't affect your ability to use the app.",
             variant: "destructive"
           });
         } else {
@@ -121,6 +127,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           title: "Sign in failed",
           description: error.message,
           variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Sign in successful",
+          description: "You have been successfully signed in."
         });
       }
     } catch (error) {
