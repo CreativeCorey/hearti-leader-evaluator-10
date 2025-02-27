@@ -1,7 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { HEARTIAssessment, UserProfile, Organization } from "../types";
-import { Tables } from "@/integrations/supabase/types";
+import { Json } from "@/integrations/supabase/types";
 
 // Authentication utilities
 export const getCurrentUser = async () => {
@@ -280,17 +280,20 @@ export const getOrganizationAssessments = async (organizationId: string): Promis
 };
 
 export const saveAssessment = async (assessment: Omit<HEARTIAssessment, 'id'>): Promise<HEARTIAssessment | null> => {
+  // Convert from our application model to the database schema
+  const dbAssessment = {
+    user_id: assessment.userId,
+    organization_id: assessment.organizationId || null,
+    date: assessment.date,
+    answers: assessment.answers as Json,
+    dimension_scores: assessment.dimensionScores as Json,
+    overall_score: assessment.overallScore,
+    demographics: assessment.demographics as Json || null
+  };
+  
   const { data, error } = await supabase
     .from('assessments')
-    .insert({
-      user_id: assessment.userId,
-      organization_id: assessment.organizationId || null,
-      date: assessment.date,
-      answers: assessment.answers,
-      dimension_scores: assessment.dimensionScores,
-      overall_score: assessment.overallScore,
-      demographics: assessment.demographics || null
-    })
+    .insert(dbAssessment)
     .select()
     .maybeSingle();
   
