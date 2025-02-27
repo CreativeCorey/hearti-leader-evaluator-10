@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from 'uuid';
@@ -15,7 +14,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 
-// Questions for the assessment
 const questions: HEARTIQuestion[] = [
   // Humility
   { id: 1, dimension: 'humility', text: 'I acknowledge when I don\'t know the answer.' },
@@ -88,7 +86,6 @@ const questions: HEARTIQuestion[] = [
   { id: 59, dimension: 'inclusivity', text: 'I collaborate with diverse talent to ensure our workplace programs and policies are inclusive.' },
 ];
 
-// Function to shuffle an array
 const shuffleArray = <T,>(array: T[]): T[] => {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -111,29 +108,24 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
   const questionsPerPage = 10;
   const totalPages = Math.ceil(questions.length / questionsPerPage);
   
-  // Shuffle questions once when component mounts
   useEffect(() => {
     setShuffledQuestions(shuffleArray(questions));
   }, []);
   
-  // Get questions for current page
   const currentQuestions = shuffledQuestions.slice(
     currentPage * questionsPerPage, 
     (currentPage + 1) * questionsPerPage
   );
 
-  const handleAnswerChange = (questionId: number, score: number, isReversed: boolean = false) => {
-    // For reverse-scored items, we need to invert the score (1 becomes 5, 2 becomes 4, etc.)
-    const finalScore = isReversed ? 6 - score : score;
-    
+  const handleAnswerChange = (questionId: number, score: number) => {
     setAnswers(prev => {
       const existingAnswerIndex = prev.findIndex(a => a.questionId === questionId);
       if (existingAnswerIndex !== -1) {
         const newAnswers = [...prev];
-        newAnswers[existingAnswerIndex] = { questionId, score: finalScore };
+        newAnswers[existingAnswerIndex] = { questionId, score };
         return newAnswers;
       }
-      return [...prev, { questionId, score: finalScore }];
+      return [...prev, { questionId, score }];
     });
   };
 
@@ -169,13 +161,21 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
   };
 
   const completeAssessment = () => {
-    const dimensionScores = calculateDimensionScores(answers, questions);
+    const finalAnswers = answers.map(answer => {
+      const question = questions.find(q => q.id === answer.questionId);
+      if (question?.reverseScored) {
+        return { ...answer, score: 6 - answer.score };
+      }
+      return answer;
+    });
+
+    const dimensionScores = calculateDimensionScores(finalAnswers, questions);
     const overallScore = calculateOverallScore(dimensionScores);
     
     const assessment: HEARTIAssessment = {
       id: uuidv4(),
       date: new Date().toISOString(),
-      answers,
+      answers: finalAnswers,
       dimensionScores,
       overallScore
     };
@@ -209,7 +209,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
             <div key={question.id} className="space-y-3">
               <div className="font-medium">{question.text}</div>
               <RadioGroup 
-                onValueChange={(value) => handleAnswerChange(question.id, parseInt(value), question.reverseScored)}
+                onValueChange={(value) => handleAnswerChange(question.id, parseInt(value))}
                 value={answers.find(a => a.questionId === question.id)?.score.toString() || ""}
               >
                 <div className="flex justify-between max-w-md">
