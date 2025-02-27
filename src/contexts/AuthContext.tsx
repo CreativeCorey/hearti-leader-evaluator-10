@@ -59,7 +59,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         options: {
           data: {
             name: name || null
-          }
+          },
+          emailRedirectTo: `${window.location.origin}/auth`
         }
       });
 
@@ -75,6 +76,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       // If successful registration
       if (data.user) {
+        if (data.user.identities?.length === 0) {
+          toast({
+            title: "Account already exists",
+            description: "Please sign in instead",
+            variant: "destructive"
+          });
+          return;
+        }
+
         // Try to manually create the profile
         const { error: profileError } = await supabase
           .from('profiles')
@@ -91,12 +101,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             description: "Your account was created but we couldn't set up your profile. This won't affect your ability to use the app.",
             variant: "destructive"
           });
-        } else {
-          toast({
-            title: "Sign up successful",
-            description: "Your account has been created. Check your email for verification.",
-          });
         }
+
+        toast({
+          title: "Sign up successful",
+          description: "Please check your email for the verification link before signing in.",
+        });
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -116,19 +126,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       });
 
       if (error) {
-        setError(error.message);
+        let errorMessage = error.message;
+        
+        // Check if user exists but hasn't confirmed their email
+        const { data: userData } = await supabase.auth.signUp({
+          email,
+          password
+        });
+
+        if (userData?.user?.identities?.length === 0) {
+          errorMessage = "Please check your email and verify your account before signing in.";
+        }
+
+        setError(errorMessage);
         toast({
           title: "Sign in failed",
-          description: error.message,
+          description: errorMessage,
           variant: "destructive"
         });
-      } else {
+        return;
+      }
+
+      if (data.session) {
         toast({
           title: "Sign in successful",
           description: "You have been successfully signed in."
