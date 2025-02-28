@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from 'uuid';
@@ -9,7 +10,8 @@ import {
   Demographics
 } from '../types';
 import { calculateDimensionScores, calculateOverallScore } from '../utils/calculations';
-import { saveAssessment, ensureUserExists, ensureUserProfileExists } from '../utils/localStorage';
+import { saveAssessment, ensureUserExists } from '../utils/localStorage';
+import { ensureUserProfileExists } from '../utils/supabaseHelpers';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
