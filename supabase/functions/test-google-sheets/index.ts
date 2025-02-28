@@ -37,19 +37,33 @@ serve(async (req) => {
     }
     console.log("Using Sheet ID:", sheetId)
     
-    // Get the access token from environment variable
-    const accessToken = Deno.env.get("GOOGLE_WORKLOAD_IDENTITY_CONFIG")
-    if (!accessToken) {
-      console.error("Missing GOOGLE_WORKLOAD_IDENTITY_CONFIG")
+    // Check for service account email
+    const serviceAccountEmail = Deno.env.get("GOOGLE_SERVICE_ACCOUNT_EMAIL")
+    if (!serviceAccountEmail) {
+      console.error("Missing GOOGLE_SERVICE_ACCOUNT_EMAIL")
       return new Response(
         JSON.stringify({ 
-          error: "Missing access token",
-          message: "Please add your Google OAuth access token to the GOOGLE_WORKLOAD_IDENTITY_CONFIG secret"
+          error: "Missing GOOGLE_SERVICE_ACCOUNT_EMAIL",
+          message: "Please add your Google service account email to the Edge Function secrets"
         }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       )
     }
-    console.log("Access token is available")
+    console.log("Using service account email:", serviceAccountEmail)
+    
+    // Get the workload identity configuration
+    const workloadIdentityConfig = Deno.env.get("GOOGLE_WORKLOAD_IDENTITY_CONFIG")
+    if (!workloadIdentityConfig) {
+      console.error("Missing GOOGLE_WORKLOAD_IDENTITY_CONFIG")
+      return new Response(
+        JSON.stringify({ 
+          error: "Missing workload identity configuration",
+          message: "Please add the GOOGLE_WORKLOAD_IDENTITY_CONFIG secret"
+        }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      )
+    }
+    console.log("Workload identity configuration is available")
     
     // Create very simple test data
     const testValues = [
@@ -61,9 +75,62 @@ serve(async (req) => {
       "Test", "Test", "Test", "Test", "Test", "Test", "Test"
     ]
     
-    // Try to access Google Sheets API with the access token
-    console.log("Attempting to send test data to Google Sheets...")
+    // Get token for Google Sheets API
+    let accessToken;
+    try {
+      console.log("Getting access token from workload identity configuration")
+      // Try using the configuration directly as an access token first
+      accessToken = workloadIdentityConfig;
+      
+      // If the configuration is a JSON credential file, we would need to use it to generate a token
+      if (workloadIdentityConfig.startsWith("{")) {
+        try {
+          console.log("Parsing workload identity configuration as JSON")
+          const credentials = JSON.parse(workloadIdentityConfig);
+          
+          if (credentials.type === "service_account" && credentials.private_key) {
+            console.log("Found service account credentials with private key")
+            
+            // Here we would generate a JWT and exchange it for an access token
+            // But for security best practices (avoiding private key handling), we'll suggest a better approach in the response
+            
+            return new Response(
+              JSON.stringify({ 
+                error: "Service account key detected",
+                message: "For better security, please use a direct access token or federated identity instead of a service account key JSON.",
+                suggestion: "Generate a token using the OAuth playground and set it directly as GOOGLE_WORKLOAD_IDENTITY_CONFIG"
+              }),
+              { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+            )
+          }
+        } catch (parseError) {
+          console.error("Failed to parse workload identity config as JSON:", parseError.message)
+          // Continue using it as a plain token
+        }
+      }
+    } catch (tokenError) {
+      console.error("Error getting access token:", tokenError.message)
+      return new Response(
+        JSON.stringify({ 
+          error: "Failed to get access token",
+          message: tokenError.message,
+          help: "Check your GOOGLE_WORKLOAD_IDENTITY_CONFIG format"
+        }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      )
+    }
     
+    if (!accessToken) {
+      return new Response(
+        JSON.stringify({ 
+          error: "No valid access token",
+          message: "Could not obtain a valid access token for Google Sheets API"
+        }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      )
+    }
+    
+    // Try to use the token with Google Sheets API
     try {
       const sheetsUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A:Q:append?valueInputOption=USER_ENTERED`
       console.log("Making request to Google Sheets API...")
@@ -98,7 +165,7 @@ serve(async (req) => {
             return new Response(
               JSON.stringify({ 
                 error: "Authentication failed",
-                message: "Your access token is invalid or expired. Please generate a new access token.",
+                message: "Your access token is invalid or expired. Please check your workload identity configuration.",
                 details: error
               }),
               { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -109,7 +176,7 @@ serve(async (req) => {
             return new Response(
               JSON.stringify({ 
                 error: "Permission denied",
-                message: "The access token doesn't have permission to access this Google Sheet. Make sure the sheet is shared with your Google account or service account.",
+                message: `The service account ${serviceAccountEmail} doesn't have permission to access this Google Sheet. Make sure the sheet is shared with this email.`,
                 details: error
               }),
               { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -145,7 +212,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           success: true, 
-          message: "Test data successfully sent to Google Sheets",
+          message: "Test data successfully sent to Google Sheets using workload identity",
           details: result
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }

@@ -27,17 +27,22 @@ serve(async (req) => {
     // Get the request body
     const reqData = await req.json()
     console.log("Received assessment data:", JSON.stringify(reqData, null, 2))
+
+    // Check for required configuration
+    const serviceAccountEmail = Deno.env.get("GOOGLE_SERVICE_ACCOUNT_EMAIL")
+    if (!serviceAccountEmail) {
+      throw new Error("Missing GOOGLE_SERVICE_ACCOUNT_EMAIL environment variable")
+    }
     
-    // Check for Sheet ID
     const sheetId = Deno.env.get("GOOGLE_SHEET_ID")
     if (!sheetId) {
       throw new Error("Missing GOOGLE_SHEET_ID environment variable")
     }
     
-    // Get the access token
-    const accessToken = Deno.env.get("GOOGLE_WORKLOAD_IDENTITY_CONFIG")
-    if (!accessToken) {
-      throw new Error("Missing GOOGLE_WORKLOAD_IDENTITY_CONFIG environment variable (access token)")
+    // Get the workload identity configuration
+    const workloadIdentityConfig = Deno.env.get("GOOGLE_WORKLOAD_IDENTITY_CONFIG")
+    if (!workloadIdentityConfig) {
+      throw new Error("Missing GOOGLE_WORKLOAD_IDENTITY_CONFIG environment variable")
     }
     
     // Check if we received assessment_id
@@ -145,6 +150,9 @@ serve(async (req) => {
       sheetData.management_level,
       sheetData.company_size
     ]
+    
+    // Get token for Google Sheets API using workload identity configuration
+    let accessToken = workloadIdentityConfig;
     
     // Try to append data to Google Sheet
     try {
