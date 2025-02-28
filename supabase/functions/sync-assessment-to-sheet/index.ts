@@ -5,6 +5,7 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
+import { create } from "https://deno.land/x/jwt@v2.0.1/mod.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -29,20 +30,26 @@ serve(async (req) => {
     console.log("Received assessment data:", JSON.stringify(reqData, null, 2))
 
     // Check for required configuration
-    const serviceAccountEmail = Deno.env.get("GOOGLE_SERVICE_ACCOUNT_EMAIL")
-    if (!serviceAccountEmail) {
-      throw new Error("Missing GOOGLE_SERVICE_ACCOUNT_EMAIL environment variable")
-    }
-    
     const sheetId = Deno.env.get("GOOGLE_SHEET_ID")
     if (!sheetId) {
       throw new Error("Missing GOOGLE_SHEET_ID environment variable")
     }
     
-    // Get the workload identity configuration
-    const workloadIdentityConfig = Deno.env.get("GOOGLE_WORKLOAD_IDENTITY_CONFIG")
-    if (!workloadIdentityConfig) {
-      throw new Error("Missing GOOGLE_WORKLOAD_IDENTITY_CONFIG environment variable")
+    // Get the service account credentials
+    const serviceAccountKey = Deno.env.get("GOOGLE_SERVICE_ACCOUNT_KEY")
+    if (!serviceAccountKey) {
+      console.error("Missing GOOGLE_SERVICE_ACCOUNT_KEY")
+      throw new Error("Missing GOOGLE_SERVICE_ACCOUNT_KEY environment variable")
+    }
+    
+    // Parse the service account key JSON
+    let serviceAccount;
+    try {
+      serviceAccount = JSON.parse(serviceAccountKey);
+      console.log("Service account email:", serviceAccount.client_email);
+    } catch (parseError) {
+      console.error("Failed to parse service account key:", parseError.message);
+      throw new Error("Invalid service account key format")
     }
     
     // Check if we received assessment_id
@@ -151,8 +158,50 @@ serve(async (req) => {
       sheetData.company_size
     ]
     
-    // Get token for Google Sheets API using workload identity configuration
-    let accessToken = workloadIdentityConfig;
+    // Generate a JWT token for Google API authentication
+    const now = Math.floor(Date.now() / 1000);
+    const claims = {
+      iss: serviceAccount.client_email,
+      scope: "https://www.googleapis.com/auth/spreadsheets",
+      aud: "https://oauth2.googleapis.com/token",
+      exp: now + 3600,
+      iat: now
+    };
+    
+    // Sign the JWT
+    const jwt = await create(
+      { alg: "RS256", typ: "JWT" }, 
+      claims, 
+      serviceAccount.private_key
+    );
+    
+    // Exchange the JWT for an access token
+    const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({
+        grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
+        assertion: jwt
+      })
+    });
+    
+    if (!tokenResponse.ok) {
+      const errorText = await tokenResponse.text();
+      console.error("Token request failed:", tokenResponse.status, errorText);
+      throw new Error(`Failed to get Google API access token: ${errorText}`);
+    }
+    
+    const tokenData = await tokenResponse.json();
+    const accessToken = tokenData.access_token;
+    
+    if (!accessToken) {
+      console.error("No access token in response:", JSON.stringify(tokenData));
+      throw new Error("No access token received from Google Auth API");
+    }
+    
+    console.log("Successfully obtained access token");
     
     // Try to append data to Google Sheet
     try {
