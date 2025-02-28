@@ -35,7 +35,7 @@ const Index: React.FC = () => {
   const [latestAssessment, setLatestAssessment] = useState<HEARTIAssessment | null>(null);
   const [userAssessments, setUserAssessments] = useState<HEARTIAssessment[]>([]);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [isSupabaseEnabled, setIsSupabaseEnabled] = useState(false);
+  const [isSupabaseEnabled, setIsSupabaseEnabled] = useState(true); // Default to true to enable Google Sheets integration
   const [loading, setLoading] = useState(true);
   const [syncDialogOpen, setSyncDialogOpen] = useState(false);
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'success' | 'error'>('idle');
@@ -43,28 +43,14 @@ const Index: React.FC = () => {
   useEffect(() => {
     const init = async () => {
       try {
-        // Check if Supabase integration is enabled
-        const supabseEnabled = useSupabase();
-        setIsSupabaseEnabled(supabseEnabled);
+        // Enable Supabase by default for Google Sheets integration
+        const supabaseEnabled = true;
+        setUseSupabase(supabaseEnabled);
+        setIsSupabaseEnabled(supabaseEnabled);
         
-        // Ensure user exists in Supabase if using it
-        if (supabseEnabled) {
-          // Get or create anonymous ID
-          const anonymousId = getOrCreateAnonymousId();
-          console.log("Anonymous user ID:", anonymousId);
-          
-          // Ensure this ID has a profile in Supabase
-          const profileCreated = await ensureUserProfileExists(anonymousId);
-          console.log("Profile exists or was created:", profileCreated);
-          
-          if (!profileCreated) {
-            toast({
-              title: "Profile Creation Error",
-              description: "Could not create or verify your user profile. Some features may be limited.",
-              variant: "destructive",
-            });
-          }
-        }
+        // Get or create anonymous ID
+        const anonymousId = getOrCreateAnonymousId();
+        console.log("Anonymous user ID:", anonymousId);
         
         // Get user profile - this should now work with the profile created above
         const userProfile = await getCurrentUser();
@@ -125,7 +111,7 @@ const Index: React.FC = () => {
     // Show success message
     toast({
       title: "Assessment Complete!",
-      description: "Your HEARTI Leadership Assessment has been saved.",
+      description: "Your HEARTI Leadership Assessment has been saved and sent to Google Sheets.",
     });
   };
   
@@ -151,7 +137,6 @@ const Index: React.FC = () => {
     try {
       // Get or create anonymous ID and ensure profile exists first
       const anonymousId = getOrCreateAnonymousId();
-      await ensureUserProfileExists(anonymousId);
       
       // Then sync data from localStorage to Supabase
       const success = await syncLocalDataToSupabase();
