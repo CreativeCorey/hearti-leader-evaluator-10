@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from 'uuid';
@@ -10,7 +9,7 @@ import {
   Demographics
 } from '../types';
 import { calculateDimensionScores, calculateOverallScore } from '../utils/calculations';
-import { saveAssessment, ensureUserExists } from '../utils/localStorage';
+import { saveAssessment, ensureUserExists, ensureUserProfileExists } from '../utils/localStorage';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
@@ -119,6 +118,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     
     // Initialize user
     const initUser = async () => {
+      console.log("Initializing user, checking if exists...");
       try {
         const user = await ensureUserExists();
         setCurrentUser({
@@ -186,7 +186,6 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     }
   };
 
-  // Modified to set assessment as complete and store temp assessment
   const completeAssessmentQuestions = () => {
     if (!currentUser) {
       toast({
@@ -270,6 +269,8 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     }
   };
 
+  const DEBUG = import.meta.env.DEV;
+
   if (shuffledQuestions.length === 0) {
     return <div className="flex justify-center p-6">Loading assessment questions...</div>;
   }
@@ -344,6 +345,47 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
           {currentPage === totalPages - 1 ? 'Complete' : 'Next'}
         </Button>
       </CardFooter>
+      {DEBUG && (
+        <div className="mt-4 p-4 border border-red-300 rounded bg-red-50">
+          <h3 className="text-red-700 font-medium">Debug Tools</h3>
+          <p className="text-sm text-red-600 mb-2">Only visible in development mode</p>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={async () => {
+                const anonId = localStorage.getItem('hearti-anonymous-user-id');
+                console.log("Current anonymous ID:", anonId);
+                
+                if (anonId) {
+                  const success = await ensureUserProfileExists(anonId);
+                  console.log("Profile creation result:", success);
+                  toast({
+                    title: success ? "Profile Created" : "Profile Creation Failed",
+                    description: `Attempted to create profile for ${anonId}`,
+                    variant: success ? "default" : "destructive"
+                  });
+                }
+              }}
+            >
+              Debug: Create Profile
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => {
+                localStorage.removeItem('hearti-anonymous-user-id');
+                toast({
+                  title: "Anonymous ID Cleared",
+                  description: "You'll get a new anonymous ID on refresh",
+                });
+              }}
+            >
+              Clear Anonymous ID
+            </Button>
+          </div>
+        </div>
+      )}
     </Card>
   );
 };

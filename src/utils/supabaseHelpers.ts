@@ -1,3 +1,4 @@
+
 import { supabase } from '../integrations/supabase/client';
 import { HEARTIAssessment, UserProfile, Organization, HEARTIAnswer, HEARTIDimension, Demographics } from '../types';
 import { Json } from '../integrations/supabase/types';
@@ -39,12 +40,12 @@ export const ensureUserProfileExists = async (userId: string): Promise<boolean> 
     // If profile exists, return true
     if (existingProfile) return true;
     
-    // Otherwise, create a new profile
+    // If not, insert with required fields
     const { error: insertError } = await supabase
       .from('profiles')
       .insert({
         id: userId,
-        email: 'anonymous@example.com', // Placeholder email for anonymous users
+        email: 'anonymous@' + userId.substring(0, 8) + '.com', // Generate a unique email to satisfy not-null constraint
         role: 'user'
       });
     
@@ -53,6 +54,7 @@ export const ensureUserProfileExists = async (userId: string): Promise<boolean> 
       return false;
     }
     
+    console.log('Profile created successfully for user ID:', userId);
     return true;
   } catch (error) {
     console.error('Failed to ensure user profile exists:', error);
@@ -87,6 +89,7 @@ export const saveAssessmentToSupabase = async (assessment: HEARTIAssessment): Pr
       return false;
     }
     
+    console.log('Assessment saved successfully');
     return true;
   } catch (error) {
     console.error('Failed to save assessment to Supabase:', error);

@@ -1,4 +1,3 @@
-
 import { HEARTIAssessment, UserProfile, Organization } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 import { 
@@ -23,26 +22,31 @@ const ORGANIZATIONS_KEY = 'hearti-organizations';
 const USE_SUPABASE_KEY = 'hearti-use-supabase';
 const ANONYMOUS_USER_KEY = 'hearti-anonymous-user-id';
 
-// Get or create an anonymous user ID
 export const getOrCreateAnonymousId = (): string => {
   let anonymousId = localStorage.getItem(ANONYMOUS_USER_KEY);
   
   if (!anonymousId) {
     anonymousId = uuidv4();
     localStorage.setItem(ANONYMOUS_USER_KEY, anonymousId);
+    console.log("Created new anonymous ID:", anonymousId);
     
-    // Also ensure this profile exists in Supabase if using Supabase
     if (useSupabase()) {
-      ensureUserProfileExists(anonymousId).catch(err => {
-        console.error("Failed to create anonymous profile:", err);
-      });
+      ensureUserProfileExists(anonymousId)
+        .then(success => {
+          console.log("Profile creation result for new ID:", success);
+          if (!success) {
+            console.error("Failed to create profile for new anonymous ID");
+          }
+        })
+        .catch(err => {
+          console.error("Failed to create anonymous profile:", err);
+        });
     }
   }
   
   return anonymousId;
 };
 
-// Utility to check if we should use Supabase
 export const useSupabase = (): boolean => {
   try {
     const useSupabaseStr = localStorage.getItem(USE_SUPABASE_KEY);
@@ -60,8 +64,6 @@ export const setUseSupabase = (value: boolean): void => {
     console.error('Failed to set Supabase usage flag:', error);
   }
 };
-
-// Organization Management
 
 export const createOrganization = async (name: string, description?: string): Promise<Organization> => {
   try {
@@ -119,8 +121,6 @@ export const getOrganizationById = async (organizationId: string): Promise<Organ
   }
 };
 
-// User Management
-
 export const createUser = async (
   name?: string, 
   email?: string, 
@@ -128,14 +128,22 @@ export const createUser = async (
   role: 'user' | 'admin' = 'user'
 ): Promise<UserProfile> => {
   try {
-    // Either use authenticated user ID or create an anonymous one
     const userId = getOrCreateAnonymousId();
+    console.log("Creating user with ID:", userId);
+    
+    if (useSupabase()) {
+      const profileExists = await ensureUserProfileExists(userId);
+      console.log("Profile exists check result:", profileExists);
+      if (!profileExists) {
+        console.error("Failed to ensure profile exists before creating user");
+      }
+    }
     
     const newUser: UserProfile = {
       id: userId,
       createdAt: new Date().toISOString(),
       name,
-      email,
+      email: email || `anonymous@${userId.substring(0, 8)}.com`,
       organizationId,
       role
     };
@@ -151,8 +159,8 @@ export const createUser = async (
       localStorage.setItem(USERS_KEY, JSON.stringify(users));
     }
     
-    // Set as current user
     await setCurrentUser(newUser.id);
+    console.log("User created successfully:", newUser);
     
     return newUser;
   } catch (error) {
@@ -163,8 +171,6 @@ export const createUser = async (
 
 export const getUsers = async (): Promise<UserProfile[]> => {
   try {
-    // Note: For a complete implementation, we would need a Supabase function to get all users
-    // This is simplified to use localStorage for now, even in Supabase mode
     const usersJson = localStorage.getItem(USERS_KEY);
     return usersJson ? JSON.parse(usersJson) : [];
   } catch (error) {
@@ -237,19 +243,27 @@ export const setCurrentUser = async (userId: string): Promise<void> => {
 
 export const getCurrentUser = async (): Promise<UserProfile | null> => {
   try {
-    // First try to get the authenticated user
-    // If no authenticated user, fall back to anonymous ID
     const userId = localStorage.getItem(CURRENT_USER_KEY) || getOrCreateAnonymousId();
+    console.log("Getting current user with ID:", userId);
     
     if (!userId) return null;
     
     const user = await getUserById(userId);
     
-    // If no user profile exists yet but we have an ID, create a minimal profile
     if (!user && useSupabase()) {
+      console.log("No user profile found, creating one...");
       try {
-        await ensureUserProfileExists(userId);
-        return await getUserProfileFromSupabase(userId);
+        const profileCreated = await ensureUserProfileExists(userId);
+        console.log("Profile creation result:", profileCreated);
+        
+        if (profileCreated) {
+          const profile = await getUserProfileFromSupabase(userId);
+          console.log("Retrieved profile from Supabase:", profile);
+          return profile;
+        } else {
+          console.log("Creating full user since profile creation failed");
+          return await createUser(undefined, undefined, undefined, 'user');
+        }
       } catch (err) {
         console.error("Failed to create user profile:", err);
         return null;
@@ -268,7 +282,6 @@ export const ensureUserExists = async (): Promise<UserProfile> => {
     const currentUser = await getCurrentUser();
     if (currentUser) return currentUser;
     
-    // If no current user, create one
     return await createUser();
   } catch (error) {
     console.error('Failed to ensure user exists:', error);
@@ -276,27 +289,33 @@ export const ensureUserExists = async (): Promise<UserProfile> => {
   }
 };
 
-// Assessment Management
-
 export const saveAssessment = async (assessment: HEARTIAssessment): Promise<void> => {
   try {
-    // Make sure we have a valid user ID
     if (!assessment.userId) {
       assessment.userId = getOrCreateAnonymousId();
+      console.log("Using anonymous ID for assessment:", assessment.userId);
     }
     
     if (useSupabase()) {
-      // Make sure the user profile exists before saving assessment
-      await ensureUserProfileExists(assessment.userId);
+      const profileExists = await ensureUserProfileExists(assessment.userId);
+      console.log("Profile exists check result:", profileExists);
+      
+      if (!profileExists) {
+        console.error("Failed to ensure profile exists before saving assessment");
+        throw new Error('Failed to ensure user profile exists');
+      }
       
       const success = await saveAssessmentToSupabase(assessment);
       if (!success) {
         throw new Error('Failed to save assessment to Supabase');
       }
+      
+      console.log("Assessment saved successfully to Supabase");
     } else {
       const existingAssessments = await getAssessments();
       const assessments = [...existingAssessments, assessment];
       localStorage.setItem(ASSESSMENTS_KEY, JSON.stringify(assessments));
+      console.log("Assessment saved successfully to localStorage");
     }
   } catch (error) {
     console.error('Failed to save assessment:', error);
@@ -385,14 +404,11 @@ export const deleteAssessment = async (id: string): Promise<void> => {
       const existingAssessments = await getAssessments();
       const currentUser = await getCurrentUser();
       
-      // Only allow deletion if the assessment belongs to the current user or user is an admin
       if (currentUser) {
         const filteredAssessments = existingAssessments.filter(assessment => {
-          // Allow admins to delete any assessment in their organization
           if (currentUser.role === 'admin' && assessment.organizationId === currentUser.organizationId) {
             return assessment.id !== id;
           }
-          // Regular users can only delete their own assessments
           return assessment.id !== id || assessment.userId !== currentUser.id;
         });
         
@@ -411,9 +427,6 @@ export const clearUserAssessments = async (userId: string): Promise<void> => {
       (assessment) => assessment.userId !== userId
     );
     localStorage.setItem(ASSESSMENTS_KEY, JSON.stringify(filteredAssessments));
-    
-    // Note: For Supabase, we would need a proper batch delete operation
-    // This is simplified to use localStorage for now
   } catch (error) {
     console.error('Failed to clear user assessments:', error);
   }
@@ -426,9 +439,6 @@ export const clearOrganizationAssessments = async (organizationId: string): Prom
       (assessment) => assessment.organizationId !== organizationId
     );
     localStorage.setItem(ASSESSMENTS_KEY, JSON.stringify(filteredAssessments));
-    
-    // Note: For Supabase, we would need a proper batch delete operation
-    // This is simplified to use localStorage for now
   } catch (error) {
     console.error('Failed to clear organization assessments:', error);
   }
@@ -437,23 +447,17 @@ export const clearOrganizationAssessments = async (organizationId: string): Prom
 export const clearAssessments = async (): Promise<void> => {
   try {
     localStorage.removeItem(ASSESSMENTS_KEY);
-    
-    // Note: For Supabase, we would need a proper batch delete operation
-    // This is simplified to use localStorage for now
   } catch (error) {
     console.error('Failed to clear assessments:', error);
   }
 };
 
-// Added function to handle syncing local data to Supabase when switching
 export const syncLocalDataToSupabase = async (): Promise<boolean> => {
   try {
-    // Get all local data
     const localAssessments = JSON.parse(localStorage.getItem(ASSESSMENTS_KEY) || '[]');
     const localUsers = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
     const localOrganizations = JSON.parse(localStorage.getItem(ORGANIZATIONS_KEY) || '[]');
     
-    // Upload organizations first (since they're referenced by users)
     for (const org of localOrganizations) {
       const success = await saveOrganizationToSupabase(org);
       if (!success) {
@@ -461,7 +465,6 @@ export const syncLocalDataToSupabase = async (): Promise<boolean> => {
       }
     }
     
-    // Upload users next (since they're referenced by assessments)
     for (const user of localUsers) {
       const success = await saveUserProfileToSupabase(user);
       if (!success) {
@@ -469,7 +472,6 @@ export const syncLocalDataToSupabase = async (): Promise<boolean> => {
       }
     }
     
-    // Upload assessments last
     for (const assessment of localAssessments) {
       const success = await saveAssessmentToSupabase(assessment);
       if (!success) {
