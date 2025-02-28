@@ -4,21 +4,8 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader2 } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
-import { ensureUserProfileExists } from "@/utils/supabaseHelpers";
 import { useToast } from "@/hooks/use-toast";
-
-// Get or create an anonymous user ID from localStorage
-const getOrCreateAnonymousId = (): string => {
-  const key = "hearti-anonymous-user-id";
-  let anonymousId = localStorage.getItem(key);
-  
-  if (!anonymousId) {
-    anonymousId = uuidv4();
-    localStorage.setItem(key, anonymousId);
-  }
-  
-  return anonymousId;
-};
+import { getOrCreateAnonymousId, ensureUserExists } from "../utils/localStorage";
 
 const AuthGuard = () => {
   const { user, isLoading } = useAuth();
@@ -28,29 +15,27 @@ const AuthGuard = () => {
   useEffect(() => {
     const initializeAnonymousUser = async () => {
       if (!isLoading && !user) {
-        const anonymousId = getOrCreateAnonymousId();
-        console.log("Using anonymous ID:", anonymousId);
-        
         try {
-          // Try to ensure the user profile exists
-          const profileExists = await ensureUserProfileExists(anonymousId);
-          console.log("Profile exists or was created:", profileExists);
+          // Get or create anonymous ID and ensure user exists
+          const anonymousId = getOrCreateAnonymousId();
+          console.log("Using anonymous ID:", anonymousId);
           
-          if (!profileExists) {
-            console.warn("Failed to ensure anonymous profile exists, but continuing anyway");
-            
-            // We'll continue even if profile creation fails
-            // This allows local storage fallback to work
-          }
+          // Try to ensure the user profile exists in localStorage
+          const userProfile = await ensureUserExists();
+          console.log("User profile created or retrieved:", userProfile);
         } catch (error) {
-          console.error("Error ensuring anonymous profile:", error);
-          // Still continue even if there's an error
+          console.error("Error initializing anonymous user:", error);
+          toast({
+            title: "Initialization Error",
+            description: "There was a problem setting up your anonymous profile. Some features may be limited.",
+            variant: "destructive",
+          });
         }
       }
     };
     
     initializeAnonymousUser();
-  }, [user, isLoading]);
+  }, [user, isLoading, toast]);
 
   if (isLoading) {
     return (
