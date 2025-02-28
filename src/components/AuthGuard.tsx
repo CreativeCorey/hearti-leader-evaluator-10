@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Loader2 } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { ensureUserProfileExists } from "@/utils/supabaseHelpers";
+import { useToast } from "@/hooks/use-toast";
 
 // Get or create an anonymous user ID from localStorage
 const getOrCreateAnonymousId = (): string => {
@@ -14,10 +15,6 @@ const getOrCreateAnonymousId = (): string => {
   if (!anonymousId) {
     anonymousId = uuidv4();
     localStorage.setItem(key, anonymousId);
-    // Create profile for this anonymous user
-    ensureUserProfileExists(anonymousId).catch(err => {
-      console.error("Failed to create anonymous profile:", err);
-    });
   }
   
   return anonymousId;
@@ -25,12 +22,34 @@ const getOrCreateAnonymousId = (): string => {
 
 const AuthGuard = () => {
   const { user, isLoading } = useAuth();
+  const { toast } = useToast();
   
   // Set up anonymous user ID if not authenticated
   useEffect(() => {
-    if (!isLoading && !user) {
-      getOrCreateAnonymousId();
-    }
+    const initializeAnonymousUser = async () => {
+      if (!isLoading && !user) {
+        const anonymousId = getOrCreateAnonymousId();
+        console.log("Using anonymous ID:", anonymousId);
+        
+        try {
+          // Try to ensure the user profile exists
+          const profileExists = await ensureUserProfileExists(anonymousId);
+          console.log("Profile exists or was created:", profileExists);
+          
+          if (!profileExists) {
+            console.warn("Failed to ensure anonymous profile exists, but continuing anyway");
+            
+            // We'll continue even if profile creation fails
+            // This allows local storage fallback to work
+          }
+        } catch (error) {
+          console.error("Error ensuring anonymous profile:", error);
+          // Still continue even if there's an error
+        }
+      }
+    };
+    
+    initializeAnonymousUser();
   }, [user, isLoading]);
 
   if (isLoading) {
