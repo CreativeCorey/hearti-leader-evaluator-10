@@ -13,8 +13,14 @@ export const signInWithGoogle = async (): Promise<boolean> => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
+        redirectTo: redirectUrl,
         scopes: 'https://www.googleapis.com/auth/spreadsheets',
-        redirectTo: redirectUrl
+        queryParams: {
+          // Include prompt to ensure the user gets the consent screen
+          prompt: 'consent',
+          // Include access_type to request refresh token
+          access_type: 'offline',
+        }
       }
     });
     

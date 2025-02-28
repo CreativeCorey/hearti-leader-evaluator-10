@@ -15,37 +15,71 @@ const AuthCallback: React.FC = () => {
         // Log the current URL to help with debugging
         console.log('Auth callback URL:', window.location.href);
         
-        // The hash contains the token
-        const hashParams = new URLSearchParams(location.hash.substring(1));
-        const accessToken = hashParams.get('access_token');
+        // Check if we have a code in the URL
+        const queryParams = new URLSearchParams(location.search);
+        const code = queryParams.get('code');
+        const errorParam = queryParams.get('error');
+        const errorDescription = queryParams.get('error_description');
         
-        if (accessToken) {
-          console.log('Found access token in URL, setting session');
-          // If we have an access_token in the URL, we can set the session
-          const { error } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: hashParams.get('refresh_token') || '',
-          });
+        // If we have an error, display it
+        if (errorParam || errorDescription) {
+          console.error('OAuth error:', errorDescription || errorParam);
+          setError(`Authentication failed: ${errorDescription || errorParam}`);
+          return;
+        }
+        
+        // If we have a code, let Supabase handle the exchange
+        if (code) {
+          console.log('Found authorization code in URL, exchanging for tokens');
+          
+          // Let Supabase handle the token exchange automatically
+          const { data, error } = await supabase.auth.exchangeCodeForSession(code);
           
           if (error) {
-            console.error('Error setting session:', error);
+            console.error('Error exchanging code for session:', error);
             setError(`Authentication failed: ${error.message}`);
+            return;
           }
-        } else if (location.search) {
-          // Handle any error in the URL parameters
-          const queryParams = new URLSearchParams(location.search);
-          const errorDescription = queryParams.get('error_description');
           
-          if (errorDescription) {
-            console.error('OAuth error:', errorDescription);
-            setError(`Authentication failed: ${errorDescription}`);
-          } else {
-            // Let Supabase handle the callback
-            const { error } = await supabase.auth.getSession();
+          if (data.session) {
+            console.log('Successfully authenticated with Google');
+          }
+        } 
+        // Check for token in hash (SPA redirect)
+        else if (location.hash) {
+          const hashParams = new URLSearchParams(location.hash.substring(1));
+          const accessToken = hashParams.get('access_token');
+          
+          if (accessToken) {
+            console.log('Found access token in URL hash, setting session');
+            const { error } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: hashParams.get('refresh_token') || '',
+            });
+            
             if (error) {
-              console.error('Session error:', error);
+              console.error('Error setting session:', error);
               setError(`Authentication failed: ${error.message}`);
+              return;
             }
+          }
+        } 
+        // If no code or token was found, but we're at the callback URL
+        else {
+          console.warn('No authorization code or token found in callback URL');
+          // Try to retrieve session anyway, might be stored in cookies/localStorage
+          const { data, error } = await supabase.auth.getSession();
+          
+          if (error) {
+            console.error('Failed to get session:', error);
+            setError('Authentication failed: No authorization code or token found');
+            return;
+          }
+          
+          if (!data.session) {
+            console.error('No session found after callback');
+            setError('Authentication failed: No session established');
+            return;
           }
         }
       } catch (err) {
