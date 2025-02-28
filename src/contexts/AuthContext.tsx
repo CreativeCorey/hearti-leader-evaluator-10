@@ -3,9 +3,24 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
+import { v4 as uuidv4 } from "uuid";
+
+// Get or create an anonymous user ID from localStorage
+const getOrCreateAnonymousId = (): string => {
+  const key = "hearti-anonymous-user-id";
+  let anonymousId = localStorage.getItem(key);
+  
+  if (!anonymousId) {
+    anonymousId = uuidv4();
+    localStorage.setItem(key, anonymousId);
+  }
+  
+  return anonymousId;
+};
 
 type AuthContextType = {
   user: User | null;
+  anonymousId: string;
   session: Session | null;
   isLoading: boolean;
   signUp: (email: string, password: string, name?: string) => Promise<void>;
@@ -18,6 +33,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [anonymousId, setAnonymousId] = useState<string>("");
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,9 +46,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const { data } = await supabase.auth.getSession();
         setSession(data.session);
         setUser(data.session?.user ?? null);
+        
+        // Always get or create an anonymous ID
+        const anonId = getOrCreateAnonymousId();
+        setAnonymousId(anonId);
       } catch (error) {
         console.error("Error getting session:", error);
         setError("Failed to get session");
+        
+        // Still set an anonymous ID in case of error
+        const anonId = getOrCreateAnonymousId();
+        setAnonymousId(anonId);
       } finally {
         setIsLoading(false);
       }
@@ -194,7 +218,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, isLoading, signUp, signIn, signOut, error }}>
+    <AuthContext.Provider value={{ user, anonymousId, session, isLoading, signUp, signIn, signOut, error }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,10 +1,37 @@
 
+import { useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader2 } from "lucide-react";
+import { v4 as uuidv4 } from "uuid";
+import { ensureUserProfileExists } from "@/utils/supabaseHelpers";
+
+// Get or create an anonymous user ID from localStorage
+const getOrCreateAnonymousId = (): string => {
+  const key = "hearti-anonymous-user-id";
+  let anonymousId = localStorage.getItem(key);
+  
+  if (!anonymousId) {
+    anonymousId = uuidv4();
+    localStorage.setItem(key, anonymousId);
+    // Create profile for this anonymous user
+    ensureUserProfileExists(anonymousId).catch(err => {
+      console.error("Failed to create anonymous profile:", err);
+    });
+  }
+  
+  return anonymousId;
+};
 
 const AuthGuard = () => {
   const { user, isLoading } = useAuth();
+  
+  // Set up anonymous user ID if not authenticated
+  useEffect(() => {
+    if (!isLoading && !user) {
+      getOrCreateAnonymousId();
+    }
+  }, [user, isLoading]);
 
   if (isLoading) {
     return (
@@ -15,7 +42,7 @@ const AuthGuard = () => {
     );
   }
 
-  return user ? <Outlet /> : <Navigate to="/auth" replace />;
+  return <Outlet />;
 };
 
 export default AuthGuard;

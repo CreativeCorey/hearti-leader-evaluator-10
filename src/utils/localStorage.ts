@@ -11,14 +11,36 @@ import {
   getUserProfileFromSupabase,
   saveOrganizationToSupabase,
   getOrganizationsFromSupabase,
-  getOrganizationByIdFromSupabase
+  getOrganizationByIdFromSupabase,
+  ensureUserProfileExists
 } from './supabaseHelpers';
+import { useAuth } from '../contexts/AuthContext';
 
 const ASSESSMENTS_KEY = 'hearti-assessments';
 const USERS_KEY = 'hearti-users';
 const CURRENT_USER_KEY = 'hearti-current-user';
 const ORGANIZATIONS_KEY = 'hearti-organizations';
 const USE_SUPABASE_KEY = 'hearti-use-supabase';
+const ANONYMOUS_USER_KEY = 'hearti-anonymous-user-id';
+
+// Get or create an anonymous user ID
+export const getOrCreateAnonymousId = (): string => {
+  let anonymousId = localStorage.getItem(ANONYMOUS_USER_KEY);
+  
+  if (!anonymousId) {
+    anonymousId = uuidv4();
+    localStorage.setItem(ANONYMOUS_USER_KEY, anonymousId);
+    
+    // Also ensure this profile exists in Supabase if using Supabase
+    if (useSupabase()) {
+      ensureUserProfileExists(anonymousId).catch(err => {
+        console.error("Failed to create anonymous profile:", err);
+      });
+    }
+  }
+  
+  return anonymousId;
+};
 
 // Utility to check if we should use Supabase
 export const useSupabase = (): boolean => {
@@ -106,8 +128,11 @@ export const createUser = async (
   role: 'user' | 'admin' = 'user'
 ): Promise<UserProfile> => {
   try {
+    // Either use authenticated user ID or create an anonymous one
+    const userId = getOrCreateAnonymousId();
+    
     const newUser: UserProfile = {
-      id: uuidv4(),
+      id: userId,
       createdAt: new Date().toISOString(),
       name,
       email,
@@ -212,10 +237,25 @@ export const setCurrentUser = async (userId: string): Promise<void> => {
 
 export const getCurrentUser = async (): Promise<UserProfile | null> => {
   try {
-    const currentUserId = localStorage.getItem(CURRENT_USER_KEY);
-    if (!currentUserId) return null;
+    // First try to get the authenticated user
+    // If no authenticated user, fall back to anonymous ID
+    const userId = localStorage.getItem(CURRENT_USER_KEY) || getOrCreateAnonymousId();
     
-    const user = await getUserById(currentUserId);
+    if (!userId) return null;
+    
+    const user = await getUserById(userId);
+    
+    // If no user profile exists yet but we have an ID, create a minimal profile
+    if (!user && useSupabase()) {
+      try {
+        await ensureUserProfileExists(userId);
+        return await getUserProfileFromSupabase(userId);
+      } catch (err) {
+        console.error("Failed to create user profile:", err);
+        return null;
+      }
+    }
+    
     return user || null;
   } catch (error) {
     console.error('Failed to get current user:', error);
@@ -240,7 +280,15 @@ export const ensureUserExists = async (): Promise<UserProfile> => {
 
 export const saveAssessment = async (assessment: HEARTIAssessment): Promise<void> => {
   try {
+    // Make sure we have a valid user ID
+    if (!assessment.userId) {
+      assessment.userId = getOrCreateAnonymousId();
+    }
+    
     if (useSupabase()) {
+      // Make sure the user profile exists before saving assessment
+      await ensureUserProfileExists(assessment.userId);
+      
       const success = await saveAssessmentToSupabase(assessment);
       if (!success) {
         throw new Error('Failed to save assessment to Supabase');
@@ -252,6 +300,7 @@ export const saveAssessment = async (assessment: HEARTIAssessment): Promise<void
     }
   } catch (error) {
     console.error('Failed to save assessment:', error);
+    throw error; // Rethrow to allow proper error handling
   }
 };
 
@@ -300,7 +349,10 @@ export const getAssessmentsByOrganizationId = async (organizationId: string): Pr
 export const getCurrentUserAssessments = async (): Promise<HEARTIAssessment[]> => {
   try {
     const currentUser = await getCurrentUser();
-    if (!currentUser) return [];
+    if (!currentUser) {
+      const anonymousId = getOrCreateAnonymousId();
+      return await getAssessmentsByUserId(anonymousId);
+    }
     return await getAssessmentsByUserId(currentUser.id);
   } catch (error) {
     console.error('Failed to retrieve current user assessments:', error);
