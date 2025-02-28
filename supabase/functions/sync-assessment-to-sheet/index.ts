@@ -5,14 +5,13 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
-import { create } from "https://deno.land/x/jwt@v2.0.1/mod.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-console.log("Starting sync-assessment-to-sheet function!")
+console.log("Starting sync-assessment-to-sheet function with workload identity federation!")
 
 // Log all available environment variables (without their values for security)
 const envKeys = Object.keys(Deno.env.toObject())
@@ -35,18 +34,30 @@ serve(async (req) => {
       throw new Error("Missing GOOGLE_SHEET_ID environment variable")
     }
     
-    // Get the service account email 
+    // Get the workload identity configuration
+    const workloadIdentityConfig = Deno.env.get("GOOGLE_WORKLOAD_IDENTITY_CONFIG")
+    if (!workloadIdentityConfig) {
+      console.error("Missing GOOGLE_WORKLOAD_IDENTITY_CONFIG")
+      throw new Error("Missing GOOGLE_WORKLOAD_IDENTITY_CONFIG environment variable")
+    }
+    
+    // Get service account email
     const serviceAccountEmail = Deno.env.get("GOOGLE_SERVICE_ACCOUNT_EMAIL")
     if (!serviceAccountEmail) {
       console.error("Missing GOOGLE_SERVICE_ACCOUNT_EMAIL")
       throw new Error("Missing GOOGLE_SERVICE_ACCOUNT_EMAIL environment variable")
     }
     
-    // Get the service account private key
-    const privateKey = Deno.env.get("GOOGLE_PRIVATE_KEY")
-    if (!privateKey) {
-      console.error("Missing GOOGLE_PRIVATE_KEY")
-      throw new Error("Missing GOOGLE_PRIVATE_KEY environment variable")
+    console.log("Using service account email:", serviceAccountEmail)
+    
+    // Parse the workload identity configuration
+    let configJson;
+    try {
+      configJson = JSON.parse(workloadIdentityConfig);
+      console.log("Workload identity config parsed successfully");
+    } catch (parseError) {
+      console.error("Failed to parse workload identity config:", parseError.message);
+      throw new Error("Invalid workload identity configuration format")
     }
     
     // Check if we received assessment_id
@@ -155,33 +166,45 @@ serve(async (req) => {
       sheetData.company_size
     ]
     
-    // Generate a JWT token for Google API authentication
-    const now = Math.floor(Date.now() / 1000);
-    const claims = {
-      iss: serviceAccountEmail,
+    // Get access token using workload identity federation
+    console.log("Getting identity token from our provider...");
+    
+    // First, get our identity token from our own identity provider
+    const identityResponse = await fetch(`https://odwkgxdkjyccnkydxvjw.functions.supabase.co/identity-token`, {
+      headers: {
+        "Metadata-Flavor": "Google"
+      }
+    });
+    
+    if (!identityResponse.ok) {
+      const errorText = await identityResponse.text();
+      console.error("Identity token request failed:", identityResponse.status, errorText);
+      throw new Error(`Failed to get identity token: ${errorText}`);
+    }
+    
+    const identityToken = await identityResponse.text();
+    console.log("Got identity token");
+    
+    // Now exchange the identity token for a Google access token
+    console.log("Exchanging identity token for Google access token...");
+    
+    // Prepare the token exchange using configuration from credential.json
+    const tokenUrl = configJson.credential_source.url || "https://sts.googleapis.com/v1/token";
+    const tokenRequest = {
+      audience: configJson.audience,
+      grantType: "urn:ietf:params:oauth:grant-type:token-exchange",
+      requestedTokenType: "urn:ietf:params:oauth:token-type:access_token",
       scope: "https://www.googleapis.com/auth/spreadsheets",
-      aud: "https://oauth2.googleapis.com/token",
-      exp: now + 3600,
-      iat: now
+      subjectTokenType: configJson.subject_token_type || "urn:ietf:params:oauth:token-type:jwt",
+      subjectToken: identityToken
     };
     
-    // Sign the JWT
-    const jwt = await create(
-      { alg: "RS256", typ: "JWT" }, 
-      claims, 
-      privateKey
-    );
-    
-    // Exchange the JWT for an access token
-    const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+    const tokenResponse = await fetch(tokenUrl, {
       method: "POST",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
+        "Content-Type": "application/json"
       },
-      body: new URLSearchParams({
-        grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
-        assertion: jwt
-      })
+      body: JSON.stringify(tokenRequest)
     });
     
     if (!tokenResponse.ok) {
