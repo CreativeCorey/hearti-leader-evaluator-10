@@ -1,13 +1,14 @@
 
 // Simple edge function to test Google Sheets connectivity
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { create } from "https://deno.land/x/jwt@v2.0.1/mod.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-console.log("Starting test-google-sheets function with workload identity federation!")
+console.log("Starting test-google-sheets function!")
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -32,20 +33,7 @@ serve(async (req) => {
     }
     console.log("Using Sheet ID:", sheetId)
     
-    // Get the workload identity configuration
-    const workloadIdentityConfig = Deno.env.get("GOOGLE_WORKLOAD_IDENTITY_CONFIG")
-    if (!workloadIdentityConfig) {
-      console.error("Missing GOOGLE_WORKLOAD_IDENTITY_CONFIG")
-      return new Response(
-        JSON.stringify({ 
-          error: "Missing workload identity configuration",
-          message: "Please add the GOOGLE_WORKLOAD_IDENTITY_CONFIG secret"
-        }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      )
-    }
-    
-    // Get service account email
+    // Get the service account email 
     const serviceAccountEmail = Deno.env.get("GOOGLE_SERVICE_ACCOUNT_EMAIL")
     if (!serviceAccountEmail) {
       console.error("Missing GOOGLE_SERVICE_ACCOUNT_EMAIL")
@@ -58,19 +46,14 @@ serve(async (req) => {
       )
     }
     
-    console.log("Using service account email:", serviceAccountEmail)
-    
-    // Parse the workload identity configuration
-    let configJson;
-    try {
-      configJson = JSON.parse(workloadIdentityConfig);
-      console.log("Workload identity config parsed successfully");
-    } catch (parseError) {
-      console.error("Failed to parse workload identity config:", parseError.message);
+    // Get the service account private key
+    const privateKey = Deno.env.get("GOOGLE_PRIVATE_KEY")
+    if (!privateKey) {
+      console.error("Missing GOOGLE_PRIVATE_KEY")
       return new Response(
         JSON.stringify({ 
-          error: "Invalid workload identity configuration format",
-          message: "The GOOGLE_WORKLOAD_IDENTITY_CONFIG does not contain valid JSON"
+          error: "Missing service account private key",
+          message: "Please add the GOOGLE_PRIVATE_KEY secret"
         }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       )
@@ -86,25 +69,29 @@ serve(async (req) => {
       "Test", "Test", "Test", "Test", "Test", "Test", "Test"
     ]
     
-    // Get access token using the workload identity federation
-    console.log("Requesting access token using workload identity federation...");
-    
-    const tokenUrl = "https://sts.googleapis.com/v1/token";
-    const tokenRequest = {
-      audience: configJson.audience,
-      grantType: "urn:ietf:params:oauth:grant-type:token-exchange",
-      requestedTokenType: "urn:ietf:params:oauth:token-type:access_token",
+    // Generate a JWT token for Google API authentication
+    const now = Math.floor(Date.now() / 1000);
+    const claims = {
+      iss: serviceAccountEmail,
       scope: "https://www.googleapis.com/auth/spreadsheets",
-      subjectTokenType: configJson.subject_token_type,
-      subjectToken: configJson.subject_token
+      aud: "https://oauth2.googleapis.com/token",
+      exp: now + 3600,
+      iat: now
     };
     
-    const tokenResponse = await fetch(tokenUrl, {
+    // Sign the JWT
+    const jwt = await create({ alg: "RS256", typ: "JWT" }, claims, privateKey);
+    
+    // Exchange the JWT for an access token
+    const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/x-www-form-urlencoded"
       },
-      body: JSON.stringify(tokenRequest)
+      body: new URLSearchParams({
+        grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
+        assertion: jwt
+      })
     });
     
     if (!tokenResponse.ok) {
@@ -114,8 +101,7 @@ serve(async (req) => {
         JSON.stringify({ 
           error: "Failed to get Google API access token",
           status: tokenResponse.status,
-          message: errorText,
-          request: tokenRequest
+          message: errorText
         }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
@@ -207,7 +193,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           success: true, 
-          message: "Test data successfully sent to Google Sheets using workload identity federation",
+          message: "Test data successfully sent to Google Sheets",
           details: result
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
