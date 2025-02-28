@@ -108,11 +108,20 @@ const Index: React.FC = () => {
     // Switch to results tab
     setActiveTab('results');
     
-    // Show success message
-    toast({
-      title: "Assessment Complete!",
-      description: "Your HEARTI Leadership Assessment has been saved and sent to Google Sheets.",
-    });
+    // Show success message with more specific information
+    if (isSupabaseEnabled) {
+      toast({
+        title: "Assessment Complete!",
+        description: "Your assessment has been saved and sent to Google Sheets. It may take a few moments to appear in the sheet.",
+        duration: 5000,
+      });
+    } else {
+      toast({
+        title: "Assessment Complete!",
+        description: "Your assessment has been saved locally. To send to Google Sheets, enable Cloud Storage.",
+        duration: 5000,
+      });
+    }
   };
   
   const handleToggleSupabase = async (enabled: boolean) => {
@@ -126,7 +135,7 @@ const Index: React.FC = () => {
       
       toast({
         title: "Local storage enabled",
-        description: "Your data will now be stored locally in this browser.",
+        description: "Your data will now be stored locally in this browser. Google Sheets integration is disabled.",
       });
     }
   };
@@ -151,8 +160,8 @@ const Index: React.FC = () => {
         await loadAssessments();
         
         toast({
-          title: "Supabase storage enabled",
-          description: "Your data has been synced to Supabase successfully.",
+          title: "Cloud storage enabled",
+          description: "Your data has been synced to cloud storage, and Google Sheets integration is now active.",
         });
       } else {
         throw new Error("Sync failed");
@@ -163,7 +172,7 @@ const Index: React.FC = () => {
       
       toast({
         title: "Sync Failed",
-        description: "Could not sync your data to Supabase. Staying on local storage.",
+        description: "Could not sync your data to cloud storage. Google Sheets integration may not work properly.",
         variant: "destructive",
       });
     }
@@ -208,7 +217,7 @@ const Index: React.FC = () => {
               onPressedChange={handleToggleSupabase}
               className="data-[state=on]:bg-blue-500 px-4"
             >
-              {isSupabaseEnabled ? 'Cloud Storage' : 'Local Storage'}
+              {isSupabaseEnabled ? 'Cloud Storage (Google Sheets)' : 'Local Storage'}
             </Toggle>
             
             {profile && (
@@ -265,8 +274,8 @@ const Index: React.FC = () => {
             <DialogHeader>
               <DialogTitle>Sync Local Data to Cloud Storage</DialogTitle>
               <DialogDescription>
-                Would you like to sync your existing local data to Supabase cloud storage? 
-                This allows you to access your assessments from any device.
+                Would you like to sync your existing local data to cloud storage?
+                This allows your assessments to be sent to Google Sheets and accessed from any device.
               </DialogDescription>
             </DialogHeader>
             
@@ -279,7 +288,7 @@ const Index: React.FC = () => {
               <div className="py-6 text-center text-green-600">
                 <p className="font-medium">Sync completed successfully!</p>
                 <p className="text-sm text-muted-foreground mt-2">
-                  Your data is now available in cloud storage.
+                  Your data is now available in cloud storage and Google Sheets integration is active.
                 </p>
               </div>
             ) : syncStatus === 'error' ? (
@@ -298,8 +307,8 @@ const Index: React.FC = () => {
                   <li>Organization information (if any)</li>
                 </ul>
                 <p className="text-sm text-muted-foreground">
-                  You can switch back to local storage at any time, but data synchronized to the cloud
-                  will remain there.
+                  Enabling cloud storage will also activate Google Sheets integration, sending your
+                  assessment data to a central spreadsheet.
                 </p>
               </div>
             )}

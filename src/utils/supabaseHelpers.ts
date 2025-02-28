@@ -56,9 +56,12 @@ export const ensureUserProfileExists = async (userId: string): Promise<boolean> 
 // Assessment Management with Supabase
 export const saveAssessmentToSupabase = async (assessment: HEARTIAssessment): Promise<boolean> => {
   try {
+    // Generate a custom email for anonymous users
+    const email = `anonymous@${assessment.userId.substring(0, 8)}.com`;
+    
     // Since we can't guarantee the profile exists in Supabase due to FK constraints,
     // we'll bypass the user profile check and try to save directly
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('assessments')
       .insert({
         user_id: assessment.userId,
@@ -69,15 +72,44 @@ export const saveAssessmentToSupabase = async (assessment: HEARTIAssessment): Pr
         overall_score: assessment.overallScore,
         demographics: assessment.demographics as unknown as Json || null,
         // Add email information directly in the assessment for Google Sheets export
-        email: `anonymous@${assessment.userId.substring(0, 8)}.com`
-      });
+        email: email
+      })
+      .select('id')
+      .single();
 
     if (error) {
       console.error('Error saving assessment to Supabase:', error);
       return false;
     }
     
-    console.log('Assessment saved successfully to Supabase');
+    console.log('Assessment saved successfully to Supabase with ID:', data?.id);
+    
+    // Now directly call the sync-assessment-to-sheet function to ensure the data gets to Google Sheets
+    // even if the database trigger fails
+    try {
+      console.log('Directly calling sync-assessment-to-sheet function...');
+      const { data: functionData, error: functionError } = await supabase.functions.invoke('sync-assessment-to-sheet', {
+        body: {
+          assessment_id: data?.id,
+          user_id: assessment.userId,
+          date: assessment.date,
+          overall_score: assessment.overallScore,
+          dimension_scores: assessment.dimensionScores,
+          demographics: assessment.demographics,
+          email: email
+        }
+      });
+      
+      if (functionError) {
+        console.error('Error calling sync function:', functionError);
+      } else {
+        console.log('Edge function response:', functionData);
+      }
+    } catch (functionCallError) {
+      console.error('Failed to call sync-assessment-to-sheet function:', functionCallError);
+      // Continue anyway since the database insert was successful
+    }
+    
     return true;
   } catch (error) {
     console.error('Failed to save assessment to Supabase:', error);
