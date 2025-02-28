@@ -13,7 +13,7 @@ import {
   getOrCreateAnonymousId,
   ensureUserExists
 } from '../utils/localStorage';
-import { ensureUserProfileExists } from '../utils/supabaseHelpers';
+import { ensureUserProfileExists, saveAssessmentToSupabase } from '../utils/supabaseHelpers';
 import { HEARTIAssessment, UserProfile } from '../types';
 import AssessmentForm from '../components/AssessmentForm';
 import ResultsDisplay from '../components/ResultsDisplay';
@@ -27,6 +27,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Toggle } from '@/components/ui/toggle';
 import { Loader2 } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
+import { supabase } from '../integrations/supabase/client';
 
 const Index: React.FC = () => {
   const { toast } = useToast();
@@ -39,6 +40,7 @@ const Index: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [syncDialogOpen, setSyncDialogOpen] = useState(false);
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'success' | 'error'>('idle');
+  const [testingSheets, setTestingSheets] = useState(false);
   
   useEffect(() => {
     const init = async () => {
@@ -187,6 +189,101 @@ const Index: React.FC = () => {
     setSyncStatus('idle');
   };
   
+  const testGoogleSheets = async () => {
+    setTestingSheets(true);
+    try {
+      // First, test the direct edge function
+      const { data: testData, error: testError } = await supabase.functions.invoke('test-google-sheets');
+      
+      if (testError) {
+        console.error('Error testing Google Sheets connection:', testError);
+        toast({
+          title: "Google Sheets Test Failed",
+          description: "Could not connect to Google Sheets. See console for details.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      console.log('Google Sheets test response:', testData);
+      
+      if (testData.success) {
+        toast({
+          title: "Google Sheets Connection Successful",
+          description: "Test data was successfully sent to Google Sheets!",
+        });
+      } else {
+        toast({
+          title: "Google Sheets Test Failed",
+          description: testData.message || "Unknown error",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error during Google Sheets test:', error);
+      toast({
+        title: "Test Error",
+        description: "An unexpected error occurred during the test.",
+        variant: "destructive",
+      });
+    } finally {
+      setTestingSheets(false);
+    }
+  };
+  
+  // Send latest assessment directly to Google Sheets
+  const sendLatestToSheets = async () => {
+    if (!latestAssessment) {
+      toast({
+        title: "No Assessment Available",
+        description: "Please complete an assessment first.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setTestingSheets(true);
+    try {
+      // Directly call the sync function with the latest assessment
+      const { data, error } = await supabase.functions.invoke('sync-assessment-to-sheet', {
+        body: {
+          user_id: latestAssessment.userId,
+          date: latestAssessment.date,
+          overall_score: latestAssessment.overallScore,
+          dimension_scores: latestAssessment.dimensionScores,
+          demographics: latestAssessment.demographics,
+          manual_sync: true
+        }
+      });
+      
+      if (error) {
+        console.error('Error syncing to Google Sheets:', error);
+        toast({
+          title: "Sync Failed",
+          description: "Could not send your assessment to Google Sheets.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      console.log('Google Sheets sync response:', data);
+      
+      toast({
+        title: "Assessment Sent",
+        description: "Your assessment has been manually sent to Google Sheets.",
+      });
+    } catch (error) {
+      console.error('Error during manual sync:', error);
+      toast({
+        title: "Sync Error",
+        description: "An unexpected error occurred during the sync attempt.",
+        variant: "destructive",
+      });
+    } finally {
+      setTestingSheets(false);
+    }
+  };
+  
   if (loading) {
     return (
       <Layout>
@@ -252,6 +349,18 @@ const Index: React.FC = () => {
                 <div>
                   <h2 className="text-xl font-bold mb-4">Latest Assessment Results</h2>
                   <ResultsDisplay assessment={latestAssessment} />
+                  
+                  <div className="mt-6 flex gap-3">
+                    <Button 
+                      onClick={sendLatestToSheets}
+                      disabled={testingSheets}
+                      variant="outline"
+                      className="flex items-center gap-2"
+                    >
+                      {testingSheets && <Loader2 className="h-4 w-4 animate-spin" />}
+                      Send to Google Sheets
+                    </Button>
+                  </div>
                 </div>
               )}
               
@@ -268,6 +377,32 @@ const Index: React.FC = () => {
             </div>
           </TabsContent>
         </Tabs>
+        
+        {/* Admin debug tools - only visible on results page */}
+        {activeTab === 'results' && (
+          <div className="mt-12 border-t pt-4">
+            <details className="text-sm">
+              <summary className="cursor-pointer font-medium text-muted-foreground">
+                Google Sheets Integration Tools
+              </summary>
+              <div className="mt-4 p-4 bg-gray-50 rounded-md">
+                <p className="mb-4 text-sm text-muted-foreground">
+                  These tools help diagnose issues with Google Sheets integration. The test will attempt to send
+                  sample data directly to Google Sheets.
+                </p>
+                <Button 
+                  onClick={testGoogleSheets}
+                  disabled={testingSheets}
+                  variant="secondary"
+                  className="flex items-center gap-2"
+                >
+                  {testingSheets && <Loader2 className="h-4 w-4 animate-spin" />}
+                  Test Google Sheets Connection
+                </Button>
+              </div>
+            </details>
+          </div>
+        )}
         
         <Dialog open={syncDialogOpen} onOpenChange={handleSyncDialogClose}>
           <DialogContent>
