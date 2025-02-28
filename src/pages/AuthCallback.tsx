@@ -7,10 +7,18 @@ import { Loader2 } from 'lucide-react';
 const AuthCallback: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(true);
+  const [debugInfo, setDebugInfo] = useState<any>(null);
   const location = useLocation();
 
   useEffect(() => {
     const handleAuthCallback = async () => {
+      const debug: Record<string, any> = {
+        url: window.location.href,
+        hash: location.hash,
+        search: location.search,
+        timestamp: new Date().toISOString()
+      };
+      
       try {
         // Log the current URL to help with debugging
         console.log('Auth callback URL:', window.location.href);
@@ -20,6 +28,11 @@ const AuthCallback: React.FC = () => {
         const code = queryParams.get('code');
         const errorParam = queryParams.get('error');
         const errorDescription = queryParams.get('error_description');
+        
+        // Update debug information
+        debug.has_code = !!code;
+        debug.error_param = errorParam;
+        debug.error_description = errorDescription;
         
         // If we have an error, display it
         if (errorParam || errorDescription) {
@@ -31,18 +44,37 @@ const AuthCallback: React.FC = () => {
         // If we have a code, let Supabase handle the exchange
         if (code) {
           console.log('Found authorization code in URL, exchanging for tokens');
+          debug.attempting = 'exchange_code';
           
-          // Let Supabase handle the token exchange automatically
-          const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-          
-          if (error) {
-            console.error('Error exchanging code for session:', error);
-            setError(`Authentication failed: ${error.message}`);
+          try {
+            // Let Supabase handle the token exchange automatically
+            const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+            
+            debug.exchange_result = error ? 'error' : 'success';
+            debug.exchange_error = error?.message;
+            
+            if (error) {
+              console.error('Error exchanging code for session:', error);
+              setError(`Authentication failed: ${error.message}`);
+              return;
+            }
+            
+            if (data.session) {
+              debug.session_created = true;
+              debug.user_id = data.session.user.id;
+              debug.provider = data.session.user.app_metadata.provider;
+              
+              console.log('Successfully authenticated with Google', {
+                user: data.session.user.id,
+                email: data.session.user.email,
+                provider: data.session.user.app_metadata.provider
+              });
+            }
+          } catch (exchangeError) {
+            console.error('Exception during code exchange:', exchangeError);
+            debug.exchange_exception = String(exchangeError);
+            setError(`Error during authentication: ${exchangeError instanceof Error ? exchangeError.message : String(exchangeError)}`);
             return;
-          }
-          
-          if (data.session) {
-            console.log('Successfully authenticated with Google');
           }
         } 
         // Check for token in hash (SPA redirect)
@@ -50,42 +82,69 @@ const AuthCallback: React.FC = () => {
           const hashParams = new URLSearchParams(location.hash.substring(1));
           const accessToken = hashParams.get('access_token');
           
+          debug.attempting = 'hash_token';
+          debug.has_access_token = !!accessToken;
+          
           if (accessToken) {
             console.log('Found access token in URL hash, setting session');
-            const { error } = await supabase.auth.setSession({
-              access_token: accessToken,
-              refresh_token: hashParams.get('refresh_token') || '',
-            });
-            
-            if (error) {
-              console.error('Error setting session:', error);
-              setError(`Authentication failed: ${error.message}`);
+            try {
+              const { error } = await supabase.auth.setSession({
+                access_token: accessToken,
+                refresh_token: hashParams.get('refresh_token') || '',
+              });
+              
+              debug.session_result = error ? 'error' : 'success';
+              debug.session_error = error?.message;
+              
+              if (error) {
+                console.error('Error setting session:', error);
+                setError(`Authentication failed: ${error.message}`);
+                return;
+              }
+            } catch (sessionError) {
+              console.error('Exception during session setting:', sessionError);
+              debug.session_exception = String(sessionError);
+              setError(`Error setting session: ${sessionError instanceof Error ? sessionError.message : String(sessionError)}`);
               return;
             }
           }
         } 
         // If no code or token was found, but we're at the callback URL
         else {
+          debug.attempting = 'get_session';
           console.warn('No authorization code or token found in callback URL');
           // Try to retrieve session anyway, might be stored in cookies/localStorage
-          const { data, error } = await supabase.auth.getSession();
-          
-          if (error) {
-            console.error('Failed to get session:', error);
-            setError('Authentication failed: No authorization code or token found');
-            return;
-          }
-          
-          if (!data.session) {
-            console.error('No session found after callback');
-            setError('Authentication failed: No session established');
+          try {
+            const { data, error } = await supabase.auth.getSession();
+            
+            debug.get_session = error ? 'error' : 'success';
+            debug.get_session_error = error?.message;
+            debug.has_session = !!data?.session;
+            
+            if (error) {
+              console.error('Failed to get session:', error);
+              setError('Authentication failed: No authorization code or token found');
+              return;
+            }
+            
+            if (!data.session) {
+              console.error('No session found after callback');
+              setError('Authentication failed: No session established');
+              return;
+            }
+          } catch (sessionError) {
+            console.error('Exception during session retrieval:', sessionError);
+            debug.get_session_exception = String(sessionError);
+            setError(`Error getting session: ${sessionError instanceof Error ? sessionError.message : String(sessionError)}`);
             return;
           }
         }
       } catch (err) {
         console.error('Unexpected error during auth callback:', err);
+        debug.global_exception = String(err);
         setError(`Unexpected error: ${err instanceof Error ? err.message : String(err)}`);
       } finally {
+        setDebugInfo(debug);
         setProcessing(false);
       }
     };
@@ -126,6 +185,14 @@ const AuthCallback: React.FC = () => {
           </div>
           <div className="mt-8 border-t pt-6 text-sm text-gray-500">
             <p>If the problem persists, please check your Google OAuth configuration.</p>
+            {debugInfo && (
+              <details className="mt-4 text-left">
+                <summary className="cursor-pointer font-medium">Debug Information</summary>
+                <pre className="mt-2 overflow-auto rounded bg-gray-100 p-2 text-xs">
+                  {JSON.stringify(debugInfo, null, 2)}
+                </pre>
+              </details>
+            )}
           </div>
         </div>
       </div>

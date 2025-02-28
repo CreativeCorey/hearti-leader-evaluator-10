@@ -10,6 +10,14 @@ export const signInWithGoogle = async (): Promise<boolean> => {
     
     console.log('Starting Google sign-in with redirect URL:', redirectUrl);
     
+    // Add more debugging for network conditions
+    const testResponse = await fetch(`${origin}/auth/callback`, {
+      method: 'HEAD',
+      cache: 'no-cache'
+    }).catch(e => console.log('Connectivity test error:', e));
+    
+    console.log('Connectivity test status:', testResponse?.status || 'Failed');
+    
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -32,10 +40,14 @@ export const signInWithGoogle = async (): Promise<boolean> => {
     // If we have a URL to redirect to, do it now
     if (data?.url) {
       console.log('Redirecting to OAuth URL:', data.url);
-      window.location.href = data.url;
+      
+      // Use window.location.replace for a cleaner redirect
+      window.location.replace(data.url);
+      return true;
+    } else {
+      console.error('No redirect URL provided by Supabase');
+      return false;
     }
-    
-    return true;
   } catch (error) {
     console.error('Failed to sign in with Google:', error);
     return false;
@@ -51,6 +63,15 @@ export const testGoogleSheetsConnection = async (): Promise<{success: boolean, m
     if (!session) {
       return { success: false, message: "You need to sign in with Google first" };
     }
+    
+    console.log('Testing Google Sheets with session:', 
+      { 
+        user: session.user.id, 
+        provider: session.user.app_metadata.provider,
+        hasAccessToken: !!session.provider_token,
+        hasRefreshToken: !!session.provider_refresh_token
+      }
+    );
     
     // Call the test function
     const { data, error } = await supabase.functions.invoke('test-google-sheets');
@@ -121,6 +142,14 @@ export const getGoogleConnection = async (): Promise<{connected: boolean, email?
     // Check if the user is signed in with Google
     const provider = session.user?.app_metadata?.provider;
     const email = session.user?.email;
+    
+    // More detailed debugging information
+    console.log('Google connection check:', {
+      provider,
+      email,
+      hasProviderToken: !!session.provider_token,
+      hasAccessToken: !!session.access_token
+    });
     
     return { 
       connected: provider === 'google', 
