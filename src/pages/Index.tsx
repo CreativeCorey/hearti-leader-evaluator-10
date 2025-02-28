@@ -196,11 +196,26 @@ const Index: React.FC = () => {
   };
   
   const handleGoogleSignIn = async () => {
-    const success = await signInWithGoogle();
-    if (!success) {
+    try {
       toast({
-        title: "Google Sign In Failed",
-        description: "Could not initiate Google sign in. Please try again.",
+        title: "Initiating Google Sign In",
+        description: "Redirecting to Google Authentication...",
+      });
+      
+      const success = await signInWithGoogle();
+      
+      if (!success) {
+        toast({
+          title: "Google Sign In Failed",
+          description: "Could not initiate Google sign in. Check console for details.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error during Google sign in:', error);
+      toast({
+        title: "Sign In Error",
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
         variant: "destructive",
       });
     }
