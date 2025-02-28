@@ -15,6 +15,7 @@ export type Database = {
           date: string
           demographics: Json | null
           dimension_scores: Json
+          email: string | null
           id: string
           organization_id: string | null
           overall_score: number
@@ -25,6 +26,7 @@ export type Database = {
           date?: string
           demographics?: Json | null
           dimension_scores: Json
+          email?: string | null
           id?: string
           organization_id?: string | null
           overall_score: number
@@ -35,6 +37,7 @@ export type Database = {
           date?: string
           demographics?: Json | null
           dimension_scores?: Json
+          email?: string | null
           id?: string
           organization_id?: string | null
           overall_score?: number
@@ -125,6 +128,7 @@ export type Database = {
           date: string
           demographics: Json | null
           dimension_scores: Json
+          email: string | null
           id: string
           organization_id: string | null
           overall_score: number
