@@ -28,6 +28,7 @@ import { Toggle } from '@/components/ui/toggle';
 import { Loader2 } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
 import { supabase } from '../integrations/supabase/client';
+import { signInWithGoogle, testGoogleSheetsConnection, setupWorkloadIdentity, getGoogleConnection } from '../utils/googleAuth';
 
 const Index: React.FC = () => {
   const { toast } = useToast();
@@ -41,6 +42,8 @@ const Index: React.FC = () => {
   const [syncDialogOpen, setSyncDialogOpen] = useState(false);
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'success' | 'error'>('idle');
   const [testingSheets, setTestingSheets] = useState(false);
+  const [googleConnection, setGoogleConnection] = useState<{connected: boolean, email?: string}>({ connected: false });
+  const [configuringWorkloadIdentity, setConfiguringWorkloadIdentity] = useState(false);
   
   useEffect(() => {
     const init = async () => {
@@ -57,6 +60,10 @@ const Index: React.FC = () => {
         // Get user profile - this should now work with the profile created above
         const userProfile = await getCurrentUser();
         setProfile(userProfile);
+        
+        // Check Google connection
+        const connection = await getGoogleConnection();
+        setGoogleConnection(connection);
         
         // Get assessment data
         await loadAssessments();
@@ -189,33 +196,72 @@ const Index: React.FC = () => {
     setSyncStatus('idle');
   };
   
+  const handleGoogleSignIn = async () => {
+    const success = await signInWithGoogle();
+    if (!success) {
+      toast({
+        title: "Google Sign In Failed",
+        description: "Could not initiate Google sign in. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  const handleConfigureWorkloadIdentity = async () => {
+    if (!googleConnection.connected) {
+      toast({
+        title: "Not Connected to Google",
+        description: "You need to sign in with Google first.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setConfiguringWorkloadIdentity(true);
+    
+    try {
+      // First test Google Sheets connection
+      const result = await setupWorkloadIdentity();
+      
+      if (result.success) {
+        toast({
+          title: "Success",
+          description: result.message,
+        });
+      } else {
+        toast({
+          title: "Configuration Failed",
+          description: result.message,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error configuring workload identity:', error);
+      toast({
+        title: "Configuration Error",
+        description: "An unexpected error occurred while configuring workload identity.",
+        variant: "destructive",
+      });
+    } finally {
+      setConfiguringWorkloadIdentity(false);
+    }
+  };
+  
   const testGoogleSheets = async () => {
     setTestingSheets(true);
     try {
-      // First, test the direct edge function
-      const { data: testData, error: testError } = await supabase.functions.invoke('test-google-sheets');
+      // Test the Google Sheets connection
+      const result = await testGoogleSheetsConnection();
       
-      if (testError) {
-        console.error('Error testing Google Sheets connection:', testError);
-        toast({
-          title: "Google Sheets Test Failed",
-          description: "Could not connect to Google Sheets. See console for details.",
-          variant: "destructive",
-        });
-        return;
-      }
-      
-      console.log('Google Sheets test response:', testData);
-      
-      if (testData.success) {
+      if (result.success) {
         toast({
           title: "Google Sheets Connection Successful",
-          description: "Test data was successfully sent to Google Sheets!",
+          description: result.message,
         });
       } else {
         toast({
           title: "Google Sheets Test Failed",
-          description: testData.message || "Unknown error",
+          description: result.message,
           variant: "destructive",
         });
       }
@@ -320,7 +366,7 @@ const Index: React.FC = () => {
             {profile && (
               <div className="flex items-center gap-2">
                 <Badge variant="outline" className="p-2">
-                  {profile.email || 'Anonymous user'}
+                  {googleConnection.connected ? googleConnection.email : (profile.email || 'Anonymous user')}
                 </Badge>
                 
                 <Link to="/auth">
@@ -377,6 +423,75 @@ const Index: React.FC = () => {
             </div>
           </TabsContent>
         </Tabs>
+        
+        {/* Google Integration Section */}
+        <div className="mt-12 border-t pt-6">
+          <h2 className="text-xl font-bold mb-4">Google Sheets Integration</h2>
+          <Card>
+            <CardHeader>
+              <CardTitle>Connect with Google</CardTitle>
+              <CardDescription>
+                Configure Google Sheets integration using workload identity federation
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {/* Step 1: Connect Google Account */}
+                <div className="p-4 border rounded-md">
+                  <h3 className="font-semibold mb-2">Step 1: Connect your Google Account</h3>
+                  {googleConnection.connected ? (
+                    <div className="flex items-center gap-2 text-green-600">
+                      <Badge variant="success" className="bg-green-100 text-green-800">Connected</Badge>
+                      <span>Connected as {googleConnection.email}</span>
+                    </div>
+                  ) : (
+                    <Button onClick={handleGoogleSignIn}>
+                      Sign in with Google
+                    </Button>
+                  )}
+                </div>
+                
+                {/* Step 2: Configure Workload Identity */}
+                <div className="p-4 border rounded-md">
+                  <h3 className="font-semibold mb-2">Step 2: Setup Workload Identity</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Configure workload identity federation to securely connect to Google Sheets
+                  </p>
+                  <Button 
+                    onClick={handleConfigureWorkloadIdentity}
+                    disabled={!googleConnection.connected || configuringWorkloadIdentity}
+                    className="flex items-center gap-2"
+                  >
+                    {configuringWorkloadIdentity && <Loader2 className="h-4 w-4 animate-spin" />}
+                    Configure Workload Identity
+                  </Button>
+                </div>
+                
+                {/* Step 3: Test Connection */}
+                <div className="p-4 border rounded-md">
+                  <h3 className="font-semibold mb-2">Step 3: Test Google Sheets Connection</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Test your connection to make sure it's working correctly
+                  </p>
+                  <Button 
+                    onClick={testGoogleSheets}
+                    disabled={testingSheets}
+                    variant="outline"
+                    className="flex items-center gap-2"
+                  >
+                    {testingSheets && <Loader2 className="h-4 w-4 animate-spin" />}
+                    Test Connection
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter className="flex flex-col items-start">
+              <p className="text-sm text-muted-foreground">
+                For more information about Google Sheets integration and workload identity federation, refer to the documentation.
+              </p>
+            </CardFooter>
+          </Card>
+        </div>
         
         {/* Admin debug tools - only visible on results page */}
         {activeTab === 'results' && (
