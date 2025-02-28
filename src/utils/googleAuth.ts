@@ -4,11 +4,17 @@ import { supabase } from '../integrations/supabase/client';
 // Initiate Google OAuth flow
 export const signInWithGoogle = async (): Promise<boolean> => {
   try {
+    // Get the current origin and define callback path
+    const origin = window.location.origin;
+    const redirectUrl = `${origin}/auth/callback`;
+    
+    console.log('Starting Google sign-in with redirect URL:', redirectUrl);
+    
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
         scopes: 'https://www.googleapis.com/auth/spreadsheets',
-        redirectTo: `${window.location.origin}/auth/callback`
+        redirectTo: redirectUrl
       }
     });
     
@@ -19,6 +25,7 @@ export const signInWithGoogle = async (): Promise<boolean> => {
     
     // If we have a URL to redirect to, do it now
     if (data?.url) {
+      console.log('Redirecting to OAuth URL:', data.url);
       window.location.href = data.url;
     }
     
