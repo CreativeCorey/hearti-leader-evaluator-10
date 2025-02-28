@@ -1,7 +1,7 @@
-
 import { supabase } from '../integrations/supabase/client';
 import { HEARTIAssessment, UserProfile, Organization, HEARTIAnswer, HEARTIDimension, Demographics } from '../types';
 import { Json } from '../integrations/supabase/types';
+import { v4 as uuidv4 } from 'uuid';
 
 // Type guard to ensure safe conversion from Json to our application types
 function isValidAnswersArray(data: any): data is HEARTIAnswer[] {
@@ -21,9 +21,55 @@ function isValidDemographics(data: any): data is Demographics {
   return typeof data === 'object' && data !== null;
 }
 
+// Helper function to ensure a user profile exists in Supabase
+export const ensureUserProfileExists = async (userId: string): Promise<boolean> => {
+  try {
+    // Check if the profile already exists
+    const { data: existingProfile, error: fetchError } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('id', userId)
+      .maybeSingle();
+    
+    if (fetchError) {
+      console.error('Error checking user profile:', fetchError);
+      return false;
+    }
+    
+    // If profile exists, return true
+    if (existingProfile) return true;
+    
+    // Otherwise, create a new profile
+    const { error: insertError } = await supabase
+      .from('profiles')
+      .insert({
+        id: userId,
+        email: 'anonymous@example.com', // Placeholder email for anonymous users
+        role: 'user'
+      });
+    
+    if (insertError) {
+      console.error('Error creating user profile:', insertError);
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Failed to ensure user profile exists:', error);
+    return false;
+  }
+};
+
 // Assessment Management with Supabase
 export const saveAssessmentToSupabase = async (assessment: HEARTIAssessment): Promise<boolean> => {
   try {
+    // First ensure the user profile exists
+    const profileExists = await ensureUserProfileExists(assessment.userId);
+    if (!profileExists) {
+      console.error('Could not ensure user profile exists before saving assessment');
+      return false;
+    }
+    
     const { error } = await supabase
       .from('assessments')
       .insert({
