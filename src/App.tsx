@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
+import AuthCallback from "./pages/AuthCallback";
 import AuthGuard from "./components/AuthGuard";
 import { AuthProvider } from "./contexts/AuthContext";
 
@@ -21,6 +22,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<Auth />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
             <Route element={<AuthGuard />}>
               <Route path="/" element={<Index />} />
               {/* ADD ALL PROTECTED ROUTES HERE */}
