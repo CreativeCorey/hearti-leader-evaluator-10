@@ -441,7 +441,7 @@ const Index: React.FC = () => {
                   <h3 className="font-semibold mb-2">Step 1: Connect your Google Account</h3>
                   {googleConnection.connected ? (
                     <div className="flex items-center gap-2 text-green-600">
-                      <Badge variant="success" className="bg-green-100 text-green-800">Connected</Badge>
+                      <Badge variant="secondary" className="bg-green-100 text-green-800">Connected</Badge>
                       <span>Connected as {googleConnection.email}</span>
                     </div>
                   ) : (
