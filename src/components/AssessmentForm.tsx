@@ -10,7 +10,7 @@ import {
   Demographics
 } from '../types';
 import { calculateDimensionScores, calculateOverallScore } from '../utils/calculations';
-import { saveAssessment, ensureUserExists } from '../utils/localStorage';
+import { saveAssessment, ensureUserExists, getOrCreateAnonymousId } from '../utils/localStorage';
 import { ensureUserProfileExists } from '../utils/supabaseHelpers';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
