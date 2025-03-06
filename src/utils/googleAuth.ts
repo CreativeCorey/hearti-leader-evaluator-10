@@ -11,12 +11,19 @@ export const signInWithGoogle = async (): Promise<boolean> => {
     console.log('Starting Google sign-in with redirect URL:', redirectUrl);
     
     // Add more debugging for network conditions
-    const testResponse = await fetch(`${origin}/auth/callback`, {
-      method: 'HEAD',
-      cache: 'no-cache'
-    }).catch(e => console.log('Connectivity test error:', e));
+    let connectivityStatus = 'Unknown';
+    try {
+      const testResponse = await fetch(`${origin}/auth/callback`, {
+        method: 'HEAD',
+        cache: 'no-cache'
+      });
+      connectivityStatus = testResponse.status.toString();
+    } catch (e) {
+      console.log('Connectivity test error:', e);
+      connectivityStatus = 'Failed';
+    }
     
-    console.log('Connectivity test status:', testResponse?.status || 'Failed');
+    console.log('Connectivity test status:', connectivityStatus);
     
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
