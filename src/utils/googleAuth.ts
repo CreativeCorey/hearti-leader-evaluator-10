@@ -80,11 +80,35 @@ export const testGoogleSheetsConnection = async (): Promise<{success: boolean, m
       }
     );
     
-    // Call the test function
+    // Call the test function with verbose error handling
+    console.log('Invoking test-google-sheets function...');
     const { data, error } = await supabase.functions.invoke('test-google-sheets');
     
     if (error) {
       console.error('Error testing Google Sheets connection:', error);
+      
+      // Check for specific error types to give more helpful messages
+      if (error.message?.includes('403') || error.message?.includes('Permission')) {
+        return { 
+          success: false, 
+          message: `Permission denied (403). Make sure your Google service account email has access to the Google Sheet and Sheets API is enabled.`
+        };
+      }
+      
+      if (error.message?.includes('404')) {
+        return { 
+          success: false, 
+          message: `Google Sheet not found (404). Check your GOOGLE_SHEET_ID in Supabase Edge Function secrets.`
+        };
+      }
+      
+      if (error.message?.includes('401')) {
+        return { 
+          success: false, 
+          message: `Authentication failed (401). Verify your workload identity configuration in Google Cloud Console.`
+        };
+      }
+      
       return { 
         success: false, 
         message: `Connection failed: ${error.message}` 
@@ -107,6 +131,7 @@ export const testGoogleSheetsConnection = async (): Promise<{success: boolean, m
 // Setup workload identity federation
 export const setupWorkloadIdentity = async (): Promise<{success: boolean, message: string}> => {
   try {
+    console.log('Testing workload identity federation setup...');
     // Call the identity-token function to get a test token
     const { data, error } = await supabase.functions.invoke('identity-token', {
       method: 'GET',
@@ -122,6 +147,8 @@ export const setupWorkloadIdentity = async (): Promise<{success: boolean, messag
         message: `Setup failed: ${error.message}` 
       };
     }
+    
+    console.log('Received identity token, checking validity...');
     
     // Test if the token works
     return { 
