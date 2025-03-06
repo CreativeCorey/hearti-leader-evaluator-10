@@ -1,4 +1,3 @@
-
 export type HEARTIDimension = 'humility' | 'empathy' | 'accountability' | 'resiliency' | 'transparency' | 'inclusivity';
 
 export interface HEARTIQuestion {
@@ -80,6 +79,7 @@ export interface Demographics {
   ageRange?: AgeRange;
   genderIdentity?: GenderIdentity;
   raceEthnicity?: RaceEthnicity;
+  name?: string; // Added name property
 }
 
 export interface HEARTIAssessment {
