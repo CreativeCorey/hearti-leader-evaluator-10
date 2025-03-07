@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { format } from 'date-fns';
 import { 
@@ -175,66 +176,111 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
         description: "Please wait while we generate your report...",
       });
       
-      const reportElement = reportRef.current;
+      // Create PDF document
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
         format: 'a4'
       });
       
-      const reportHeight = reportElement.scrollHeight;
-      const reportWidth = reportElement.scrollWidth;
+      // PDF dimensions
+      const pageWidth = 210;  // A4 width in mm
+      const pageHeight = 297; // A4 height in mm
+      const margin = 10;      // margin in mm
+      const contentWidth = pageWidth - (margin * 2);
       
-      const maxCanvasHeight = 1500;
-      const chunksNeeded = Math.ceil(reportHeight / maxCanvasHeight);
+      // Store all report sections
+      const reportSections = [];
       
-      let pdfYPosition = 0;
+      // Function to add a new section to our array
+      const addSection = (element) => {
+        if (!element) return;
+        reportSections.push(element);
+      };
       
-      for (let i = 0; i < chunksNeeded; i++) {
-        const sourceY = i * maxCanvasHeight;
-        const chunkHeight = Math.min(maxCanvasHeight, reportHeight - sourceY);
+      // Select all major sections in the report
+      const introSection = reportRef.current.querySelector('.prose:first-child');
+      const spectraSection = reportRef.current.querySelector('.my-8');
+      const dimensionCards = reportRef.current.querySelectorAll('.mb-8.overflow-hidden');
+      const conclusionCard = reportRef.current.querySelector('.mb-8:not(.overflow-hidden)');
+      
+      // Add intro
+      addSection(introSection);
+      
+      // Add spectra visualization
+      addSection(spectraSection);
+      
+      // Add each dimension card as a separate section
+      dimensionCards.forEach(card => {
+        addSection(card);
+      });
+      
+      // Add conclusion
+      addSection(conclusionCard);
+      
+      // Process each section
+      let currentPage = 1;
+      
+      for (let i = 0; i < reportSections.length; i++) {
+        const section = reportSections[i];
         
+        // Create a temporary div to hold the current section
         const tempDiv = document.createElement('div');
         tempDiv.style.position = 'absolute';
         tempDiv.style.top = '0';
         tempDiv.style.left = '0';
-        tempDiv.style.width = `${reportWidth}px`;
-        tempDiv.style.height = `${chunkHeight}px`;
+        tempDiv.style.width = `${reportRef.current.offsetWidth}px`;
+        tempDiv.style.background = 'white';
         tempDiv.style.overflow = 'hidden';
         
-        const clone = reportElement.cloneNode(true) as HTMLElement;
-        clone.style.position = 'absolute';
-        clone.style.top = `-${sourceY}px`;
-        
-        tempDiv.appendChild(clone);
+        // Clone the section into our temp div
+        const sectionClone = section.cloneNode(true);
+        tempDiv.appendChild(sectionClone);
         document.body.appendChild(tempDiv);
         
+        // Render to canvas
         const canvas = await html2canvas(tempDiv, {
           scale: 2,
           logging: false,
           useCORS: true,
-          width: reportWidth,
-          height: chunkHeight,
-          windowWidth: reportWidth,
-          windowHeight: chunkHeight
+          backgroundColor: 'white'
         });
         
+        // Clean up
         document.body.removeChild(tempDiv);
         
-        const imgData = canvas.toDataURL('image/png');
-        
-        const imgWidth = 210;
+        // Calculate image dimensions
+        const imgWidth = contentWidth;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         
+        // If not the first section, add a new page
         if (i > 0) {
           pdf.addPage();
-          pdfYPosition = 0;
+          currentPage++;
         }
         
-        pdf.addImage(imgData, 'PNG', 0, pdfYPosition, imgWidth, imgHeight);
-        pdfYPosition += imgHeight;
+        // Add image centered on page
+        pdf.addImage(
+          canvas.toDataURL('image/png'),
+          'PNG',
+          margin,
+          margin,
+          imgWidth,
+          imgHeight
+        );
+        
+        // Add page number
+        pdf.setFontSize(10);
+        pdf.setTextColor(100, 100, 100);
+        pdf.text(
+          `Page ${currentPage}`,
+          pageWidth / 2,
+          pageHeight - 5,
+          { align: 'center' }
+        );
       }
       
+      // Save the PDF
       pdf.save(fileName);
       
       toast({
