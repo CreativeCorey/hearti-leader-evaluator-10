@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -114,6 +113,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
   const [assessmentComplete, setAssessmentComplete] = useState(false);
   const [tempAssessment, setTempAssessment] = useState<HEARTIAssessment | null>(null);
   const [currentUser, setCurrentUser] = useState<{ id: string, organizationId?: string } | null>(null);
+  const [transition, setTransition] = useState(false);
   
   const totalQuestions = questions.length;
   
@@ -177,8 +177,11 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     }
 
     if (currentQuestionIndex < shuffledQuestions.length - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTransition(true);
+      setTimeout(() => {
+        setCurrentQuestionIndex(prev => prev + 1);
+        setTransition(false);
+      }, 150);
     } else {
       completeAssessmentQuestions();
     }
@@ -186,8 +189,11 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
 
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev - 1);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTransition(true);
+      setTimeout(() => {
+        setCurrentQuestionIndex(prev => prev - 1);
+        setTransition(false);
+      }, 150);
     }
   };
 
@@ -309,9 +315,17 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     { value: 5, label: "Almost Always" },
   ];
 
+  const progressPercentage = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+
   return (
-    <Card className="w-full max-w-3xl mx-auto appear-animate shadow-sm">
-      <CardHeader>
+    <Card className="w-full max-w-3xl mx-auto shadow-sm">
+      <CardHeader className="relative pb-0">
+        <div className="h-1 w-full bg-secondary absolute top-0 left-0 right-0">
+          <div 
+            className="h-full bg-primary transition-all duration-300 ease-in-out" 
+            style={{ width: `${progressPercentage}%` }}
+          />
+        </div>
         <CardTitle className="text-2xl">
           HEARTI Leadership Assessment
         </CardTitle>
@@ -320,17 +334,17 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-10 py-6">
-          <div className="text-center mb-8">
+        <div className="space-y-6 py-4">
+          <div className="text-center mb-4">
             <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium">
               Question {currentQuestionIndex + 1} of {totalQuestions}
             </span>
           </div>
           
-          <div className="bg-muted/30 p-6 rounded-lg mb-10">
-            <h3 className="text-xl font-medium mb-3 text-center">{currentQuestion.text}</h3>
+          <div className={`bg-muted/30 p-6 rounded-lg transition-opacity duration-150 ${transition ? 'opacity-0' : 'opacity-100'}`}>
+            <h3 className="text-xl font-medium mb-6 text-center">{currentQuestion.text}</h3>
             
-            <div className="mt-12 space-y-8">
+            <div className="mt-8 space-y-8">
               <div className="px-4">
                 <Slider
                   value={[currentScore]}
@@ -338,14 +352,16 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
                   max={5}
                   step={1}
                   onValueChange={value => handleAnswerChange(value[0])}
-                  className="mb-8"
+                  className="mb-6"
                 />
                 
                 <div className="flex justify-between text-sm text-muted-foreground pt-2">
                   {scoreLabels.map(({ value, label }) => (
                     <button
                       key={value}
-                      className={`text-center px-2 ${currentScore === value ? 'text-primary font-medium' : ''}`}
+                      className={`text-center px-1 py-2 rounded hover:bg-primary/5 transition-colors ${
+                        currentScore === value ? 'text-primary font-medium bg-primary/10' : ''
+                      }`}
                       onClick={() => handleAnswerChange(value)}
                       aria-label={`Select ${label}`}
                     >
@@ -355,7 +371,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
                 </div>
               </div>
               
-              <div className="text-center mt-8">
+              <div className="text-center mt-6">
                 <div className="inline-block px-4 py-2 bg-primary/10 rounded-lg">
                   <span className="font-medium">Selected:</span> {getScoreLabel(currentScore)}
                 </div>
