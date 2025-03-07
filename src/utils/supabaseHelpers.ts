@@ -96,7 +96,8 @@ export const saveAssessmentToSupabase = async (assessment: HEARTIAssessment): Pr
           overall_score: assessment.overallScore,
           dimension_scores: assessment.dimensionScores,
           demographics: assessment.demographics,
-          email: email
+          email: email,
+          answers: assessment.answers
         }
       });
       

@@ -73,7 +73,7 @@ serve(async (req) => {
     // Create a Supabase client with the Admin key if we need to fetch assessment data
     let assessmentData = { ...reqData }
     
-    if (reqData.assessment_id && (!reqData.dimension_scores || !reqData.overall_score)) {
+    if (reqData.assessment_id && (!reqData.dimension_scores || !reqData.overall_score || !reqData.answers)) {
       console.log(`Fetching complete assessment data for ID: ${reqData.assessment_id}`)
       
       const supabaseUrl = Deno.env.get("SUPABASE_URL")
@@ -105,66 +105,136 @@ serve(async (req) => {
           dimension_scores: reqData.dimension_scores || fetchedData.dimension_scores,
           demographics: reqData.demographics || fetchedData.demographics,
           email: reqData.email || fetchedData.email,
+          answers: reqData.answers || fetchedData.answers,
         }
       } else {
         throw new Error(`Assessment with ID ${reqData.assessment_id} not found`)
       }
     }
 
-    // Build data for Google Sheet
-    const email = assessmentData.email || `anonymous@${assessmentData.user_id?.substring(0, 8) || 'unknown'}.com`
-    const date = assessmentData.date ? new Date(assessmentData.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+    // Get current date and time
+    const now = new Date();
+    const dateTime = now.toISOString();
+    const duration = ""; // This would need to be tracked separately
+
+    // Format user information
+    const contactUid = assessmentData.user_id || 'unknown';
+    const email = assessmentData.email || `anonymous@${assessmentData.user_id?.substring(0, 8) || 'unknown'}.com`;
+    const firstName = assessmentData.demographics?.firstName || "";
+    const lastName = assessmentData.demographics?.lastName || "";
+    const premiumCode = assessmentData.demographics?.premiumCode || "";
+    const privacyAccepted = "Yes"; // Assuming this is always accepted when taking the assessment
     
-    // Format dimension scores
-    const dimScores = assessmentData.dimension_scores || {}
+    // Extract answers if available
+    const answers = assessmentData.answers || [];
     
-    // Extract demographics if available
-    const demo = assessmentData.demographics || {}
+    // Create a map of question IDs to scores
+    const answerMap = {};
+    answers.forEach(answer => {
+      answerMap[answer.questionId] = answer.score;
+    });
+    
+    // Get question scores
+    const getQuestionScore = (questionId) => answerMap[questionId]?.toString() || "";
+    
+    // Extract dimension scores
+    const dimScores = assessmentData.dimension_scores || {};
     
     // Prepare row data for Google Sheet
-    const sheetData = {
-      email,
-      date,
-      assessment_id: assessmentData.assessment_id || 'manual-sync-' + Date.now(),
-      overall_score: assessmentData.overall_score || 0,
-      humility: dimScores.humility || 0,
-      empathy: dimScores.empathy || 0,
-      accountability: dimScores.accountability || 0,
-      resiliency: dimScores.resiliency || 0,
-      transparency: dimScores.transparency || 0,
-      inclusivity: dimScores.inclusivity || 0,
-      // Demographics info
-      gender: demo.gender || 'Not specified',
-      race: demo.race || 'Not specified',
-      age: demo.age || 'Not specified',
-      location: demo.location || 'Not specified',
-      role: demo.role || 'Not specified',
-      management_level: demo.managementLevel || 'Not specified',
-      company_size: demo.companySize || 'Not specified',
-    }
+    const sheetData = [
+      dateTime, // Date & Time
+      duration, // Duration
+      contactUid, // Contact UID
+      firstName, // First Name
+      lastName, // Last Name
+      email, // E-mail
+      premiumCode, // Premium Code
+      privacyAccepted, // I acknowledge and agree to the privacy policy
+      contactUid, // UID (duplicate of Contact UID)
+      
+      // Individual question scores - Q1 through Q58
+      getQuestionScore(1),
+      getQuestionScore(2),
+      getQuestionScore(3),
+      getQuestionScore(4),
+      getQuestionScore(5),
+      getQuestionScore(6),
+      getQuestionScore(7),
+      getQuestionScore(8),
+      getQuestionScore(9),
+      getQuestionScore(10),
+      getQuestionScore(11),
+      getQuestionScore(12), // This seems to be missing from our questions list, insert empty
+      getQuestionScore(13),
+      getQuestionScore(14),
+      getQuestionScore(15),
+      getQuestionScore(16),
+      getQuestionScore(17),
+      getQuestionScore(18),
+      getQuestionScore(19),
+      getQuestionScore(20),
+      getQuestionScore(21),
+      getQuestionScore(22),
+      getQuestionScore(23),
+      getQuestionScore(24),
+      getQuestionScore(25),
+      getQuestionScore(26),
+      getQuestionScore(27),
+      getQuestionScore(28),
+      getQuestionScore(29),
+      getQuestionScore(30),
+      getQuestionScore(31),
+      getQuestionScore(32),
+      getQuestionScore(33),
+      getQuestionScore(34),
+      getQuestionScore(35),
+      getQuestionScore(36),
+      getQuestionScore(37),
+      getQuestionScore(38),
+      getQuestionScore(39),
+      getQuestionScore(40),
+      getQuestionScore(41),
+      getQuestionScore(42),
+      getQuestionScore(43),
+      getQuestionScore(44),
+      getQuestionScore(45),
+      getQuestionScore(46),
+      getQuestionScore(47),
+      getQuestionScore(48),
+      getQuestionScore(49),
+      getQuestionScore(50),
+      getQuestionScore(51),
+      getQuestionScore(52),
+      getQuestionScore(53),
+      getQuestionScore(54),
+      getQuestionScore(55),
+      getQuestionScore(56),
+      getQuestionScore(57),
+      getQuestionScore(58),
+      
+      assessmentData.overall_score?.toString() || "0", // Active HEARTI Questions - Score
+      "290", // Active HEARTI Questions - Max Score (58 questions * 5 max score = 290)
+      
+      // Dimension scores
+      dimScores.humility?.toString() || "0", // Humility
+      dimScores.empathy?.toString() || "0", // Empathy
+      dimScores.accountability?.toString() || "0", // Accountability
+      dimScores.resiliency?.toString() || "0", // Resiliency
+      dimScores.transparency?.toString() || "0", // Transparency
+      dimScores.inclusivity?.toString() || "0", // Inclusivity
+      
+      assessmentData.assessment_id || `manual-sync-${Date.now()}`, // F21: Unique ID Test
+      "", // Outcome(s)
+      "", // Response ID
+      "", // Empty
+      "", // Empty
+      "", // Empty
+      "", // Empty
+      "", // Empty
+      ""  // Empty
+    ];
     
-    console.log("Formatted data for sheet:", JSON.stringify(sheetData, null, 2))
-    
-    // Convert data to an array of values for the sheet
-    const values = [
-      sheetData.email,
-      sheetData.date,
-      sheetData.assessment_id,
-      sheetData.overall_score,
-      sheetData.humility,
-      sheetData.empathy,
-      sheetData.accountability,
-      sheetData.resiliency,
-      sheetData.transparency,
-      sheetData.inclusivity,
-      sheetData.gender,
-      sheetData.race,
-      sheetData.age,
-      sheetData.location,
-      sheetData.role,
-      sheetData.management_level,
-      sheetData.company_size
-    ]
+    console.log("Formatted data for sheet:", JSON.stringify(sheetData, null, 2));
     
     // Get access token using workload identity federation
     console.log("Getting identity token from our provider...");
@@ -227,8 +297,8 @@ serve(async (req) => {
     try {
       console.log("Attempting to append to sheet...")
       
-      // Append data to the sheet
-      const sheetsUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A:Q:append?valueInputOption=USER_ENTERED`
+      // Append data to the sheet - update the range to match the new columns (A:BW)
+      const sheetsUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A:BV:append?valueInputOption=USER_ENTERED`
       console.log("Making request to Google Sheets API...")
       
       const response = await fetch(sheetsUrl, {
@@ -238,7 +308,7 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          values: [values]
+          values: [sheetData]
         })
       })
       
