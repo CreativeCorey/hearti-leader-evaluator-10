@@ -16,6 +16,22 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
       eventsPerSecond: 10
     }
   },
+  // Adding global fetch options with proper headers for cross-origin requests
+  global: {
+    fetch: (...args) => {
+      // @ts-ignore - first argument is the input
+      const [url, options = {}] = args;
+      const headers = {
+        ...options?.headers,
+        'Content-Type': 'application/json',
+      };
+      
+      return fetch(url, {
+        ...options,
+        headers,
+      });
+    }
+  }
 });
 
 // Create an admin client for serverless functions (not used in browser)

@@ -126,16 +126,22 @@ serve(async (req) => {
     const privacyAccepted = "Yes"; // Assuming this is always accepted when taking the assessment
     
     // Extract answers if available
-    const answers = assessmentData.answers || [];
+    const answers = Array.isArray(assessmentData.answers) ? assessmentData.answers : [];
+    console.log(`Processing ${answers.length} answers`);
     
     // Create a map of question IDs to scores
     const answerMap = {};
     answers.forEach(answer => {
-      answerMap[answer.questionId] = answer.score;
+      if (answer && typeof answer === 'object' && 'questionId' in answer && 'score' in answer) {
+        answerMap[answer.questionId] = answer.score;
+      }
     });
     
     // Get question scores
-    const getQuestionScore = (questionId) => answerMap[questionId]?.toString() || "";
+    const getQuestionScore = (questionId) => {
+      const score = answerMap[questionId];
+      return score !== undefined ? score.toString() : "";
+    };
     
     // Extract dimension scores
     const dimScores = assessmentData.dimension_scores || {};
@@ -259,7 +265,7 @@ serve(async (req) => {
     console.log("Exchanging identity token for Google access token...");
     
     // Prepare the token exchange using configuration from credential.json
-    const tokenUrl = configJson.credential_source.url || "https://sts.googleapis.com/v1/token";
+    const tokenUrl = configJson.credential_source?.url || "https://sts.googleapis.com/v1/token";
     const tokenRequest = {
       audience: configJson.audience,
       grantType: "urn:ietf:params:oauth:grant-type:token-exchange",
@@ -280,6 +286,12 @@ serve(async (req) => {
     if (!tokenResponse.ok) {
       const errorText = await tokenResponse.text();
       console.error("Token request failed:", tokenResponse.status, errorText);
+      try {
+        const errorJson = JSON.parse(errorText);
+        console.error("Detailed error:", JSON.stringify(errorJson, null, 2));
+      } catch (e) {
+        // Text wasn't JSON, that's fine
+      }
       throw new Error(`Failed to get Google API access token: ${errorText}`);
     }
     
@@ -295,11 +307,11 @@ serve(async (req) => {
     
     // Try to append data to Google Sheet
     try {
-      console.log("Attempting to append to sheet...")
+      console.log("Attempting to append to sheet with ID:", sheetId);
       
       // Append data to the sheet - update the range to match the new columns (A:BW)
-      const sheetsUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A:BV:append?valueInputOption=USER_ENTERED`
-      console.log("Making request to Google Sheets API...")
+      const sheetsUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A:BV:append?valueInputOption=USER_ENTERED`;
+      console.log("Making request to Google Sheets API:", sheetsUrl);
       
       const response = await fetch(sheetsUrl, {
         method: 'POST',
@@ -310,37 +322,37 @@ serve(async (req) => {
         body: JSON.stringify({
           values: [sheetData]
         })
-      })
+      });
       
-      console.log("Google Sheets API response status:", response.status, response.statusText)
+      console.log("Google Sheets API response status:", response.status, response.statusText);
       
       if (!response.ok) {
-        const errorText = await response.text()
-        console.error("Google Sheets API error response:", errorText)
+        const errorText = await response.text();
+        console.error("Google Sheets API error response:", errorText);
         
         try {
-          const errorJson = JSON.parse(errorText)
-          console.error("Error details:", JSON.stringify(errorJson, null, 2))
+          const errorJson = JSON.parse(errorText);
+          console.error("Error details:", JSON.stringify(errorJson, null, 2));
           
-          throw new Error(`Google Sheets API error: ${response.status} - ${errorJson.error?.message || "Unknown error"}`)
+          throw new Error(`Google Sheets API error: ${response.status} - ${errorJson.error?.message || "Unknown error"}`);
         } catch (parseError) {
-          throw new Error(`Google Sheets API error: ${response.status} - ${errorText}`)
+          throw new Error(`Google Sheets API error: ${response.status} - ${errorText}`);
         }
       }
       
-      const result = await response.json()
-      console.log("Successfully appended data to sheet:", JSON.stringify(result, null, 2))
+      const result = await response.json();
+      console.log("Successfully appended data to sheet:", JSON.stringify(result, null, 2));
       
       return new Response(
         JSON.stringify({ success: true, message: "Assessment synced to Google Sheet" }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      )
+      );
     } catch (error) {
-      console.error("Error syncing to Google Sheet:", error.message)
-      throw error
+      console.error("Error syncing to Google Sheet:", error.message);
+      throw error;
     }
   } catch (error) {
-    console.error("Error in edge function:", error.message, error.stack)
+    console.error("Error in edge function:", error.message, error.stack);
     
     return new Response(
       JSON.stringify({ 
@@ -348,9 +360,9 @@ serve(async (req) => {
         message: "Failed to sync assessment to Google Sheet. See function logs for details."
       }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    )
+    );
   }
-})
+});
 
 // To invoke:
 // curl -i --location --request POST 'https://odwkgxdkjyccnkydxvjw.functions.supabase.co/sync-assessment-to-sheet' \
