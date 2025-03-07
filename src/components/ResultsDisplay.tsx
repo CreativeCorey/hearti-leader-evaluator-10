@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { format } from 'date-fns';
 import { 
@@ -165,6 +166,58 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
   // Function to get the user's name (fallback to "Leader" if not available)
   const getUserName = (): string => {
     return assessment.demographics?.name || "Leader";
+  };
+
+  // PDF export function
+  const exportPDF = async () => {
+    if (!reportRef.current) return;
+    
+    setExportingPdf(true);
+    
+    try {
+      const userName = getUserName();
+      const dateStr = format(new Date(assessment.date), 'yyyy-MM-dd');
+      const fileName = `HEARTI-Leader-Report-${userName}-${dateStr}.pdf`;
+      
+      toast({
+        title: "Generating PDF",
+        description: "Please wait while we generate your report...",
+      });
+      
+      const canvas = await html2canvas(reportRef.current, {
+        scale: 2,
+        logging: false,
+        useCORS: true
+      });
+      
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+      
+      const imgWidth = 210; // A4 width in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      
+      pdf.save(fileName);
+      
+      toast({
+        title: "PDF Generated",
+        description: "Your HEARTI Leader report has been downloaded.",
+      });
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast({
+        title: "PDF Generation Failed",
+        description: "There was an error creating your PDF. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setExportingPdf(false);
+    }
   };
 
   return (
