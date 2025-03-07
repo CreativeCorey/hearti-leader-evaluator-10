@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { v4 as uuidv4 } from 'uuid';
 import { 
   HEARTIQuestion, 
@@ -106,6 +107,7 @@ interface AssessmentFormProps {
 
 const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [shuffledQuestions, setShuffledQuestions] = useState<HEARTIQuestion[]>([]);
   const [answers, setAnswers] = useState<HEARTIAnswer[]>([]);
@@ -299,6 +301,14 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     }
   };
 
+  const scoreLabels = [
+    { value: 1, label: "Nearly Never" },
+    { value: 2, label: "Rarely" },
+    { value: 3, label: "Sometimes" },
+    { value: 4, label: "Frequently" },
+    { value: 5, label: "Almost Always" },
+  ];
+
   return (
     <Card className="w-full max-w-3xl mx-auto appear-animate shadow-sm">
       <CardHeader>
@@ -320,7 +330,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
           <div className="bg-muted/30 p-6 rounded-lg mb-10">
             <h3 className="text-xl font-medium mb-3 text-center">{currentQuestion.text}</h3>
             
-            <div className="mt-12 space-y-10">
+            <div className="mt-12 space-y-8">
               <div className="px-4">
                 <Slider
                   value={[currentScore]}
@@ -332,11 +342,16 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
                 />
                 
                 <div className="flex justify-between text-sm text-muted-foreground pt-2">
-                  <span>Nearly Never</span>
-                  <span>Rarely</span>
-                  <span>Sometimes</span>
-                  <span>Frequently</span>
-                  <span>Almost Always</span>
+                  {scoreLabels.map(({ value, label }) => (
+                    <button
+                      key={value}
+                      className={`text-center px-2 ${currentScore === value ? 'text-primary font-medium' : ''}`}
+                      onClick={() => handleAnswerChange(value)}
+                      aria-label={`Select ${label}`}
+                    >
+                      {isMobile ? value : label}
+                    </button>
+                  ))}
                 </div>
               </div>
               
