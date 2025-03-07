@@ -13,9 +13,10 @@ import { calculateDimensionScores, calculateOverallScore } from '../utils/calcul
 import { saveAssessment, ensureUserExists, getOrCreateAnonymousId } from '../utils/localStorage';
 import { ensureUserProfileExists } from '../utils/supabaseHelpers';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Slider } from '@/components/ui/slider';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import DemographicForm from './DemographicForm';
 
 const questions: HEARTIQuestion[] = [
@@ -105,15 +106,14 @@ interface AssessmentFormProps {
 
 const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
   const { toast } = useToast();
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [shuffledQuestions, setShuffledQuestions] = useState<HEARTIQuestion[]>([]);
   const [answers, setAnswers] = useState<HEARTIAnswer[]>([]);
   const [assessmentComplete, setAssessmentComplete] = useState(false);
   const [tempAssessment, setTempAssessment] = useState<HEARTIAssessment | null>(null);
   const [currentUser, setCurrentUser] = useState<{ id: string, organizationId?: string } | null>(null);
   
-  const questionsPerPage = 10;
-  const totalPages = Math.ceil(questions.length / questionsPerPage);
+  const totalQuestions = questions.length;
   
   useEffect(() => {
     setShuffledQuestions(shuffleArray(questions));
@@ -140,41 +140,42 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     initUser();
   }, []);
   
-  const currentQuestions = shuffledQuestions.slice(
-    currentPage * questionsPerPage, 
-    (currentPage + 1) * questionsPerPage
-  );
+  const currentQuestion = shuffledQuestions[currentQuestionIndex];
 
-  const handleAnswerChange = (questionId: number, score: number) => {
+  const handleAnswerChange = (score: number) => {
+    if (!currentQuestion) return;
+    
     setAnswers(prev => {
-      const existingAnswerIndex = prev.findIndex(a => a.questionId === questionId);
+      const existingAnswerIndex = prev.findIndex(a => a.questionId === currentQuestion.id);
       if (existingAnswerIndex !== -1) {
         const newAnswers = [...prev];
-        newAnswers[existingAnswerIndex] = { questionId, score };
+        newAnswers[existingAnswerIndex] = { questionId: currentQuestion.id, score };
         return newAnswers;
       }
-      return [...prev, { questionId, score }];
+      return [...prev, { questionId: currentQuestion.id, score }];
     });
   };
 
-  const isCurrentPageComplete = () => {
-    return currentQuestions.every(q => 
-      answers.some(a => a.questionId === q.id)
-    );
+  const getCurrentAnswer = (): number => {
+    if (!currentQuestion) return 3; // Default to middle value
+    
+    const existingAnswer = answers.find(a => a.questionId === currentQuestion.id);
+    return existingAnswer ? existingAnswer.score : 3;
   };
 
   const handleNext = () => {
-    if (!isCurrentPageComplete()) {
+    // Ensure current question is answered
+    if (!answers.some(a => a.questionId === currentQuestion?.id)) {
       toast({
-        title: "Please answer all questions",
-        description: "All questions on this page must be answered before proceeding.",
+        title: "Please answer the question",
+        description: "Please select a value on the slider to continue.",
         variant: "destructive"
       });
       return;
     }
 
-    if (currentPage < totalPages - 1) {
-      setCurrentPage(prev => prev + 1);
+    if (currentQuestionIndex < shuffledQuestions.length - 1) {
+      setCurrentQuestionIndex(prev => prev + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       completeAssessmentQuestions();
@@ -182,8 +183,8 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
   };
 
   const handlePrevious = () => {
-    if (currentPage > 0) {
-      setCurrentPage(prev => prev - 1);
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex(prev => prev - 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -273,7 +274,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
 
   const DEBUG = import.meta.env.DEV;
 
-  if (shuffledQuestions.length === 0) {
+  if (shuffledQuestions.length === 0 || !currentQuestion) {
     return <div className="flex justify-center p-6">Loading assessment questions...</div>;
   }
 
@@ -286,8 +287,20 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     );
   }
 
+  const currentScore = getCurrentAnswer();
+  const getScoreLabel = (score: number): string => {
+    switch (score) {
+      case 1: return "Nearly Never";
+      case 2: return "Rarely";
+      case 3: return "Sometimes";
+      case 4: return "Frequently";
+      case 5: return "Almost Always";
+      default: return "";
+    }
+  };
+
   return (
-    <Card className="w-full appear-animate shadow-sm">
+    <Card className="w-full max-w-3xl mx-auto appear-animate shadow-sm">
       <CardHeader>
         <CardTitle className="text-2xl">
           HEARTI Leadership Assessment
@@ -297,56 +310,68 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-8">
-          {currentQuestions.map((question) => (
-            <div key={question.id} className="space-y-3">
-              <div className="font-medium">{question.text}</div>
-              <RadioGroup 
-                onValueChange={(value) => handleAnswerChange(question.id, parseInt(value))}
-                value={answers.find(a => a.questionId === question.id)?.score.toString() || ""}
-              >
-                <div className="flex justify-between max-w-md">
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="1" id={`q${question.id}-1`} />
-                    <Label htmlFor={`q${question.id}-1`}>Nearly Never</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="2" id={`q${question.id}-2`} />
-                    <Label htmlFor={`q${question.id}-2`}>Rarely</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="3" id={`q${question.id}-3`} />
-                    <Label htmlFor={`q${question.id}-3`}>Sometimes</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="4" id={`q${question.id}-4`} />
-                    <Label htmlFor={`q${question.id}-4`}>Frequently</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="5" id={`q${question.id}-5`} />
-                    <Label htmlFor={`q${question.id}-5`}>Almost Always</Label>
-                  </div>
+        <div className="space-y-10 py-6">
+          <div className="text-center mb-8">
+            <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium">
+              Question {currentQuestionIndex + 1} of {totalQuestions}
+            </span>
+          </div>
+          
+          <div className="bg-muted/30 p-6 rounded-lg mb-10">
+            <h3 className="text-xl font-medium mb-3 text-center">{currentQuestion.text}</h3>
+            
+            <div className="mt-12 space-y-10">
+              <div className="px-4">
+                <Slider
+                  value={[currentScore]}
+                  min={1}
+                  max={5}
+                  step={1}
+                  onValueChange={value => handleAnswerChange(value[0])}
+                  className="mb-8"
+                />
+                
+                <div className="flex justify-between text-sm text-muted-foreground pt-2">
+                  <span>Nearly Never</span>
+                  <span>Rarely</span>
+                  <span>Sometimes</span>
+                  <span>Frequently</span>
+                  <span>Almost Always</span>
                 </div>
-              </RadioGroup>
+              </div>
+              
+              <div className="text-center mt-8">
+                <div className="inline-block px-4 py-2 bg-primary/10 rounded-lg">
+                  <span className="font-medium">Selected:</span> {getScoreLabel(currentScore)}
+                </div>
+              </div>
             </div>
-          ))}
+          </div>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex justify-between border-t p-6">
         <Button 
           variant="outline" 
           onClick={handlePrevious}
-          disabled={currentPage === 0}
+          disabled={currentQuestionIndex === 0}
+          className="flex items-center gap-2"
         >
-          Previous
+          <ArrowLeft className="h-4 w-4" /> Previous
         </Button>
-        <div className="text-sm text-muted-foreground">
-          {currentPage + 1} of {totalPages}
+        
+        <div className="text-sm text-muted-foreground font-medium">
+          {currentQuestionIndex + 1} of {totalQuestions}
         </div>
-        <Button onClick={handleNext}>
-          {currentPage === totalPages - 1 ? 'Complete' : 'Next'}
+        
+        <Button 
+          onClick={handleNext}
+          className="flex items-center gap-2"
+        >
+          {currentQuestionIndex === totalQuestions - 1 ? 'Complete' : 'Next'} 
+          {currentQuestionIndex !== totalQuestions - 1 && <ArrowRight className="h-4 w-4" />}
         </Button>
       </CardFooter>
+      
       {DEBUG && (
         <div className="mt-4 p-4 border border-red-300 rounded bg-red-50">
           <h3 className="text-red-700 font-medium">Debug Tools</h3>
