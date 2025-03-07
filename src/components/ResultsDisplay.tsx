@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { format } from 'date-fns';
 import { 
@@ -35,7 +34,6 @@ interface ResultsDisplayProps {
   assessment: HEARTIAssessment;
 }
 
-// Sample aggregated data for comparison (in a real app, this would come from the backend)
 const aggregateData = {
   averageScores: {
     humility: 3.8,
@@ -77,7 +75,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
   const chartData = formatDataForRadarChart(assessment.dimensionScores);
   const formattedDate = format(new Date(assessment.date), 'MMMM d, yyyy');
   
-  // Sort dimensions by score (highest to lowest)
   const sortedDimensions = Object.entries(assessment.dimensionScores)
     .sort(([, a], [, b]) => b - a)
     .map(([dimension]) => dimension as HEARTIDimension);
@@ -85,7 +82,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
   const topStrength = sortedDimensions[0];
   const developmentArea = sortedDimensions[sortedDimensions.length - 1];
 
-  // Prepare comparison data
   const getComparisonData = () => {
     if (compareMode === 'none') {
       return null;
@@ -119,7 +115,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
     return item;
   });
 
-  // Function to get badge color based on score
   const getBadgeVariant = (score: number) => {
     if (score >= 4.5) return "default";
     if (score >= 3.5) return "secondary";
@@ -136,12 +131,11 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
     }
   };
 
-  // Colors for radar charts
-  const userColor = "#6366f1"; // Indigo color
+  const userColor = "#6366f1";
   const comparisonColors = {
-    average: "#8b5cf6", // Purple color
-    men: "#ec4899",     // Pink color
-    women: "#f97316"    // Orange color
+    average: "#8b5cf6",
+    men: "#ec4899",
+    women: "#f97316"
   };
 
   const getComparisonColor = () => {
@@ -153,7 +147,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
     }
   };
 
-  // Determine if a dimension is a strength, vulnerability, or neutral
   const getDimensionStatus = (dimension: HEARTIDimension): 'strength' | 'vulnerability' | 'neutral' => {
     const score = assessment.dimensionScores[dimension];
     const average = aggregateData.averageScores[dimension];
@@ -163,12 +156,10 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
     return 'neutral';
   };
 
-  // Function to get the user's name (fallback to "Leader" if not available)
   const getUserName = (): string => {
     return assessment.demographics?.name || "Leader";
   };
 
-  // PDF export function
   const exportPDF = async () => {
     if (!reportRef.current) return;
     
@@ -184,23 +175,65 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
         description: "Please wait while we generate your report...",
       });
       
-      const canvas = await html2canvas(reportRef.current, {
-        scale: 2,
-        logging: false,
-        useCORS: true
-      });
-      
-      const imgData = canvas.toDataURL('image/png');
+      const reportElement = reportRef.current;
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
         format: 'a4'
       });
       
-      const imgWidth = 210; // A4 width in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const reportHeight = reportElement.scrollHeight;
+      const reportWidth = reportElement.scrollWidth;
       
-      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      const maxCanvasHeight = 1500;
+      const chunksNeeded = Math.ceil(reportHeight / maxCanvasHeight);
+      
+      let pdfYPosition = 0;
+      
+      for (let i = 0; i < chunksNeeded; i++) {
+        const sourceY = i * maxCanvasHeight;
+        const chunkHeight = Math.min(maxCanvasHeight, reportHeight - sourceY);
+        
+        const tempDiv = document.createElement('div');
+        tempDiv.style.position = 'absolute';
+        tempDiv.style.top = '0';
+        tempDiv.style.left = '0';
+        tempDiv.style.width = `${reportWidth}px`;
+        tempDiv.style.height = `${chunkHeight}px`;
+        tempDiv.style.overflow = 'hidden';
+        
+        const clone = reportElement.cloneNode(true) as HTMLElement;
+        clone.style.position = 'absolute';
+        clone.style.top = `-${sourceY}px`;
+        
+        tempDiv.appendChild(clone);
+        document.body.appendChild(tempDiv);
+        
+        const canvas = await html2canvas(tempDiv, {
+          scale: 2,
+          logging: false,
+          useCORS: true,
+          width: reportWidth,
+          height: chunkHeight,
+          windowWidth: reportWidth,
+          windowHeight: chunkHeight
+        });
+        
+        document.body.removeChild(tempDiv);
+        
+        const imgData = canvas.toDataURL('image/png');
+        
+        const imgWidth = 210;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        
+        if (i > 0) {
+          pdf.addPage();
+          pdfYPosition = 0;
+        }
+        
+        pdf.addImage(imgData, 'PNG', 0, pdfYPosition, imgWidth, imgHeight);
+        pdfYPosition += imgHeight;
+      }
       
       pdf.save(fileName);
       
