@@ -32,7 +32,7 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
       <div className="flex flex-col lg:flex-row gap-8 pdf-charts-grid">
         <div className="flex-1 bg-slate-50 p-6 rounded-lg pdf-chart-column">
           <p className="text-center font-medium text-xl text-indigo-600 mb-4">Your Results</p>
-          <div className="h-[400px] pdf-chart-container">
+          <div className="h-[500px] pdf-chart-container">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="75%" data={chartData}>
                 <PolarGrid gridType="polygon" />
@@ -53,7 +53,7 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
         
         <div className="flex-1 bg-slate-50 p-6 rounded-lg pdf-chart-column">
           <p className="text-center font-medium text-xl text-purple-600 mb-4">Global Benchmark</p>
-          <div className="h-[400px] pdf-chart-container">
+          <div className="h-[500px] pdf-chart-container">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="75%" data={formatDataForRadarChart(aggregateData.averageScores)}>
                 <PolarGrid gridType="polygon" />

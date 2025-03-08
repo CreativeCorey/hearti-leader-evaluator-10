@@ -22,13 +22,45 @@ export const exportToPDF = async (element: HTMLElement, assessment: HEARTIAssess
   const clonedElement = element.cloneNode(true) as HTMLElement;
   tempContainer.appendChild(clonedElement);
   
-  // Add the PDF-specific stylesheet
-  const linkElement = document.createElement('link');
-  linkElement.rel = 'stylesheet';
-  linkElement.href = '/src/styles/pdf-report.css';
-  tempContainer.appendChild(linkElement);
-  
   try {
+    // Apply PDF-specific styles
+    const style = document.createElement('style');
+    style.textContent = `
+      .pdf-container {
+        width: 8.5in;
+        padding: 0.5in;
+        box-sizing: border-box;
+        background-color: white;
+        color: #333;
+        font-family: 'Arial', sans-serif;
+        line-height: 1.5;
+      }
+      
+      .pdf-container * {
+        box-sizing: border-box;
+      }
+      
+      .pdf-chart-container {
+        height: 5.5in !important;
+      }
+      
+      .pdf-charts-grid {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+      }
+      
+      .pdf-chart-column {
+        width: 3.5in !important;
+        height: auto !important;
+      }
+      
+      .pdf-dimension-card {
+        page-break-inside: avoid !important;
+      }
+    `;
+    tempContainer.appendChild(style);
+    
     // Force browser to calculate layout with PDF styles
     await new Promise(resolve => setTimeout(resolve, 1000));
     
