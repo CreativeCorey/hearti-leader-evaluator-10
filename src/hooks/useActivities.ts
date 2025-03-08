@@ -1,23 +1,19 @@
 
 import { useState, useEffect } from 'react';
-import { getOrCreateAnonymousId } from '@/utils/localStorage';
 import { SavedActivity, SkillActivity } from '@/data/heartActivities';
-import { 
-  fetchSavedActivities, 
-  saveActivityToSupabase, 
-  updateActivityCompletionInSupabase, 
-  deleteActivityFromSupabase,
-  saveHabitToSupabase
-} from '@/api/savedActivitiesApi';
+import { getOrCreateAnonymousId } from '@/utils/localStorage';
+import { showSuccessToast, showErrorToast } from '@/utils/notifications';
 import { 
   getStoredActivities, 
-  storeActivities, 
-  storeNewHabit 
+  storeActivities 
 } from '@/utils/activityStorage';
 import { 
-  showSuccessToast, 
-  showErrorToast 
-} from '@/utils/notifications';
+  loadActivitiesFromSources,
+  saveActivityToSources,
+  toggleActivityCompletionInSources,
+  removeActivityFromSources,
+  addActivityToHabitTracker
+} from '@/services/activityService';
 
 export const useActivities = () => {
   const [savedActivities, setSavedActivities] = useState<SavedActivity[]>([]);
@@ -40,17 +36,12 @@ export const useActivities = () => {
         setSavedActivities(storedActivities);
       }
       
-      // Try to fetch from Supabase
-      try {
-        const supabaseActivities = await fetchSavedActivities(userId);
-        
-        if (supabaseActivities.length > 0) {
-          setSavedActivities(supabaseActivities);
-          // Save to localStorage as backup
-          storeActivities(supabaseActivities);
-        }
-      } catch (e) {
-        console.log('Error fetching from Supabase, using local storage', e);
+      // Try to load from all sources
+      const activities = await loadActivitiesFromSources(userId);
+      if (activities.length > 0) {
+        setSavedActivities(activities);
+        // Save to localStorage as backup
+        storeActivities(activities);
       }
     } catch (error) {
       console.error('Error loading saved activities:', error);
@@ -76,41 +67,17 @@ export const useActivities = () => {
         return;
       }
       
-      const newSavedActivity: SavedActivity = {
-        id: crypto.randomUUID(),
-        userId,
-        activityId: activity.id,
-        dimension: activity.dimension,
-        completed: false,
-        savedAt: new Date().toISOString()
-      };
-      
-      // Try to save to Supabase
-      try {
-        const savedId = await saveActivityToSupabase(activity, userId);
-        if (savedId) {
-          newSavedActivity.id = savedId;
-        }
-      } catch (e) {
-        console.log('Error saving to Supabase, will save to local storage only', e);
-      }
+      // Save the activity to all sources
+      const newSavedActivity = await saveActivityToSources(activity, userId);
       
       // If the user wants to add this to the habit tracker
       if (addToHabitTracker) {
-        try {
-          // Save to local storage
-          storeNewHabit(userId, activity.dimension, activity.description);
-          
-          // Add to Supabase habits table
-          await saveHabitToSupabase(userId, activity);
-          
-          showSuccessToast(
-            "Habit Created",
-            "The activity has been added to your habit tracker"
-          );
-        } catch (e) {
-          console.log('Error adding to habit tracker', e);
-        }
+        await addActivityToHabitTracker(userId, activity);
+        
+        showSuccessToast(
+          "Habit Created",
+          "The activity has been added to your habit tracker"
+        );
       }
       
       // Update local state
@@ -137,10 +104,16 @@ export const useActivities = () => {
     if (!savedActivityId) return;
     
     try {
+      // Update in all sources
+      const updatedActivity = await toggleActivityCompletionInSources(
+        savedActivityId, 
+        savedActivities
+      );
+      
       // Update local state
       const updatedSavedActivities = savedActivities.map(activity => {
         if (activity.id === savedActivityId) {
-          return { ...activity, completed: !activity.completed };
+          return updatedActivity;
         }
         return activity;
       });
@@ -149,17 +122,6 @@ export const useActivities = () => {
       
       // Save to localStorage
       storeActivities(updatedSavedActivities);
-      
-      // Try to update in Supabase
-      const activityToUpdate = updatedSavedActivities.find(a => a.id === savedActivityId);
-      
-      if (activityToUpdate) {
-        try {
-          await updateActivityCompletionInSupabase(savedActivityId, activityToUpdate.completed);
-        } catch (e) {
-          console.log('Error updating in Supabase, updated in local storage only', e);
-        }
-      }
     } catch (error) {
       console.error('Error toggling activity completion:', error);
       showErrorToast(
@@ -173,6 +135,9 @@ export const useActivities = () => {
     if (!savedActivityId) return;
     
     try {
+      // Remove from all sources
+      await removeActivityFromSources(savedActivityId);
+      
       // Update local state
       const updatedSavedActivities = savedActivities.filter(
         activity => activity.id !== savedActivityId
@@ -182,13 +147,6 @@ export const useActivities = () => {
       
       // Save to localStorage
       storeActivities(updatedSavedActivities);
-      
-      // Try to delete from Supabase
-      try {
-        await deleteActivityFromSupabase(savedActivityId);
-      } catch (e) {
-        console.log('Error deleting from Supabase, removed from local storage only', e);
-      }
       
       showSuccessToast(
         "Activity Removed",
