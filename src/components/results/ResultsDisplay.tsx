@@ -53,11 +53,11 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
         <TabsTrigger value="report" className="text-xs md:text-sm whitespace-nowrap">
           Full Report
         </TabsTrigger>
-        <TabsTrigger value="habits" className="text-xs md:text-sm whitespace-nowrap">
-          Build Habits
-        </TabsTrigger>
         <TabsTrigger value="development" className="text-xs md:text-sm whitespace-nowrap">
           Development
+        </TabsTrigger>
+        <TabsTrigger value="habits" className="text-xs md:text-sm whitespace-nowrap">
+          Build Habits
         </TabsTrigger>
       </TabsList>
       

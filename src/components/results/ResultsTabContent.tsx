@@ -8,8 +8,8 @@ import OverviewTab from './OverviewTab';
 import DimensionsTab from './DimensionsTab';
 import ComparisonTab from './ComparisonTab';
 import ReportTab from './ReportTab';
-import HabitTab from './HabitTab';
 import DevelopmentTab from './DevelopmentTab';
+import HabitTab from './HabitTab';
 
 interface ResultsTabContentProps {
   assessment: HEARTIAssessment;
@@ -66,12 +66,12 @@ const ResultsTabContent: React.FC<ResultsTabContentProps> = ({
         </div>
       </TabsContent>
       
-      <TabsContent value="habits" className="space-y-6">
-        <HabitTab focusDimension={topDevelopmentArea} />
-      </TabsContent>
-      
       <TabsContent value="development" className="space-y-6">
         <DevelopmentTab focusDimension={topDevelopmentArea} />
+      </TabsContent>
+      
+      <TabsContent value="habits" className="space-y-6">
+        <HabitTab focusDimension={topDevelopmentArea} />
       </TabsContent>
     </>
   );
