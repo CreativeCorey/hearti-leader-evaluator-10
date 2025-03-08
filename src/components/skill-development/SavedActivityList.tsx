@@ -4,6 +4,7 @@ import { Award } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { SavedActivity, activityData } from '@/data/heartActivities';
 import SavedActivityCard from './SavedActivityCard';
+import { Button } from '@/components/ui/button';
 
 interface SavedActivityListProps {
   filteredSavedActivities: SavedActivity[];
@@ -47,6 +48,12 @@ const SavedActivityList: React.FC<SavedActivityListProps> = ({
         Your Saved Activities
       </h3>
       
+      <div className="bg-amber-50 p-3 rounded-md border border-amber-100 mb-2">
+        <p className="text-sm text-amber-800">
+          These are your saved activities. To add them to your habit tracker, use the "Add to Habit Tracker" option when saving activities in the Explore tab.
+        </p>
+      </div>
+      
       <ScrollArea className="h-[500px] pr-4">
         <div className="space-y-3">
           {filteredSavedActivities.map((savedActivity) => {
@@ -55,7 +62,7 @@ const SavedActivityList: React.FC<SavedActivityListProps> = ({
             
             return (
               <SavedActivityCard
-                key={savedActivity.id} // Added key prop to fix the React warning
+                key={savedActivity.id}
                 savedActivity={savedActivity}
                 activityDetails={activityDetails}
                 onToggleCompletion={onToggleCompletion}

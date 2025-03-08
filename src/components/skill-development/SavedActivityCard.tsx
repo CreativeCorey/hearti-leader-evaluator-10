@@ -3,8 +3,11 @@ import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { BookmarkCheck, Check } from 'lucide-react';
+import { BookmarkCheck, Check, Plus } from 'lucide-react';
 import { SavedActivity, SkillActivity, dimensionColors, dimensionTitles } from '@/data/heartActivities';
+import { addActivityToHabitTracker } from '@/services/activityService';
+import { getOrCreateAnonymousId } from '@/utils/localStorage';
+import { toast } from '@/hooks/use-toast';
 
 interface SavedActivityCardProps {
   savedActivity: SavedActivity;
@@ -19,6 +22,25 @@ const SavedActivityCard: React.FC<SavedActivityCardProps> = ({
   onToggleCompletion, 
   onRemove 
 }) => {
+  const handleAddToHabitTracker = async () => {
+    try {
+      const userId = getOrCreateAnonymousId();
+      await addActivityToHabitTracker(userId, activityDetails);
+      
+      toast({
+        title: "Added to Habit Tracker",
+        description: "The activity has been added to your habit tracker",
+      });
+    } catch (error) {
+      console.error('Error adding to habit tracker:', error);
+      toast({
+        title: "Error",
+        description: "Could not add to habit tracker",
+        variant: "destructive",
+      });
+    }
+  };
+  
   return (
     <Card className={`p-4 border-l-4 ${savedActivity.completed ? 'border-l-green-500 bg-green-50' : 'border-l-blue-300'}`}>
       <div className="flex justify-between items-start">
@@ -48,6 +70,15 @@ const SavedActivityCard: React.FC<SavedActivityCardProps> = ({
             ) : (
               'Mark Complete'
             )}
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="flex items-center gap-1"
+            onClick={handleAddToHabitTracker}
+          >
+            <Plus size={16} />
+            Habit
           </Button>
           <Button 
             variant="ghost" 
