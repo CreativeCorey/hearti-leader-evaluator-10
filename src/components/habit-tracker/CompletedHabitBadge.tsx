@@ -10,13 +10,38 @@ interface CompletedHabitBadgeProps {
   iconType?: 'award' | 'trophy' | 'star' | 'check';
 }
 
+// Updated colors based on the provided image
 const dimensionColors = {
-  humility: 'bg-purple-100 border-purple-200 text-purple-800',
-  empathy: 'bg-blue-100 border-blue-200 text-blue-800',
-  accountability: 'bg-green-100 border-green-200 text-green-800',
-  resiliency: 'bg-amber-100 border-amber-200 text-amber-800',
-  transparency: 'bg-indigo-100 border-indigo-200 text-indigo-800',
-  inclusivity: 'bg-rose-100 border-rose-200 text-rose-800'
+  humility: {
+    bg: 'bg-[#5B0F58]/10',
+    text: 'text-[#5B0F58]',
+    border: 'border-[#5B0F58]/20'
+  },
+  empathy: {
+    bg: 'bg-[#18B7D9]/10',
+    text: 'text-[#18B7D9]',
+    border: 'border-[#18B7D9]/20'
+  },
+  accountability: {
+    bg: 'bg-[#00A249]/10',
+    text: 'text-[#00A249]',
+    border: 'border-[#00A249]/20'
+  },
+  resiliency: {
+    bg: 'bg-[#FFCC33]/10',
+    text: 'text-[#FFCC33]',
+    border: 'border-[#FFCC33]/20'
+  },
+  transparency: {
+    bg: 'bg-[#3953A4]/10',
+    text: 'text-[#3953A4]',
+    border: 'border-[#3953A4]/20'
+  },
+  inclusivity: {
+    bg: 'bg-[#EE2D67]/10',
+    text: 'text-[#EE2D67]',
+    border: 'border-[#EE2D67]/20'
+  }
 };
 
 const iconSizes = {
@@ -26,9 +51,9 @@ const iconSizes = {
 };
 
 const badgeSizes = {
-  sm: 'text-xs py-0 px-1.5',
-  md: 'text-xs py-0.5 px-2',
-  lg: 'text-sm py-1 px-2.5'
+  sm: 'text-xs py-0.5 px-1.5',
+  md: 'text-xs py-1 px-2',
+  lg: 'text-sm py-1.5 px-2.5'
 };
 
 const CompletedHabitBadge: React.FC<CompletedHabitBadgeProps> = ({ 
@@ -44,10 +69,14 @@ const CompletedHabitBadge: React.FC<CompletedHabitBadgeProps> = ({
     check: Check
   }[iconType];
   
+  const colorSet = dimensionColors[dimension];
+  
   return (
     <Badge 
       className={`
-        ${dimensionColors[dimension]} 
+        ${colorSet.bg} 
+        ${colorSet.text} 
+        ${colorSet.border}
         ${badgeSizes[size]}
         flex items-center gap-1 font-medium border
       `}
