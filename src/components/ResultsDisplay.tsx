@@ -279,6 +279,23 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
     }
   };
 
+  const sortDimensionsForReport = () => {
+    const dimensions: HEARTIDimension[] = ['inclusivity', 'humility', 'transparency', 'empathy', 'accountability', 'resiliency'];
+    
+    const strengths: HEARTIDimension[] = [];
+    const vulnerabilities: HEARTIDimension[] = [];
+    const competentSkills: HEARTIDimension[] = [];
+    
+    dimensions.forEach(dimension => {
+      const status = getDimensionStatus(dimension);
+      if (status === 'strength') strengths.push(dimension);
+      else if (status === 'vulnerability') vulnerabilities.push(dimension);
+      else competentSkills.push(dimension);
+    });
+    
+    return [...strengths, ...vulnerabilities, ...competentSkills];
+  };
+
   return (
     <div className="space-y-8">
       <Card className="appear-animate shadow-md border-0">
@@ -664,7 +681,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
                   </p>
                 </div>
                 
-                {['inclusivity', 'humility', 'transparency', 'empathy', 'accountability', 'resiliency'].map((dimension) => {
+                {sortDimensionsForReport().map((dimension) => {
                   const dimensionKey = dimension as HEARTIDimension;
                   const status = getDimensionStatus(dimensionKey);
                   const score = assessment.dimensionScores[dimensionKey];
@@ -804,3 +821,4 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
 };
 
 export default ResultsDisplay;
+
