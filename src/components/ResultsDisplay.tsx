@@ -169,13 +169,13 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
         </CardHeader>
         <CardContent className="p-6">
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="mb-6 grid grid-cols-6 w-full">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="dimensions">Dimensions</TabsTrigger>
-              <TabsTrigger value="comparison">Comparison</TabsTrigger>
-              <TabsTrigger value="report">Report</TabsTrigger>
-              <TabsTrigger value="habits">Habit Tracker</TabsTrigger>
-              <TabsTrigger value="development">Skill Development</TabsTrigger>
+            <TabsList className="mb-6 overflow-x-auto grid grid-cols-2 md:grid-cols-6 w-full gap-1">
+              <TabsTrigger value="overview" className="px-3 md:px-4">Overview</TabsTrigger>
+              <TabsTrigger value="dimensions" className="px-3 md:px-4">Dimensions</TabsTrigger>
+              <TabsTrigger value="comparison" className="px-3 md:px-4">Comparison</TabsTrigger>
+              <TabsTrigger value="report" className="px-3 md:px-4">Report</TabsTrigger>
+              <TabsTrigger value="habits" className="px-3 md:px-4">Habit Tracker</TabsTrigger>
+              <TabsTrigger value="development" className="px-3 md:px-4">Skill Development</TabsTrigger>
             </TabsList>
             
             <TabsContent value="overview" className="space-y-6">
