@@ -6,16 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
 import { HEARTIDimension } from '@/types';
-
-interface Habit {
-  id?: string;
-  userId: string;
-  dimension: HEARTIDimension;
-  description: string;
-  frequency: 'daily' | 'weekly';
-  completedDates: string[];
-  createdAt: string;
-}
+import { Habit } from '@/hooks/useHabits';
 
 interface HabitListProps {
   habits: Habit[];

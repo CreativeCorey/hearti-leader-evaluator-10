@@ -6,20 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Save, X } from 'lucide-react';
 import { HEARTIDimension } from '@/types';
+import { NewHabitForm } from '@/hooks/useHabits';
 
 interface HabitFormProps {
-  newHabit: {
-    dimension?: HEARTIDimension;
-    description: string;
-    frequency?: 'daily' | 'weekly';
-  };
+  newHabit: NewHabitForm;
   onCancel: () => void;
   onSave: () => void;
-  onHabitChange: (value: Partial<{
-    dimension: HEARTIDimension;
-    description: string;
-    frequency: 'daily' | 'weekly';
-  }>) => void;
+  onHabitChange: (value: Partial<NewHabitForm>) => void;
 }
 
 const HabitForm: React.FC<HabitFormProps> = ({
