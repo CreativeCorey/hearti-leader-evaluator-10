@@ -15,6 +15,15 @@ interface SkillDevelopmentProps {
   focusDimension?: HEARTIDimension;
 }
 
+const dimensionLabels = {
+  humility: 'Humility',
+  empathy: 'Empathy',
+  accountability: 'Accountability',
+  resiliency: 'Resiliency',
+  transparency: 'Transparency',
+  inclusivity: 'Inclusivity'
+};
+
 const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension }) => {
   const isMobile = useIsMobile();
   const [activeDimension, setActiveDimension] = useState<HEARTIDimension | 'all'>(focusDimension || 'all');

@@ -8,6 +8,15 @@ interface HabitTabProps {
   focusDimension: HEARTIDimension;
 }
 
+const dimensionLabels = {
+  humility: 'Humility',
+  empathy: 'Empathy',
+  accountability: 'Accountability',
+  resiliency: 'Resiliency',
+  transparency: 'Transparency',
+  inclusivity: 'Inclusivity'
+};
+
 const HabitTab: React.FC<HabitTabProps> = ({ focusDimension }) => {
   return (
     <div className="mb-4">
@@ -20,7 +29,7 @@ const HabitTab: React.FC<HabitTabProps> = ({ focusDimension }) => {
           Track your progress as you build consistent habits for your chosen behaviors. Complete each behavior 30 times to turn it into a lasting habit.
         </p>
         <p className="text-blue-700 mt-2 text-sm">
-          We recommend focusing on behaviors from your development area: <strong className="uppercase">{focusDimension}</strong>
+          We recommend focusing on behaviors from your development area: <strong className="uppercase">{dimensionLabels[focusDimension]}</strong>
         </p>
       </div>
       

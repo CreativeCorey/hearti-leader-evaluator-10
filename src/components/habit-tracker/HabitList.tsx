@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { format, isSameDay } from 'date-fns';
 import { Button } from '@/components/ui/button';
@@ -24,6 +23,15 @@ const dimensionColors = {
   resiliency: 'bg-amber-100 text-amber-800 border-amber-200',
   transparency: 'bg-indigo-100 text-indigo-800 border-indigo-200',
   inclusivity: 'bg-rose-100 text-rose-800 border-rose-200'
+};
+
+const dimensionLabels = {
+  humility: 'Humility',
+  empathy: 'Empathy',
+  accountability: 'Accountability',
+  resiliency: 'Resiliency',
+  transparency: 'Transparency',
+  inclusivity: 'Inclusivity'
 };
 
 const dimensionProgressColors = {
@@ -71,7 +79,7 @@ const HabitList: React.FC<HabitListProps> = ({
             <div className="flex justify-between items-center mb-3">
               <div className="flex items-center space-x-2">
                 <div className={`px-2 py-1 rounded-md text-xs font-medium ${dimensionColors[habit.dimension]}`}>
-                  {isMobile ? habit.dimension.charAt(0).toUpperCase() : habit.dimension}
+                  {isMobile ? habit.dimension.charAt(0).toUpperCase() : dimensionLabels[habit.dimension]}
                 </div>
                 <span className="text-xs text-muted-foreground">{habit.frequency === 'daily' ? 'Daily' : 'Weekly'}</span>
                 {isHabitMastered && (
