@@ -208,8 +208,8 @@ export const exportToPDF = async (element: HTMLElement, assessment: HEARTIAssess
     
     // Determine the height of the content
     const contentHeight = tempContainer.scrollHeight;
-    const pageHeight = 10 * 96; // 10 inches (11 - 1 margin) at 96 DPI
-    const totalPages = Math.ceil(contentHeight / pageHeight);
+    const docPageHeight = 10 * 96; // 10 inches (11 - 1 margin) at 96 DPI
+    const totalPages = Math.ceil(contentHeight / docPageHeight);
     
     const pdf = createPdfDocument();
     
@@ -221,14 +221,14 @@ export const exportToPDF = async (element: HTMLElement, assessment: HEARTIAssess
       }
       
       // Calculate the position to capture
-      const yPosition = i * pageHeight;
+      const yPosition = i * docPageHeight;
       
       const canvas = await html2canvas(tempContainer, {
         scale: 2, // Higher resolution
         useCORS: true,
         logging: false,
         width: 8.5 * 96, // 8.5 inches at 96 DPI
-        height: Math.min(pageHeight, contentHeight - yPosition), // Capture only what's needed
+        height: Math.min(docPageHeight, contentHeight - yPosition), // Capture only what's needed
         y: yPosition, // Offset to capture the correct portion
         windowWidth: 8.5 * 96,
         windowHeight: contentHeight
@@ -240,9 +240,9 @@ export const exportToPDF = async (element: HTMLElement, assessment: HEARTIAssess
       // Calculate aspect ratio to maintain proportions
       const canvasRatio = canvas.height / canvas.width;
       const pageWidth = 8.5; // inches
-      const pageHeight = Math.min(11, pageWidth * canvasRatio);
+      const renderedPageHeight = Math.min(11, pageWidth * canvasRatio);
       
-      pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, pageHeight);
+      pdf.addImage(imgData, 'JPEG', 0, 0, pageWidth, renderedPageHeight);
     }
     
     // Save the PDF
