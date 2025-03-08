@@ -6,7 +6,7 @@ import ActivityCard from './ActivityCard';
 interface ActivityListProps {
   groupedActivities: Record<string, SkillActivity[]>;
   savedActivities: SavedActivity[];
-  onSaveActivity: (activity: SkillActivity) => void;
+  onSaveActivity: (activity: SkillActivity, addToHabitTracker?: boolean) => void;
 }
 
 const ActivityList: React.FC<ActivityListProps> = ({ 

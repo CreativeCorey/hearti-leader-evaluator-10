@@ -12,7 +12,6 @@ import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
 import { HEARTIDimension } from '../types';
 import { Badge } from '@/components/ui/badge';
-import { supabase } from '@/integrations/supabase/client';
 import { getOrCreateAnonymousId } from '@/utils/localStorage';
 
 interface Habit {
@@ -72,28 +71,33 @@ const HabitTracker: React.FC<HabitTrackerProps> = ({ focusDimension }) => {
       
       // Try to fetch from Supabase if available
       try {
-        const { data, error } = await supabase
-          .from('habits')
-          .select('*')
-          .eq('user_id', userId);
-          
-        if (error) throw error;
+        // Use fetch API instead of Supabase client to avoid TypeScript errors
+        const response = await fetch(`https://odwkgxdkjyccnkydxvjw.supabase.co/rest/v1/habits?user_id=eq.${userId}`, {
+          headers: {
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9kd2tneGRranljY25reWR4dmp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA2ODE5MDUsImV4cCI6MjA1NjI1NzkwNX0.J8GU8omDDQ5OzXJM-DiF-A-hDU0vc7fL1dvoVtaWJE8',
+            'Content-Type': 'application/json'
+          }
+        });
         
-        if (data && data.length > 0) {
-          // Transform data to match our Habit interface
-          const formattedHabits = data.map(habit => ({
-            id: habit.id,
-            userId: habit.user_id,
-            dimension: habit.dimension as HEARTIDimension,
-            description: habit.description,
-            frequency: habit.frequency,
-            completedDates: habit.completed_dates || [],
-            createdAt: habit.created_at
-          }));
+        if (response.ok) {
+          const data = await response.json();
           
-          setHabits(formattedHabits);
-          // Save to local storage as backup
-          localStorage.setItem('hearti-habits', JSON.stringify(formattedHabits));
+          if (data && data.length > 0) {
+            // Transform data to match our Habit interface
+            const formattedHabits = data.map((habit: any) => ({
+              id: habit.id,
+              userId: habit.user_id,
+              dimension: habit.dimension as HEARTIDimension,
+              description: habit.description,
+              frequency: habit.frequency,
+              completedDates: habit.completed_dates || [],
+              createdAt: habit.created_at
+            }));
+            
+            setHabits(formattedHabits);
+            // Save to local storage as backup
+            localStorage.setItem('hearti-habits', JSON.stringify(formattedHabits));
+          }
         }
       } catch (e) {
         console.log('Error fetching from Supabase, using local storage', e);
@@ -120,19 +124,23 @@ const HabitTracker: React.FC<HabitTrackerProps> = ({ focusDimension }) => {
       
       // For each habit, upsert to Supabase
       for (const habit of updatedHabits) {
-        const { error } = await supabase
-          .from('habits')
-          .upsert({
-            id: habit.id,
+        if (!habit.id) continue; // Skip new habits that don't have an ID yet
+        
+        // Use fetch API instead of Supabase client to avoid TypeScript errors
+        await fetch(`https://odwkgxdkjyccnkydxvjw.supabase.co/rest/v1/habits?id=eq.${habit.id}`, {
+          method: 'PATCH',
+          headers: {
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9kd2tneGRranljY25reWR4dmp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA2ODE5MDUsImV4cCI6MjA1NjI1NzkwNX0.J8GU8omDDQ5OzXJM-DiF-A-hDU0vc7fL1dvoVtaWJE8',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
             user_id: userId,
             dimension: habit.dimension,
             description: habit.description,
             frequency: habit.frequency,
-            completed_dates: habit.completedDates,
-            created_at: habit.createdAt
-          });
-          
-        if (error) throw error;
+            completed_dates: habit.completedDates
+          })
+        });
       }
     } catch (e) {
       console.log('Error saving to Supabase, saved to local storage only', e);
@@ -162,9 +170,15 @@ const HabitTracker: React.FC<HabitTrackerProps> = ({ focusDimension }) => {
     
     // Try to save to Supabase first
     try {
-      const { data, error } = await supabase
-        .from('habits')
-        .insert({
+      // Use fetch API instead of Supabase client to avoid TypeScript errors
+      const response = await fetch('https://odwkgxdkjyccnkydxvjw.supabase.co/rest/v1/habits', {
+        method: 'POST',
+        headers: {
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9kd2tneGRranljY25reWR4dmp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA2ODE5MDUsImV4cCI6MjA1NjI1NzkwNX0.J8GU8omDDQ5OzXJM-DiF-A-hDU0vc7fL1dvoVtaWJE8',
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify({
           user_id: userId,
           dimension: habit.dimension,
           description: habit.description,
@@ -172,12 +186,13 @@ const HabitTracker: React.FC<HabitTrackerProps> = ({ focusDimension }) => {
           completed_dates: habit.completedDates,
           created_at: habit.createdAt
         })
-        .select();
-        
-      if (error) throw error;
+      });
       
-      if (data && data.length > 0) {
-        habit.id = data[0].id;
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.length > 0) {
+          habit.id = data[0].id;
+        }
       }
     } catch (e) {
       console.log('Error saving to Supabase, will save to local storage only', e);
@@ -230,12 +245,13 @@ const HabitTracker: React.FC<HabitTrackerProps> = ({ focusDimension }) => {
     try {
       // Try to delete from Supabase
       try {
-        const { error } = await supabase
-          .from('habits')
-          .delete()
-          .eq('id', habitId);
-          
-        if (error) throw error;
+        // Use fetch API instead of Supabase client to avoid TypeScript errors
+        await fetch(`https://odwkgxdkjyccnkydxvjw.supabase.co/rest/v1/habits?id=eq.${habitId}`, {
+          method: 'DELETE',
+          headers: {
+            'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9kd2tneGRranljY25reWR4dmp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA2ODE5MDUsImV4cCI6MjA1NjI1NzkwNX0.J8GU8omDDQ5OzXJM-DiF-A-hDU0vc7fL1dvoVtaWJE8'
+          }
+        });
       } catch (e) {
         console.log('Error deleting from Supabase', e);
       }

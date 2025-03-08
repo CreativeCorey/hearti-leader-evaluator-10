@@ -9,7 +9,7 @@ import { SkillActivity, SavedActivity, dimensionColors, dimensionTitles } from '
 interface ActivityCardProps {
   activity: SkillActivity;
   savedActivities: SavedActivity[];
-  onSave: (activity: SkillActivity) => void;
+  onSave: (activity: SkillActivity, addToHabitTracker?: boolean) => void;
 }
 
 const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, onSave }) => {
@@ -26,16 +26,28 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
           </div>
           <p className="text-sm">{activity.description}</p>
         </div>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="ml-2 flex items-center gap-1" 
-          onClick={() => onSave(activity)}
-          disabled={isAlreadySaved}
-        >
-          <Bookmark size={16} />
-          {isAlreadySaved ? 'Saved' : 'Save'}
-        </Button>
+        <div className="flex flex-col gap-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="ml-2 flex items-center gap-1" 
+            onClick={() => onSave(activity, false)}
+            disabled={isAlreadySaved}
+          >
+            <Bookmark size={16} />
+            {isAlreadySaved ? 'Saved' : 'Save'}
+          </Button>
+          {!isAlreadySaved && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="ml-2 text-xs" 
+              onClick={() => onSave(activity, true)}
+            >
+              Save & Track
+            </Button>
+          )}
+        </div>
       </div>
     </Card>
   );
