@@ -14,18 +14,12 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
   const [exportingPdf, setExportingPdf] = useState(false);
   const reportRef = useRef<HTMLDivElement>(null);
   
-  // Get dimension scores sorted for development and strength areas
-  const dimensionScores = assessment.dimensionScores;
-  const sortedDimensions = Object.entries(dimensionScores)
-    .sort(([, a], [, b]) => a - b);
-  
   // Get top development area (lowest scoring dimension)
-  const topDevelopmentArea = sortedDimensions[0][0] as 
-    'humility' | 'empathy' | 'accountability' | 'resiliency' | 'transparency' | 'inclusivity';
-    
-  // Get top strength area (highest scoring dimension)
-  const topStrength = sortedDimensions[sortedDimensions.length - 1][0] as
-    'humility' | 'empathy' | 'accountability' | 'resiliency' | 'transparency' | 'inclusivity';
+  const dimensionScores = assessment.dimensionScores;
+  const topDevelopmentArea = 
+    Object.entries(dimensionScores)
+      .sort(([, a], [, b]) => a - b)[0][0] as 
+      'humility' | 'empathy' | 'accountability' | 'resiliency' | 'transparency' | 'inclusivity';
   
   const handleExportPDF = async () => {
     if (!reportRef.current) return;
@@ -73,7 +67,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
         onExportPDF={handleExportPDF}
         exportingPdf={exportingPdf}
         topDevelopmentArea={topDevelopmentArea}
-        topStrength={topStrength}
       />
     </Tabs>
   );

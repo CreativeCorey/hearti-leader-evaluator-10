@@ -13,10 +13,9 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 interface SkillDevelopmentProps {
   focusDimension?: HEARTIDimension;
-  topStrength?: HEARTIDimension;
 }
 
-const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension, topStrength }) => {
+const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension }) => {
   const isMobile = useIsMobile();
   const [activeDimension, setActiveDimension] = useState<HEARTIDimension | 'all'>(focusDimension || 'all');
   const [activeView, setActiveView] = useState<'explore' | 'saved'>('explore');
@@ -59,8 +58,7 @@ const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension, top
           HEARTI Skill Development
         </CardTitle>
         <CardDescription className="text-white/90">
-          Choose behaviors from both your strength area ({topStrength ? topStrength.toUpperCase() : 'strength'}) and 
-          vulnerability area ({focusDimension ? focusDimension.toUpperCase() : 'vulnerability'})
+          Choose 3 behaviors to practice 21 times to master your HEARTI leadership dimensions
         </CardDescription>
       </CardHeader>
       <CardContent className={`${isMobile ? 'p-3' : 'p-6'}`}>
@@ -115,8 +113,6 @@ const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension, top
               groupedActivities={groupedActivities} 
               savedActivities={savedActivities}
               onSaveActivity={saveActivity}
-              focusDimension={focusDimension}
-              topStrength={topStrength}
             />
           ) : (
             <SavedActivityList 
@@ -129,7 +125,7 @@ const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension, top
         </Tabs>
       </CardContent>
       <CardFooter className="bg-gray-50 p-4 text-sm text-muted-foreground rounded-b-lg">
-        <p>Select a balanced mix of 3 behaviors that address both your strengths ({topStrength ? topStrength.toUpperCase() : ''}) and vulnerability areas ({focusDimension ? focusDimension.toUpperCase() : ''}). Practice each 21 times to form lasting habits.</p>
+        <p>Select 3 behaviors that balance your strengths and vulnerability areas. Practice each 21 times to form lasting habits.</p>
       </CardFooter>
     </Card>
   );

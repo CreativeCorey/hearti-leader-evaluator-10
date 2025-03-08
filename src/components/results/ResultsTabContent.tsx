@@ -17,7 +17,6 @@ interface ResultsTabContentProps {
   onExportPDF: () => Promise<void>;
   exportingPdf: boolean;
   topDevelopmentArea: HEARTIDimension;
-  topStrength: HEARTIDimension;
 }
 
 const ResultsTabContent: React.FC<ResultsTabContentProps> = ({ 
@@ -25,8 +24,7 @@ const ResultsTabContent: React.FC<ResultsTabContentProps> = ({
   reportRef, 
   onExportPDF, 
   exportingPdf,
-  topDevelopmentArea,
-  topStrength
+  topDevelopmentArea
 }) => {
   return (
     <>
@@ -69,7 +67,7 @@ const ResultsTabContent: React.FC<ResultsTabContentProps> = ({
       </TabsContent>
       
       <TabsContent value="development" className="space-y-6">
-        <DevelopmentTab focusDimension={topDevelopmentArea} topStrength={topStrength} />
+        <DevelopmentTab focusDimension={topDevelopmentArea} />
       </TabsContent>
       
       <TabsContent value="habits" className="space-y-6">

@@ -6,10 +6,9 @@ import SkillDevelopment from '../SkillDevelopment';
 
 interface DevelopmentTabProps {
   focusDimension: HEARTIDimension;
-  topStrength: HEARTIDimension;
 }
 
-const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension, topStrength }) => {
+const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
   return (
     <div className="mb-4">
       <div className="bg-indigo-50 border-l-4 border-indigo-400 p-4 mb-6 rounded-md">
@@ -18,18 +17,15 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension, topStre
           Development Recommendations
         </h3>
         <p className="text-indigo-700 mt-1">
-          Select behaviors below that balance your leadership profile. We recommend including:
+          Choose 3 behaviors below that will help strengthen your leadership dimensions. We recommend focusing on your development area: 
+          <strong className="uppercase"> {focusDimension}</strong>
         </p>
-        <ul className="list-disc ml-5 text-indigo-700 mt-2">
-          <li>Behaviors from your strength area: <strong className="uppercase">{topStrength}</strong></li>
-          <li>Behaviors from your development area: <strong className="uppercase">{focusDimension}</strong></li>
-        </ul>
         <p className="text-indigo-700 mt-2 text-sm">
-          Choose a total of 3 behaviors and practice each 21 times to form lasting habits.
+          Practice each behavior 21 times to develop a new habit and master the skill.
         </p>
       </div>
       
-      <SkillDevelopment focusDimension={focusDimension} topStrength={topStrength} />
+      <SkillDevelopment focusDimension={focusDimension} />
     </div>
   );
 };
