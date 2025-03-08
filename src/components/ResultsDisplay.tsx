@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { format } from 'date-fns';
 import { 
@@ -176,55 +175,44 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
         description: "Please wait while we generate your report...",
       });
       
-      // Create PDF document
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
         format: 'a4'
       });
       
-      // PDF dimensions
       const pageWidth = 210;  // A4 width in mm
       const pageHeight = 297; // A4 height in mm
       const margin = 10;      // margin in mm
       const contentWidth = pageWidth - (margin * 2);
       
-      // Store all report sections
       const reportSections = [];
       
-      // Function to add a new section to our array
       const addSection = (element) => {
         if (!element) return;
         reportSections.push(element);
       };
       
-      // Select all major sections in the report
       const introSection = reportRef.current.querySelector('.prose:first-child');
       const spectraSection = reportRef.current.querySelector('.my-8');
       const dimensionCards = reportRef.current.querySelectorAll('.mb-8.overflow-hidden');
       const conclusionCard = reportRef.current.querySelector('.mb-8:not(.overflow-hidden)');
       
-      // Add intro
       addSection(introSection);
       
-      // Add spectra visualization
       addSection(spectraSection);
       
-      // Add each dimension card as a separate section
       dimensionCards.forEach(card => {
         addSection(card);
       });
       
-      // Add conclusion
       addSection(conclusionCard);
       
-      // Process each section
       let currentPage = 1;
       
       for (let i = 0; i < reportSections.length; i++) {
         const section = reportSections[i];
         
-        // Create a temporary div to hold the current section
         const tempDiv = document.createElement('div');
         tempDiv.style.position = 'absolute';
         tempDiv.style.top = '0';
@@ -233,12 +221,10 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
         tempDiv.style.background = 'white';
         tempDiv.style.overflow = 'hidden';
         
-        // Clone the section into our temp div
         const sectionClone = section.cloneNode(true);
         tempDiv.appendChild(sectionClone);
         document.body.appendChild(tempDiv);
         
-        // Render to canvas
         const canvas = await html2canvas(tempDiv, {
           scale: 2,
           logging: false,
@@ -246,20 +232,16 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
           backgroundColor: 'white'
         });
         
-        // Clean up
         document.body.removeChild(tempDiv);
         
-        // Calculate image dimensions
         const imgWidth = contentWidth;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         
-        // If not the first section, add a new page
         if (i > 0) {
           pdf.addPage();
           currentPage++;
         }
         
-        // Add image centered on page
         pdf.addImage(
           canvas.toDataURL('image/png'),
           'PNG',
@@ -269,7 +251,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
           imgHeight
         );
         
-        // Add page number
         pdf.setFontSize(10);
         pdf.setTextColor(100, 100, 100);
         pdf.text(
@@ -280,7 +261,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
         );
       }
       
-      // Save the PDF
       pdf.save(fileName);
       
       toast({
@@ -706,8 +686,8 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
                           </Badge>
                           <span className="ml-2 text-sm">
                             {status === 'strength' ? '(Strength)' : 
-                             status === 'vulnerability' ? '(Development Area)' : 
-                             '(Within norms)'}
+                             status === 'vulnerability' ? '(Vulnerability)' : 
+                             '(Evolving)'}
                           </span>
                         </div>
                       </div>
