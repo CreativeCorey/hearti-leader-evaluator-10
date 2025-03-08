@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Calendar } from 'lucide-react';
+import { Hexagon } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { HEARTIDimension } from '@/types';
 import HabitTrackerCore from './habit-tracker/HabitTrackerCore';
@@ -17,7 +17,7 @@ const HabitTracker: React.FC<HabitTrackerProps> = ({ focusDimension }) => {
     <Card className="shadow-lg border-0 overflow-hidden">
       <CardHeader className="bg-gradient-to-r from-blue to-light-blue text-white">
         <CardTitle className="text-2xl flex items-center gap-2">
-          <Calendar className="text-white" size={24} />
+          <Hexagon className="text-white" size={24} />
           HEARTI™ Habit Tracker
         </CardTitle>
         <CardDescription className="text-blue-100">

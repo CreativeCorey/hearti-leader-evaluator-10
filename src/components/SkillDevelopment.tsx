@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Target, ListFilter } from 'lucide-react';
+import { Hexagon, ListFilter } from 'lucide-react';
 import { HEARTIDimension } from '../types';
 import { activityData } from '@/data/heartActivities';
 import { useActivities } from '@/hooks/useActivities';
@@ -54,7 +54,7 @@ const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension }) =
     <Card className="shadow-md border-0">
       <CardHeader className="bg-gradient-to-r from-orange to-yellow rounded-t-lg">
         <CardTitle className="text-2xl flex items-center gap-2 text-white">
-          <Target className="text-white" size={24} />
+          <Hexagon className="text-white" size={24} />
           HEARTI Skill Development
         </CardTitle>
         <CardDescription className="text-white/90">

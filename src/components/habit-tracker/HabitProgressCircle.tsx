@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { HEARTIDimension } from '@/types';
+import { Hexagon } from 'lucide-react';
 
 interface HabitProgressCircleProps {
   percentage: number;
@@ -64,10 +65,12 @@ const HabitProgressCircle: React.FC<HabitProgressCircleProps> = ({
       
       {/* Display the value in the middle */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-3xl font-bold">
-          {percentage === 100 ? '✓' : '0'}
-        </span>
-        <span className="text-xs text-gray-500">
+        {percentage === 100 ? (
+          <Hexagon size={32} className="text-green fill-green/20" />
+        ) : (
+          <span className="text-3xl font-bold">0</span>
+        )}
+        <span className="text-xs text-gray-500 mt-1">
           {percentage === 100 ? 'Complete' : 'Tap to complete'}
         </span>
       </div>
