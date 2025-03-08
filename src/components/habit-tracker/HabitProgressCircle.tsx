@@ -13,7 +13,7 @@ interface HabitProgressCircleProps {
 }
 
 const dimensionProgressColors = {
-  humility: { bg: '#E9D5FF', progress: '#9333EA' },
+  humility: { bg: '#E9D5FF', progress: '#9b87f5' },
   empathy: { bg: '#DBEAFE', progress: '#3B82F6' },
   accountability: { bg: '#DCFCE7', progress: '#22C55E' },
   resiliency: { bg: '#FEF3C7', progress: '#F59E0B' },
