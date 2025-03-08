@@ -128,33 +128,6 @@
   .pdf-container .recharts-wrapper {
     page-break-inside: avoid;
   }
-  
-  /* Custom styles for spider charts */
-  .recharts-polar-grid-concentric-circle {
-    stroke-opacity: 0.5;
-    stroke-dasharray: 3 3;
-  }
-  
-  .recharts-polar-grid-concentric-polygon {
-    stroke-opacity: 0.5;
-  }
-  
-  .recharts-polar-angle-axis-line {
-    stroke-opacity: 0.3;
-  }
-  
-  .recharts-radar-curve {
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-  
-  .recharts-radar-polygon {
-    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
-  }
-  
-  .radar-line {
-    transition: all 0.3s ease;
-  }
 
   /* ====================================
    * 4. DIMENSION CARDS STYLING

@@ -30,14 +30,6 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ assessment }) => {
   
   const userColor = "#6366f1";
 
-  // Spider chart configuration
-  const spiderConfig = {
-    gridType: "circle" as "polygon" | "circle",
-    axisLineType: "circle" as "polygon" | "circle",
-    fillOpacity: 0.6,
-    strokeWidth: 2,
-  };
-
   return (
     <div className="flex flex-col lg:flex-row gap-8">
       <div className="flex-1">
@@ -45,23 +37,15 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ assessment }) => {
         <div className="bg-slate-50 p-4 rounded-lg h-[400px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
-              <PolarGrid gridType={spiderConfig.gridType} />
-              <PolarAngleAxis 
-                dataKey="name" 
-                tick={{ fill: '#6b7280' }}
-                axisLineType={spiderConfig.axisLineType} 
-              />
+              <PolarGrid gridType="polygon" />
+              <PolarAngleAxis dataKey="name" tick={{ fill: '#6b7280' }} />
               <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280' }} />
               <Radar
                 name="Your Score"
                 dataKey="value"
                 stroke={userColor}
                 fill={userColor}
-                fillOpacity={spiderConfig.fillOpacity}
-                strokeWidth={spiderConfig.strokeWidth}
-                dot={{ r: 4, strokeWidth: 1, fill: "white", stroke: userColor }}
-                activeDot={{ r: 8, strokeWidth: 1, fill: userColor }}
-                className="radar-line"
+                fillOpacity={0.6}
               />
               <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
               <Legend />
