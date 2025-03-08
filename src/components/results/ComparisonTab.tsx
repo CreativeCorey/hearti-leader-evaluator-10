@@ -98,10 +98,10 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
   });
 
   const getBadgeVariant = (score: number) => {
-    if (score >= 4.5) return "default";
-    if (score >= 3.5) return "secondary";
-    if (score >= 2.5) return "outline";
-    return "destructive";
+    if (score >= 4.5) return "gradient-green";
+    if (score >= 3.5) return "gradient-blue";
+    if (score >= 2.5) return "gradient";
+    return "gradient-red";
   };
 
   const getComparisonLabel = () => {
@@ -113,11 +113,12 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
     }
   };
 
+  // Modern gradient colors matching the palette
   const userColor = "#6366f1";
   const comparisonColors = {
-    average: "#8b5cf6",
-    men: "#ec4899",
-    women: "#f97316"
+    average: "#9E0059", // Purple from gradient
+    men: "#E02639", // Red from gradient
+    women: "#390099" // Blue from gradient
   };
 
   const getComparisonColor = () => {
@@ -147,25 +148,25 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
           </Button>
           <Button 
             size="sm" 
-            variant={compareMode === 'average' ? "default" : "outline"}
+            variant={compareMode === 'average' ? "gradient-purple" : "outline"}
             onClick={() => setCompareMode('average')}
-            className="bg-purple-600 hover:bg-purple-700"
+            className="hover:bg-purple-700"
           >
             <Users size={16} className="mr-1" /> Average
           </Button>
           <Button 
             size="sm" 
-            variant={compareMode === 'men' ? "default" : "outline"}
+            variant={compareMode === 'men' ? "gradient-red" : "outline"}
             onClick={() => setCompareMode('men')}
-            className="bg-pink-600 hover:bg-pink-700"
+            className="hover:bg-red-700"
           >
             Men
           </Button>
           <Button 
             size="sm" 
-            variant={compareMode === 'women' ? "default" : "outline"}
+            variant={compareMode === 'women' ? "gradient-blue" : "outline"}
             onClick={() => setCompareMode('women')}
-            className="bg-orange-500 hover:bg-orange-600"
+            className="hover:bg-blue-700"
           >
             Women
           </Button>
@@ -176,7 +177,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
         <div className="p-1 inline-flex items-center justify-center rounded-lg bg-muted text-xs mb-4">
           <Button 
             size="sm" 
-            variant={chartView === 'combined' ? "default" : "ghost"}
+            variant={chartView === 'combined' ? "gradient" : "ghost"}
             className="rounded-md text-xs h-7"
             onClick={() => setChartView('combined')}
           >
@@ -184,7 +185,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
           </Button>
           <Button 
             size="sm" 
-            variant={chartView === 'separate' ? "default" : "ghost"}
+            variant={chartView === 'separate' ? "gradient" : "ghost"}
             className="rounded-md text-xs h-7"
             onClick={() => setChartView('separate')}
           >
