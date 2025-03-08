@@ -19,6 +19,10 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				'sans': ['Proxima Nova', 'system-ui', 'sans-serif'],
+				'heading': ['"Century Gothic Pro"', 'Century Gothic', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

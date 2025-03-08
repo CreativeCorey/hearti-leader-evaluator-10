@@ -1,8 +1,14 @@
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  font-family: 'Proxima Nova', system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Century Gothic Pro', 'Century Gothic', sans-serif;
 }
 
 .logo {
