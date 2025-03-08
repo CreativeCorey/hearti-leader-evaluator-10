@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -139,3 +138,33 @@
   transform: scale(1.05);
 }
 
+.mobile-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  width: 100%;
+  justify-content: center;
+  overflow-x: auto;
+}
+
+.mobile-tab {
+  flex: 0 0 auto;
+  min-width: 70px;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .mobile-tabs-container {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .mobile-tab {
+    min-width: 60px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}

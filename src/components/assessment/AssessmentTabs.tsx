@@ -8,6 +8,7 @@ import HistoricalResults from '@/components/HistoricalResults';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Loader2 } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface AssessmentTabsProps {
   activeTab: 'take' | 'results';
@@ -28,12 +29,16 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
   testingSheets,
   sendLatestToSheets
 }) => {
+  const isMobile = useIsMobile();
+
   return (
     <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'take' | 'results')}>
-      <TabsList className="mb-8">
-        <TabsTrigger value="take" className="flex-1">Take Assessment</TabsTrigger>
-        <TabsTrigger value="results" className="flex-1" disabled={userAssessments.length === 0}>View Results</TabsTrigger>
-      </TabsList>
+      <div className="mobile-tabs-container">
+        <TabsList className={`mb-8 w-full ${isMobile ? 'mobile-tabs' : ''}`}>
+          <TabsTrigger value="take" className={`flex-1 ${isMobile ? 'mobile-tab' : ''}`}>Take Assessment</TabsTrigger>
+          <TabsTrigger value="results" className={`flex-1 ${isMobile ? 'mobile-tab' : ''}`} disabled={userAssessments.length === 0}>View Results</TabsTrigger>
+        </TabsList>
+      </div>
       
       <TabsContent value="take">
         <AssessmentForm onComplete={onComplete} />

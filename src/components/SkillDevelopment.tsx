@@ -53,24 +53,6 @@ const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension }) =
     activeDimension === 'all' || activity.dimension === activeDimension
   );
 
-  // Function to render dimension tabs based on screen size
-  const renderDimensionTabs = () => (
-    <TabsList className={`${isMobile ? 'grid grid-cols-4 mb-2' : 'grid grid-cols-7'} w-full`}>
-      <TabsTrigger value="all">All</TabsTrigger>
-      <TabsTrigger value="humility">{isMobile ? 'H' : 'Humility'}</TabsTrigger>
-      <TabsTrigger value="empathy">{isMobile ? 'E' : 'Empathy'}</TabsTrigger>
-      <TabsTrigger value="accountability">{isMobile ? 'A' : 'Account.'}</TabsTrigger>
-      {isMobile && (
-        <TabsTrigger value="resiliency" className="col-start-1 mt-1">R</TabsTrigger>
-      )}
-      {!isMobile && (
-        <TabsTrigger value="resiliency">Resiliency</TabsTrigger>
-      )}
-      <TabsTrigger value="transparency">{isMobile ? 'T' : 'Transp.'}</TabsTrigger>
-      <TabsTrigger value="inclusivity">{isMobile ? 'I' : 'Inclusivity'}</TabsTrigger>
-    </TabsList>
-  );
-  
   return (
     <Card className="shadow-md border-0">
       <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-t-lg">
@@ -84,8 +66,30 @@ const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension }) =
       </CardHeader>
       <CardContent className={`${isMobile ? 'p-3' : 'p-6'}`}>
         <Tabs defaultValue={activeDimension} onValueChange={(value) => setActiveDimension(value as HEARTIDimension | 'all')}>
-          <div className={`flex flex-col ${isMobile ? 'gap-2' : 'md:flex-row md:justify-between md:items-center gap-4'} mb-6`}>
-            {renderDimensionTabs()}
+          <div className="flex flex-col gap-4 mb-6">
+            <div className="mobile-tabs-container overflow-hidden">
+              <TabsList className={`${isMobile ? 'mobile-tabs' : ''}`}>
+                <TabsTrigger value="all" className={`${isMobile ? 'mobile-tab' : ''}`}>All</TabsTrigger>
+                <TabsTrigger value="humility" className={`${isMobile ? 'mobile-tab' : ''}`}>
+                  {isMobile ? 'H' : 'Humility'}
+                </TabsTrigger>
+                <TabsTrigger value="empathy" className={`${isMobile ? 'mobile-tab' : ''}`}>
+                  {isMobile ? 'E' : 'Empathy'}
+                </TabsTrigger>
+                <TabsTrigger value="accountability" className={`${isMobile ? 'mobile-tab' : ''}`}>
+                  {isMobile ? 'A' : 'Account.'}
+                </TabsTrigger>
+                <TabsTrigger value="resiliency" className={`${isMobile ? 'mobile-tab' : ''}`}>
+                  {isMobile ? 'R' : 'Resiliency'}
+                </TabsTrigger>
+                <TabsTrigger value="transparency" className={`${isMobile ? 'mobile-tab' : ''}`}>
+                  {isMobile ? 'T' : 'Transp.'}
+                </TabsTrigger>
+                <TabsTrigger value="inclusivity" className={`${isMobile ? 'mobile-tab' : ''}`}>
+                  {isMobile ? 'I' : 'Inclusivity'}
+                </TabsTrigger>
+              </TabsList>
+            </div>
             
             <div className="p-1 inline-flex items-center justify-center rounded-lg bg-muted text-xs">
               <Button 
