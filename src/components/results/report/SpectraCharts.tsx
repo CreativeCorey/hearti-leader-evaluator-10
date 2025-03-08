@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { HEARTIAssessment } from '@/types';
-import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer } from 'recharts';
+import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Area } from 'recharts';
 import { formatDataForRadarChart } from '@/utils/calculations';
 
 interface SpectraChartsProps {
@@ -21,9 +21,20 @@ const aggregateData = {
 
 const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
   const chartData = formatDataForRadarChart(assessment.dimensionScores);
+  const benchmarkData = formatDataForRadarChart(aggregateData.averageScores);
+  
   const userColor = "#6366f1";
   const comparisonColors = {
     average: "#8b5cf6",
+  };
+
+  // Configuration for the spider chart appearance
+  const spiderConfig = {
+    gridType: "polygon",
+    axisLineType: "polygon",
+    outerRadius: 80,
+    fillOpacity: 0.5,
+    strokeWidth: 2,
   };
 
   return (
@@ -34,12 +45,17 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
           <p className="text-center font-medium text-xl text-indigo-600 mb-4">Your Results</p>
           <div className="h-[550px] pdf-chart-container">
             <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="80%" data={chartData}>
-                <PolarGrid gridType="polygon" />
+              <RadarChart 
+                cx="50%" 
+                cy="50%" 
+                outerRadius={`${spiderConfig.outerRadius}%`} 
+                data={chartData}
+              >
+                <PolarGrid gridType={spiderConfig.gridType} />
                 <PolarAngleAxis 
                   dataKey="name" 
                   tick={{ fill: '#6b7280', fontSize: 14, fontWeight: 'bold' }} 
-                  axisLineType="polygon"
+                  axisLineType={spiderConfig.axisLineType}
                 />
                 <PolarRadiusAxis 
                   angle={30} 
@@ -51,8 +67,12 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
                   dataKey="value"
                   stroke={userColor}
                   fill={userColor}
-                  fillOpacity={0.6}
-                  strokeWidth={2}
+                  fillOpacity={spiderConfig.fillOpacity}
+                  strokeWidth={spiderConfig.strokeWidth}
+                  // The following properties make it more "spider-like"
+                  dot={true}
+                  activeDot={{ r: 8 }}
+                  isAnimationActive={true}
                 />
               </RadarChart>
             </ResponsiveContainer>
@@ -63,12 +83,17 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
           <p className="text-center font-medium text-xl text-purple-600 mb-4">Global Benchmark</p>
           <div className="h-[550px] pdf-chart-container">
             <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="80%" data={formatDataForRadarChart(aggregateData.averageScores)}>
-                <PolarGrid gridType="polygon" />
+              <RadarChart 
+                cx="50%" 
+                cy="50%" 
+                outerRadius={`${spiderConfig.outerRadius}%`} 
+                data={benchmarkData}
+              >
+                <PolarGrid gridType={spiderConfig.gridType} />
                 <PolarAngleAxis 
                   dataKey="name" 
                   tick={{ fill: '#6b7280', fontSize: 14, fontWeight: 'bold' }} 
-                  axisLineType="polygon"
+                  axisLineType={spiderConfig.axisLineType}
                 />
                 <PolarRadiusAxis 
                   angle={30} 
@@ -80,8 +105,12 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
                   dataKey="value"
                   stroke={comparisonColors.average}
                   fill={comparisonColors.average}
-                  fillOpacity={0.6}
-                  strokeWidth={2}
+                  fillOpacity={spiderConfig.fillOpacity}
+                  strokeWidth={spiderConfig.strokeWidth}
+                  // The following properties make it more "spider-like"
+                  dot={true}
+                  activeDot={{ r: 8 }}
+                  isAnimationActive={true}
                 />
               </RadarChart>
             </ResponsiveContainer>
