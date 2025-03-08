@@ -59,25 +59,25 @@ const HabitTrackerCore: React.FC<HabitTrackerCoreProps> = ({ focusDimension }) =
       </div>
     
       <Tabs defaultValue={activeDimension} onValueChange={(value) => setActiveDimension(value as HEARTIDimension | 'all')}>
-        <div className="mobile-tabs-container mb-4 overflow-hidden">
-          <TabsList className={`${isMobile ? 'mobile-tabs' : ''}`}>
-            <TabsTrigger value="all" className={`${isMobile ? 'mobile-tab' : ''}`}>All</TabsTrigger>
-            <TabsTrigger value="humility" className={`${isMobile ? 'mobile-tab' : ''}`}>
+        <div className="mobile-tabs-container">
+          <TabsList className={isMobile ? 'mobile-tabs' : ''}>
+            <TabsTrigger value="all" className={isMobile ? 'mobile-tab' : ''}>All</TabsTrigger>
+            <TabsTrigger value="humility" className={isMobile ? 'mobile-tab' : ''}>
               {isMobile ? "H" : "Humility"}
             </TabsTrigger>
-            <TabsTrigger value="empathy" className={`${isMobile ? 'mobile-tab' : ''}`}>
+            <TabsTrigger value="empathy" className={isMobile ? 'mobile-tab' : ''}>
               {isMobile ? "E" : "Empathy"}
             </TabsTrigger>
-            <TabsTrigger value="accountability" className={`${isMobile ? 'mobile-tab' : ''}`}>
+            <TabsTrigger value="accountability" className={isMobile ? 'mobile-tab' : ''}>
               {isMobile ? "A" : "Account."}
             </TabsTrigger>
-            <TabsTrigger value="resiliency" className={`${isMobile ? 'mobile-tab' : ''}`}>
+            <TabsTrigger value="resiliency" className={isMobile ? 'mobile-tab' : ''}>
               {isMobile ? "R" : "Resiliency"}
             </TabsTrigger>
-            <TabsTrigger value="transparency" className={`${isMobile ? 'mobile-tab' : ''}`}>
+            <TabsTrigger value="transparency" className={isMobile ? 'mobile-tab' : ''}>
               {isMobile ? "T" : "Transp."}
             </TabsTrigger>
-            <TabsTrigger value="inclusivity" className={`${isMobile ? 'mobile-tab' : ''}`}>
+            <TabsTrigger value="inclusivity" className={isMobile ? 'mobile-tab' : ''}>
               {isMobile ? "I" : "Inclusivity"}
             </TabsTrigger>
           </TabsList>
