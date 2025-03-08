@@ -3,6 +3,7 @@ import React from 'react';
 import { HEARTIAssessment } from '@/types';
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer } from 'recharts';
 import { formatDataForRadarChart } from '@/utils/calculations';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface SpectraChartsProps {
   assessment: HEARTIAssessment;
@@ -20,6 +21,7 @@ const aggregateData = {
 };
 
 const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
+  const isMobile = useIsMobile();
   const chartData = formatDataForRadarChart(assessment.dimensionScores);
   const benchmarkData = formatDataForRadarChart(aggregateData.averageScores);
   
@@ -30,11 +32,13 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
 
   // Configuration for the spider chart appearance
   const spiderConfig = {
-    gridType: "polygon" as "polygon" | "circle",
-    axisLineType: "polygon" as "polygon" | "circle",
+    gridType: "circle" as "circle",
+    axisLineType: "circle" as "circle",
     outerRadius: 80,
     fillOpacity: 0.5,
     strokeWidth: 2,
+    dotSize: 5,
+    activeDotSize: 8,
   };
 
   return (
@@ -54,13 +58,18 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
                 <PolarGrid gridType={spiderConfig.gridType} />
                 <PolarAngleAxis 
                   dataKey="name" 
-                  tick={{ fill: '#6b7280', fontSize: 14, fontWeight: 'bold' }} 
+                  tick={{ 
+                    fill: '#6b7280', 
+                    fontSize: isMobile ? 10 : 14, 
+                    fontWeight: 'bold' 
+                  }} 
                   axisLineType={spiderConfig.axisLineType}
+                  tickLine={false}
                 />
                 <PolarRadiusAxis 
                   angle={30} 
                   domain={[0, 5]} 
-                  tick={{ fill: '#6b7280', fontSize: 12 }} 
+                  tick={{ fill: '#6b7280', fontSize: isMobile ? 8 : 12 }} 
                 />
                 <Radar
                   name="Your Score"
@@ -69,9 +78,8 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
                   fill={userColor}
                   fillOpacity={spiderConfig.fillOpacity}
                   strokeWidth={spiderConfig.strokeWidth}
-                  // The following properties make it more "spider-like"
                   dot={true}
-                  activeDot={{ r: 8 }}
+                  activeDot={{ r: spiderConfig.activeDotSize }}
                   isAnimationActive={true}
                 />
               </RadarChart>
@@ -92,13 +100,18 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
                 <PolarGrid gridType={spiderConfig.gridType} />
                 <PolarAngleAxis 
                   dataKey="name" 
-                  tick={{ fill: '#6b7280', fontSize: 14, fontWeight: 'bold' }} 
+                  tick={{ 
+                    fill: '#6b7280', 
+                    fontSize: isMobile ? 10 : 14, 
+                    fontWeight: 'bold' 
+                  }} 
                   axisLineType={spiderConfig.axisLineType}
+                  tickLine={false}
                 />
                 <PolarRadiusAxis 
                   angle={30} 
                   domain={[0, 5]} 
-                  tick={{ fill: '#6b7280', fontSize: 12 }} 
+                  tick={{ fill: '#6b7280', fontSize: isMobile ? 8 : 12 }} 
                 />
                 <Radar
                   name="Global Average"
@@ -107,9 +120,8 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
                   fill={comparisonColors.average}
                   fillOpacity={spiderConfig.fillOpacity}
                   strokeWidth={spiderConfig.strokeWidth}
-                  // The following properties make it more "spider-like"
                   dot={true}
-                  activeDot={{ r: 8 }}
+                  activeDot={{ r: spiderConfig.activeDotSize }}
                   isAnimationActive={true}
                 />
               </RadarChart>

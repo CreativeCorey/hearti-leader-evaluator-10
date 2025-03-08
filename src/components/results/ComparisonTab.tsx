@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Users } from 'lucide-react';
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { formatDataForRadarChart } from '@/utils/calculations';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ComparisonTabProps {
   assessment: HEARTIAssessment;
@@ -44,6 +45,7 @@ const aggregateData = {
 };
 
 const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
+  const isMobile = useIsMobile();
   const [compareMode, setCompareMode] = useState<'none' | 'average' | 'men' | 'women'>('none');
   const [chartView, setChartView] = useState<'combined' | 'separate'>('combined');
   
@@ -51,6 +53,16 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
   const sortedDimensions = Object.entries(assessment.dimensionScores)
     .sort(([, a], [, b]) => b - a)
     .map(([dimension]) => dimension as HEARTIDimension);
+
+  // Spider chart configuration
+  const spiderConfig = {
+    gridType: "circle" as "circle",
+    axisLineType: "circle" as "circle",
+    strokeWidth: 2,
+    fillOpacity: 0.6,
+    dotSize: 5,
+    activeDotSize: 8,
+  };
 
   const getComparisonData = () => {
     if (compareMode === 'none') {
@@ -184,15 +196,27 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
           <div className="bg-slate-50 p-6 rounded-lg h-[450px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="70%" data={combinedChartData}>
-                <PolarGrid gridType="polygon" />
-                <PolarAngleAxis dataKey="name" tick={{ fill: '#6b7280' }} />
+                <PolarGrid gridType={spiderConfig.gridType} />
+                <PolarAngleAxis 
+                  dataKey="name" 
+                  tick={{ 
+                    fill: '#6b7280', 
+                    fontSize: isMobile ? 10 : 12 
+                  }} 
+                  axisLineType={spiderConfig.axisLineType}
+                  tickLine={false}
+                />
                 <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280' }} />
                 <Radar
                   name="Your Score"
                   dataKey="value"
                   stroke={userColor}
                   fill={userColor}
-                  fillOpacity={0.6}
+                  fillOpacity={spiderConfig.fillOpacity}
+                  strokeWidth={spiderConfig.strokeWidth}
+                  dot={true}
+                  activeDot={{ r: spiderConfig.activeDotSize }}
+                  isAnimationActive={true}
                 />
                 {compareMode !== 'none' && (
                   <Radar
@@ -200,7 +224,11 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
                     dataKey="comparisonValue"
                     stroke={getComparisonColor()}
                     fill={getComparisonColor()}
-                    fillOpacity={0.6}
+                    fillOpacity={spiderConfig.fillOpacity}
+                    strokeWidth={spiderConfig.strokeWidth}
+                    dot={true}
+                    activeDot={{ r: spiderConfig.activeDotSize }}
+                    isAnimationActive={true}
                   />
                 )}
                 <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
@@ -214,15 +242,27 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
               <p className="text-center font-medium text-indigo-600 mb-2">Your Results</p>
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
-                  <PolarGrid gridType="polygon" />
-                  <PolarAngleAxis dataKey="name" tick={{ fill: '#6b7280', fontSize: 10 }} />
-                  <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280', fontSize: 10 }} />
+                  <PolarGrid gridType={spiderConfig.gridType} />
+                  <PolarAngleAxis 
+                    dataKey="name" 
+                    tick={{ 
+                      fill: '#6b7280', 
+                      fontSize: isMobile ? 8 : 10 
+                    }} 
+                    axisLineType={spiderConfig.axisLineType}
+                    tickLine={false}
+                  />
+                  <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280', fontSize: isMobile ? 8 : 10 }} />
                   <Radar
                     name="Your Score"
                     dataKey="value"
                     stroke={userColor}
                     fill={userColor}
-                    fillOpacity={0.6}
+                    fillOpacity={spiderConfig.fillOpacity}
+                    strokeWidth={spiderConfig.strokeWidth}
+                    dot={true}
+                    activeDot={{ r: spiderConfig.activeDotSize }}
+                    isAnimationActive={true}
                   />
                   <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
                 </RadarChart>
@@ -234,15 +274,27 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
                 <p className="text-center font-medium" style={{ color: getComparisonColor() }}>{getComparisonLabel()} Results</p>
                 <ResponsiveContainer width="100%" height="100%">
                   <RadarChart cx="50%" cy="50%" outerRadius="70%" data={getComparisonData()}>
-                    <PolarGrid gridType="polygon" />
-                    <PolarAngleAxis dataKey="name" tick={{ fill: '#6b7280', fontSize: 10 }} />
-                    <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280', fontSize: 10 }} />
+                    <PolarGrid gridType={spiderConfig.gridType} />
+                    <PolarAngleAxis 
+                      dataKey="name" 
+                      tick={{ 
+                        fill: '#6b7280', 
+                        fontSize: isMobile ? 8 : 10 
+                      }} 
+                      axisLineType={spiderConfig.axisLineType}
+                      tickLine={false}
+                    />
+                    <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280', fontSize: isMobile ? 8 : 10 }} />
                     <Radar
                       name={getComparisonLabel()}
                       dataKey="value"
                       stroke={getComparisonColor()}
                       fill={getComparisonColor()}
-                      fillOpacity={0.6}
+                      fillOpacity={spiderConfig.fillOpacity}
+                      strokeWidth={spiderConfig.strokeWidth}
+                      dot={true}
+                      activeDot={{ r: spiderConfig.activeDotSize }}
+                      isAnimationActive={true}
                     />
                     <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
                   </RadarChart>

@@ -6,12 +6,14 @@ import { formatDataForRadarChart, getFeedback } from '@/utils/calculations';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Target } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface OverviewTabProps {
   assessment: HEARTIAssessment;
 }
 
 const OverviewTab: React.FC<OverviewTabProps> = ({ assessment }) => {
+  const isMobile = useIsMobile();
   const chartData = formatDataForRadarChart(assessment.dimensionScores);
   
   const sortedDimensions = Object.entries(assessment.dimensionScores)
@@ -30,6 +32,16 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ assessment }) => {
   
   const userColor = "#6366f1";
 
+  // Spider chart configuration
+  const spiderConfig = {
+    gridType: "circle" as "circle",
+    axisLineType: "circle" as "circle",
+    strokeWidth: 2,
+    fillOpacity: 0.6,
+    dotSize: 5,
+    activeDotSize: 8,
+  };
+
   return (
     <div className="flex flex-col lg:flex-row gap-8">
       <div className="flex-1">
@@ -37,15 +49,27 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ assessment }) => {
         <div className="bg-slate-50 p-4 rounded-lg h-[400px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
-              <PolarGrid gridType="polygon" />
-              <PolarAngleAxis dataKey="name" tick={{ fill: '#6b7280' }} />
+              <PolarGrid gridType={spiderConfig.gridType} />
+              <PolarAngleAxis 
+                dataKey="name" 
+                tick={{ 
+                  fill: '#6b7280', 
+                  fontSize: isMobile ? 10 : 12 
+                }} 
+                axisLineType={spiderConfig.axisLineType}
+                tickLine={false}
+              />
               <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280' }} />
               <Radar
                 name="Your Score"
                 dataKey="value"
                 stroke={userColor}
                 fill={userColor}
-                fillOpacity={0.6}
+                fillOpacity={spiderConfig.fillOpacity}
+                strokeWidth={spiderConfig.strokeWidth}
+                dot={true}
+                activeDot={{ r: spiderConfig.activeDotSize }}
+                isAnimationActive={true}
               />
               <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
               <Legend />

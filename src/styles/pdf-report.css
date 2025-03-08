@@ -1,4 +1,3 @@
-
 /* 
  * PDF Report Stylesheet
  * 
@@ -119,14 +118,46 @@
     overflow: visible;
   }
   
-  .pdf-container .recharts-polar-angle-axis-tick text,
-  .pdf-container .recharts-polar-radius-axis-tick text {
+  .pdf-container .recharts-polar-angle-axis-tick text {
     font-size: 12pt !important;
     font-weight: bold;
   }
   
+  .pdf-container .recharts-polar-radius-axis-tick text {
+    font-size: 10pt !important;
+  }
+  
   .pdf-container .recharts-wrapper {
     page-break-inside: avoid;
+  }
+
+  /* Spider chart specific styling */
+  .pdf-container .recharts-polar-grid-concentric-circle {
+    stroke: #ddd;
+    stroke-width: 1px;
+  }
+  
+  .pdf-container .recharts-polar-grid-angle {
+    stroke: #ddd;
+    stroke-width: 1px;
+  }
+  
+  .pdf-container .recharts-polar-angle-axis-line {
+    stroke: #ddd;
+    stroke-width: 1px;
+  }
+  
+  .pdf-container .recharts-radar-polygon {
+    stroke-linejoin: round;
+  }
+  
+  .pdf-container .recharts-radar-curve {
+    stroke-linecap: round;
+  }
+  
+  .pdf-container .recharts-dot {
+    stroke-width: 1px;
+    stroke: white;
   }
 
   /* ====================================
