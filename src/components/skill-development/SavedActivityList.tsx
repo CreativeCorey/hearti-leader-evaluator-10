@@ -55,7 +55,7 @@ const SavedActivityList: React.FC<SavedActivityListProps> = ({
             
             return (
               <SavedActivityCard
-                key={savedActivity.id}
+                key={savedActivity.id} // Added key prop to fix the React warning
                 savedActivity={savedActivity}
                 activityDetails={activityDetails}
                 onToggleCompletion={onToggleCompletion}

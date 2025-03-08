@@ -127,6 +127,25 @@ export const useActivities = () => {
       // If the user wants to add this to the habit tracker
       if (addToHabitTracker) {
         try {
+          // Get habits from local storage first
+          const storedHabits = localStorage.getItem('hearti-habits');
+          const habits = storedHabits ? JSON.parse(storedHabits) : [];
+          
+          // Create a new habit
+          const newHabit = {
+            id: crypto.randomUUID(),
+            userId,
+            dimension: activity.dimension,
+            description: activity.description,
+            frequency: 'daily', // Default to daily
+            completedDates: [],
+            createdAt: new Date().toISOString()
+          };
+          
+          // Add to local storage
+          const updatedHabits = [...habits, newHabit];
+          localStorage.setItem('hearti-habits', JSON.stringify(updatedHabits));
+          
           // Add to habits table
           await fetch('https://odwkgxdkjyccnkydxvjw.supabase.co/rest/v1/habits', {
             method: 'POST',
