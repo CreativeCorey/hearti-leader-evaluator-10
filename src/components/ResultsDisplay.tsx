@@ -25,10 +25,12 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Heart, Users, Target, FileText, Download, Loader2 } from 'lucide-react';
+import { Heart, Users, Target, FileText, Download, Loader2, Calendar, Award } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import HabitTracker from './HabitTracker';
+import SkillDevelopment from './SkillDevelopment';
 
 interface ResultsDisplayProps {
   assessment: HEARTIAssessment;
@@ -296,6 +298,14 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
     return [...strengths, ...vulnerabilities, ...competentSkills];
   };
 
+  const getTopDevelopmentArea = (): HEARTIDimension => {
+    const sortedDimensions = Object.entries(assessment.dimensionScores)
+      .sort(([, a], [, b]) => a - b)
+      .map(([dimension]) => dimension as HEARTIDimension);
+    
+    return sortedDimensions[0];
+  };
+
   return (
     <div className="space-y-8">
       <Card className="appear-animate shadow-md border-0">
@@ -310,11 +320,13 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
         </CardHeader>
         <CardContent className="p-6">
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="mb-6 grid grid-cols-4 w-full">
+            <TabsList className="mb-6 grid grid-cols-6 w-full">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="dimensions">Dimensions</TabsTrigger>
               <TabsTrigger value="comparison">Comparison</TabsTrigger>
               <TabsTrigger value="report">Report</TabsTrigger>
+              <TabsTrigger value="habits">Habit Tracker</TabsTrigger>
+              <TabsTrigger value="development">Skill Development</TabsTrigger>
             </TabsList>
             
             <TabsContent value="overview" className="space-y-6">
@@ -753,6 +765,40 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
                 </Card>
               </div>
             </TabsContent>
+            
+            <TabsContent value="habits" className="space-y-6">
+              <div className="mb-4">
+                <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6 rounded-md">
+                  <h3 className="font-medium flex items-center gap-2 text-blue-800">
+                    <Calendar className="text-blue-600" size={20} />
+                    Habit Tracking for HEARTI Leadership
+                  </h3>
+                  <p className="text-blue-700 mt-1">
+                    Build consistent habits to strengthen your leadership skills. We recommend focusing on your development area: 
+                    <strong className="uppercase"> {getTopDevelopmentArea()}</strong>
+                  </p>
+                </div>
+                
+                <HabitTracker focusDimension={getTopDevelopmentArea()} />
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="development" className="space-y-6">
+              <div className="mb-4">
+                <div className="bg-indigo-50 border-l-4 border-indigo-400 p-4 mb-6 rounded-md">
+                  <h3 className="font-medium flex items-center gap-2 text-indigo-800">
+                    <Award className="text-indigo-600" size={20} />
+                    Skill Development Activities
+                  </h3>
+                  <p className="text-indigo-700 mt-1">
+                    Choose from targeted activities to improve your HEARTI leadership dimensions. We recommend focusing on your development area: 
+                    <strong className="uppercase"> {getTopDevelopmentArea()}</strong>
+                  </p>
+                </div>
+                
+                <SkillDevelopment focusDimension={getTopDevelopmentArea()} />
+              </div>
+            </TabsContent>
           </Tabs>
 
           {assessment.demographics && Object.keys(assessment.demographics).length > 0 && (
@@ -821,4 +867,3 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
 };
 
 export default ResultsDisplay;
-

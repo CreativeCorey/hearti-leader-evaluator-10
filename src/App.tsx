@@ -10,6 +10,8 @@ import Auth from "./pages/Auth";
 import AuthCallback from "./pages/AuthCallback";
 import AuthGuard from "./components/AuthGuard";
 import { AuthProvider } from "./contexts/AuthContext";
+import HabitTracker from "./components/HabitTracker";
+import SkillDevelopment from "./components/SkillDevelopment";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +27,8 @@ const App = () => (
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route element={<AuthGuard />}>
               <Route path="/" element={<Index />} />
+              <Route path="/habits" element={<HabitTracker />} />
+              <Route path="/skills" element={<SkillDevelopment />} />
               {/* ADD ALL PROTECTED ROUTES HERE */}
             </Route>
             {/* ADD ALL CUSTOM PUBLIC ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

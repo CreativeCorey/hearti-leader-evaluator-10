@@ -15,26 +15,6 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     params: {
       eventsPerSecond: 10
     }
-  },
-  global: {
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${SUPABASE_PUBLISHABLE_KEY}`
-    },
-    fetch: (...args) => {
-      // @ts-ignore - first argument is the input
-      const [url, options = {}] = args;
-      const headers = {
-        ...options?.headers,
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${SUPABASE_PUBLISHABLE_KEY}`
-      };
-      
-      return fetch(url, {
-        ...options,
-        headers,
-      });
-    }
   }
 });
 
