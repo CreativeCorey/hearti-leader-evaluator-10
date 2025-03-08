@@ -11,20 +11,20 @@ interface HabitTrackerProps {
 
 const HabitTracker: React.FC<HabitTrackerProps> = ({ focusDimension }) => {
   return (
-    <Card className="shadow-md border-0">
-      <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-t-lg">
+    <Card className="shadow-lg border-0 overflow-hidden">
+      <CardHeader className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
         <CardTitle className="text-2xl flex items-center gap-2">
-          <Calendar className="text-indigo-600" size={24} />
+          <Calendar className="text-white" size={24} />
           HEARTI™ Habit Tracker
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-indigo-100">
           Build consistent habits to strengthen your leadership dimensions
         </CardDescription>
       </CardHeader>
-      <CardContent className="p-6">
+      <CardContent className="p-6 bg-gray-50">
         <HabitTrackerCore focusDimension={focusDimension} />
       </CardContent>
-      <CardFooter className="bg-gray-50 p-4 text-sm text-muted-foreground rounded-b-lg">
+      <CardFooter className="bg-white p-4 text-sm text-muted-foreground border-t">
         <p>Consistently practicing these habits will strengthen your HEARTI skills over time.</p>
       </CardFooter>
     </Card>

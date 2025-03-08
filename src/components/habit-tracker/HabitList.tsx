@@ -1,12 +1,11 @@
 
 import React from 'react';
 import { format, isSameDay } from 'date-fns';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { X } from 'lucide-react';
+import { X, Plus, Minus, Check } from 'lucide-react';
 import { HEARTIDimension } from '@/types';
 import { Habit } from '@/hooks/useHabits';
+import HabitProgressCircle from './HabitProgressCircle';
 
 interface HabitListProps {
   habits: Habit[];
@@ -25,6 +24,15 @@ const dimensionColors = {
   inclusivity: 'bg-rose-100 text-rose-800 border-rose-200'
 };
 
+const dimensionProgressColors = {
+  humility: { bg: '#E9D5FF', progress: '#9333EA' },
+  empathy: { bg: '#DBEAFE', progress: '#3B82F6' },
+  accountability: { bg: '#DCFCE7', progress: '#22C55E' },
+  resiliency: { bg: '#FEF3C7', progress: '#F59E0B' },
+  transparency: { bg: '#E0E7FF', progress: '#6366F1' },
+  inclusivity: { bg: '#FCE7F3', progress: '#DB2777' }
+};
+
 const HabitList: React.FC<HabitListProps> = ({
   habits,
   weekDates,
@@ -34,69 +42,114 @@ const HabitList: React.FC<HabitListProps> = ({
 }) => {
   if (habits.length === 0) {
     return (
-      <div className="text-center py-8">
+      <div className="text-center py-12 bg-white rounded-xl shadow-sm">
         <p className="text-muted-foreground">No habits found. Click "Add Habit" to create one.</p>
       </div>
     );
   }
 
+  const today = new Date();
+
   return (
     <div className="grid gap-4">
-      <div className="grid grid-cols-7 gap-2 mb-2">
-        <div className="font-medium text-sm text-muted-foreground">Habit</div>
-        {weekDates.map((date, i) => (
-          <div 
-            key={i} 
-            className={`text-center text-sm font-medium ${
-              isSameDay(date, new Date()) ? 'text-indigo-600' : 'text-muted-foreground'
-            }`}
-          >
-            <div>{format(date, 'EEE')}</div>
-            <div>{format(date, 'd')}</div>
-          </div>
-        ))}
-      </div>
-      
-      {habits.map((habit) => (
-        <div key={habit.id} className="grid grid-cols-7 gap-2 items-center py-3 border-t">
-          <div className="flex flex-col">
-            <div className="flex items-start">
-              <Badge className={`${dimensionColors[habit.dimension]} font-normal mr-2`}>
-                {habit.dimension.substring(0, 3)}
-              </Badge>
-              <span className="text-sm">{habit.description}</span>
-            </div>
-            <div className="flex items-center mt-1 text-xs text-muted-foreground">
-              <span className="mr-2">{habit.frequency === 'daily' ? 'Daily' : 'Weekly'}</span>
-              <span className="mr-1">•</span>
-              <span>Streak: {calculateStreaks(habit)}</span>
+      {habits.map((habit) => {
+        const streakCount = calculateStreaks(habit);
+        const todayStr = format(today, 'yyyy-MM-dd');
+        const isCompletedToday = habit.completedDates.includes(todayStr);
+        
+        // Calculate a simple completion percentage for today
+        const completionPercentage = isCompletedToday ? 100 : 0;
+        
+        return (
+          <div key={habit.id} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex items-center space-x-2">
+                <div className={`px-2 py-1 rounded-md text-xs font-medium ${dimensionColors[habit.dimension]}`}>
+                  {habit.dimension}
+                </div>
+                <span className="text-xs text-muted-foreground">{habit.frequency === 'daily' ? 'Daily' : 'Weekly'}</span>
+              </div>
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="h-6 w-6 p-0 ml-2" 
+                className="h-7 w-7 p-0" 
                 onClick={() => onDeleteHabit(habit.id)}
               >
-                <X size={12} />
+                <X size={16} />
+              </Button>
+            </div>
+            
+            <h3 className="text-lg font-bold mb-1">{habit.description}</h3>
+            
+            <div className="flex justify-between items-center mb-2">
+              <div className="text-xs text-muted-foreground">
+                Current streak: {streakCount} {streakCount === 1 ? 'day' : 'days'}
+              </div>
+            </div>
+            
+            <div className="flex justify-between items-center mt-4">
+              <div className="flex-1 flex items-center justify-center">
+                <HabitProgressCircle 
+                  percentage={completionPercentage}
+                  dimension={habit.dimension} 
+                  size={100}
+                  onClick={() => onToggleHabit(habit.id, today)}
+                />
+              </div>
+              
+              <div className="flex-1 flex items-center justify-center gap-4">
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="rounded-full h-10 w-10 p-0 flex items-center justify-center bg-slate-50"
+                  onClick={() => {
+                    // This would decrease the count if we had a count feature
+                    onToggleHabit(habit.id, today);
+                  }}
+                >
+                  <Minus size={18} />
+                </Button>
+                
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="rounded-full h-10 w-10 p-0 flex items-center justify-center bg-slate-50"
+                  onClick={() => {
+                    // This would increase the count if we had a count feature
+                    onToggleHabit(habit.id, today);
+                  }}
+                >
+                  <Plus size={18} />
+                </Button>
+              </div>
+            </div>
+            
+            <div className="mt-4">
+              <Button 
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
+                onClick={() => onToggleHabit(habit.id, today)}
+              >
+                {isCompletedToday ? (
+                  <>
+                    <Check size={16} className="mr-2" />
+                    Completed
+                  </>
+                ) : (
+                  'Complete'
+                )}
+              </Button>
+              
+              <Button 
+                variant="ghost" 
+                className="w-full mt-2 text-indigo-600"
+                onClick={() => onToggleHabit(habit.id, today)}
+              >
+                Skip today
               </Button>
             </div>
           </div>
-          
-          {weekDates.map((date, i) => {
-            const dateStr = format(date, 'yyyy-MM-dd');
-            const isCompleted = habit.completedDates.includes(dateStr);
-            
-            return (
-              <div key={i} className="flex justify-center">
-                <Checkbox 
-                  checked={isCompleted}
-                  onCheckedChange={() => onToggleHabit(habit.id, date)}
-                  className={isCompleted ? 'data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500' : ''}
-                />
-              </div>
-            );
-          })}
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };

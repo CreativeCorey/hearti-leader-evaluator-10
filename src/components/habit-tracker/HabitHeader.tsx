@@ -19,12 +19,22 @@ const HabitHeader: React.FC<HabitHeaderProps> = ({
       <h3 className="text-lg font-medium">Your Habits</h3>
       
       {!addingHabit ? (
-        <Button onClick={onAddHabit} variant="outline" size="sm" className="flex items-center gap-2">
+        <Button 
+          onClick={onAddHabit} 
+          variant="outline" 
+          size="sm" 
+          className="rounded-full flex items-center gap-2 border-indigo-200 text-indigo-600 hover:bg-indigo-50"
+        >
           <Plus size={16} />
           Add Habit
         </Button>
       ) : (
-        <Button onClick={onCancelAdd} variant="outline" size="sm" className="flex items-center gap-2">
+        <Button 
+          onClick={onCancelAdd} 
+          variant="outline" 
+          size="sm" 
+          className="rounded-full flex items-center gap-2 border-red-200 text-red-600 hover:bg-red-50"
+        >
           <X size={16} />
           Cancel
         </Button>

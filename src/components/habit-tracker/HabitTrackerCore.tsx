@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { startOfWeek, addDays } from 'date-fns';
+import { startOfWeek, addDays, format } from 'date-fns';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HEARTIDimension } from '@/types';
 import { useHabits, NewHabitForm } from '@/hooks/useHabits';
@@ -46,45 +46,57 @@ const HabitTrackerCore: React.FC<HabitTrackerCoreProps> = ({ focusDimension }) =
     }
   };
 
+  // Get today's formatted date for display
+  const todayFormatted = format(new Date(), 'EEEE, MMMM d');
+
   return (
-    <Tabs defaultValue={activeDimension} onValueChange={(value) => setActiveDimension(value as HEARTIDimension | 'all')}>
-      <TabsList className="mb-6 grid grid-cols-7 w-full">
-        <TabsTrigger value="all">All</TabsTrigger>
-        <TabsTrigger value="humility">Humility</TabsTrigger>
-        <TabsTrigger value="empathy">Empathy</TabsTrigger>
-        <TabsTrigger value="accountability">Account.</TabsTrigger>
-        <TabsTrigger value="resiliency">Resiliency</TabsTrigger>
-        <TabsTrigger value="transparency">Transp.</TabsTrigger>
-        <TabsTrigger value="inclusivity">Inclusivity</TabsTrigger>
-      </TabsList>
-      
-      <HabitHeader 
-        addingHabit={addingHabit} 
-        onAddHabit={() => setAddingHabit(true)} 
-        onCancelAdd={() => setAddingHabit(false)} 
-      />
-      
-      {addingHabit && (
-        <HabitForm
-          newHabit={newHabit}
-          onCancel={() => setAddingHabit(false)}
-          onSave={onSaveHabit}
-          onHabitChange={(value) => setNewHabit({...newHabit, ...value})}
+    <div className="space-y-6">
+      <div className="flex flex-col space-y-2">
+        <h2 className="text-2xl font-bold">Today</h2>
+        <p className="text-muted-foreground">{todayFormatted}</p>
+      </div>
+    
+      <Tabs defaultValue={activeDimension} onValueChange={(value) => setActiveDimension(value as HEARTIDimension | 'all')}>
+        <div className="flex justify-between items-center mb-4">
+          <TabsList className="bg-gray-100">
+            <TabsTrigger value="all" className="data-[state=active]:bg-white">All</TabsTrigger>
+            <TabsTrigger value="humility" className="data-[state=active]:bg-white">Humility</TabsTrigger>
+            <TabsTrigger value="empathy" className="data-[state=active]:bg-white">Empathy</TabsTrigger>
+            <TabsTrigger value="accountability" className="data-[state=active]:bg-white">Account.</TabsTrigger>
+            <TabsTrigger value="resiliency" className="data-[state=active]:bg-white">Resiliency</TabsTrigger>
+            <TabsTrigger value="transparency" className="data-[state=active]:bg-white">Transp.</TabsTrigger>
+            <TabsTrigger value="inclusivity" className="data-[state=active]:bg-white">Inclusivity</TabsTrigger>
+          </TabsList>
+        </div>
+        
+        <HabitHeader 
+          addingHabit={addingHabit} 
+          onAddHabit={() => setAddingHabit(true)} 
+          onCancelAdd={() => setAddingHabit(false)} 
         />
-      )}
-      
-      {loading ? (
-        <LoadingSpinner />
-      ) : (
-        <HabitList
-          habits={filteredHabits}
-          weekDates={weekDates}
-          onToggleHabit={toggleHabitCompletion}
-          onDeleteHabit={deleteHabit}
-          calculateStreaks={calculateStreaks}
-        />
-      )}
-    </Tabs>
+        
+        {addingHabit && (
+          <HabitForm
+            newHabit={newHabit}
+            onCancel={() => setAddingHabit(false)}
+            onSave={onSaveHabit}
+            onHabitChange={(value) => setNewHabit({...newHabit, ...value})}
+          />
+        )}
+        
+        {loading ? (
+          <LoadingSpinner />
+        ) : (
+          <HabitList
+            habits={filteredHabits}
+            weekDates={weekDates}
+            onToggleHabit={toggleHabitCompletion}
+            onDeleteHabit={deleteHabit}
+            calculateStreaks={calculateStreaks}
+          />
+        )}
+      </Tabs>
+    </div>
   );
 };
 
