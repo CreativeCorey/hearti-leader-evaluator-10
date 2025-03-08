@@ -320,9 +320,9 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
   return (
     <Card className="w-full max-w-3xl mx-auto shadow-sm">
       <CardHeader className="relative pb-0">
-        <div className="h-1 w-full bg-secondary absolute top-0 left-0 right-0">
+        <div className="h-1 w-full bg-orange/20 absolute top-0 left-0 right-0">
           <div 
-            className="h-full bg-primary transition-all duration-300 ease-in-out" 
+            className="h-full bg-purple transition-all duration-300 ease-in-out" 
             style={{ width: `${progressPercentage}%` }}
           />
         </div>
