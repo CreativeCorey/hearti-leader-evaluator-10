@@ -15,7 +15,7 @@ const HabitTracker: React.FC<HabitTrackerProps> = ({ focusDimension }) => {
       <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-t-lg">
         <CardTitle className="text-2xl flex items-center gap-2">
           <Calendar className="text-indigo-600" size={24} />
-          HEARTI Habit Tracker
+          HEARTI™ Habit Tracker
         </CardTitle>
         <CardDescription>
           Build consistent habits to strengthen your leadership dimensions

@@ -23,9 +23,16 @@ interface HabitTrackerCoreProps {
   focusDimension?: HEARTIDimension;
 }
 
+// Create a type for new habit form state that has description as required
+interface NewHabitForm {
+  dimension: HEARTIDimension;
+  description: string;
+  frequency: 'daily' | 'weekly';
+}
+
 const HabitTrackerCore: React.FC<HabitTrackerCoreProps> = ({ focusDimension }) => {
   const [habits, setHabits] = useState<Habit[]>([]);
-  const [newHabit, setNewHabit] = useState<Partial<Habit>>({
+  const [newHabit, setNewHabit] = useState<NewHabitForm>({
     dimension: focusDimension || 'humility',
     description: '',
     frequency: 'daily',
@@ -147,9 +154,9 @@ const HabitTrackerCore: React.FC<HabitTrackerCoreProps> = ({ focusDimension }) =
     
     const habit: Habit = {
       userId,
-      dimension: newHabit.dimension as HEARTIDimension,
+      dimension: newHabit.dimension,
       description: newHabit.description,
-      frequency: newHabit.frequency as 'daily' | 'weekly',
+      frequency: newHabit.frequency,
       completedDates: [],
       createdAt: new Date().toISOString(),
     };
