@@ -86,4 +86,70 @@
   .border-blue {
     border-color: hsl(var(--blue));
   }
+  
+  /* Hiking chart theme colors */
+  .bg-hiking-purple {
+    background-color: #6C5B7B;
+  }
+  .bg-hiking-mauve {
+    background-color: #C06C84;
+  }
+  .bg-hiking-salmon {
+    background-color: #F67280;
+  }
+  .bg-hiking-peach {
+    background-color: #F8B195;
+  }
+  
+  .text-hiking-purple {
+    color: #6C5B7B;
+  }
+  .text-hiking-mauve {
+    color: #C06C84;
+  }
+  .text-hiking-salmon {
+    color: #F67280;
+  }
+  .text-hiking-peach {
+    color: #F8B195;
+  }
+  
+  .border-hiking-purple {
+    border-color: #6C5B7B;
+  }
+  .border-hiking-mauve {
+    border-color: #C06C84;
+  }
+  .border-hiking-salmon {
+    border-color: #F67280;
+  }
+  .border-hiking-peach {
+    border-color: #F8B195;
+  }
+  
+  .fill-hiking-purple {
+    fill: #6C5B7B;
+  }
+  .fill-hiking-mauve {
+    fill: #C06C84;
+  }
+  .fill-hiking-salmon {
+    fill: #F67280;
+  }
+  .fill-hiking-peach {
+    fill: #F8B195;
+  }
+  
+  .stroke-hiking-purple {
+    stroke: #6C5B7B;
+  }
+  .stroke-hiking-mauve {
+    stroke: #C06C84;
+  }
+  .stroke-hiking-salmon {
+    stroke: #F67280;
+  }
+  .stroke-hiking-peach {
+    stroke: #F8B195;
+  }
 }
