@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Target, Award, Bookmark, BookmarkCheck, Check } from 'lucide-react';
+import { Target, Award, Bookmark, BookmarkCheck } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { getOrCreateAnonymousId } from '@/utils/localStorage';
@@ -104,7 +104,7 @@ const activityData: SkillActivity[] = [
   { id: 'i7', dimension: 'inclusivity', category: 'Promoting Equity', description: 'Review hiring practices to eliminate bias and ensure fairness.' },
   { id: 'i8', dimension: 'inclusivity', category: 'Promoting Equity', description: 'Offer mentorship programs that connect underrepresented employees with leaders.' },
   { id: 'i9', dimension: 'inclusivity', category: 'Fostering Collaboration', description: 'Pair employees from different departments or backgrounds for projects.' },
-  { id: 'i10', dimension: 'inclusivity', category: 'Leading by Example', description: 'Model inclusive behavior in every interaction.' }
+  { id: 'i10', dimension: 'inclusivity', category: 'Leading by Example', description: 'Model inclusive behavior in every interaction.' },
 ];
 
 const dimensionColors = {
