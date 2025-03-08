@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Heart, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from './ui/button';
@@ -9,17 +9,14 @@ const Header: React.FC = () => {
   const { user, signOut } = useAuth();
 
   return (
-    <header className="w-full py-6 px-4 flex justify-between items-center border-b backdrop-blur-sm bg-white/50 fixed top-0 z-10">
-      <div className="flex items-center space-x-2">
-        <Link to="/" className="flex items-center space-x-2">
-          <Heart 
-            className="text-gray-800" 
-            size={24}
-            strokeWidth={2} 
+    <header className="w-full py-4 px-4 flex justify-between items-center border-b backdrop-blur-sm bg-white/50 fixed top-0 z-10">
+      <div className="flex items-center">
+        <Link to="/" className="flex items-center">
+          <img 
+            src="/lovable-uploads/148fa8a0-f281-4830-abc1-0270b8145921.png" 
+            alt="HEARTI Leader Quotient Logo" 
+            className="h-10 md:h-12"
           />
-          <h1 className="text-2xl font-medium tracking-tight text-gray-900">
-            HEARTI Leader Assessment
-          </h1>
         </Link>
       </div>
       <div>
