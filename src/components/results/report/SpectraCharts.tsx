@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { HEARTIAssessment } from '@/types';
-import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Area } from 'recharts';
+import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer } from 'recharts';
 import { formatDataForRadarChart } from '@/utils/calculations';
 
 interface SpectraChartsProps {
@@ -30,8 +30,8 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
 
   // Configuration for the spider chart appearance
   const spiderConfig = {
-    gridType: "polygon",
-    axisLineType: "polygon",
+    gridType: "polygon" as "polygon" | "circle",
+    axisLineType: "polygon" as "polygon" | "circle",
     outerRadius: 80,
     fillOpacity: 0.5,
     strokeWidth: 2,
