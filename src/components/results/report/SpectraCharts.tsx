@@ -30,11 +30,12 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
 
   // Configuration for the spider chart appearance
   const spiderConfig = {
-    gridType: "polygon" as "polygon" | "circle",
-    axisLineType: "polygon" as "polygon" | "circle",
+    gridType: "circle" as "polygon" | "circle",
+    axisLineType: "circle" as "polygon" | "circle",
     outerRadius: 80,
     fillOpacity: 0.5,
     strokeWidth: 2,
+    activeDotSize: 8,
   };
 
   return (
@@ -69,10 +70,10 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
                   fill={userColor}
                   fillOpacity={spiderConfig.fillOpacity}
                   strokeWidth={spiderConfig.strokeWidth}
-                  // The following properties make it more "spider-like"
-                  dot={true}
-                  activeDot={{ r: 8 }}
+                  dot={{ r: 5, strokeWidth: 1, fill: "white", stroke: userColor }}
+                  activeDot={{ r: spiderConfig.activeDotSize, strokeWidth: 1, fill: userColor }}
                   isAnimationActive={true}
+                  className="radar-line"
                 />
               </RadarChart>
             </ResponsiveContainer>
@@ -107,10 +108,10 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
                   fill={comparisonColors.average}
                   fillOpacity={spiderConfig.fillOpacity}
                   strokeWidth={spiderConfig.strokeWidth}
-                  // The following properties make it more "spider-like"
-                  dot={true}
-                  activeDot={{ r: 8 }}
+                  dot={{ r: 5, strokeWidth: 1, fill: "white", stroke: comparisonColors.average }}
+                  activeDot={{ r: spiderConfig.activeDotSize, strokeWidth: 1, fill: comparisonColors.average }}
                   isAnimationActive={true}
+                  className="radar-line"
                 />
               </RadarChart>
             </ResponsiveContainer>
