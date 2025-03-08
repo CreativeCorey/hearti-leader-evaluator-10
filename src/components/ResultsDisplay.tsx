@@ -368,7 +368,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
                       <div className="bg-amber-50 p-3 rounded-md border border-amber-100">
                         <p className="font-medium flex items-center text-amber-800">
                           <Target size={16} className="mr-2" />
-                          Development Area: {developmentArea.charAt(0).toUpperCase() + developmentArea.slice(1)}
+                          Vulnerability: {developmentArea.charAt(0).toUpperCase() + developmentArea.slice(1)}
                         </p>
                         <p className="text-amber-700 mt-1">{getFeedback(assessment.dimensionScores[developmentArea], developmentArea)}</p>
                       </div>
@@ -687,7 +687,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
                           <span className="ml-2 text-sm">
                             {status === 'strength' ? '(Strength)' : 
                              status === 'vulnerability' ? '(Vulnerability)' : 
-                             '(Evolving)'}
+                             '(Competent)'}
                           </span>
                         </div>
                       </div>
