@@ -1,11 +1,12 @@
 import React from 'react';
 import { format, isSameDay } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { X, Plus, Minus, Check, Calendar, ArrowRight, Award } from 'lucide-react';
+import { X, Plus, Minus, Check, Calendar, ArrowRight } from 'lucide-react';
 import { HEARTIDimension } from '@/types';
 import { Habit } from '@/hooks/useHabits';
 import HabitProgressCircle from './HabitProgressCircle';
 import { useIsMobile } from '@/hooks/use-mobile';
+import CompletedHabitBadge from './CompletedHabitBadge';
 
 interface HabitListProps {
   habits: Habit[];
@@ -60,7 +61,6 @@ const HabitList: React.FC<HabitListProps> = ({
         const todayStr = format(today, 'yyyy-MM-dd');
         const isCompletedToday = habit.completedDates.includes(todayStr);
         
-        // Calculate completion metrics
         const completionCount = habit.completedDates.length;
         const completionPercentage = Math.min((completionCount / TARGET_COMPLETIONS) * 100, 100);
         const isHabitMastered = completionCount >= TARGET_COMPLETIONS;
@@ -74,10 +74,12 @@ const HabitList: React.FC<HabitListProps> = ({
                 </div>
                 <span className="text-xs text-muted-foreground">{habit.frequency === 'daily' ? 'Daily' : 'Weekly'}</span>
                 {isHabitMastered && (
-                  <span className="flex items-center gap-1 text-xs text-green-600 font-semibold">
-                    <Award size={14} className="text-green-500" />
-                    Mastered!
-                  </span>
+                  <CompletedHabitBadge 
+                    dimension={habit.dimension}
+                    size={isMobile ? 'sm' : 'md'}
+                    iconType={habit.dimension === 'accountability' ? 'trophy' : 
+                              habit.dimension === 'humility' ? 'star' : 'award'}
+                  />
                 )}
               </div>
               <Button 
@@ -164,9 +166,16 @@ const HabitList: React.FC<HabitListProps> = ({
             
             {isHabitMastered && (
               <div className="mt-3 pt-3 border-t border-gray-100">
-                <p className="text-sm text-green-700 text-center">
-                  Congratulations! You've completed this habit 30 times and formed a lasting behavior.
-                </p>
+                <div className="flex flex-col items-center space-y-2">
+                  <div className="flex items-center justify-center">
+                    <div className="rounded-full bg-green-50 p-2">
+                      <Trophy size={24} className="text-green-600" />
+                    </div>
+                  </div>
+                  <p className="text-sm text-green-700 text-center">
+                    Congratulations! You've completed this habit 30 times and formed a lasting behavior.
+                  </p>
+                </div>
               </div>
             )}
           </div>
