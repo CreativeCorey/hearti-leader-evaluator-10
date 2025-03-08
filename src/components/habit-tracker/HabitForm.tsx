@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Save, X } from 'lucide-react';
 import { HEARTIDimension } from '@/types';
 import { NewHabitForm } from '@/hooks/useHabits';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface HabitFormProps {
   newHabit: NewHabitForm;
@@ -21,11 +22,13 @@ const HabitForm: React.FC<HabitFormProps> = ({
   onSave,
   onHabitChange
 }) => {
+  const isMobile = useIsMobile();
+  
   return (
     <Card className="mb-6 border bg-white shadow-sm rounded-xl">
-      <CardContent className="pt-6">
+      <CardContent className={`${isMobile ? 'pt-4 px-3' : 'pt-6'}`}>
         <div className="grid gap-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className={`grid ${isMobile ? 'grid-cols-1 gap-3' : 'grid-cols-1 md:grid-cols-2 gap-4'}`}>
             <div>
               <Label htmlFor="habit-dimension" className="text-sm font-medium mb-1.5">Dimension</Label>
               <select
@@ -68,13 +71,25 @@ const HabitForm: React.FC<HabitFormProps> = ({
             />
           </div>
           
-          <Button 
-            onClick={onSave} 
-            className="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white"
-          >
-            <Save size={16} className="mr-2" />
-            Save Habit
-          </Button>
+          <div className={`flex ${isMobile ? 'flex-col gap-2' : 'flex-row gap-3'} mt-2`}>
+            <Button 
+              onClick={onSave} 
+              className={`${isMobile ? 'w-full' : 'flex-1'} bg-indigo-600 hover:bg-indigo-700 text-white`}
+            >
+              <Save size={16} className="mr-2" />
+              Save Habit
+            </Button>
+            {isMobile && (
+              <Button 
+                onClick={onCancel} 
+                variant="outline" 
+                className="w-full"
+              >
+                <X size={16} className="mr-2" />
+                Cancel
+              </Button>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>

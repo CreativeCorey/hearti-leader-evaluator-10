@@ -9,12 +9,14 @@ import HabitHeader from './HabitHeader';
 import HabitForm from './HabitForm';
 import HabitList from './HabitList';
 import LoadingSpinner from './LoadingSpinner';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface HabitTrackerCoreProps {
   focusDimension?: HEARTIDimension;
 }
 
 const HabitTrackerCore: React.FC<HabitTrackerCoreProps> = ({ focusDimension }) => {
+  const isMobile = useIsMobile();
   const [newHabit, setNewHabit] = useState<NewHabitForm>({
     dimension: focusDimension || 'humility',
     description: '',
@@ -58,14 +60,26 @@ const HabitTrackerCore: React.FC<HabitTrackerCoreProps> = ({ focusDimension }) =
     
       <Tabs defaultValue={activeDimension} onValueChange={(value) => setActiveDimension(value as HEARTIDimension | 'all')}>
         <div className="flex justify-between items-center mb-4">
-          <TabsList className="bg-gray-100">
+          <TabsList className={`bg-gray-100 ${isMobile ? 'flex flex-wrap justify-start w-full gap-1' : ''}`}>
             <TabsTrigger value="all" className="data-[state=active]:bg-white">All</TabsTrigger>
-            <TabsTrigger value="humility" className="data-[state=active]:bg-white">Humility</TabsTrigger>
-            <TabsTrigger value="empathy" className="data-[state=active]:bg-white">Empathy</TabsTrigger>
-            <TabsTrigger value="accountability" className="data-[state=active]:bg-white">Account.</TabsTrigger>
-            <TabsTrigger value="resiliency" className="data-[state=active]:bg-white">Resiliency</TabsTrigger>
-            <TabsTrigger value="transparency" className="data-[state=active]:bg-white">Transp.</TabsTrigger>
-            <TabsTrigger value="inclusivity" className="data-[state=active]:bg-white">Inclusivity</TabsTrigger>
+            <TabsTrigger value="humility" className="data-[state=active]:bg-white">
+              {isMobile ? "H" : "Humility"}
+            </TabsTrigger>
+            <TabsTrigger value="empathy" className="data-[state=active]:bg-white">
+              {isMobile ? "E" : "Empathy"}
+            </TabsTrigger>
+            <TabsTrigger value="accountability" className="data-[state=active]:bg-white">
+              {isMobile ? "A" : "Account."}
+            </TabsTrigger>
+            <TabsTrigger value="resiliency" className="data-[state=active]:bg-white">
+              {isMobile ? "R" : "Resiliency"}
+            </TabsTrigger>
+            <TabsTrigger value="transparency" className="data-[state=active]:bg-white">
+              {isMobile ? "T" : "Transp."}
+            </TabsTrigger>
+            <TabsTrigger value="inclusivity" className="data-[state=active]:bg-white">
+              {isMobile ? "I" : "Inclusivity"}
+            </TabsTrigger>
           </TabsList>
         </div>
         

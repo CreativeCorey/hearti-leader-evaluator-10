@@ -2,10 +2,11 @@
 import React from 'react';
 import { format, isSameDay } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { X, Plus, Minus, Check } from 'lucide-react';
+import { X, Plus, Minus, Check, Calendar, ArrowRight } from 'lucide-react';
 import { HEARTIDimension } from '@/types';
 import { Habit } from '@/hooks/useHabits';
 import HabitProgressCircle from './HabitProgressCircle';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface HabitListProps {
   habits: Habit[];
@@ -40,6 +41,8 @@ const HabitList: React.FC<HabitListProps> = ({
   onDeleteHabit,
   calculateStreaks
 }) => {
+  const isMobile = useIsMobile();
+  
   if (habits.length === 0) {
     return (
       <div className="text-center py-12 bg-white rounded-xl shadow-sm">
@@ -51,7 +54,7 @@ const HabitList: React.FC<HabitListProps> = ({
   const today = new Date();
 
   return (
-    <div className="grid gap-4">
+    <div className={`grid ${isMobile ? 'gap-3' : 'gap-4'}`}>
       {habits.map((habit) => {
         const streakCount = calculateStreaks(habit);
         const todayStr = format(today, 'yyyy-MM-dd');
@@ -61,11 +64,11 @@ const HabitList: React.FC<HabitListProps> = ({
         const completionPercentage = isCompletedToday ? 100 : 0;
         
         return (
-          <div key={habit.id} className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-            <div className="flex justify-between items-center mb-4">
+          <div key={habit.id} className={`bg-white rounded-xl ${isMobile ? 'p-3' : 'p-5'} shadow-sm border border-gray-100 hover:shadow-md transition-shadow`}>
+            <div className="flex justify-between items-center mb-3">
               <div className="flex items-center space-x-2">
                 <div className={`px-2 py-1 rounded-md text-xs font-medium ${dimensionColors[habit.dimension]}`}>
-                  {habit.dimension}
+                  {isMobile ? habit.dimension.charAt(0).toUpperCase() : habit.dimension}
                 </div>
                 <span className="text-xs text-muted-foreground">{habit.frequency === 'daily' ? 'Daily' : 'Weekly'}</span>
               </div>
@@ -79,73 +82,74 @@ const HabitList: React.FC<HabitListProps> = ({
               </Button>
             </div>
             
-            <h3 className="text-lg font-bold mb-1">{habit.description}</h3>
+            <h3 className={`${isMobile ? 'text-base' : 'text-lg'} font-bold mb-1`}>{habit.description}</h3>
             
             <div className="flex justify-between items-center mb-2">
-              <div className="text-xs text-muted-foreground">
+              <div className="text-xs text-muted-foreground flex items-center gap-1">
+                <Calendar size={12} />
                 Current streak: {streakCount} {streakCount === 1 ? 'day' : 'days'}
               </div>
             </div>
             
-            <div className="flex justify-between items-center mt-4">
-              <div className="flex-1 flex items-center justify-center">
+            <div className={`flex ${isMobile ? 'flex-col items-center' : 'justify-between items-center'} mt-3`}>
+              <div className={`${isMobile ? 'mb-3' : 'flex-1'} flex items-center justify-center`}>
                 <HabitProgressCircle 
                   percentage={completionPercentage}
                   dimension={habit.dimension} 
-                  size={100}
+                  size={isMobile ? 80 : 100}
                   onClick={() => onToggleHabit(habit.id, today)}
                 />
               </div>
               
-              <div className="flex-1 flex items-center justify-center gap-4">
-                <Button 
-                  variant="outline"
-                  size="sm"
-                  className="rounded-full h-10 w-10 p-0 flex items-center justify-center bg-slate-50"
-                  onClick={() => {
-                    // This would decrease the count if we had a count feature
-                    onToggleHabit(habit.id, today);
-                  }}
-                >
-                  <Minus size={18} />
-                </Button>
-                
-                <Button 
-                  variant="outline"
-                  size="sm"
-                  className="rounded-full h-10 w-10 p-0 flex items-center justify-center bg-slate-50"
-                  onClick={() => {
-                    // This would increase the count if we had a count feature
-                    onToggleHabit(habit.id, today);
-                  }}
-                >
-                  <Plus size={18} />
-                </Button>
-              </div>
+              {!isMobile && (
+                <div className="flex-1 flex items-center justify-center gap-4">
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full h-10 w-10 p-0 flex items-center justify-center bg-slate-50"
+                    onClick={() => onToggleHabit(habit.id, today)}
+                  >
+                    <Minus size={18} />
+                  </Button>
+                  
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full h-10 w-10 p-0 flex items-center justify-center bg-slate-50"
+                    onClick={() => onToggleHabit(habit.id, today)}
+                  >
+                    <Plus size={18} />
+                  </Button>
+                </div>
+              )}
             </div>
             
-            <div className="mt-4">
+            <div className={`${isMobile ? 'mt-3' : 'mt-4'}`}>
               <Button 
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
+                className={`w-full ${isMobile ? 'py-1.5 px-3 text-sm h-auto' : ''} bg-indigo-600 hover:bg-indigo-700 text-white`}
                 onClick={() => onToggleHabit(habit.id, today)}
               >
                 {isCompletedToday ? (
                   <>
-                    <Check size={16} className="mr-2" />
+                    <Check size={isMobile ? 14 : 16} className="mr-1.5" />
                     Completed
                   </>
                 ) : (
-                  'Complete'
+                  <>
+                    {isMobile ? 'Mark Complete' : 'Complete'}
+                  </>
                 )}
               </Button>
               
-              <Button 
-                variant="ghost" 
-                className="w-full mt-2 text-indigo-600"
-                onClick={() => onToggleHabit(habit.id, today)}
-              >
-                Skip today
-              </Button>
+              {!isCompletedToday && (
+                <Button 
+                  variant="ghost" 
+                  className={`w-full ${isMobile ? 'mt-1 text-xs py-1 h-auto' : 'mt-2'} text-indigo-600`}
+                  onClick={() => onToggleHabit(habit.id, today)}
+                >
+                  Skip today
+                </Button>
+              )}
             </div>
           </div>
         );

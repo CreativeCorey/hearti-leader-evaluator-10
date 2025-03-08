@@ -4,12 +4,15 @@ import { Calendar } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { HEARTIDimension } from '@/types';
 import HabitTrackerCore from './habit-tracker/HabitTrackerCore';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface HabitTrackerProps {
   focusDimension?: HEARTIDimension;
 }
 
 const HabitTracker: React.FC<HabitTrackerProps> = ({ focusDimension }) => {
+  const isMobile = useIsMobile();
+  
   return (
     <Card className="shadow-lg border-0 overflow-hidden">
       <CardHeader className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
@@ -21,7 +24,7 @@ const HabitTracker: React.FC<HabitTrackerProps> = ({ focusDimension }) => {
           Build consistent habits to strengthen your leadership dimensions
         </CardDescription>
       </CardHeader>
-      <CardContent className="p-6 bg-gray-50">
+      <CardContent className={`${isMobile ? 'p-3' : 'p-6'} bg-gray-50`}>
         <HabitTrackerCore focusDimension={focusDimension} />
       </CardContent>
       <CardFooter className="bg-white p-4 text-sm text-muted-foreground border-t">

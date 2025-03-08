@@ -3,18 +3,20 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Target } from 'lucide-react';
+import { Target, ListFilter } from 'lucide-react';
 import { HEARTIDimension } from '../types';
 import { activityData } from '@/data/heartActivities';
 import { useActivities } from '@/hooks/useActivities';
 import ActivityList from './skill-development/ActivityList';
 import SavedActivityList from './skill-development/SavedActivityList';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface SkillDevelopmentProps {
   focusDimension?: HEARTIDimension;
 }
 
 const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension }) => {
+  const isMobile = useIsMobile();
   const [activeDimension, setActiveDimension] = useState<HEARTIDimension | 'all'>(focusDimension || 'all');
   const [activeView, setActiveView] = useState<'explore' | 'saved'>('explore');
   
@@ -50,6 +52,24 @@ const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension }) =
   const filteredSavedActivities = savedActivities.filter(activity => 
     activeDimension === 'all' || activity.dimension === activeDimension
   );
+
+  // Function to render dimension tabs based on screen size
+  const renderDimensionTabs = () => (
+    <TabsList className={`${isMobile ? 'grid grid-cols-4 mb-2' : 'grid grid-cols-7'} w-full`}>
+      <TabsTrigger value="all">All</TabsTrigger>
+      <TabsTrigger value="humility">{isMobile ? 'H' : 'Humility'}</TabsTrigger>
+      <TabsTrigger value="empathy">{isMobile ? 'E' : 'Empathy'}</TabsTrigger>
+      <TabsTrigger value="accountability">{isMobile ? 'A' : 'Account.'}</TabsTrigger>
+      {isMobile && (
+        <TabsTrigger value="resiliency" className="col-start-1 mt-1">R</TabsTrigger>
+      )}
+      {!isMobile && (
+        <TabsTrigger value="resiliency">Resiliency</TabsTrigger>
+      )}
+      <TabsTrigger value="transparency">{isMobile ? 'T' : 'Transp.'}</TabsTrigger>
+      <TabsTrigger value="inclusivity">{isMobile ? 'I' : 'Inclusivity'}</TabsTrigger>
+    </TabsList>
+  );
   
   return (
     <Card className="shadow-md border-0">
@@ -62,18 +82,10 @@ const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension }) =
           Improve your leadership dimensions with these targeted activities
         </CardDescription>
       </CardHeader>
-      <CardContent className="p-6">
+      <CardContent className={`${isMobile ? 'p-3' : 'p-6'}`}>
         <Tabs defaultValue={activeDimension} onValueChange={(value) => setActiveDimension(value as HEARTIDimension | 'all')}>
-          <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
-            <TabsList className="grid grid-cols-7 w-full md:w-auto">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="humility">Humility</TabsTrigger>
-              <TabsTrigger value="empathy">Empathy</TabsTrigger>
-              <TabsTrigger value="accountability">Account.</TabsTrigger>
-              <TabsTrigger value="resiliency">Resiliency</TabsTrigger>
-              <TabsTrigger value="transparency">Transp.</TabsTrigger>
-              <TabsTrigger value="inclusivity">Inclusivity</TabsTrigger>
-            </TabsList>
+          <div className={`flex flex-col ${isMobile ? 'gap-2' : 'md:flex-row md:justify-between md:items-center gap-4'} mb-6`}>
+            {renderDimensionTabs()}
             
             <div className="p-1 inline-flex items-center justify-center rounded-lg bg-muted text-xs">
               <Button 
