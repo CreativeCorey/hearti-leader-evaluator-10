@@ -1,4 +1,3 @@
-
 import { supabase } from '../integrations/supabase/client';
 import { HEARTIAssessment, UserProfile, Organization, HEARTIAnswer, HEARTIDimension, Demographics } from '../types';
 import { Json } from '../integrations/supabase/types';
@@ -85,7 +84,6 @@ export const saveAssessmentToSupabase = async (assessment: HEARTIAssessment): Pr
     console.log('Assessment saved successfully to Supabase with ID:', data?.id);
     
     // Now directly call the sync-assessment-to-sheet function to ensure the data gets to Google Sheets
-    // even if the database trigger fails
     try {
       console.log('Directly calling sync-assessment-to-sheet function...');
       const { data: functionData, error: functionError } = await supabase.functions.invoke('sync-assessment-to-sheet', {
@@ -263,6 +261,51 @@ export const deleteAssessmentFromSupabase = async (assessmentId: string): Promis
   } catch (error) {
     console.error('Failed to delete assessment from Supabase:', error);
     return false;
+  }
+};
+
+// Get a specific assessment by its ID
+export const getAssessmentByIdFromSupabase = async (assessmentId: string): Promise<HEARTIAssessment | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('assessments')
+      .select('*')
+      .eq('id', assessmentId)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Error fetching assessment from Supabase:', error);
+      return null;
+    }
+    
+    if (!data) return null;
+    
+    // Transform the data structure from Supabase format to application format
+    const answers = isValidAnswersArray(data.answers) 
+      ? data.answers 
+      : [] as HEARTIAnswer[];
+    
+    const dimensionScores = isValidDimensionScores(data.dimension_scores)
+      ? data.dimension_scores as Record<HEARTIDimension, number>
+      : {} as Record<HEARTIDimension, number>;
+    
+    const demographics = isValidDemographics(data.demographics)
+      ? data.demographics as Demographics
+      : undefined;
+      
+    return {
+      id: data.id,
+      userId: data.user_id,
+      organizationId: data.organization_id || undefined,
+      date: data.date,
+      answers: answers,
+      dimensionScores: dimensionScores,
+      overallScore: data.overall_score,
+      demographics: demographics
+    };
+  } catch (error) {
+    console.error('Failed to get assessment from Supabase:', error);
+    return null;
   }
 };
 
