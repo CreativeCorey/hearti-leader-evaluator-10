@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { format, isSameDay } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { X, Plus, Minus, Check, Calendar, ArrowRight } from 'lucide-react';
+import { X, Plus, Minus, Check, Calendar, ArrowRight, Trophy } from 'lucide-react';
 import { HEARTIDimension } from '@/types';
 import { Habit } from '@/hooks/useHabits';
 import HabitProgressCircle from './HabitProgressCircle';
