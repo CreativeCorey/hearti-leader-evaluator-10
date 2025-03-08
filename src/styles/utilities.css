@@ -1,0 +1,89 @@
+
+@tailwind utilities;
+
+@layer utilities {
+  /* Theme utility classes */
+  .bg-orange {
+    background-color: hsl(var(--orange));
+  }
+  .bg-yellow {
+    background-color: hsl(var(--yellow));
+  }
+  .bg-green {
+    background-color: hsl(var(--green));
+  }
+  .bg-light-blue {
+    background-color: hsl(var(--light-blue));
+  }
+  .bg-pink {
+    background-color: hsl(var(--pink));
+  }
+  .bg-red {
+    background-color: hsl(var(--red));
+  }
+  .bg-purple {
+    background-color: hsl(var(--purple));
+  }
+  .bg-light-purple {
+    background-color: hsl(var(--light-purple));
+  }
+  .bg-blue {
+    background-color: hsl(var(--blue));
+  }
+
+  .text-orange {
+    color: hsl(var(--orange));
+  }
+  .text-yellow {
+    color: hsl(var(--yellow));
+  }
+  .text-green {
+    color: hsl(var(--green));
+  }
+  .text-light-blue {
+    color: hsl(var(--light-blue));
+  }
+  .text-pink {
+    color: hsl(var(--pink));
+  }
+  .text-red {
+    color: hsl(var(--red));
+  }
+  .text-purple {
+    color: hsl(var(--purple));
+  }
+  .text-light-purple {
+    color: hsl(var(--light-purple));
+  }
+  .text-blue {
+    color: hsl(var(--blue));
+  }
+
+  .border-orange {
+    border-color: hsl(var(--orange));
+  }
+  .border-yellow {
+    border-color: hsl(var(--yellow));
+  }
+  .border-green {
+    border-color: hsl(var(--green));
+  }
+  .border-light-blue {
+    border-color: hsl(var(--light-blue));
+  }
+  .border-pink {
+    border-color: hsl(var(--pink));
+  }
+  .border-red {
+    border-color: hsl(var(--red));
+  }
+  .border-purple {
+    border-color: hsl(var(--purple));
+  }
+  .border-light-purple {
+    border-color: hsl(var(--light-purple));
+  }
+  .border-blue {
+    border-color: hsl(var(--blue));
+  }
+}
