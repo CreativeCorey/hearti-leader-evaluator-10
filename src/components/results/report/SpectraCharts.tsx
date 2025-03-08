@@ -32,12 +32,20 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
       <div className="flex flex-col lg:flex-row gap-8 pdf-charts-grid">
         <div className="flex-1 bg-slate-50 p-6 rounded-lg pdf-chart-column">
           <p className="text-center font-medium text-xl text-indigo-600 mb-4">Your Results</p>
-          <div className="h-[500px] pdf-chart-container">
+          <div className="h-[550px] pdf-chart-container">
             <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="75%" data={chartData}>
+              <RadarChart cx="50%" cy="50%" outerRadius="80%" data={chartData}>
                 <PolarGrid gridType="polygon" />
-                <PolarAngleAxis dataKey="name" tick={{ fill: '#6b7280', fontSize: 14 }} />
-                <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280', fontSize: 12 }} />
+                <PolarAngleAxis 
+                  dataKey="name" 
+                  tick={{ fill: '#6b7280', fontSize: 14, fontWeight: 'bold' }} 
+                  axisLineType="polygon"
+                />
+                <PolarRadiusAxis 
+                  angle={30} 
+                  domain={[0, 5]} 
+                  tick={{ fill: '#6b7280', fontSize: 12 }} 
+                />
                 <Radar
                   name="Your Score"
                   dataKey="value"
@@ -53,12 +61,20 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
         
         <div className="flex-1 bg-slate-50 p-6 rounded-lg pdf-chart-column">
           <p className="text-center font-medium text-xl text-purple-600 mb-4">Global Benchmark</p>
-          <div className="h-[500px] pdf-chart-container">
+          <div className="h-[550px] pdf-chart-container">
             <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="75%" data={formatDataForRadarChart(aggregateData.averageScores)}>
+              <RadarChart cx="50%" cy="50%" outerRadius="80%" data={formatDataForRadarChart(aggregateData.averageScores)}>
                 <PolarGrid gridType="polygon" />
-                <PolarAngleAxis dataKey="name" tick={{ fill: '#6b7280', fontSize: 14 }} />
-                <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280', fontSize: 12 }} />
+                <PolarAngleAxis 
+                  dataKey="name" 
+                  tick={{ fill: '#6b7280', fontSize: 14, fontWeight: 'bold' }} 
+                  axisLineType="polygon"
+                />
+                <PolarRadiusAxis 
+                  angle={30} 
+                  domain={[0, 5]} 
+                  tick={{ fill: '#6b7280', fontSize: 12 }} 
+                />
                 <Radar
                   name="Global Average"
                   dataKey="value"
