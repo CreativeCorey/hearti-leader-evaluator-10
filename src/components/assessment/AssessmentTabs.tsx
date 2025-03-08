@@ -48,7 +48,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
         <div className="space-y-8">
           {latestAssessment && (
             <div>
-              <h2 className="text-xl font-bold mb-4">Latest Assessment Results</h2>
+              <h2 className="text-xl font-bold mb-4 text-orange">Latest Assessment Results</h2>
               <ResultsDisplay assessment={latestAssessment} />
               
               <div className="mt-6 flex gap-3">
@@ -56,7 +56,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
                   onClick={sendLatestToSheets}
                   disabled={testingSheets}
                   variant="outline"
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 border-green text-green hover:bg-green/10"
                 >
                   {testingSheets && <Loader2 className="h-4 w-4 animate-spin" />}
                   Send to Google Sheets
@@ -68,7 +68,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
           {userAssessments.length > 1 && (
             <div>
               <Separator className="my-8" />
-              <h2 className="text-xl font-bold mb-4">Assessment History</h2>
+              <h2 className="text-xl font-bold mb-4 text-blue">Assessment History</h2>
               <HistoricalResults 
                 assessments={userAssessments} 
                 onSelect={(assessment) => latestAssessment = assessment} 

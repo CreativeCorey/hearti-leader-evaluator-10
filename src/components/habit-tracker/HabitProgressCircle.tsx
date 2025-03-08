@@ -11,12 +11,12 @@ interface HabitProgressCircleProps {
 }
 
 const dimensionProgressColors = {
-  humility: { bg: '#E9D5FF', progress: '#9333EA' },
-  empathy: { bg: '#DBEAFE', progress: '#3B82F6' },
-  accountability: { bg: '#DCFCE7', progress: '#22C55E' },
-  resiliency: { bg: '#FEF3C7', progress: '#F59E0B' },
-  transparency: { bg: '#E0E7FF', progress: '#6366F1' },
-  inclusivity: { bg: '#FCE7F3', progress: '#DB2777' }
+  humility: { bg: '#E9D5FF', progress: '#8B5CF6' }, // purple
+  empathy: { bg: '#DBEAFE', progress: '#1E40AF' }, // blue
+  accountability: { bg: '#DCFCE7', progress: '#22C55E' }, // green
+  resiliency: { bg: '#FEF3C7', progress: '#F59E0B' }, // yellow/orange
+  transparency: { bg: '#E0E7FF', progress: '#4F46E5' }, // indigo
+  inclusivity: { bg: '#FCE7F3', progress: '#EC4899' }  // pink
 };
 
 const HabitProgressCircle: React.FC<HabitProgressCircleProps> = ({

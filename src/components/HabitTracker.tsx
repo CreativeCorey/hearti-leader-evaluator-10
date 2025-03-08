@@ -15,12 +15,12 @@ const HabitTracker: React.FC<HabitTrackerProps> = ({ focusDimension }) => {
   
   return (
     <Card className="shadow-lg border-0 overflow-hidden">
-      <CardHeader className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+      <CardHeader className="bg-gradient-to-r from-blue to-light-blue text-white">
         <CardTitle className="text-2xl flex items-center gap-2">
           <Calendar className="text-white" size={24} />
           HEARTI™ Habit Tracker
         </CardTitle>
-        <CardDescription className="text-indigo-100">
+        <CardDescription className="text-blue-100">
           Build consistent habits to strengthen your leadership dimensions
         </CardDescription>
       </CardHeader>

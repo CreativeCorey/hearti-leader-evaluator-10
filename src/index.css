@@ -1,9 +1,11 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
+    /* Base colors */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
@@ -13,42 +15,57 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    /* Primary: Orange */
+    --primary: 22 100% 50%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
+    /* Secondary: Light Blue */
+    --secondary: 199 90% 50%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
+    /* Muted: Softer Gray */
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
+    /* Accent: Yellow */
+    --accent: 47 100% 50%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
+    /* Destructive: Red */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
+    /* Success: Green */
+    --success: 142 76% 36%;
+    --success-foreground: 210 40% 98%;
+
+    /* Border, Input, Ring */
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
 
+    /* Sidebar */
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Custom theme colors based on the image */
+    --orange: 22 84% 55%;
+    --yellow: 47 100% 70%;
+    --green: 142 76% 36%;
+    --light-blue: 199 65% 50%;
+    --pink: 335 90% 50%;
+    --red: 358 85% 53%;
+    --purple: 282 80% 44%;
+    --light-purple: 267 100% 50%;
+    --blue: 214 79% 42%;
   }
 
   .dark {
@@ -61,16 +78,16 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
+    --primary: 22 100% 50%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 199 90% 50%;
     --secondary-foreground: 210 40% 98%;
 
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 217.2 32.6% 17.5%;
+    --accent: 47 100% 50%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -156,8 +173,9 @@
     flex-wrap: wrap;
     width: 100%;
     justify-content: flex-start;
-    gap: 4px;
-    padding: 4px;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    row-gap: 0.5rem;
   }
 
   .mobile-tab {
@@ -166,7 +184,14 @@
     text-align: center;
     font-size: 0.875rem;
     padding: 0.5rem 0.75rem;
-    margin: 2px;
+    margin: 0;
+    background-color: white;
+    color: hsl(var(--foreground));
+  }
+
+  .mobile-tab[data-state="active"] {
+    background-color: hsl(var(--primary));
+    color: white;
   }
 
   @media (max-width: 640px) {
@@ -175,10 +200,101 @@
       margin: 0 0 1rem 0;
     }
     
+    .mobile-tabs {
+      padding: 0.25rem;
+      row-gap: 0.25rem;
+    }
+    
     .mobile-tab {
       min-width: auto;
       padding: 0.25rem 0.5rem;
       font-size: 0.75rem;
+      border-radius: 0.25rem;
     }
+  }
+
+  /* Theme utility classes */
+  .bg-orange {
+    background-color: hsl(var(--orange));
+  }
+  .bg-yellow {
+    background-color: hsl(var(--yellow));
+  }
+  .bg-green {
+    background-color: hsl(var(--green));
+  }
+  .bg-light-blue {
+    background-color: hsl(var(--light-blue));
+  }
+  .bg-pink {
+    background-color: hsl(var(--pink));
+  }
+  .bg-red {
+    background-color: hsl(var(--red));
+  }
+  .bg-purple {
+    background-color: hsl(var(--purple));
+  }
+  .bg-light-purple {
+    background-color: hsl(var(--light-purple));
+  }
+  .bg-blue {
+    background-color: hsl(var(--blue));
+  }
+
+  .text-orange {
+    color: hsl(var(--orange));
+  }
+  .text-yellow {
+    color: hsl(var(--yellow));
+  }
+  .text-green {
+    color: hsl(var(--green));
+  }
+  .text-light-blue {
+    color: hsl(var(--light-blue));
+  }
+  .text-pink {
+    color: hsl(var(--pink));
+  }
+  .text-red {
+    color: hsl(var(--red));
+  }
+  .text-purple {
+    color: hsl(var(--purple));
+  }
+  .text-light-purple {
+    color: hsl(var(--light-purple));
+  }
+  .text-blue {
+    color: hsl(var(--blue));
+  }
+
+  .border-orange {
+    border-color: hsl(var(--orange));
+  }
+  .border-yellow {
+    border-color: hsl(var(--yellow));
+  }
+  .border-green {
+    border-color: hsl(var(--green));
+  }
+  .border-light-blue {
+    border-color: hsl(var(--light-blue));
+  }
+  .border-pink {
+    border-color: hsl(var(--pink));
+  }
+  .border-red {
+    border-color: hsl(var(--red));
+  }
+  .border-purple {
+    border-color: hsl(var(--purple));
+  }
+  .border-light-purple {
+    border-color: hsl(var(--light-purple));
+  }
+  .border-blue {
+    border-color: hsl(var(--blue));
   }
 }

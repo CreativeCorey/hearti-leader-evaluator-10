@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { startOfWeek, addDays, format } from 'date-fns';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -53,7 +54,7 @@ const HabitTrackerCore: React.FC<HabitTrackerCoreProps> = ({ focusDimension }) =
   return (
     <div className="space-y-6">
       <div className="flex flex-col space-y-2">
-        <h2 className="text-2xl font-bold">Today</h2>
+        <h2 className="text-2xl font-bold text-blue">Today</h2>
         <p className="text-muted-foreground">{todayFormatted}</p>
       </div>
     

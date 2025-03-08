@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -51,12 +52,12 @@ const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension }) =
 
   return (
     <Card className="shadow-md border-0">
-      <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-t-lg">
-        <CardTitle className="text-2xl flex items-center gap-2">
-          <Target className="text-indigo-600" size={24} />
+      <CardHeader className="bg-gradient-to-r from-orange to-yellow rounded-t-lg">
+        <CardTitle className="text-2xl flex items-center gap-2 text-white">
+          <Target className="text-white" size={24} />
           HEARTI Skill Development
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-white/90">
           Improve your leadership dimensions with these targeted activities
         </CardDescription>
       </CardHeader>
