@@ -25,7 +25,7 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Heart, Users, Target, FileText, Download, Loader2, Calendar, Award } from 'lucide-react';
+import { Hexagon, Users, Target, FileText, Download, Loader2, Calendar, Award } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -311,7 +311,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
       <Card className="appear-animate shadow-md border-0">
         <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-t-lg">
           <CardTitle className="text-2xl flex items-center gap-2">
-            <Heart className="text-indigo-600" size={24} />
+            <Hexagon className="text-indigo-600" size={24} />
             HEARTI Assessment Results
           </CardTitle>
           <CardDescription>
