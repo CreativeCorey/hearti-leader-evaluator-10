@@ -15,7 +15,7 @@ const TodayHeader: React.FC = () => {
       </div>
       <div className="flex items-center bg-indigo-50 text-indigo-800 px-3 py-1.5 rounded-full text-xs font-medium">
         <Award size={14} className="mr-1.5 text-indigo-600" />
-        21 Completions = Mastery
+        30 Completions = Mastery
       </div>
     </div>
   );
