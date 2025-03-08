@@ -34,9 +34,9 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
   return (
     <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'take' | 'results')}>
       <div className="mobile-tabs-container">
-        <TabsList className={isMobile ? 'mobile-tabs' : ''}>
-          <TabsTrigger value="take" className={isMobile ? 'mobile-tab' : ''}>Take Assessment</TabsTrigger>
-          <TabsTrigger value="results" className={isMobile ? 'mobile-tab' : ''} disabled={userAssessments.length === 0}>View Results</TabsTrigger>
+        <TabsList className="mobile-tabs">
+          <TabsTrigger value="take" className="mobile-tab">Take Assessment</TabsTrigger>
+          <TabsTrigger value="results" className="mobile-tab" disabled={userAssessments.length === 0}>View Results</TabsTrigger>
         </TabsList>
       </div>
       

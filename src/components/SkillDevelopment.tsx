@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -34,12 +33,10 @@ const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension }) =
     }
   }, [focusDimension]);
   
-  // Filter activities based on selected dimension
   const filteredActivities = activityData.filter(activity => 
     activeDimension === 'all' || activity.dimension === activeDimension
   );
   
-  // Group activities by category
   const groupedActivities = filteredActivities.reduce((acc, activity) => {
     if (!acc[activity.category]) {
       acc[activity.category] = [];
@@ -48,7 +45,6 @@ const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension }) =
     return acc;
   }, {} as Record<string, typeof activityData>);
   
-  // Filter saved activities based on selected dimension
   const filteredSavedActivities = savedActivities.filter(activity => 
     activeDimension === 'all' || activity.dimension === activeDimension
   );
@@ -67,25 +63,25 @@ const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension }) =
       <CardContent className={`${isMobile ? 'p-3' : 'p-6'}`}>
         <Tabs defaultValue={activeDimension} onValueChange={(value) => setActiveDimension(value as HEARTIDimension | 'all')}>
           <div className="flex flex-col gap-4 mb-6">
-            <div className="mobile-tabs-container overflow-hidden">
-              <TabsList className={`${isMobile ? 'mobile-tabs' : ''}`}>
-                <TabsTrigger value="all" className={`${isMobile ? 'mobile-tab' : ''}`}>All</TabsTrigger>
-                <TabsTrigger value="humility" className={`${isMobile ? 'mobile-tab' : ''}`}>
+            <div className="mobile-tabs-container">
+              <TabsList className="mobile-tabs">
+                <TabsTrigger value="all" className="mobile-tab">All</TabsTrigger>
+                <TabsTrigger value="humility" className="mobile-tab">
                   {isMobile ? 'H' : 'Humility'}
                 </TabsTrigger>
-                <TabsTrigger value="empathy" className={`${isMobile ? 'mobile-tab' : ''}`}>
+                <TabsTrigger value="empathy" className="mobile-tab">
                   {isMobile ? 'E' : 'Empathy'}
                 </TabsTrigger>
-                <TabsTrigger value="accountability" className={`${isMobile ? 'mobile-tab' : ''}`}>
+                <TabsTrigger value="accountability" className="mobile-tab">
                   {isMobile ? 'A' : 'Account.'}
                 </TabsTrigger>
-                <TabsTrigger value="resiliency" className={`${isMobile ? 'mobile-tab' : ''}`}>
+                <TabsTrigger value="resiliency" className="mobile-tab">
                   {isMobile ? 'R' : 'Resiliency'}
                 </TabsTrigger>
-                <TabsTrigger value="transparency" className={`${isMobile ? 'mobile-tab' : ''}`}>
+                <TabsTrigger value="transparency" className="mobile-tab">
                   {isMobile ? 'T' : 'Transp.'}
                 </TabsTrigger>
-                <TabsTrigger value="inclusivity" className={`${isMobile ? 'mobile-tab' : ''}`}>
+                <TabsTrigger value="inclusivity" className="mobile-tab">
                   {isMobile ? 'I' : 'Inclusivity'}
                 </TabsTrigger>
               </TabsList>
