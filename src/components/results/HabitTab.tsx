@@ -31,6 +31,9 @@ const HabitTab: React.FC<HabitTabProps> = ({ focusDimension }) => {
         <p className="text-blue-700 mt-2 text-sm">
           We recommend focusing on behaviors from your development area: <strong className="uppercase">{dimensionLabels[focusDimension]}</strong>
         </p>
+        <p className="text-blue-700 mt-2 text-sm font-medium">
+          Add behaviors to your habit tracker by using the "Add to Habit Tracker" button in the Development tab or on your saved activities.
+        </p>
       </div>
       
       <HabitTracker focusDimension={focusDimension} />

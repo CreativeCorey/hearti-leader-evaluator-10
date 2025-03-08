@@ -43,8 +43,8 @@ const SavedActivityCard: React.FC<SavedActivityCardProps> = ({
   
   return (
     <Card className={`p-4 border-l-4 ${savedActivity.completed ? 'border-l-green-500 bg-green-50' : 'border-l-blue-300'}`}>
-      <div className="flex justify-between items-start">
-        <div className="flex-1">
+      <div className="flex flex-col gap-3">
+        <div>
           <div className="flex items-center mb-2">
             <Badge className={`${dimensionColors[activityDetails.dimension]} font-normal mr-2`}>
               {dimensionTitles[activityDetails.dimension]}
@@ -53,9 +53,10 @@ const SavedActivityCard: React.FC<SavedActivityCardProps> = ({
               {activityDetails.category}
             </span>
           </div>
-          <p className="text-sm">{activityDetails.description}</p>
+          <p className="text-sm font-medium">{activityDetails.description}</p>
         </div>
-        <div className="flex gap-1">
+        
+        <div className="flex flex-wrap gap-2 mt-1">
           <Button 
             variant={savedActivity.completed ? "outline" : "default"}
             size="sm" 
@@ -71,21 +72,25 @@ const SavedActivityCard: React.FC<SavedActivityCardProps> = ({
               'Mark Complete'
             )}
           </Button>
+          
           <Button 
-            variant="outline" 
+            variant="default" 
             size="sm"
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 bg-purple-600 hover:bg-purple-700"
             onClick={handleAddToHabitTracker}
           >
             <Plus size={16} />
-            Habit
+            Add to Habit Tracker
           </Button>
+          
           <Button 
             variant="ghost" 
             size="sm"
             onClick={() => onRemove(savedActivity.id)}
+            className="text-red-500 hover:text-red-700 hover:bg-red-50"
           >
-            <BookmarkCheck size={16} className="text-red-500" />
+            <BookmarkCheck size={16} className="mr-1" />
+            Remove
           </Button>
         </div>
       </div>

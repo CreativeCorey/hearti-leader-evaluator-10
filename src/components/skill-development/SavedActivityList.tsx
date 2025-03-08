@@ -4,7 +4,6 @@ import { Award } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { SavedActivity, activityData } from '@/data/heartActivities';
 import SavedActivityCard from './SavedActivityCard';
-import { Button } from '@/components/ui/button';
 
 interface SavedActivityListProps {
   filteredSavedActivities: SavedActivity[];
@@ -50,7 +49,7 @@ const SavedActivityList: React.FC<SavedActivityListProps> = ({
       
       <div className="bg-amber-50 p-3 rounded-md border border-amber-100 mb-2">
         <p className="text-sm text-amber-800">
-          These are your saved activities. To add them to your habit tracker, use the "Add to Habit Tracker" option when saving activities in the Explore tab.
+          These are your saved activities. To add them to your habit tracker, use the "Add to Habit Tracker" option when viewing your saved activities.
         </p>
       </div>
       
