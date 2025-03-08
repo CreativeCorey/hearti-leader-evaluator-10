@@ -21,7 +21,7 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
           <strong className="uppercase"> {focusDimension}</strong>
         </p>
         <p className="text-indigo-700 mt-2 text-sm">
-          Practice each behavior 21 times to develop a new habit and master the skill.
+          Practice each behavior 30 times to develop a new habit and master the skill.
         </p>
       </div>
       

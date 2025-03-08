@@ -27,7 +27,7 @@ const HabitProgressCircle: React.FC<HabitProgressCircleProps> = ({
   size = 100,
   onClick,
   completionCount = 0,
-  targetCount = 21
+  targetCount = 30
 }) => {
   const strokeWidth = size * 0.08;
   const radius = (size - strokeWidth) / 2;

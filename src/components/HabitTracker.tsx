@@ -21,14 +21,14 @@ const HabitTracker: React.FC<HabitTrackerProps> = ({ focusDimension }) => {
           HEARTI™ Habit Tracker
         </CardTitle>
         <CardDescription className="text-blue-100">
-          Build consistent habits by practicing them 21 times to form lasting behaviors
+          Build consistent habits by practicing them 30 times to form lasting behaviors
         </CardDescription>
       </CardHeader>
       <CardContent className={`${isMobile ? 'p-3' : 'p-6'} bg-gray-50`}>
         <HabitTrackerCore focusDimension={focusDimension} />
       </CardContent>
       <CardFooter className="bg-white p-4 text-sm text-muted-foreground border-t">
-        <p>Complete each habit 21 times to turn it into a lasting behavioral change.</p>
+        <p>Complete each habit 30 times to turn it into a lasting behavioral change.</p>
       </CardFooter>
     </Card>
   );

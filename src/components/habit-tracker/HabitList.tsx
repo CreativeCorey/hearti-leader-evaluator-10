@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { format, isSameDay } from 'date-fns';
 import { Button } from '@/components/ui/button';
@@ -52,7 +51,7 @@ const HabitList: React.FC<HabitListProps> = ({
   }
 
   const today = new Date();
-  const TARGET_COMPLETIONS = 21;
+  const TARGET_COMPLETIONS = 30;
 
   return (
     <div className={`grid ${isMobile ? 'gap-3' : 'gap-4'}`}>
@@ -166,7 +165,7 @@ const HabitList: React.FC<HabitListProps> = ({
             {isHabitMastered && (
               <div className="mt-3 pt-3 border-t border-gray-100">
                 <p className="text-sm text-green-700 text-center">
-                  Congratulations! You've completed this habit 21 times and formed a lasting behavior.
+                  Congratulations! You've completed this habit 30 times and formed a lasting behavior.
                 </p>
               </div>
             )}
