@@ -3,7 +3,7 @@
 
 @layer base {
   @font-face {
-    font-family: 'Century Gothic Pro';
+    font-family: 'Century Gothic';
     src: url('/fonts/CenturyGothicPro.woff2') format('woff2'),
          url('/fonts/CenturyGothicPro.woff') format('woff');
     font-weight: normal;
@@ -12,7 +12,7 @@
   }
 
   @font-face {
-    font-family: 'Century Gothic Pro';
+    font-family: 'Century Gothic';
     src: url('/fonts/CenturyGothicPro-Bold.woff2') format('woff2'),
          url('/fonts/CenturyGothicPro-Bold.woff') format('woff');
     font-weight: bold;
@@ -145,12 +145,12 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
-    font-family: 'Proxima Nova', system-ui, sans-serif;
+    @apply bg-background text-foreground;
+    font-family: 'Proxima Nova', system-ui, sans-serif !important;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading;
-    font-family: 'Century Gothic Pro', 'Century Gothic', sans-serif;
+    font-family: 'Century Gothic', sans-serif !important;
   }
 }

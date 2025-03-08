@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -19,7 +20,7 @@ export default {
 		},
 		fontFamily: {
 			'sans': ['Proxima Nova', 'system-ui', 'sans-serif'],
-			'heading': ['"Century Gothic Pro"', 'Century Gothic', 'sans-serif'],
+			'heading': ['Century Gothic', 'sans-serif'],
 		},
 		extend: {
 			colors: {
