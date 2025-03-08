@@ -1,33 +1,25 @@
+
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
-import HeartiLogo from '../assets/hearti-logo.svg';
 import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from 'lucide-react';
+import { useIsMobile } from '../hooks/use-mobile';
+import { HEARTIAssessment, UserProfile } from '../types';
 import { 
   getCurrentUser, 
   getCurrentUserAssessments, 
   setUseSupabase, 
-  useSupabase,
-  syncLocalDataToSupabase,
   getOrCreateAnonymousId,
-  ensureUserExists
+  syncLocalDataToSupabase
 } from '../utils/localStorage';
-import { ensureUserProfileExists, saveAssessmentToSupabase } from '../utils/supabaseHelpers';
-import { HEARTIAssessment, UserProfile } from '../types';
-import AssessmentForm from '../components/AssessmentForm';
-import ResultsDisplay from '../components/ResultsDisplay';
-import HistoricalResults from '../components/HistoricalResults';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Toggle } from '@/components/ui/toggle';
-import { Loader2 } from 'lucide-react';
-import { useIsMobile } from '../hooks/use-mobile';
 import { supabase } from '../integrations/supabase/client';
 import { signInWithGoogle, testGoogleSheetsConnection, setupWorkloadIdentity, getGoogleConnection } from '../utils/googleAuth';
+import HeaderSection from '@/components/assessment/HeaderSection';
+import AssessmentTabs from '@/components/assessment/AssessmentTabs';
+import SyncDialog from '@/components/sync/SyncDialog';
+import GoogleSheetsSetup from '@/components/google-integration/GoogleSheetsSetup';
+import GoogleTroubleshooting from '@/components/google-integration/GoogleTroubleshooting';
+import GoogleIntegrationTools from '@/components/google-integration/GoogleIntegrationTools';
 
 const Index: React.FC = () => {
   const { toast } = useToast();
@@ -153,7 +145,7 @@ const Index: React.FC = () => {
     
     try {
       // Get or create anonymous ID and ensure profile exists first
-      const anonymousId = getOrCreateAnonymousId();
+      getOrCreateAnonymousId();
       
       // Then sync data from localStorage to Supabase
       const success = await syncLocalDataToSupabase();
@@ -360,273 +352,50 @@ const Index: React.FC = () => {
   return (
     <Layout>
       <div className={`container max-w-6xl mx-auto p-4 ${isMobile ? 'pt-20' : 'pt-8'}`}>
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">HEARTI Leadership Assessment</h1>
-            <p className="text-muted-foreground mt-1">
-              Measure your growth in Humility, Empathy, Accountability, Resiliency, Transparency, and Inclusivity
-            </p>
-          </div>
-          
-          <div className="flex items-center gap-2 sm:gap-4">
-            <Toggle
-              pressed={isSupabaseEnabled}
-              onPressedChange={handleToggleSupabase}
-              className="data-[state=on]:bg-blue-500 px-4"
-            >
-              {isSupabaseEnabled ? 'Cloud Storage (Google Sheets)' : 'Local Storage'}
-            </Toggle>
-            
-            {profile && (
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="p-2">
-                  {googleConnection.connected ? googleConnection.email : (profile.email || 'Anonymous user')}
-                </Badge>
-                
-                <Link to="/auth">
-                  <Button variant="ghost" size="sm">
-                    {profile.email ? 'Account' : 'Sign In'}
-                  </Button>
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
+        <HeaderSection 
+          profile={profile}
+          isSupabaseEnabled={isSupabaseEnabled}
+          handleToggleSupabase={handleToggleSupabase}
+          googleConnection={googleConnection}
+          isMobile={isMobile}
+        />
         
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'take' | 'results')}>
-          <TabsList className="mb-8">
-            <TabsTrigger value="take" className="flex-1">Take Assessment</TabsTrigger>
-            <TabsTrigger value="results" className="flex-1" disabled={userAssessments.length === 0}>View Results</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="take">
-            <AssessmentForm onComplete={handleAssessmentComplete} />
-          </TabsContent>
-          
-          <TabsContent value="results">
-            <div className="space-y-8">
-              {latestAssessment && (
-                <div>
-                  <h2 className="text-xl font-bold mb-4">Latest Assessment Results</h2>
-                  <ResultsDisplay assessment={latestAssessment} />
-                  
-                  <div className="mt-6 flex gap-3">
-                    <Button 
-                      onClick={sendLatestToSheets}
-                      disabled={testingSheets}
-                      variant="outline"
-                      className="flex items-center gap-2"
-                    >
-                      {testingSheets && <Loader2 className="h-4 w-4 animate-spin" />}
-                      Send to Google Sheets
-                    </Button>
-                  </div>
-                </div>
-              )}
-              
-              {userAssessments.length > 1 && (
-                <div>
-                  <Separator className="my-8" />
-                  <h2 className="text-xl font-bold mb-4">Assessment History</h2>
-                  <HistoricalResults 
-                    assessments={userAssessments} 
-                    onSelect={(assessment) => setLatestAssessment(assessment)} 
-                  />
-                </div>
-              )}
-            </div>
-          </TabsContent>
-        </Tabs>
+        <AssessmentTabs 
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          userAssessments={userAssessments}
+          latestAssessment={latestAssessment}
+          onComplete={handleAssessmentComplete}
+          testingSheets={testingSheets}
+          sendLatestToSheets={sendLatestToSheets}
+        />
         
-        {/* Google Integration Section */}
-        <div className="mt-12 border-t pt-6">
-          <h2 className="text-xl font-bold mb-4">Google Sheets Integration</h2>
-          <Card>
-            <CardHeader>
-              <CardTitle>Connect with Google</CardTitle>
-              <CardDescription>
-                Configure Google Sheets integration using workload identity federation
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {/* Step 1: Connect Google Account */}
-                <div className="p-4 border rounded-md">
-                  <h3 className="font-semibold mb-2">Step 1: Connect your Google Account</h3>
-                  {googleConnection.connected ? (
-                    <div className="flex items-center gap-2 text-green-600">
-                      <Badge variant="secondary" className="bg-green-100 text-green-800">Connected</Badge>
-                      <span>Connected as {googleConnection.email}</span>
-                    </div>
-                  ) : (
-                    <Button onClick={handleGoogleSignIn}>
-                      Sign in with Google
-                    </Button>
-                  )}
-                </div>
-                
-                {/* Step 2: Configure Workload Identity */}
-                <div className="p-4 border rounded-md">
-                  <h3 className="font-semibold mb-2">Step 2: Setup Workload Identity</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Configure workload identity federation to securely connect to Google Sheets
-                  </p>
-                  <Button 
-                    onClick={handleConfigureWorkloadIdentity}
-                    disabled={!googleConnection.connected || configuringWorkloadIdentity}
-                    className="flex items-center gap-2"
-                  >
-                    {configuringWorkloadIdentity && <Loader2 className="h-4 w-4 animate-spin" />}
-                    Configure Workload Identity
-                  </Button>
-                </div>
-                
-                {/* Step 3: Test Connection */}
-                <div className="p-4 border rounded-md">
-                  <h3 className="font-semibold mb-2">Step 3: Test Google Sheets Connection</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Test your connection to make sure it's working correctly
-                  </p>
-                  <Button 
-                    onClick={testGoogleSheets}
-                    disabled={testingSheets}
-                    variant="outline"
-                    className="flex items-center gap-2"
-                  >
-                    {testingSheets && <Loader2 className="h-4 w-4 animate-spin" />}
-                    Test Connection
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="flex flex-col items-start">
-              <p className="text-sm text-muted-foreground">
-                For more information about Google Sheets integration and workload identity federation, refer to the documentation.
-              </p>
-            </CardFooter>
-          </Card>
-        </div>
+        <GoogleSheetsSetup
+          googleConnection={googleConnection}
+          handleGoogleSignIn={handleGoogleSignIn}
+          handleConfigureWorkloadIdentity={handleConfigureWorkloadIdentity}
+          configuringWorkloadIdentity={configuringWorkloadIdentity}
+          testGoogleSheets={testGoogleSheets}
+          testingSheets={testingSheets}
+        />
         
-        {/* Google OAuth Troubleshooting Guide */}
-        <div className="mt-6 p-6 border rounded-md bg-blue-50">
-          <h3 className="text-lg font-semibold mb-2">Troubleshooting Google OAuth</h3>
-          <p className="mb-4">If you're seeing a 403 error when connecting to Google, please ensure:</p>
-          
-          <ol className="list-decimal pl-6 space-y-2 mb-4">
-            <li>
-              <strong>Your Google Cloud Project is properly configured:</strong> 
-              <ul className="list-disc pl-6 mt-1">
-                <li>OAuth consent screen is set up</li>
-                <li>Web application OAuth client is created</li>
-                <li>The correct redirect URL is added to allowed redirect URLs</li>
-              </ul>
-            </li>
-            <li>
-              <strong>Redirect URL is properly configured:</strong> Add this URL to your authorized redirect URIs in Google Cloud Console:
-              <div className="p-2 bg-white border rounded mt-1 font-mono text-sm break-all">
-                {`${window.location.origin}/auth/callback`}
-              </div>
-            </li>
-            <li>
-              <strong>JavaScript origins are set:</strong> Add this URL to your authorized JavaScript origins:
-              <div className="p-2 bg-white border rounded mt-1 font-mono text-sm">
-                {window.location.origin}
-              </div>
-            </li>
-            <li>
-              <strong>OAuth Client ID and Secret are correctly added to Supabase</strong>
-            </li>
-          </ol>
-          
-          <p className="text-sm text-muted-foreground">
-            For more details, see the <a href="https://supabase.com/docs/guides/auth/social-login/auth-google" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Supabase Google Auth documentation</a>.
-          </p>
-        </div>
+        <GoogleTroubleshooting />
         
         {/* Admin debug tools - only visible on results page */}
         {activeTab === 'results' && (
-          <div className="mt-12 border-t pt-4">
-            <details className="text-sm">
-              <summary className="cursor-pointer font-medium text-muted-foreground">
-                Google Sheets Integration Tools
-              </summary>
-              <div className="mt-4 p-4 bg-gray-50 rounded-md">
-                <p className="mb-4 text-sm text-muted-foreground">
-                  These tools help diagnose issues with Google Sheets integration. The test will attempt to send
-                  sample data directly to Google Sheets.
-                </p>
-                <Button 
-                  onClick={testGoogleSheets}
-                  disabled={testingSheets}
-                  variant="secondary"
-                  className="flex items-center gap-2"
-                >
-                  {testingSheets && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Test Google Sheets Connection
-                </Button>
-              </div>
-            </details>
-          </div>
+          <GoogleIntegrationTools 
+            testGoogleSheets={testGoogleSheets}
+            testingSheets={testingSheets}
+          />
         )}
         
-        <Dialog open={syncDialogOpen} onOpenChange={handleSyncDialogClose}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Sync Local Data to Cloud Storage</DialogTitle>
-              <DialogDescription>
-                Would you like to sync your existing local data to cloud storage?
-                This allows your assessments to be sent to Google Sheets and accessed from any device.
-              </DialogDescription>
-            </DialogHeader>
-            
-            {syncStatus === 'syncing' ? (
-              <div className="py-6 flex flex-col items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
-                <p>Syncing your data to the cloud...</p>
-              </div>
-            ) : syncStatus === 'success' ? (
-              <div className="py-6 text-center text-green-600">
-                <p className="font-medium">Sync completed successfully!</p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Your data is now available in cloud storage and Google Sheets integration is active.
-                </p>
-              </div>
-            ) : syncStatus === 'error' ? (
-              <div className="py-6 text-center text-red-600">
-                <p className="font-medium">Sync failed</p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  There was an error syncing your data. Please try again.
-                </p>
-              </div>
-            ) : (
-              <div className="py-4">
-                <p className="mb-2">This will copy your:</p>
-                <ul className="list-disc pl-6 mb-4 text-sm">
-                  <li>Assessment results and history</li>
-                  <li>User profile information</li>
-                  <li>Organization information (if any)</li>
-                </ul>
-                <p className="text-sm text-muted-foreground">
-                  Enabling cloud storage will also activate Google Sheets integration, sending your
-                  assessment data to a central spreadsheet.
-                </p>
-              </div>
-            )}
-            
-            {syncStatus === 'idle' && (
-              <DialogFooter>
-                <Button variant="outline" onClick={handleCancelSync}>Cancel</Button>
-                <Button onClick={handleConfirmSync}>Sync Now</Button>
-              </DialogFooter>
-            )}
-            
-            {(syncStatus === 'success' || syncStatus === 'error') && (
-              <DialogFooter>
-                <Button onClick={handleSyncDialogClose}>Close</Button>
-              </DialogFooter>
-            )}
-          </DialogContent>
-        </Dialog>
+        <SyncDialog
+          open={syncDialogOpen}
+          onClose={handleSyncDialogClose}
+          status={syncStatus}
+          onConfirm={handleConfirmSync}
+          onCancel={handleCancelSync}
+        />
       </div>
     </Layout>
   );
