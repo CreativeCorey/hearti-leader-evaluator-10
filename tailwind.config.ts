@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -18,11 +17,11 @@ export default {
 				'2xl': '1400px'
 			}
 		},
+		fontFamily: {
+			'sans': ['Proxima Nova', 'system-ui', 'sans-serif'],
+			'heading': ['"Century Gothic Pro"', 'Century Gothic', 'sans-serif'],
+		},
 		extend: {
-			fontFamily: {
-				'sans': ['Proxima Nova', 'system-ui', 'sans-serif'],
-				'heading': ['"Century Gothic Pro"', 'Century Gothic', 'sans-serif'],
-			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
