@@ -27,12 +27,12 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
   };
 
   return (
-    <div className="my-8">
-      <h3 className="text-lg font-medium mb-4">Your HEARTI:Leader Spectra</h3>
-      <div className="flex flex-col lg:flex-row gap-8">
-        <div className="flex-1 bg-slate-50 p-6 rounded-lg">
+    <div className="my-8 pdf-section">
+      <h3 className="text-lg font-medium mb-4 pdf-section-title">Your HEARTI:Leader Spectra</h3>
+      <div className="flex flex-col lg:flex-row gap-8 pdf-charts-grid">
+        <div className="flex-1 bg-slate-50 p-6 rounded-lg pdf-chart-column">
           <p className="text-center font-medium text-indigo-600 mb-2">Your Results</p>
-          <div className="h-[300px]">
+          <div className="h-[300px] pdf-chart-container">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
                 <PolarGrid gridType="polygon" />
@@ -50,9 +50,9 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
           </div>
         </div>
         
-        <div className="flex-1 bg-slate-50 p-6 rounded-lg">
+        <div className="flex-1 bg-slate-50 p-6 rounded-lg pdf-chart-column">
           <p className="text-center font-medium text-purple-600 mb-2">Global Benchmark</p>
-          <div className="h-[300px]">
+          <div className="h-[300px] pdf-chart-container">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart cx="50%" cy="50%" outerRadius="70%" data={formatDataForRadarChart(aggregateData.averageScores)}>
                 <PolarGrid gridType="polygon" />

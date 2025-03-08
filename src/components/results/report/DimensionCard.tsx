@@ -16,16 +16,19 @@ const DimensionCard: React.FC<DimensionCardProps> = ({ dimension, assessment, st
   const score = assessment.dimensionScores[dimension];
   const { statusContent, description, levels, tips } = getDimensionReportContent(dimension, status, userName);
 
+  // PDF class mapping for dimension headers
+  const dimensionHeaderClass = `${dimension.toLowerCase()}-header`;
+
   return (
-    <Card className="mb-8 overflow-hidden">
-      <div className={`p-4 text-white ${
+    <Card className="mb-8 overflow-hidden pdf-dimension-card">
+      <div className={`p-4 text-white pdf-dimension-header ${
         status === 'strength' ? 'bg-green-600' : 
         status === 'vulnerability' ? 'bg-amber-600' : 
         'bg-blue-600'
-      }`}>
-        <h3 className="text-xl font-bold uppercase">{dimension}</h3>
+      } ${dimensionHeaderClass}`}>
+        <h3 className="text-xl font-bold uppercase pdf-dimension-title">{dimension}</h3>
         <div className="flex items-center mt-1">
-          <Badge className="text-sm py-0.5 px-2 bg-white text-gray-800">
+          <Badge className="text-sm py-0.5 px-2 bg-white text-gray-800 pdf-dimension-score">
             Score: {score}/5
           </Badge>
           <span className="ml-2 text-sm">
@@ -36,7 +39,7 @@ const DimensionCard: React.FC<DimensionCardProps> = ({ dimension, assessment, st
         </div>
       </div>
       
-      <CardContent className="p-6">
+      <CardContent className="p-6 pdf-dimension-content">
         <div className="prose max-w-none">
           <div className="mb-4" dangerouslySetInnerHTML={{ __html: statusContent }} />
           
