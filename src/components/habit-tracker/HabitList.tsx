@@ -2,7 +2,7 @@
 import React from 'react';
 import { format, isSameDay } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { X, Plus, Minus, Check, Calendar, ArrowRight } from 'lucide-react';
+import { X, Plus, Minus, Check, Calendar, ArrowRight, Award } from 'lucide-react';
 import { HEARTIDimension } from '@/types';
 import { Habit } from '@/hooks/useHabits';
 import HabitProgressCircle from './HabitProgressCircle';
@@ -52,6 +52,7 @@ const HabitList: React.FC<HabitListProps> = ({
   }
 
   const today = new Date();
+  const TARGET_COMPLETIONS = 21;
 
   return (
     <div className={`grid ${isMobile ? 'gap-3' : 'gap-4'}`}>
@@ -60,17 +61,25 @@ const HabitList: React.FC<HabitListProps> = ({
         const todayStr = format(today, 'yyyy-MM-dd');
         const isCompletedToday = habit.completedDates.includes(todayStr);
         
-        // Calculate a simple completion percentage for today
-        const completionPercentage = isCompletedToday ? 100 : 0;
+        // Calculate completion metrics
+        const completionCount = habit.completedDates.length;
+        const completionPercentage = Math.min((completionCount / TARGET_COMPLETIONS) * 100, 100);
+        const isHabitMastered = completionCount >= TARGET_COMPLETIONS;
         
         return (
-          <div key={habit.id} className={`bg-white rounded-xl ${isMobile ? 'p-3' : 'p-5'} shadow-sm border border-gray-100 hover:shadow-md transition-shadow`}>
+          <div key={habit.id} className={`bg-white rounded-xl ${isMobile ? 'p-3' : 'p-5'} shadow-sm border border-gray-100 hover:shadow-md transition-shadow ${isHabitMastered ? 'border-2 border-green-300' : ''}`}>
             <div className="flex justify-between items-center mb-3">
               <div className="flex items-center space-x-2">
                 <div className={`px-2 py-1 rounded-md text-xs font-medium ${dimensionColors[habit.dimension]}`}>
                   {isMobile ? habit.dimension.charAt(0).toUpperCase() : habit.dimension}
                 </div>
                 <span className="text-xs text-muted-foreground">{habit.frequency === 'daily' ? 'Daily' : 'Weekly'}</span>
+                {isHabitMastered && (
+                  <span className="flex items-center gap-1 text-xs text-green-600 font-semibold">
+                    <Award size={14} className="text-green-500" />
+                    Mastered!
+                  </span>
+                )}
               </div>
               <Button 
                 variant="ghost" 
@@ -98,6 +107,8 @@ const HabitList: React.FC<HabitListProps> = ({
                   dimension={habit.dimension} 
                   size={isMobile ? 80 : 100}
                   onClick={() => onToggleHabit(habit.id, today)}
+                  completionCount={completionCount}
+                  targetCount={TARGET_COMPLETIONS}
                 />
               </div>
               
@@ -126,13 +137,13 @@ const HabitList: React.FC<HabitListProps> = ({
             
             <div className={`${isMobile ? 'mt-3' : 'mt-4'}`}>
               <Button 
-                className={`w-full ${isMobile ? 'py-1.5 px-3 text-sm h-auto' : ''} bg-indigo-600 hover:bg-indigo-700 text-white`}
+                className={`w-full ${isMobile ? 'py-1.5 px-3 text-sm h-auto' : ''} ${isHabitMastered ? 'bg-green-600 hover:bg-green-700' : 'bg-indigo-600 hover:bg-indigo-700'} text-white`}
                 onClick={() => onToggleHabit(habit.id, today)}
               >
                 {isCompletedToday ? (
                   <>
                     <Check size={isMobile ? 14 : 16} className="mr-1.5" />
-                    Completed
+                    Completed Today
                   </>
                 ) : (
                   <>
@@ -151,6 +162,14 @@ const HabitList: React.FC<HabitListProps> = ({
                 </Button>
               )}
             </div>
+            
+            {isHabitMastered && (
+              <div className="mt-3 pt-3 border-t border-gray-100">
+                <p className="text-sm text-green-700 text-center">
+                  Congratulations! You've completed this habit 21 times and formed a lasting behavior.
+                </p>
+              </div>
+            )}
           </div>
         );
       })}

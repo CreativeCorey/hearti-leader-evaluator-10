@@ -58,7 +58,7 @@ const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension }) =
           HEARTI Skill Development
         </CardTitle>
         <CardDescription className="text-white/90">
-          Improve your leadership dimensions with these targeted activities
+          Choose 3 behaviors to practice 21 times to master your HEARTI leadership dimensions
         </CardDescription>
       </CardHeader>
       <CardContent className={`${isMobile ? 'p-3' : 'p-6'}`}>
@@ -103,7 +103,7 @@ const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension }) =
                 className="rounded-md text-xs h-7"
                 onClick={() => setActiveView('saved')}
               >
-                My Activities ({savedActivities.length})
+                My Activities ({savedActivities.length}/3)
               </Button>
             </div>
           </div>
@@ -125,7 +125,7 @@ const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension }) =
         </Tabs>
       </CardContent>
       <CardFooter className="bg-gray-50 p-4 text-sm text-muted-foreground rounded-b-lg">
-        <p>Regularly practicing these activities will help you develop your HEARTI leadership dimensions.</p>
+        <p>Select 3 behaviors that balance your strengths and vulnerability areas. Practice each 21 times to form lasting habits.</p>
       </CardFooter>
     </Card>
   );

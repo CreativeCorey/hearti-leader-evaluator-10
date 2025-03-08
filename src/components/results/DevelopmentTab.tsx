@@ -14,11 +14,14 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
       <div className="bg-indigo-50 border-l-4 border-indigo-400 p-4 mb-6 rounded-md">
         <h3 className="font-medium flex items-center gap-2 text-indigo-800">
           <Award className="text-indigo-600" size={20} />
-          Skill Development Activities
+          Development Recommendations
         </h3>
         <p className="text-indigo-700 mt-1">
-          Choose from targeted activities to improve your HEARTI leadership dimensions. We recommend focusing on your development area: 
+          Choose 3 behaviors below that will help strengthen your leadership dimensions. We recommend focusing on your development area: 
           <strong className="uppercase"> {focusDimension}</strong>
+        </p>
+        <p className="text-indigo-700 mt-2 text-sm">
+          Practice each behavior 21 times to develop a new habit and master the skill.
         </p>
       </div>
       

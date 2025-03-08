@@ -2,6 +2,8 @@
 import React from 'react';
 import { SkillActivity, SavedActivity } from '@/data/heartActivities';
 import ActivityCard from './ActivityCard';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { InfoCircle } from 'lucide-react';
 
 interface ActivityListProps {
   groupedActivities: Record<string, SkillActivity[]>;
@@ -14,6 +16,9 @@ const ActivityList: React.FC<ActivityListProps> = ({
   savedActivities, 
   onSaveActivity 
 }) => {
+  const savedActivitiesCount = savedActivities.length;
+  const isRecommendationVisible = savedActivitiesCount < 3;
+
   if (Object.entries(groupedActivities).length === 0) {
     return (
       <div className="text-center py-8">
@@ -24,6 +29,15 @@ const ActivityList: React.FC<ActivityListProps> = ({
 
   return (
     <div className="space-y-6">
+      {isRecommendationVisible && (
+        <Alert className="bg-blue-50 border-blue-200 text-blue-800">
+          <InfoCircle className="h-4 w-4 text-blue-500" />
+          <AlertDescription>
+            We recommend selecting at least 3 behaviors to track - choose ones that address both your strengths and vulnerability areas.
+          </AlertDescription>
+        </Alert>
+      )}
+      
       {Object.entries(groupedActivities).map(([category, activities]) => (
         <div key={category} className="mb-6">
           <h3 className="text-lg font-medium mb-3">{category}</h3>
