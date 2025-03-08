@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 
 const ReportFooter: React.FC = () => {
   return (
-    <Card className="mb-8 pdf-footer">
+    <Card className="mt-8 mb-8 pdf-footer">
       <CardContent className="p-6">
         <div className="prose max-w-none">
           <h3 className="text-xl font-bold mb-4">Change the World:</h3>

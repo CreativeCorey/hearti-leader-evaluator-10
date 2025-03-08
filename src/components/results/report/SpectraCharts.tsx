@@ -28,22 +28,23 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
 
   return (
     <div className="my-8 pdf-section">
-      <h3 className="text-lg font-medium mb-4 pdf-section-title">Your HEARTI:Leader Spectra</h3>
+      <h3 className="text-2xl font-medium mb-4 pdf-section-title">Your HEARTI:Leader Spectra</h3>
       <div className="flex flex-col lg:flex-row gap-8 pdf-charts-grid">
         <div className="flex-1 bg-slate-50 p-6 rounded-lg pdf-chart-column">
-          <p className="text-center font-medium text-indigo-600 mb-2">Your Results</p>
-          <div className="h-[300px] pdf-chart-container">
+          <p className="text-center font-medium text-xl text-indigo-600 mb-4">Your Results</p>
+          <div className="h-[400px] pdf-chart-container">
             <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
+              <RadarChart cx="50%" cy="50%" outerRadius="75%" data={chartData}>
                 <PolarGrid gridType="polygon" />
-                <PolarAngleAxis dataKey="name" tick={{ fill: '#6b7280' }} />
-                <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280' }} />
+                <PolarAngleAxis dataKey="name" tick={{ fill: '#6b7280', fontSize: 14 }} />
+                <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280', fontSize: 12 }} />
                 <Radar
                   name="Your Score"
                   dataKey="value"
                   stroke={userColor}
                   fill={userColor}
                   fillOpacity={0.6}
+                  strokeWidth={2}
                 />
               </RadarChart>
             </ResponsiveContainer>
@@ -51,19 +52,20 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
         </div>
         
         <div className="flex-1 bg-slate-50 p-6 rounded-lg pdf-chart-column">
-          <p className="text-center font-medium text-purple-600 mb-2">Global Benchmark</p>
-          <div className="h-[300px] pdf-chart-container">
+          <p className="text-center font-medium text-xl text-purple-600 mb-4">Global Benchmark</p>
+          <div className="h-[400px] pdf-chart-container">
             <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="70%" data={formatDataForRadarChart(aggregateData.averageScores)}>
+              <RadarChart cx="50%" cy="50%" outerRadius="75%" data={formatDataForRadarChart(aggregateData.averageScores)}>
                 <PolarGrid gridType="polygon" />
-                <PolarAngleAxis dataKey="name" tick={{ fill: '#6b7280' }} />
-                <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280' }} />
+                <PolarAngleAxis dataKey="name" tick={{ fill: '#6b7280', fontSize: 14 }} />
+                <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280', fontSize: 12 }} />
                 <Radar
                   name="Global Average"
                   dataKey="value"
                   stroke={comparisonColors.average}
                   fill={comparisonColors.average}
                   fillOpacity={0.6}
+                  strokeWidth={2}
                 />
               </RadarChart>
             </ResponsiveContainer>
