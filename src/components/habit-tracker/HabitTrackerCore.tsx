@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { startOfWeek, addDays, format } from 'date-fns';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { startOfWeek, addDays } from 'date-fns';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { HEARTIDimension } from '@/types';
 import { useHabits, NewHabitForm } from '@/hooks/useHabits';
 import { filterHabits, calculateStreaks } from '@/utils/habitUtils';
@@ -9,20 +9,24 @@ import HabitHeader from './HabitHeader';
 import HabitForm from './HabitForm';
 import HabitList from './HabitList';
 import LoadingSpinner from './LoadingSpinner';
-import { useIsMobile } from '@/hooks/use-mobile';
+import HabitTabs from './HabitTabs';
+import TodayHeader from './TodayHeader';
+import EmptyHabitState from './EmptyHabitState';
 
 interface HabitTrackerCoreProps {
   focusDimension?: HEARTIDimension;
 }
 
 const HabitTrackerCore: React.FC<HabitTrackerCoreProps> = ({ focusDimension }) => {
-  const isMobile = useIsMobile();
+  // Form state
   const [newHabit, setNewHabit] = useState<NewHabitForm>({
     dimension: focusDimension || 'humility',
     description: '',
     frequency: 'daily',
   });
   const [addingHabit, setAddingHabit] = useState(false);
+  
+  // Active dimension & date tracking
   const [activeDimension, setActiveDimension] = useState<HEARTIDimension | 'all'>(focusDimension || 'all');
   const [currentWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }));
   
@@ -48,40 +52,19 @@ const HabitTrackerCore: React.FC<HabitTrackerCoreProps> = ({ focusDimension }) =
     }
   };
 
-  // Get today's formatted date for display
-  const todayFormatted = format(new Date(), 'EEEE, MMMM d');
+  const handleDimensionChange = (dimension: HEARTIDimension | 'all') => {
+    setActiveDimension(dimension);
+  };
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col space-y-2">
-        <h2 className="text-2xl font-bold text-blue">Today</h2>
-        <p className="text-muted-foreground">{todayFormatted}</p>
-      </div>
+      <TodayHeader />
     
-      <Tabs defaultValue={activeDimension} onValueChange={(value) => setActiveDimension(value as HEARTIDimension | 'all')}>
-        <div className="mobile-tabs-container">
-          <TabsList className="mobile-tabs">
-            <TabsTrigger value="all" className="mobile-tab">All</TabsTrigger>
-            <TabsTrigger value="humility" className="mobile-tab">
-              {isMobile ? "H" : "Humility"}
-            </TabsTrigger>
-            <TabsTrigger value="empathy" className="mobile-tab">
-              {isMobile ? "E" : "Empathy"}
-            </TabsTrigger>
-            <TabsTrigger value="accountability" className="mobile-tab">
-              {isMobile ? "A" : "Account."}
-            </TabsTrigger>
-            <TabsTrigger value="resiliency" className="mobile-tab">
-              {isMobile ? "R" : "Resiliency"}
-            </TabsTrigger>
-            <TabsTrigger value="transparency" className="mobile-tab">
-              {isMobile ? "T" : "Transp."}
-            </TabsTrigger>
-            <TabsTrigger value="inclusivity" className="mobile-tab">
-              {isMobile ? "I" : "Inclusivity"}
-            </TabsTrigger>
-          </TabsList>
-        </div>
+      <Tabs defaultValue={activeDimension} value={activeDimension}>
+        <HabitTabs 
+          activeDimension={activeDimension} 
+          onDimensionChange={handleDimensionChange}
+        />
         
         <HabitHeader 
           addingHabit={addingHabit} 
@@ -100,6 +83,8 @@ const HabitTrackerCore: React.FC<HabitTrackerCoreProps> = ({ focusDimension }) =
         
         {loading ? (
           <LoadingSpinner />
+        ) : filteredHabits.length === 0 ? (
+          <EmptyHabitState />
         ) : (
           <HabitList
             habits={filteredHabits}
