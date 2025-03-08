@@ -34,8 +34,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ assessment }) => {
 
   // Spider chart configuration
   const spiderConfig = {
-    gridType: "circle" as "circle",
-    axisLineType: "circle" as "circle",
+    gridType: "polygon" as "polygon",
+    axisLineType: "polygon" as "polygon",
     strokeWidth: 2,
     fillOpacity: 0.6,
     dotSize: 5,
@@ -67,9 +67,11 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ assessment }) => {
                 fill={userColor}
                 fillOpacity={spiderConfig.fillOpacity}
                 strokeWidth={spiderConfig.strokeWidth}
-                dot={true}
+                dot={{ r: spiderConfig.dotSize }}
                 activeDot={{ r: spiderConfig.activeDotSize }}
                 isAnimationActive={true}
+                animationBegin={200}
+                animationDuration={1000}
               />
               <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
               <Legend />

@@ -32,8 +32,8 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
 
   // Configuration for the spider chart appearance
   const spiderConfig = {
-    gridType: "circle" as "circle",
-    axisLineType: "circle" as "circle",
+    gridType: "polygon" as "polygon",
+    axisLineType: "polygon" as "polygon",
     outerRadius: 80,
     fillOpacity: 0.5,
     strokeWidth: 2,
@@ -78,9 +78,11 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
                   fill={userColor}
                   fillOpacity={spiderConfig.fillOpacity}
                   strokeWidth={spiderConfig.strokeWidth}
-                  dot={true}
+                  dot={{ r: spiderConfig.dotSize }}
                   activeDot={{ r: spiderConfig.activeDotSize }}
                   isAnimationActive={true}
+                  animationBegin={100}
+                  animationDuration={1000}
                 />
               </RadarChart>
             </ResponsiveContainer>
@@ -120,9 +122,11 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
                   fill={comparisonColors.average}
                   fillOpacity={spiderConfig.fillOpacity}
                   strokeWidth={spiderConfig.strokeWidth}
-                  dot={true}
+                  dot={{ r: spiderConfig.dotSize }}
                   activeDot={{ r: spiderConfig.activeDotSize }}
                   isAnimationActive={true}
+                  animationBegin={100}
+                  animationDuration={1000}
                 />
               </RadarChart>
             </ResponsiveContainer>

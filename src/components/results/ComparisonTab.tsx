@@ -56,8 +56,8 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
 
   // Spider chart configuration
   const spiderConfig = {
-    gridType: "circle" as "circle",
-    axisLineType: "circle" as "circle",
+    gridType: "polygon" as "polygon",
+    axisLineType: "polygon" as "polygon",
     strokeWidth: 2,
     fillOpacity: 0.6,
     dotSize: 5,
@@ -214,9 +214,11 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
                   fill={userColor}
                   fillOpacity={spiderConfig.fillOpacity}
                   strokeWidth={spiderConfig.strokeWidth}
-                  dot={true}
+                  dot={{ r: spiderConfig.dotSize }}
                   activeDot={{ r: spiderConfig.activeDotSize }}
                   isAnimationActive={true}
+                  animationBegin={100}
+                  animationDuration={1000}
                 />
                 {compareMode !== 'none' && (
                   <Radar
@@ -226,9 +228,11 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
                     fill={getComparisonColor()}
                     fillOpacity={spiderConfig.fillOpacity}
                     strokeWidth={spiderConfig.strokeWidth}
-                    dot={true}
+                    dot={{ r: spiderConfig.dotSize }}
                     activeDot={{ r: spiderConfig.activeDotSize }}
                     isAnimationActive={true}
+                    animationBegin={200}
+                    animationDuration={1000}
                   />
                 )}
                 <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
@@ -260,9 +264,11 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
                     fill={userColor}
                     fillOpacity={spiderConfig.fillOpacity}
                     strokeWidth={spiderConfig.strokeWidth}
-                    dot={true}
+                    dot={{ r: spiderConfig.dotSize }}
                     activeDot={{ r: spiderConfig.activeDotSize }}
                     isAnimationActive={true}
+                    animationBegin={100}
+                    animationDuration={1000}
                   />
                   <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
                 </RadarChart>
@@ -292,9 +298,11 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
                       fill={getComparisonColor()}
                       fillOpacity={spiderConfig.fillOpacity}
                       strokeWidth={spiderConfig.strokeWidth}
-                      dot={true}
+                      dot={{ r: spiderConfig.dotSize }}
                       activeDot={{ r: spiderConfig.activeDotSize }}
                       isAnimationActive={true}
+                      animationBegin={100}
+                      animationDuration={1000}
                     />
                     <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
                   </RadarChart>
