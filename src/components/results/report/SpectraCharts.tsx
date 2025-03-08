@@ -25,10 +25,9 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
   const chartData = formatDataForRadarChart(assessment.dimensionScores);
   const benchmarkData = formatDataForRadarChart(aggregateData.averageScores);
   
-  // Modern gradient colors matching the palette
-  const userColor = "#6366f1"; // User score color
+  const userColor = "#6366f1";
   const comparisonColors = {
-    average: "#9E0059", // Purple from the gradient
+    average: "#8b5cf6",
   };
 
   // Configuration for the spider chart appearance
@@ -44,7 +43,7 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
 
   return (
     <div className="my-8 pdf-section">
-      <h3 className="text-2xl font-medium mb-4 pdf-section-title text-gradient-primary">Your HEARTI:Leader Spectra</h3>
+      <h3 className="text-2xl font-medium mb-4 pdf-section-title">Your HEARTI:Leader Spectra</h3>
       <div className="flex flex-col lg:flex-row gap-8 pdf-charts-grid">
         <div className="flex-1 bg-slate-50 p-6 rounded-lg pdf-chart-column">
           <p className="text-center font-medium text-xl text-indigo-600 mb-4">Your Results</p>
@@ -91,7 +90,7 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
         </div>
         
         <div className="flex-1 bg-slate-50 p-6 rounded-lg pdf-chart-column">
-          <p className="text-center font-medium text-xl text-gradient-purple-blue mb-4">Global Benchmark</p>
+          <p className="text-center font-medium text-xl text-purple-600 mb-4">Global Benchmark</p>
           <div className="h-[550px] pdf-chart-container">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart 

@@ -24,13 +24,12 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ assessment }) => {
   const developmentArea = sortedDimensions[sortedDimensions.length - 1];
 
   const getBadgeVariant = (score: number) => {
-    if (score >= 4.5) return "gradient-green";
-    if (score >= 3.5) return "gradient-blue";
-    if (score >= 2.5) return "gradient";
-    return "gradient-red";
+    if (score >= 4.5) return "default";
+    if (score >= 3.5) return "secondary";
+    if (score >= 2.5) return "outline";
+    return "destructive";
   };
   
-  // Modern gradient color for the chart
   const userColor = "#6366f1";
 
   // Spider chart configuration
@@ -114,7 +113,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ assessment }) => {
         <div>
           <h3 className="text-lg font-medium mb-2">Key Insights</h3>
           <div className="space-y-4 text-sm">
-            <div className="bg-gradient-green-yellow/10 p-3 rounded-md border border-green-100">
+            <div className="bg-green-50 p-3 rounded-md border border-green-100">
               <p className="font-medium flex items-center text-green-800">
                 <Target size={16} className="mr-2" />
                 Top Strength: {topStrength.charAt(0).toUpperCase() + topStrength.slice(1)}
@@ -122,12 +121,12 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ assessment }) => {
               <p className="text-green-700 mt-1">{getFeedback(assessment.dimensionScores[topStrength], topStrength)}</p>
             </div>
             
-            <div className="bg-gradient-red-pink/10 p-3 rounded-md border border-red-100">
-              <p className="font-medium flex items-center text-red-800">
+            <div className="bg-amber-50 p-3 rounded-md border border-amber-100">
+              <p className="font-medium flex items-center text-amber-800">
                 <Target size={16} className="mr-2" />
                 Vulnerability: {developmentArea.charAt(0).toUpperCase() + developmentArea.slice(1)}
               </p>
-              <p className="text-red-700 mt-1">{getFeedback(assessment.dimensionScores[developmentArea], developmentArea)}</p>
+              <p className="text-amber-700 mt-1">{getFeedback(assessment.dimensionScores[developmentArea], developmentArea)}</p>
             </div>
           </div>
         </div>

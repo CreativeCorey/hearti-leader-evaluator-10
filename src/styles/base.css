@@ -64,13 +64,6 @@
     --purple: 282 80% 44%;
     --light-purple: 267 100% 50%;
     --blue: 214 79% 42%;
-    
-    /* New gradient variables */
-    --gradient-primary: linear-gradient(90deg, #FFBA08 0%, #E02639 50%, #9E0059 75%, #390099 100%);
-    --gradient-red-pink: linear-gradient(90deg, #E02639 0%, #9E0059 100%);
-    --gradient-purple-blue: linear-gradient(90deg, #9E0059 0%, #390099 100%);
-    --gradient-green-yellow: linear-gradient(90deg, #52B788 0%, #DDE02A 100%);
-    --gradient-blue: linear-gradient(90deg, #0077B6 0%, #00B4D8 100%);
   }
 
   .dark {

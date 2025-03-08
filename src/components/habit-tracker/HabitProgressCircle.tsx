@@ -12,12 +12,12 @@ interface HabitProgressCircleProps {
 }
 
 const dimensionProgressColors = {
-  humility: { bg: '#E9D5FF', progress: 'url(#gradientPurpleBlue)' }, // purple gradient
-  empathy: { bg: '#DBEAFE', progress: 'url(#gradientBlue)' }, // blue gradient
-  accountability: { bg: '#DCFCE7', progress: 'url(#gradientGreenYellow)' }, // green-yellow gradient
-  resiliency: { bg: '#FEF3C7', progress: 'url(#gradientPrimary)' }, // primary gradient
-  transparency: { bg: '#E0E7FF', progress: 'url(#gradientBlue)' }, // blue gradient
-  inclusivity: { bg: '#FCE7F3', progress: 'url(#gradientRedPink)' }  // red-pink gradient
+  humility: { bg: '#E9D5FF', progress: '#8B5CF6' }, // purple
+  empathy: { bg: '#DBEAFE', progress: '#1E40AF' }, // blue
+  accountability: { bg: '#DCFCE7', progress: '#22C55E' }, // green
+  resiliency: { bg: '#FEF3C7', progress: '#F59E0B' }, // yellow/orange
+  transparency: { bg: '#E0E7FF', progress: '#4F46E5' }, // indigo
+  inclusivity: { bg: '#FCE7F3', progress: '#EC4899' }  // pink
 };
 
 const HabitProgressCircle: React.FC<HabitProgressCircleProps> = ({
@@ -39,32 +39,6 @@ const HabitProgressCircle: React.FC<HabitProgressCircleProps> = ({
       onClick={onClick}
     >
       <svg width={size} height={size} className="transform -rotate-90">
-        {/* SVG Gradient Definitions */}
-        <defs>
-          <linearGradient id="gradientPrimary" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#FFBA08" />
-            <stop offset="50%" stopColor="#E02639" />
-            <stop offset="75%" stopColor="#9E0059" />
-            <stop offset="100%" stopColor="#390099" />
-          </linearGradient>
-          <linearGradient id="gradientRedPink" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#E02639" />
-            <stop offset="100%" stopColor="#9E0059" />
-          </linearGradient>
-          <linearGradient id="gradientPurpleBlue" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#9E0059" />
-            <stop offset="100%" stopColor="#390099" />
-          </linearGradient>
-          <linearGradient id="gradientGreenYellow" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#52B788" />
-            <stop offset="100%" stopColor="#DDE02A" />
-          </linearGradient>
-          <linearGradient id="gradientBlue" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#0077B6" />
-            <stop offset="100%" stopColor="#00B4D8" />
-          </linearGradient>
-        </defs>
-        
         {/* Background circle */}
         <circle
           cx={size / 2}
