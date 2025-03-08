@@ -41,6 +41,18 @@ const SavedActivityCard: React.FC<SavedActivityCardProps> = ({
     }
   };
   
+  const handleToggleCompletion = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onToggleCompletion(savedActivity.id);
+  };
+  
+  const handleRemove = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onRemove(savedActivity.id);
+  };
+  
   return (
     <Card className={`p-4 border-l-4 ${savedActivity.completed ? 'border-l-green-500 bg-green-50' : 'border-l-blue-300'}`}>
       <div className="flex flex-col gap-3">
@@ -61,7 +73,7 @@ const SavedActivityCard: React.FC<SavedActivityCardProps> = ({
             variant={savedActivity.completed ? "outline" : "default"}
             size="sm" 
             className="flex items-center gap-1" 
-            onClick={() => onToggleCompletion(savedActivity.id)}
+            onClick={handleToggleCompletion}
           >
             {savedActivity.completed ? (
               <>
@@ -86,7 +98,7 @@ const SavedActivityCard: React.FC<SavedActivityCardProps> = ({
           <Button 
             variant="ghost" 
             size="sm"
-            onClick={() => onRemove(savedActivity.id)}
+            onClick={handleRemove}
             className="text-red-500 hover:text-red-700 hover:bg-red-50"
           >
             <BookmarkCheck size={16} className="mr-1" />

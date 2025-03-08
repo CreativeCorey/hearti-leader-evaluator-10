@@ -61,7 +61,7 @@ const SavedActivityList: React.FC<SavedActivityListProps> = ({
             
             return (
               <SavedActivityCard
-                key={savedActivity.id}
+                key={savedActivity.id || `activity-${savedActivity.activityId}`}
                 savedActivity={savedActivity}
                 activityDetails={activityDetails}
                 onToggleCompletion={onToggleCompletion}
