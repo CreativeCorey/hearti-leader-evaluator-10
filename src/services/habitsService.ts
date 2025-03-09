@@ -1,4 +1,3 @@
-
 import { format } from 'date-fns';
 import { toast } from '@/hooks/use-toast';
 import { Habit, NewHabitForm } from '@/types/habits';
@@ -10,14 +9,12 @@ import { supabase } from '@/integrations/supabase/client';
 export const fetchHabitsFromSupabase = async (userId: string): Promise<Habit[]> => {
   try {
     // Set the anonymous ID header for RLS
-    const headers = { 'x-anonymous-id': userId };
-    
     const { data, error } = await supabase
       .from('habits')
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
-      .headers(headers);
+      .select();
     
     if (error) {
       console.error('Error fetching habits from Supabase:', error);
@@ -47,9 +44,6 @@ export const fetchHabitsFromSupabase = async (userId: string): Promise<Habit[]> 
 // Save a habit to Supabase
 export const saveHabitToSupabase = async (habit: Habit): Promise<string | undefined> => {
   try {
-    // Set the anonymous ID header for RLS
-    const headers = { 'x-anonymous-id': habit.userId };
-    
     const { data, error } = await supabase
       .from('habits')
       .insert({
@@ -62,7 +56,6 @@ export const saveHabitToSupabase = async (habit: Habit): Promise<string | undefi
         created_at: habit.createdAt
       })
       .select('id')
-      .headers(headers)
       .single();
     
     if (error) {
@@ -82,9 +75,6 @@ export const updateHabitInSupabase = async (habit: Habit): Promise<boolean> => {
   if (!habit.id) return false;
   
   try {
-    // Set the anonymous ID header for RLS
-    const headers = { 'x-anonymous-id': habit.userId };
-    
     const { error } = await supabase
       .from('habits')
       .update({
@@ -94,8 +84,7 @@ export const updateHabitInSupabase = async (habit: Habit): Promise<boolean> => {
         frequency: habit.frequency,
         completed_dates: habit.completedDates
       })
-      .eq('id', habit.id)
-      .headers(headers);
+      .eq('id', habit.id);
     
     if (error) {
       console.error('Error updating habit in Supabase:', error);
@@ -112,14 +101,10 @@ export const updateHabitInSupabase = async (habit: Habit): Promise<boolean> => {
 // Delete a habit from Supabase
 export const deleteHabitFromSupabase = async (habitId: string, userId: string): Promise<boolean> => {
   try {
-    // Set the anonymous ID header for RLS
-    const headers = { 'x-anonymous-id': userId };
-    
     const { error } = await supabase
       .from('habits')
       .delete()
-      .eq('id', habitId)
-      .headers(headers);
+      .eq('id', habitId);
     
     if (error) {
       console.error('Error deleting habit from Supabase:', error);

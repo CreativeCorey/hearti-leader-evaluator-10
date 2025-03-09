@@ -25,9 +25,6 @@ export const addActivityToHabitTracker = async (
 
     // Try to save to Supabase
     try {
-      // Set the anonymous ID header for RLS
-      const headers = { 'x-anonymous-id': userId };
-      
       const { data, error } = await supabase
         .from('habits')
         .insert({
@@ -40,7 +37,6 @@ export const addActivityToHabitTracker = async (
           created_at: habit.createdAt
         })
         .select('id')
-        .headers(headers)
         .single();
       
       if (error) {
