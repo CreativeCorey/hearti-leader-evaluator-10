@@ -83,7 +83,7 @@ const RadarChartDisplay: React.FC<RadarChartDisplayProps> = ({
             }} 
             axisLineType={spiderConfig.axisLineType}
             tickLine={false}
-            tickMargin={10}
+            // Removed tickMargin property as it's not supported
           />
           <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280' }} />
           <Radar
@@ -154,7 +154,7 @@ const RadarChartDisplay: React.FC<RadarChartDisplayProps> = ({
                 }} 
                 axisLineType={spiderConfig.axisLineType}
                 tickLine={false}
-                tickMargin={10}
+                // Removed tickMargin property as it's not supported
               />
               <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280' }} />
               <Radar

@@ -4,7 +4,6 @@ import { HEARTIAssessment } from '@/types';
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer } from 'recharts';
 import { formatDataForRadarChart } from '@/utils/calculations';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { dimensionIcons } from '../development/DimensionIcons';
 import { Gauge, HeartHandshake, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
 
 interface SpectraChartsProps {
@@ -97,8 +96,7 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
               }} 
               axisLineType={spiderConfig.axisLineType}
               tickLine={false}
-              // Add more margin to avoid overlap with icons
-              tickMargin={10}
+              // Removed tickMargin property as it's not supported
             />
             <PolarRadiusAxis 
               angle={30} 
