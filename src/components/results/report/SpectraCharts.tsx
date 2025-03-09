@@ -41,41 +41,44 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
     dotSize: 5,
     activeDotSize: 8,
   };
+  
+  const iconSize = isMobile ? 20 : 18;
+  const iconColor = "text-gray-500";
 
   const ChartWithIcons = ({ data, title, chartColor }) => (
     <div className="relative">
       <p className="text-center font-medium text-xl text-indigo-600 mb-2">{title}</p>
-      <div className={`h-[${isMobile ? '300px' : '450px'}] pdf-chart-container`}>
-        {/* Icon overlays - positioned more carefully to avoid text overlap */}
+      <div className={`h-[${isMobile ? '280px' : '400px'}] pdf-chart-container relative`}>
+        {/* Icon overlays */}
         <div className="absolute inset-0 pointer-events-none">
           {/* Top (Humility) */}
-          <div className="absolute top-[3%] left-[50%] transform -translate-x-1/2">
-            <Gauge size={isMobile ? 24 : 20} className="text-gray-600" />
+          <div className="absolute top-[5%] left-[50%] transform -translate-x-1/2">
+            <Gauge size={iconSize} className={iconColor} />
           </div>
           
           {/* Top Right (Empathy) */}
-          <div className="absolute top-[20%] right-[9%] transform">
-            <HeartHandshake size={isMobile ? 24 : 20} className="text-gray-600" />
+          <div className="absolute top-[25%] right-[15%] transform">
+            <HeartHandshake size={iconSize} className={iconColor} />
           </div>
           
           {/* Bottom Right (Accountability) */}
-          <div className="absolute bottom-[20%] right-[9%] transform">
-            <ChartNoAxesCombined size={isMobile ? 24 : 20} className="text-gray-600" />
+          <div className="absolute bottom-[25%] right-[15%] transform">
+            <ChartNoAxesCombined size={iconSize} className={iconColor} />
           </div>
           
           {/* Bottom (Resiliency) */}
-          <div className="absolute bottom-[3%] left-[50%] transform -translate-x-1/2">
-            <TreePalm size={isMobile ? 24 : 20} className="text-gray-600" />
+          <div className="absolute bottom-[5%] left-[50%] transform -translate-x-1/2">
+            <TreePalm size={iconSize} className={iconColor} />
           </div>
           
           {/* Bottom Left (Transparency) */}
-          <div className="absolute bottom-[20%] left-[9%] transform">
-            <Blend size={isMobile ? 24 : 20} className="text-gray-600" />
+          <div className="absolute bottom-[25%] left-[15%] transform">
+            <Blend size={iconSize} className={iconColor} />
           </div>
           
           {/* Top Left (Inclusivity) */}
-          <div className="absolute top-[20%] left-[9%] transform">
-            <Users size={isMobile ? 24 : 20} className="text-gray-600" />
+          <div className="absolute top-[25%] left-[15%] transform">
+            <Users size={iconSize} className={iconColor} />
           </div>
         </div>
         
@@ -89,11 +92,7 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
             <PolarGrid gridType={spiderConfig.gridType} />
             <PolarAngleAxis 
               dataKey="name" 
-              tick={isMobile ? false : { 
-                fill: '#6b7280', 
-                fontSize: 12, 
-                fontWeight: 'medium' 
-              }} 
+              tick={false} 
               axisLineType={spiderConfig.axisLineType}
               tickLine={false}
             />
@@ -101,8 +100,9 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
               angle={30} 
               domain={[0, 5]} 
               tick={{ 
-                fill: isMobile ? '#C8C8C9' : '#6b7280', 
-                fontSize: isMobile ? 8 : 10 
+                fill: '#C8C8C9', 
+                fontSize: isMobile ? 7 : 9,
+                opacity: 0.7
               }} 
             />
             <Radar

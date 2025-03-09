@@ -8,6 +8,7 @@ import { Download } from 'lucide-react';
 import { ReportHeader, SpectraCharts, DimensionCard, ReportFooter } from './report';
 import ShareButton from './sharing/ShareButton';
 import LinkedInBadge from './sharing/LinkedInBadge';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ReportTabProps {
   assessment: HEARTIAssessment;
@@ -22,13 +23,13 @@ const ReportTab: React.FC<ReportTabProps> = ({
   onExportPDF,
   exportingPdf
 }) => {
+  const isMobile = useIsMobile();
+  
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap gap-3 justify-between items-center">
+      <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
         <h2 className="text-2xl font-semibold">HEARTI:Leader Report</h2>
         <div className="flex gap-2">
-          <LinkedInBadge assessment={assessment} />
-          <ShareButton assessment={assessment} />
           <Button 
             onClick={onExportPDF} 
             disabled={exportingPdf}
@@ -38,6 +39,16 @@ const ReportTab: React.FC<ReportTabProps> = ({
             {exportingPdf ? "Generating PDF..." : "Export PDF"}
           </Button>
         </div>
+      </div>
+      
+      {/* Action buttons in a full-width container before the card */}
+      <div className="flex flex-wrap gap-3 justify-center sm:justify-end mb-4">
+        <LinkedInBadge assessment={assessment} />
+        <ShareButton 
+          assessment={assessment} 
+          variant="outline"
+          size={isMobile ? "sm" : "default"}
+        />
       </div>
       
       <Card className="p-6">

@@ -27,7 +27,7 @@ const ReportTabContent: React.FC<ReportTabContentProps> = ({
         exportingPdf={exportingPdf}
       />
       
-      <div className="space-y-6 p-4">
+      <div className="space-y-4 p-4">
         <ReportTab 
           assessment={assessment} 
           reportRef={reportRef}

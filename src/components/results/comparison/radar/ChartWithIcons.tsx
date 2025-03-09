@@ -25,39 +25,42 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
   spiderConfig
 }) => {
   const isMobile = useIsMobile();
+  
+  const iconSize = isMobile ? 20 : 18;
+  const iconColor = "text-gray-500";
 
   return (
     <div className="relative h-full">
       {showIcons && (
         <div className="absolute inset-0 pointer-events-none">
           {/* Top (Humility) */}
-          <div className="absolute top-[3%] left-[50%] transform -translate-x-1/2">
-            <Gauge size={isMobile ? 24 : 18} className="text-gray-600" />
+          <div className="absolute top-[5%] left-[50%] transform -translate-x-1/2">
+            <Gauge size={iconSize} className={iconColor} />
           </div>
           
           {/* Top Right (Empathy) */}
-          <div className="absolute top-[20%] right-[9%] transform">
-            <HeartHandshake size={isMobile ? 24 : 18} className="text-gray-600" />
+          <div className="absolute top-[25%] right-[15%] transform">
+            <HeartHandshake size={iconSize} className={iconColor} />
           </div>
           
           {/* Bottom Right (Accountability) */}
-          <div className="absolute bottom-[20%] right-[9%] transform">
-            <ChartNoAxesCombined size={isMobile ? 24 : 18} className="text-gray-600" />
+          <div className="absolute bottom-[25%] right-[15%] transform">
+            <ChartNoAxesCombined size={iconSize} className={iconColor} />
           </div>
           
           {/* Bottom (Resiliency) */}
-          <div className="absolute bottom-[3%] left-[50%] transform -translate-x-1/2">
-            <TreePalm size={isMobile ? 24 : 18} className="text-gray-600" />
+          <div className="absolute bottom-[5%] left-[50%] transform -translate-x-1/2">
+            <TreePalm size={iconSize} className={iconColor} />
           </div>
           
           {/* Bottom Left (Transparency) */}
-          <div className="absolute bottom-[20%] left-[9%] transform">
-            <Blend size={isMobile ? 24 : 18} className="text-gray-600" />
+          <div className="absolute bottom-[25%] left-[15%] transform">
+            <Blend size={iconSize} className={iconColor} />
           </div>
           
           {/* Top Left (Inclusivity) */}
-          <div className="absolute top-[20%] left-[9%] transform">
-            <Users size={isMobile ? 24 : 18} className="text-gray-600" />
+          <div className="absolute top-[25%] left-[15%] transform">
+            <Users size={iconSize} className={iconColor} />
           </div>
         </div>
       )}
@@ -78,8 +81,9 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
             angle={30} 
             domain={[0, 5]} 
             tick={{ 
-              fill: isMobile ? '#C8C8C9' : '#6b7280',
-              fontSize: isMobile ? 8 : 10 
+              fill: '#C8C8C9',
+              fontSize: isMobile ? 7 : 9,
+              opacity: 0.7
             }} 
           />
           <Radar
