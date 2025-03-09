@@ -37,7 +37,7 @@ export const userColor = "#6366f1";
 
 export const comparisonColors = {
   average: "#8b5cf6",
-  men: "#ec4899",
+  men: "#3b82f6",     // Changed from pink (#ec4899) to blue (#3b82f6)
   women: "#f97316"
 };
 

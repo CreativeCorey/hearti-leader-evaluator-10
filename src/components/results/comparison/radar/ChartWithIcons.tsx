@@ -33,8 +33,8 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
     <div className="relative h-full">
       {showIcons && (
         <div className="absolute inset-0 pointer-events-none">
-          {/* Top (Humility) - Adjusted position */}
-          <div className="absolute top-[10%] left-[50%] transform -translate-x-1/2">
+          {/* Top (Humility) - Adjusted position to move down slightly */}
+          <div className="absolute top-[15%] left-[50%] transform -translate-x-1/2">
             <Gauge size={iconSize} className={iconColor} />
           </div>
           
@@ -48,8 +48,8 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
             <ChartNoAxesCombined size={iconSize} className={iconColor} />
           </div>
           
-          {/* Bottom (Resiliency) - Adjusted position */}
-          <div className="absolute bottom-[10%] left-[50%] transform -translate-x-1/2">
+          {/* Bottom (Resiliency) - Adjusted position to move up slightly */}
+          <div className="absolute bottom-[15%] left-[50%] transform -translate-x-1/2">
             <TreePalm size={iconSize} className={iconColor} />
           </div>
           
