@@ -1,9 +1,9 @@
-
 import React, { createContext, useContext, useState } from 'react';
 import { startOfWeek, addDays } from 'date-fns';
 import { HEARTIDimension } from '@/types';
 import { Habit, useHabits } from '@/hooks/useHabits';
 import { filterHabits } from '@/utils/habitUtils';
+import { toast } from '@/hooks/use-toast';
 
 interface HabitTrackerContextType {
   habits: Habit[];
@@ -38,6 +38,34 @@ export const HabitTrackerProvider: React.FC<{
   // Filter habits based on active dimension
   const filteredHabits = filterHabits(habits, activeDimension);
 
+  // Create a safe toggle function that checks for valid ID
+  const handleToggleHabit = (habitId: string | undefined, date: Date) => {
+    if (!habitId) {
+      console.error("Cannot toggle habit completion: missing habit ID");
+      toast({
+        title: "Error",
+        description: "Could not update habit completion status",
+        variant: "destructive",
+      });
+      return;
+    }
+    toggleHabitCompletion(habitId, date);
+  };
+
+  // Create a safe delete function that checks for valid ID
+  const handleDeleteHabit = (habitId: string | undefined) => {
+    if (!habitId) {
+      console.error("Cannot delete habit: missing habit ID");
+      toast({
+        title: "Error",
+        description: "Could not delete habit",
+        variant: "destructive",
+      });
+      return;
+    }
+    deleteHabit(habitId);
+  };
+
   const value = {
     habits,
     loading,
@@ -45,8 +73,8 @@ export const HabitTrackerProvider: React.FC<{
     weekDates,
     filteredHabits,
     handleAddHabit,
-    toggleHabitCompletion,
-    deleteHabit,
+    toggleHabitCompletion: handleToggleHabit,
+    deleteHabit: handleDeleteHabit,
     setActiveDimension
   };
 

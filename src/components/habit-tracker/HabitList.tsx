@@ -36,7 +36,7 @@ const HabitList: React.FC<HabitListProps> = ({
         
         return (
           <HabitItem
-            key={habit.id}
+            key={habit.id || `habit-${Math.random()}`} // Ensure unique key even if habit.id is undefined
             habit={habit}
             streakCount={streakCount}
             onToggleHabit={onToggleHabit}

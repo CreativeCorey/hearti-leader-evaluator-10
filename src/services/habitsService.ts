@@ -1,8 +1,8 @@
-
 import { format } from 'date-fns';
 import { toast } from '@/hooks/use-toast';
 import { Habit, NewHabitForm } from '@/types/habits';
 import { getOrCreateAnonymousId } from '@/utils/localStorage';
+import { v4 as uuidv4 } from 'uuid';
 
 const SUPABASE_API_URL = 'https://odwkgxdkjyccnkydxvjw.supabase.co/rest/v1';
 const SUPABASE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9kd2tneGRranljY25reWR4dmp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA2ODE5MDUsImV4cCI6MjA1NjI1NzkwNX0.J8GU8omDDQ5OzXJM-DiF-A-hDU0vc7fL1dvoVtaWJE8';
@@ -138,7 +138,11 @@ export const createNewHabit = async (newHabit: NewHabitForm): Promise<Habit | nu
   
   const userId = getOrCreateAnonymousId();
   
+  // Generate a UUID for the new habit first
+  const generatedId = uuidv4();
+  
   const habit: Habit = {
+    id: generatedId, // Always set an ID
     userId,
     dimension: newHabit.dimension,
     description: newHabit.description,
@@ -150,11 +154,12 @@ export const createNewHabit = async (newHabit: NewHabitForm): Promise<Habit | nu
   try {
     const habitId = await saveHabitToSupabase(habit);
     if (habitId) {
-      habit.id = habitId;
+      habit.id = habitId; // Replace with Supabase ID if available
     }
+    // If Supabase fails, we'll keep the UUID we generated
     return habit;
   } catch (e) {
     console.log('Error creating habit', e);
-    return habit; // Still return the habit for local storage
+    return habit; // Still return the habit with the generated ID for local storage
   }
 };
