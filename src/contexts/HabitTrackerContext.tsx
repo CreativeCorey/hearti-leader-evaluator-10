@@ -8,6 +8,7 @@ import { toast } from '@/hooks/use-toast';
 
 interface HabitTrackerContextType {
   habits: Habit[];
+  allHabits: Habit[];
   loading: boolean;
   activeDimension: HEARTIDimension | 'all';
   weekDates: Date[];
@@ -95,6 +96,7 @@ export const HabitTrackerProvider: React.FC<{
 
   const value = {
     habits,
+    allHabits: habits, // Make all habits available
     loading,
     activeDimension,
     weekDates,

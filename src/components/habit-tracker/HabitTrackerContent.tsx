@@ -1,9 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { calculateStreaks } from '@/utils/habitUtils';
 import { useHabitTracker } from '@/contexts/HabitTrackerContext';
 import { useHabitForm } from '@/hooks/useHabitForm';
+import { Button } from '@/components/ui/button';
+import { Archive } from 'lucide-react';
 import HabitHeader from './HabitHeader';
 import HabitForm from './HabitForm';
 import HabitList from './HabitList';
@@ -11,11 +13,13 @@ import LoadingSpinner from './LoadingSpinner';
 import HabitTabs from './HabitTabs';
 import TodayHeader from './TodayHeader';
 import EmptyHabitState from './EmptyHabitState';
+import SavedHabitsView from './SavedHabitsView';
 
 const HabitTrackerContent: React.FC = () => {
   const {
     loading,
     filteredHabits,
+    allHabits,
     activeDimension,
     weekDates,
     handleAddHabit,
@@ -32,6 +36,8 @@ const HabitTrackerContent: React.FC = () => {
     updateHabit
   } = useHabitForm(activeDimension !== 'all' ? activeDimension : undefined);
   
+  const [showSavedHabits, setShowSavedHabits] = useState(false);
+  
   const onSaveHabit = async () => {
     const success = await handleAddHabit(newHabit);
     if (success) {
@@ -46,6 +52,25 @@ const HabitTrackerContent: React.FC = () => {
   return (
     <div className="space-y-6">
       <TodayHeader />
+      
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-medium">Your Habit Tracker</h3>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => setShowSavedHabits(!showSavedHabits)}
+          className="flex items-center gap-1"
+        >
+          <Archive size={16} />
+          {showSavedHabits ? 'Hide' : 'View'} Saved Habits
+        </Button>
+      </div>
+      
+      {showSavedHabits && (
+        <div className="mb-6">
+          <SavedHabitsView habits={allHabits} />
+        </div>
+      )}
     
       <Tabs defaultValue={activeDimension} value={activeDimension}>
         <HabitTabs 
