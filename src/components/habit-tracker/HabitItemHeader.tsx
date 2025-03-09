@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Trash } from 'lucide-react';
 import { HEARTIDimension } from '@/types';
-import { Gauge, Ear, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
+import { Gauge, HeartHandshake, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { LucideIcon } from 'lucide-react';
 
@@ -17,7 +17,7 @@ interface HabitItemHeaderProps {
 // Updated type definition to use LucideIcon
 const dimensionIcons: Record<string, LucideIcon> = {
   humility: Gauge,
-  empathy: Ear,
+  empathy: HeartHandshake,
   accountability: ChartNoAxesCombined,
   resiliency: TreePalm,
   transparency: Blend,

@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Crown, ShieldAlert } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Gauge, HeartHandshake, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
 
 interface OverviewTabProps {
   assessment: HEARTIAssessment;
@@ -47,36 +48,71 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ assessment }) => {
       <div className="flex-1">
         <h3 className="text-lg font-medium mb-4">HEARTI:Leader Spectra</h3>
         <div className="bg-slate-50 p-4 rounded-lg h-[400px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
-              <PolarGrid gridType={spiderConfig.gridType} />
-              <PolarAngleAxis 
-                dataKey="name" 
-                tick={{ 
-                  fill: '#6b7280', 
-                  fontSize: isMobile ? 10 : 12 
-                }} 
-                axisLineType={spiderConfig.axisLineType}
-                tickLine={false}
-              />
-              <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280' }} />
-              <Radar
-                name="Your HEARTI Spectra"
-                dataKey="value"
-                stroke={userColor}
-                fill={userColor}
-                fillOpacity={spiderConfig.fillOpacity}
-                strokeWidth={spiderConfig.strokeWidth}
-                dot={{ r: spiderConfig.dotSize }}
-                activeDot={{ r: spiderConfig.activeDotSize }}
-                isAnimationActive={true}
-                animationBegin={200}
-                animationDuration={1000}
-              />
-              <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
-              <Legend />
-            </RadarChart>
-          </ResponsiveContainer>
+          <div className="relative h-full">
+            {/* Icon overlays */}
+            <div className="absolute inset-0 pointer-events-none">
+              {/* Top (Humility) */}
+              <div className="absolute top-[5%] left-[50%] transform -translate-x-1/2">
+                <Gauge size={20} className="text-gray-400" />
+              </div>
+              
+              {/* Top Right (Empathy) */}
+              <div className="absolute top-[25%] right-[15%] transform">
+                <HeartHandshake size={20} className="text-gray-400" />
+              </div>
+              
+              {/* Bottom Right (Accountability) */}
+              <div className="absolute bottom-[25%] right-[15%] transform">
+                <ChartNoAxesCombined size={20} className="text-gray-400" />
+              </div>
+              
+              {/* Bottom (Resiliency) */}
+              <div className="absolute bottom-[5%] left-[50%] transform -translate-x-1/2">
+                <TreePalm size={20} className="text-gray-400" />
+              </div>
+              
+              {/* Bottom Left (Transparency) */}
+              <div className="absolute bottom-[25%] left-[15%] transform">
+                <Blend size={20} className="text-gray-400" />
+              </div>
+              
+              {/* Top Left (Inclusivity) */}
+              <div className="absolute top-[25%] left-[15%] transform">
+                <Users size={20} className="text-gray-400" />
+              </div>
+            </div>
+            
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
+                <PolarGrid gridType={spiderConfig.gridType} />
+                <PolarAngleAxis 
+                  dataKey="name" 
+                  tick={{ 
+                    fill: '#6b7280', 
+                    fontSize: isMobile ? 10 : 12 
+                  }} 
+                  axisLineType={spiderConfig.axisLineType}
+                  tickLine={false}
+                />
+                <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280' }} />
+                <Radar
+                  name="Your HEARTI Spectra"
+                  dataKey="value"
+                  stroke={userColor}
+                  fill={userColor}
+                  fillOpacity={spiderConfig.fillOpacity}
+                  strokeWidth={spiderConfig.strokeWidth}
+                  dot={{ r: spiderConfig.dotSize }}
+                  activeDot={{ r: spiderConfig.activeDotSize }}
+                  isAnimationActive={true}
+                  animationBegin={200}
+                  animationDuration={1000}
+                />
+                <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
+                <Legend />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
       
@@ -95,16 +131,28 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ assessment }) => {
         <div className="mb-6">
           <h3 className="text-lg font-medium mb-2">Dimension Scores</h3>
           <div className="grid grid-cols-2 gap-2">
-            {Object.entries(assessment.dimensionScores).map(([dimension, score]) => (
-              <Badge 
-                key={dimension} 
-                variant={getBadgeVariant(score)}
-                className="score-pill flex justify-between py-1 px-3"
-              >
-                <span>{dimension.charAt(0).toUpperCase() + dimension.slice(1)}</span>
-                <span>{score}/5</span>
-              </Badge>
-            ))}
+            {Object.entries(assessment.dimensionScores).map(([dimension, score]) => {
+              const DimensionIcon = dimension === 'humility' ? Gauge :
+                                    dimension === 'empathy' ? HeartHandshake :
+                                    dimension === 'accountability' ? ChartNoAxesCombined :
+                                    dimension === 'resiliency' ? TreePalm :
+                                    dimension === 'transparency' ? Blend :
+                                    Users;
+              
+              return (
+                <Badge 
+                  key={dimension} 
+                  variant={getBadgeVariant(score)}
+                  className="score-pill flex justify-between py-1 px-3"
+                >
+                  <span className="flex items-center gap-1">
+                    <DimensionIcon size={14} className="mr-1" />
+                    {dimension.charAt(0).toUpperCase() + dimension.slice(1)}
+                  </span>
+                  <span>{score}/5</span>
+                </Badge>
+              );
+            })}
           </div>
         </div>
         

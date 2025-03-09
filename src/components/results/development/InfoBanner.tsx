@@ -18,7 +18,9 @@ const InfoBanner: React.FC<InfoBannerProps> = ({ focusDimension }) => {
       </h3>
       <p className="text-indigo-700 mt-1">
         Choose 3 behaviors below that will help strengthen your leadership dimensions. We recommend focusing on your development area: 
-        <strong className="uppercase"> {dimensionLabels[focusDimension]}</strong>
+        <strong className="uppercase flex items-center gap-1 inline-flex mt-1">
+          <DimensionIcon size={14} /> {dimensionLabels[focusDimension]}
+        </strong>
       </p>
       <p className="text-indigo-700 mt-2 text-sm">
         Practice each behavior 30 times to develop a new habit and master the skill.

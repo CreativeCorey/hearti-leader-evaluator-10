@@ -4,6 +4,8 @@ import { HEARTIAssessment } from '@/types';
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer } from 'recharts';
 import { formatDataForRadarChart } from '@/utils/calculations';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { dimensionIcons } from '../development/DimensionIcons';
+import { Gauge, HeartHandshake, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
 
 interface SpectraChartsProps {
   assessment: HEARTIAssessment;
@@ -41,92 +43,101 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
     activeDotSize: 8,
   };
 
+  const ChartWithIcons = ({ data, title, chartColor }) => (
+    <div className="relative">
+      <p className="text-center font-medium text-xl text-indigo-600 mb-2">{title}</p>
+      <div className={`h-[${isMobile ? '300px' : '450px'}] pdf-chart-container`}>
+        {/* Icon overlays */}
+        <div className="absolute inset-0 pointer-events-none">
+          {/* Top (Humility) */}
+          <div className="absolute top-[5%] left-[50%] transform -translate-x-1/2">
+            <Gauge size={24} className="text-gray-500" />
+          </div>
+          
+          {/* Top Right (Empathy) */}
+          <div className="absolute top-[25%] right-[15%] transform">
+            <HeartHandshake size={24} className="text-gray-500" />
+          </div>
+          
+          {/* Bottom Right (Accountability) */}
+          <div className="absolute bottom-[25%] right-[15%] transform">
+            <ChartNoAxesCombined size={24} className="text-gray-500" />
+          </div>
+          
+          {/* Bottom (Resiliency) */}
+          <div className="absolute bottom-[5%] left-[50%] transform -translate-x-1/2">
+            <TreePalm size={24} className="text-gray-500" />
+          </div>
+          
+          {/* Bottom Left (Transparency) */}
+          <div className="absolute bottom-[25%] left-[15%] transform">
+            <Blend size={24} className="text-gray-500" />
+          </div>
+          
+          {/* Top Left (Inclusivity) */}
+          <div className="absolute top-[25%] left-[15%] transform">
+            <Users size={24} className="text-gray-500" />
+          </div>
+        </div>
+        
+        <ResponsiveContainer width="100%" height="100%">
+          <RadarChart 
+            cx="50%" 
+            cy="50%" 
+            outerRadius={`${spiderConfig.outerRadius}%`} 
+            data={data}
+          >
+            <PolarGrid gridType={spiderConfig.gridType} />
+            <PolarAngleAxis 
+              dataKey="name" 
+              tick={{ 
+                fill: '#6b7280', 
+                fontSize: isMobile ? 10 : 14, 
+                fontWeight: 'bold' 
+              }} 
+              axisLineType={spiderConfig.axisLineType}
+              tickLine={false}
+            />
+            <PolarRadiusAxis 
+              angle={30} 
+              domain={[0, 5]} 
+              tick={{ fill: '#6b7280', fontSize: isMobile ? 8 : 12 }} 
+            />
+            <Radar
+              name="Your HEARTI Spectra"
+              dataKey="value"
+              stroke={chartColor}
+              fill={chartColor}
+              fillOpacity={spiderConfig.fillOpacity}
+              strokeWidth={spiderConfig.strokeWidth}
+              dot={{ r: spiderConfig.dotSize }}
+              activeDot={{ r: spiderConfig.activeDotSize }}
+              isAnimationActive={false}
+            />
+          </RadarChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+
   return (
     <div className="my-8 pdf-section">
       <h3 className="text-2xl font-medium mb-4 pdf-section-title">Your HEARTI:Leader Spectra</h3>
       <div className={`flex flex-col ${isMobile ? '' : 'lg:flex-row'} gap-4 pdf-charts-grid`}>
         <div className={`flex-1 bg-slate-50 p-4 rounded-lg pdf-chart-column ${isMobile ? 'mb-6' : ''}`}>
-          <p className="text-center font-medium text-xl text-indigo-600 mb-2">Your HEARTI Spectra</p>
-          <div className={`h-[${isMobile ? '300px' : '450px'}] pdf-chart-container`}>
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart 
-                cx="50%" 
-                cy="50%" 
-                outerRadius={`${spiderConfig.outerRadius}%`} 
-                data={chartData}
-              >
-                <PolarGrid gridType={spiderConfig.gridType} />
-                <PolarAngleAxis 
-                  dataKey="name" 
-                  tick={{ 
-                    fill: '#6b7280', 
-                    fontSize: isMobile ? 10 : 14, 
-                    fontWeight: 'bold' 
-                  }} 
-                  axisLineType={spiderConfig.axisLineType}
-                  tickLine={false}
-                />
-                <PolarRadiusAxis 
-                  angle={30} 
-                  domain={[0, 5]} 
-                  tick={{ fill: '#6b7280', fontSize: isMobile ? 8 : 12 }} 
-                />
-                <Radar
-                  name="Your HEARTI Spectra"
-                  dataKey="value"
-                  stroke={userColor}
-                  fill={userColor}
-                  fillOpacity={spiderConfig.fillOpacity}
-                  strokeWidth={spiderConfig.strokeWidth}
-                  dot={{ r: spiderConfig.dotSize }}
-                  activeDot={{ r: spiderConfig.activeDotSize }}
-                  isAnimationActive={false}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
-          </div>
+          <ChartWithIcons 
+            data={chartData} 
+            title="Your HEARTI Spectra" 
+            chartColor={userColor} 
+          />
         </div>
         
         <div className={`flex-1 bg-slate-50 p-4 rounded-lg pdf-chart-column ${isMobile ? 'mb-6' : ''}`}>
-          <p className="text-center font-medium text-xl text-purple-600 mb-2">Global HEARTI:Leader Benchmark</p>
-          <div className={`h-[${isMobile ? '300px' : '450px'}] pdf-chart-container`}>
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart 
-                cx="50%" 
-                cy="50%" 
-                outerRadius={`${spiderConfig.outerRadius}%`} 
-                data={benchmarkData}
-              >
-                <PolarGrid gridType={spiderConfig.gridType} />
-                <PolarAngleAxis 
-                  dataKey="name" 
-                  tick={{ 
-                    fill: '#6b7280', 
-                    fontSize: isMobile ? 10 : 14, 
-                    fontWeight: 'bold' 
-                  }} 
-                  axisLineType={spiderConfig.axisLineType}
-                  tickLine={false}
-                />
-                <PolarRadiusAxis 
-                  angle={30} 
-                  domain={[0, 5]} 
-                  tick={{ fill: '#6b7280', fontSize: isMobile ? 8 : 12 }} 
-                />
-                <Radar
-                  name="Global Average"
-                  dataKey="value"
-                  stroke={comparisonColors.average}
-                  fill={comparisonColors.average}
-                  fillOpacity={spiderConfig.fillOpacity}
-                  strokeWidth={spiderConfig.strokeWidth}
-                  dot={{ r: spiderConfig.dotSize }}
-                  activeDot={{ r: spiderConfig.activeDotSize }}
-                  isAnimationActive={false}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
-          </div>
+          <ChartWithIcons 
+            data={benchmarkData} 
+            title="Global HEARTI:Leader Benchmark" 
+            chartColor={comparisonColors.average} 
+          />
         </div>
       </div>
       

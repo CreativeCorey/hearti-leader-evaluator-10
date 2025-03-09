@@ -1,11 +1,11 @@
 
 import { LucideIcon } from 'lucide-react';
-import { Gauge, Ear, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
+import { Gauge, HeartHandshake, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
 import { HEARTIDimension } from '@/types';
 
 export const dimensionIcons: Record<string, LucideIcon> = {
   humility: Gauge,
-  empathy: Ear,
+  empathy: HeartHandshake,
   accountability: ChartNoAxesCombined,
   resiliency: TreePalm,
   transparency: Blend,

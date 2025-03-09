@@ -22,7 +22,7 @@ const HabitTabs: React.FC<HabitTabsProps> = ({
       <TabsList className="w-full flex justify-center">
         <TabsTrigger 
           value="all" 
-          className="flex items-center gap-1 w-full"
+          className={`flex items-center gap-1 w-full ${activeDimension === 'all' ? 'bg-blue-100' : ''}`}
           onClick={() => onDimensionChange('all')}
         >
           <span className="mr-1">🔍</span>
@@ -30,7 +30,7 @@ const HabitTabs: React.FC<HabitTabsProps> = ({
         </TabsTrigger>
       </TabsList>
       
-      {/* Dimension tabs in a 2-column grid */}
+      {/* Dimension tabs in a 3-column grid on non-mobile, 2-column grid on mobile */}
       <TabsList className="w-full grid grid-cols-2 md:grid-cols-3 gap-1">
         {Object.entries(dimensionIcons)
           .filter(([key]) => key !== 'all')
@@ -38,7 +38,7 @@ const HabitTabs: React.FC<HabitTabsProps> = ({
             <TabsTrigger 
               key={dimension}
               value={dimension} 
-              className="flex items-center justify-center gap-1"
+              className={`flex items-center justify-center gap-1 ${activeDimension === dimension ? 'bg-blue-100' : ''}`}
               onClick={() => onDimensionChange(dimension as HEARTIDimension)}
             >
               <Icon size={isMobile ? 14 : 16} className="mr-1" />

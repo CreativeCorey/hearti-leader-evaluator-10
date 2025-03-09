@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { HEARTIDimension } from '@/types';
-import { Gauge, Ear, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
+import { Gauge, HeartHandshake, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { dimensionIcons } from './DimensionIcons';
 
@@ -27,7 +27,7 @@ const DimensionTabs: React.FC<DimensionTabsProps> = ({
           <span>Humility</span>
         </TabsTrigger>
         <TabsTrigger value="empathy" className="text-xs flex flex-col items-center gap-1 py-2">
-          <Ear size={16} />
+          <HeartHandshake size={16} />
           <span>Empathy</span>
         </TabsTrigger>
         <TabsTrigger value="accountability" className="text-xs flex flex-col items-center gap-1 py-2">
