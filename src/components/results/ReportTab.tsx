@@ -42,8 +42,7 @@ const ReportTab: React.FC<ReportTabProps> = ({
       
       <Card className="p-6">
         <div className="pdf-container" ref={reportRef}>
-          {/* Cast as any to bypass TypeScript error until we can properly type the component */}
-          <ReportHeader assessment={assessment as any} />
+          <ReportHeader assessment={assessment} />
           
           <SpectraCharts assessment={assessment as any} />
           

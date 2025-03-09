@@ -1,8 +1,13 @@
 
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
+import { HEARTIAssessment } from '@/types';
 
-const ReportHeader: React.FC = () => {
+interface ReportHeaderProps {
+  assessment: HEARTIAssessment;
+}
+
+const ReportHeader: React.FC<ReportHeaderProps> = ({ assessment }) => {
   return (
     <Card className="pdf-header">
       <CardContent className="p-6">
