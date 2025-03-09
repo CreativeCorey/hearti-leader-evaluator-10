@@ -27,8 +27,13 @@ const ReportTabContent: React.FC<ReportTabContentProps> = ({
         exportingPdf={exportingPdf}
       />
       
-      <div ref={reportRef} className="space-y-6 p-4">
-        <ReportTab assessment={assessment} />
+      <div className="space-y-6 p-4">
+        <ReportTab 
+          assessment={assessment} 
+          reportRef={reportRef}
+          onExportPDF={onExportPDF}
+          exportingPdf={exportingPdf}
+        />
       </div>
     </>
   );

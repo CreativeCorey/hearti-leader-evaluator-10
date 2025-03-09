@@ -5,8 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Download } from 'lucide-react';
-import { ReportHeader, ReportFooter, DimensionCard } from './report';
-import SpectraCharts from './report/SpectraCharts';
+import { ReportHeader, SpectraCharts, DimensionCard, ReportFooter } from './report';
 import ShareButton from './sharing/ShareButton';
 import LinkedInBadge from './sharing/LinkedInBadge';
 

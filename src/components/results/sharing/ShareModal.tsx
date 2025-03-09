@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { HEARTIAssessment, HEARTIDimension } from '@/types';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -13,7 +12,7 @@ import SocialShareButton from './SocialShareButton';
 import html2canvas from 'html2canvas';
 import { 
   Linkedin, Twitter, Instagram, Mail, Share, Download, Copy, 
-  MessageCircle, Check, Slack, BrandBluesky
+  MessageCircle, Check, Slack
 } from 'lucide-react';
 import { showSuccessToast, showErrorToast } from '@/utils/notifications';
 
@@ -278,7 +277,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
               />
               
               <SocialShareButton 
-                icon={<BrandBluesky size={18} />} 
+                icon={<MessageCircle size={18} />} 
                 label="Bluesky" 
                 onClick={() => shareToSocial('bluesky')}
               />

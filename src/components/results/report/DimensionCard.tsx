@@ -8,13 +8,19 @@ import { dimensionIcons } from '../development/DimensionIcons';
 
 interface DimensionCardProps {
   dimension: HEARTIDimension;
-  assessment: HEARTIAssessment;
-  status: 'strength' | 'vulnerability' | 'neutral';
-  userName: string;
+  score: number;
+  status?: 'strength' | 'vulnerability' | 'neutral';
+  userName?: string;
+  assessment?: HEARTIAssessment;
 }
 
-const DimensionCard: React.FC<DimensionCardProps> = ({ dimension, assessment, status, userName }) => {
-  const score = assessment.dimensionScores[dimension];
+const DimensionCard: React.FC<DimensionCardProps> = ({ 
+  dimension, 
+  score, 
+  status = 'neutral', 
+  userName = '', 
+  assessment 
+}) => {
   const { statusContent, description, levels, tips } = getDimensionReportContent(dimension, status, userName);
   const DimensionIcon = dimensionIcons[dimension];
 
