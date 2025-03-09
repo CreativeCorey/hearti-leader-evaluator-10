@@ -5,6 +5,7 @@ import { toast } from '@/hooks/use-toast';
 import { HEARTIDimension } from '@/types';
 import { getOrCreateAnonymousId } from '@/utils/localStorage';
 import { Habit, NewHabitForm } from '@/types/habits';
+import { v4 as uuidv4 } from 'uuid';
 import {
   fetchHabitsFromSupabase,
   saveHabitsToLocalStorage,

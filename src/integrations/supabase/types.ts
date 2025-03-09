@@ -60,6 +60,36 @@ export type Database = {
           },
         ]
       }
+      habits: {
+        Row: {
+          completed_dates: Json
+          created_at: string
+          description: string
+          dimension: string
+          frequency: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          completed_dates?: Json
+          created_at?: string
+          description: string
+          dimension: string
+          frequency?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          completed_dates?: Json
+          created_at?: string
+          description?: string
+          dimension?: string
+          frequency?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       organizations: {
         Row: {
           created_at: string
