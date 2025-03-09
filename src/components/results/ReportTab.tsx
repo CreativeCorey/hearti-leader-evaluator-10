@@ -1,77 +1,71 @@
 
 import React from 'react';
-import { HEARTIAssessment, HEARTIDimension } from '@/types';
-import { ReportHeader, SpectraCharts, DimensionCard, ReportFooter } from './report';
+import { HEARTIAssessment } from '@/types';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Download } from 'lucide-react';
+import { ReportHeader, ReportFooter, DimensionCard } from './report';
+import SpectraCharts from './report/SpectraCharts';
+import ShareButton from './sharing/ShareButton';
+import LinkedInBadge from './sharing/LinkedInBadge';
 
 interface ReportTabProps {
   assessment: HEARTIAssessment;
+  reportRef: React.RefObject<HTMLDivElement>;
+  onExportPDF: () => Promise<void>;
+  exportingPdf: boolean;
 }
 
-const aggregateData = {
-  averageScores: {
-    humility: 3.8,
-    empathy: 3.6,
-    accountability: 4.1,
-    resiliency: 3.7,
-    transparency: 3.9,
-    inclusivity: 3.5
-  }
-};
-
-const ReportTab: React.FC<ReportTabProps> = ({ assessment }) => {
-  const getDimensionStatus = (dimension: HEARTIDimension): 'strength' | 'vulnerability' | 'neutral' => {
-    const score = assessment.dimensionScores[dimension];
-    const average = aggregateData.averageScores[dimension];
-    
-    if (score >= 4.0) return 'strength';
-    if (score <= 2.5) return 'vulnerability';
-    return 'neutral';
-  };
-
-  const getUserName = (): string => {
-    return assessment.demographics?.name || "Leader";
-  };
-  
-  const sortDimensionsForReport = () => {
-    const dimensions: HEARTIDimension[] = ['inclusivity', 'humility', 'transparency', 'empathy', 'accountability', 'resiliency'];
-    
-    const strengths: HEARTIDimension[] = [];
-    const vulnerabilities: HEARTIDimension[] = [];
-    const competentSkills: HEARTIDimension[] = [];
-    
-    dimensions.forEach(dimension => {
-      const status = getDimensionStatus(dimension);
-      if (status === 'strength') strengths.push(dimension);
-      else if (status === 'vulnerability') vulnerabilities.push(dimension);
-      else competentSkills.push(dimension);
-    });
-    
-    return [...strengths, ...vulnerabilities, ...competentSkills];
-  };
-
+const ReportTab: React.FC<ReportTabProps> = ({ 
+  assessment,
+  reportRef, 
+  onExportPDF,
+  exportingPdf
+}) => {
   return (
-    <>
-      <ReportHeader />
-      <SpectraCharts assessment={assessment} />
+    <div className="space-y-6">
+      <div className="flex flex-wrap gap-3 justify-between items-center">
+        <h2 className="text-2xl font-semibold">HEARTI:Leader Report</h2>
+        <div className="flex gap-2">
+          <LinkedInBadge assessment={assessment} />
+          <ShareButton assessment={assessment} />
+          <Button 
+            onClick={onExportPDF} 
+            disabled={exportingPdf}
+            className="flex items-center gap-2"
+          >
+            <Download size={16} />
+            {exportingPdf ? "Generating PDF..." : "Export PDF"}
+          </Button>
+        </div>
+      </div>
       
-      {sortDimensionsForReport().map((dimension) => {
-        const dimensionKey = dimension as HEARTIDimension;
-        const status = getDimensionStatus(dimensionKey);
-        const userName = getUserName();
-        
-        return (
-          <DimensionCard 
-            key={dimension}
-            dimension={dimensionKey}
-            assessment={assessment}
-            status={status}
-            userName={userName}
-          />
-        );
-      })}
-      
-      <ReportFooter />
-    </>
+      <Card className="p-6">
+        <div className="pdf-container" ref={reportRef}>
+          <ReportHeader assessment={assessment} />
+          
+          <SpectraCharts assessment={assessment} />
+          
+          <Separator className="my-8" />
+          
+          <div className="pdf-section mb-8">
+            <h3 className="text-2xl font-medium mb-6 pdf-section-title">HEARTI:Leader Dimensions in Detail</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pdf-dimension-cards">
+              {Object.entries(assessment.dimensionScores).map(([dimension, score]) => (
+                <DimensionCard 
+                  key={dimension} 
+                  dimension={dimension as any}
+                  score={score} 
+                />
+              ))}
+            </div>
+          </div>
+          
+          <ReportFooter />
+        </div>
+      </Card>
+    </div>
   );
 };
 

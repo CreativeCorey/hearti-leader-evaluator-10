@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Crown, ShieldAlert } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Gauge, HeartHandshake, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
+import ShareButton from './sharing/ShareButton';
 
 interface OverviewTabProps {
   assessment: HEARTIAssessment;
@@ -46,7 +47,11 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ assessment }) => {
   return (
     <div className="flex flex-col lg:flex-row gap-8">
       <div className="flex-1 flex flex-col">
-        <h3 className="text-lg font-medium mb-4">HEARTI:Leader Spectra</h3>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-medium">HEARTI:Leader Spectra</h3>
+          <ShareButton assessment={assessment} />
+        </div>
+        
         <div className="bg-slate-50 p-4 rounded-lg h-[400px] w-full">
           <div className="relative h-full">
             {/* Icon overlays - positioned more carefully to avoid text overlap */}

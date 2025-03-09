@@ -96,7 +96,6 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
               }} 
               axisLineType={spiderConfig.axisLineType}
               tickLine={false}
-              // Removed tickMargin property as it's not supported
             />
             <PolarRadiusAxis 
               angle={30} 
