@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -51,7 +50,6 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
         setSwipeState('default');
       }
     },
-    // Fix: Replace onSwipeEnd with onSwiped
     onSwiped: () => {
       if (swipeState !== 'saved') {
         setSwipeState('default');
