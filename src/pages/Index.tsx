@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { useToast } from "@/hooks/use-toast";
@@ -19,7 +18,6 @@ import AssessmentTabs from '@/components/assessment/AssessmentTabs';
 import SyncDialog from '@/components/sync/SyncDialog';
 import GoogleSheetsSetup from '@/components/google-integration/GoogleSheetsSetup';
 import GoogleTroubleshooting from '@/components/google-integration/GoogleTroubleshooting';
-import GoogleIntegrationTools from '@/components/google-integration/GoogleIntegrationTools';
 
 const Index: React.FC = () => {
   const { toast } = useToast();
@@ -370,23 +368,20 @@ const Index: React.FC = () => {
           sendLatestToSheets={sendLatestToSheets}
         />
         
-        <GoogleSheetsSetup
-          googleConnection={googleConnection}
-          handleGoogleSignIn={handleGoogleSignIn}
-          handleConfigureWorkloadIdentity={handleConfigureWorkloadIdentity}
-          configuringWorkloadIdentity={configuringWorkloadIdentity}
-          testGoogleSheets={testGoogleSheets}
-          testingSheets={testingSheets}
-        />
-        
-        <GoogleTroubleshooting />
-        
-        {/* Admin debug tools - only visible on results page */}
-        {activeTab === 'results' && (
-          <GoogleIntegrationTools 
-            testGoogleSheets={testGoogleSheets}
-            testingSheets={testingSheets}
-          />
+        {/* Hide development/debug tools - only show when needed for development */}
+        {false && (
+          <>
+            <GoogleSheetsSetup
+              googleConnection={googleConnection}
+              handleGoogleSignIn={handleGoogleSignIn}
+              handleConfigureWorkloadIdentity={handleConfigureWorkloadIdentity}
+              configuringWorkloadIdentity={configuringWorkloadIdentity}
+              testGoogleSheets={testGoogleSheets}
+              testingSheets={testingSheets}
+            />
+            
+            <GoogleTroubleshooting />
+          </>
         )}
         
         <SyncDialog

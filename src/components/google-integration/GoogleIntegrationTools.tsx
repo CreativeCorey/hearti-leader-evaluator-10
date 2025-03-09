@@ -12,6 +12,10 @@ const GoogleIntegrationTools: React.FC<GoogleIntegrationToolsProps> = ({
   testGoogleSheets,
   testingSheets
 }) => {
+  // Component is now hidden by default, and only shown for development
+  return null;
+  
+  /* Original implementation - kept for reference but not used
   return (
     <div className="mt-12 border-t pt-4">
       <details className="text-sm">
@@ -36,6 +40,7 @@ const GoogleIntegrationTools: React.FC<GoogleIntegrationToolsProps> = ({
       </details>
     </div>
   );
+  */
 };
 
 export default GoogleIntegrationTools;
