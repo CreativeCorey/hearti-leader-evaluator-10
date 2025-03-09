@@ -40,6 +40,7 @@ export const addActivityToHabitTracker = async (
           created_at: habit.createdAt
         })
         .select('id')
+        .headers(headers)
         .single();
       
       if (error) {
