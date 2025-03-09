@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Hexagon, ListFilter, Heart, Shield, LucideIcon, Users, Rocket, Eye, Sun } from 'lucide-react';
+import { Hexagon, ListFilter, Heart, Chart, LucideIcon, Users, Plant, Eye, Sun } from 'lucide-react';
 import { HEARTIDimension } from '../types';
 import { activityData } from '@/data/heartActivities';
 import { useActivities } from '@/hooks/useActivities';
@@ -25,15 +24,15 @@ const dimensionLabels = {
   inclusivity: 'Inclusivity'
 };
 
-// Map dimensions to their corresponding icons
+// Map dimensions to their corresponding icons as specified
 const dimensionIcons: Record<HEARTIDimension | 'all', LucideIcon> = {
-  humility: Sun,        // Represents humility with a sun - shines on others, not itself
-  empathy: Heart,       // Represents empathy with a heart - feeling for others
-  accountability: Shield, // Represents accountability with a shield - responsibility
-  resiliency: Rocket,   // Represents resiliency with a rocket - overcoming challenges
-  transparency: Eye,    // Represents transparency with an eye - seeing clearly
-  inclusivity: Users,   // Represents inclusivity with users - bringing people together
-  all: Hexagon          // Represents all dimensions with the HEARTI hexagon
+  humility: Sun,         // Humility: Sun
+  empathy: Heart,        // Empathy: Heart
+  accountability: Chart, // Accountability: Chart
+  resiliency: Plant,     // Resiliency: Plant
+  transparency: Eye,     // Transparency: Eye
+  inclusivity: Users,    // Inclusivity: Users
+  all: Hexagon           // All dimensions
 };
 
 const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension }) => {

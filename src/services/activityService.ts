@@ -23,17 +23,16 @@ export const saveActivity = async (
 
   // Try to save to Supabase
   try {
-    const { data, error } = await supabase
-      .from('saved_activities')
-      .insert({
+    const { error } = await supabase
+      .from('saved_activities') // Using string directly for table name
+      .insert([{  // Use array form for insert
         id: savedActivity.id,
         user_id: savedActivity.userId,
         activity_id: savedActivity.activityId,
         completed: savedActivity.completed,
         dimension: savedActivity.dimension,
         saved_at: savedActivity.savedAt
-      })
-      .select();
+      }]);
 
     if (error) {
       console.error('Error saving activity to Supabase:', error);
@@ -70,9 +69,9 @@ export const addActivityToHabitTracker = async (
 
     // Add to Supabase
     try {
-      const { data, error } = await supabase
-        .from('habits')
-        .insert({
+      const { error } = await supabase
+        .from('habits') // Using string directly for table name
+        .insert([{  // Use array form for insert
           id: habit.id,
           user_id: habit.userId,
           dimension: habit.dimension,
@@ -80,8 +79,7 @@ export const addActivityToHabitTracker = async (
           frequency: habit.frequency,
           completed_dates: habit.completedDates,
           created_at: habit.createdAt
-        })
-        .select();
+        }]);
 
       if (error) {
         console.error('Error adding habit to Supabase:', error);
@@ -110,7 +108,7 @@ export const addActivityToHabitTracker = async (
 export const getSavedActivities = async (userId: string): Promise<SavedActivity[]> => {
   try {
     const { data, error } = await supabase
-      .from('saved_activities')
+      .from('saved_activities') // Using string directly for table name
       .select('*')
       .eq('user_id', userId);
 
@@ -140,8 +138,10 @@ export const toggleActivityCompletion = async (
 ): Promise<boolean> => {
   try {
     const { error } = await supabase
-      .from('saved_activities')
-      .update({ completed: isCompleted })
+      .from('saved_activities') // Using string directly for table name
+      .update({
+        completed: isCompleted
+      })
       .eq('id', activityId);
 
     if (error) {
@@ -160,7 +160,7 @@ export const toggleActivityCompletion = async (
 export const removeSavedActivity = async (activityId: string): Promise<boolean> => {
   try {
     const { error } = await supabase
-      .from('saved_activities')
+      .from('saved_activities') // Using string directly for table name
       .delete()
       .eq('id', activityId);
 

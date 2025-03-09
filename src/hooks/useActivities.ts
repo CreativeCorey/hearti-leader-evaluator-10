@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { SavedActivity, SkillActivity } from '@/data/heartActivities';
 import { getOrCreateAnonymousId } from '@/utils/localStorage';
