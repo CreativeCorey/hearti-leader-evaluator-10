@@ -51,8 +51,8 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
       <div className={`h-[${isMobile ? '280px' : '400px'}] pdf-chart-container relative`}>
         {/* Icon overlays */}
         <div className="absolute inset-0 pointer-events-none">
-          {/* Top (Humility) */}
-          <div className="absolute top-[5%] left-[50%] transform -translate-x-1/2">
+          {/* Top (Humility) - Adjusted position */}
+          <div className="absolute top-[10%] left-[50%] transform -translate-x-1/2">
             <Gauge size={iconSize} className={iconColor} />
           </div>
           
@@ -66,8 +66,8 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
             <ChartNoAxesCombined size={iconSize} className={iconColor} />
           </div>
           
-          {/* Bottom (Resiliency) */}
-          <div className="absolute bottom-[5%] left-[50%] transform -translate-x-1/2">
+          {/* Bottom (Resiliency) - Adjusted position */}
+          <div className="absolute bottom-[10%] left-[50%] transform -translate-x-1/2">
             <TreePalm size={iconSize} className={iconColor} />
           </div>
           

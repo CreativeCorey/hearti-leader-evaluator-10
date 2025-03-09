@@ -39,8 +39,8 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
         <div className="h-[250px] w-full relative">
           {/* Icon overlay */}
           <div className="absolute inset-0 pointer-events-none">
-            {/* Top (Humility) */}
-            <div className="absolute top-[5%] left-[50%] transform -translate-x-1/2">
+            {/* Top (Humility) - Adjusted position */}
+            <div className="absolute top-[10%] left-[50%] transform -translate-x-1/2">
               <Gauge size={iconSize} className={iconColor} />
             </div>
             
@@ -54,8 +54,8 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
               <ChartNoAxesCombined size={iconSize} className={iconColor} />
             </div>
             
-            {/* Bottom (Resiliency) */}
-            <div className="absolute bottom-[5%] left-[50%] transform -translate-x-1/2">
+            {/* Bottom (Resiliency) - Adjusted position */}
+            <div className="absolute bottom-[10%] left-[50%] transform -translate-x-1/2">
               <TreePalm size={iconSize} className={iconColor} />
             </div>
             

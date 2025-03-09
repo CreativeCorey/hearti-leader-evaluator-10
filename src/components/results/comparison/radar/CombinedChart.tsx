@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { Gauge, HeartHandshake, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
 
 interface CombinedChartProps {
@@ -35,8 +35,8 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
       <div className="relative h-full">
         {/* Icons in combined view - positioned more carefully */}
         <div className="absolute inset-0 pointer-events-none">
-          {/* Top (Humility) */}
-          <div className="absolute top-[3%] left-[50%] transform -translate-x-1/2">
+          {/* Top (Humility) - Adjusted position */}
+          <div className="absolute top-[10%] left-[50%] transform -translate-x-1/2">
             <Gauge size={isMobile ? 24 : 18} className="text-gray-600" />
           </div>
           
@@ -50,8 +50,8 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
             <ChartNoAxesCombined size={isMobile ? 24 : 18} className="text-gray-600" />
           </div>
           
-          {/* Bottom (Resiliency) */}
-          <div className="absolute bottom-[3%] left-[50%] transform -translate-x-1/2">
+          {/* Bottom (Resiliency) - Adjusted position */}
+          <div className="absolute bottom-[10%] left-[50%] transform -translate-x-1/2">
             <TreePalm size={isMobile ? 24 : 18} className="text-gray-600" />
           </div>
           
