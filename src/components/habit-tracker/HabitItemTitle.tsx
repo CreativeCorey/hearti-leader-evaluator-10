@@ -2,7 +2,7 @@
 import React from 'react';
 import { Calendar } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
-import { Gauge, Ear, ChartNoAxesCombined, TreePalm, Search, Users } from 'lucide-react';
+import { Gauge, Ear, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
 import { HEARTIDimension } from '@/types';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -17,7 +17,7 @@ const dimensionIcons: Record<string, LucideIcon> = {
   empathy: Ear,
   accountability: ChartNoAxesCombined,
   resiliency: TreePalm,
-  transparency: Search,
+  transparency: Blend,
   inclusivity: Users
 };
 

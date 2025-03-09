@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,7 +10,7 @@ import { getOrCreateAnonymousId } from '@/utils/localStorage';
 import { toast } from '@/hooks/use-toast';
 import { Toggle } from '@/components/ui/toggle';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Gauge, Ear, ChartNoAxesCombined, TreePalm, Search, Users } from 'lucide-react';
+import { Gauge, Ear, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 
 interface SavedActivityCardProps {
@@ -24,7 +25,7 @@ const dimensionIcons: Record<string, LucideIcon> = {
   empathy: Ear,
   accountability: ChartNoAxesCombined,
   resiliency: TreePalm,
-  transparency: Search,
+  transparency: Blend,
   inclusivity: Users
 };
 

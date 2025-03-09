@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { HEARTIDimension } from '@/types';
-import { Gauge, Ear, ChartNoAxesCombined, TreePalm, Search, Users } from 'lucide-react';
+import { Gauge, Ear, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { dimensionIcons } from './DimensionIcons';
 
@@ -39,7 +39,7 @@ const DimensionTabs: React.FC<DimensionTabsProps> = ({
           <span>Resiliency</span>
         </TabsTrigger>
         <TabsTrigger value="transparency" className="text-xs flex flex-col items-center gap-1 py-2">
-          <Search size={16} />
+          <Blend size={16} />
           <span>Transparency</span>
         </TabsTrigger>
         <TabsTrigger value="inclusivity" className="text-xs flex flex-col items-center gap-1 py-2">
