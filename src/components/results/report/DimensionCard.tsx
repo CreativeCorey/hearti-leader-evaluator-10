@@ -1,10 +1,10 @@
-
 import React from 'react';
 import { HEARTIAssessment, HEARTIDimension } from '@/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getDimensionReportContent } from '@/utils/calculations';
 import { dimensionIcons } from '../development/DimensionIcons';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface DimensionCardProps {
   dimension: HEARTIDimension;
@@ -23,17 +23,20 @@ const DimensionCard: React.FC<DimensionCardProps> = ({
 }) => {
   const { statusContent, description, levels, tips } = getDimensionReportContent(dimension, status, userName);
   const DimensionIcon = dimensionIcons[dimension];
+  const isMobile = useIsMobile();
 
   // PDF class mapping for dimension headers
   const dimensionHeaderClass = `${dimension.toLowerCase()}-header`;
+  
+  // Determine background color based on status
+  const bgColorClass = 
+    status === 'strength' ? 'bg-green-600' : 
+    status === 'vulnerability' ? 'bg-amber-600' : 
+    'bg-blue-600';
 
   return (
-    <Card className="mb-8 overflow-hidden pdf-dimension-card">
-      <div className={`p-4 text-white pdf-dimension-header ${
-        status === 'strength' ? 'bg-green-600' : 
-        status === 'vulnerability' ? 'bg-amber-600' : 
-        'bg-blue-600'
-      } ${dimensionHeaderClass}`}>
+    <Card className={`mb-8 overflow-hidden pdf-dimension-card ${isMobile ? 'h-full' : ''}`}>
+      <div className={`p-4 text-white pdf-dimension-header ${bgColorClass} ${dimensionHeaderClass}`}>
         <h3 className="text-xl font-bold uppercase pdf-dimension-title flex items-center gap-2">
           <DimensionIcon size={24} className="text-white" />
           {dimension}
@@ -50,30 +53,58 @@ const DimensionCard: React.FC<DimensionCardProps> = ({
         </div>
       </div>
       
-      <CardContent className="p-6 pdf-dimension-content">
+      <CardContent className={`p-6 pdf-dimension-content ${isMobile ? 'overflow-y-auto max-h-[calc(70vh-100px)]' : ''}`}>
         <div className="prose max-w-none">
           <div className="mb-4" dangerouslySetInnerHTML={{ __html: statusContent }} />
           
           <div className="mb-4" dangerouslySetInnerHTML={{ __html: description }} />
           
-          {levels && (
-            <div className="mb-4">
-              <h4 className="text-lg font-medium uppercase mb-2 flex items-center gap-2">
-                <DimensionIcon size={18} className="text-gray-500" />
-                {dimension}
-              </h4>
-              <div dangerouslySetInnerHTML={{ __html: levels }} />
-            </div>
-          )}
-          
-          {tips && (
-            <div>
-              <h4 className="text-lg font-medium mb-2 flex items-center gap-2">
-                <DimensionIcon size={18} className="text-gray-500" />
-                Tips for increasing your {dimension} leadership:
-              </h4>
-              <div dangerouslySetInnerHTML={{ __html: tips }} />
-            </div>
+          {isMobile ? (
+            // For mobile view, collapse sections into an accordion-like structure
+            <>
+              {levels && (
+                <div className="mb-4">
+                  <h4 className="text-lg font-medium uppercase mb-2 flex items-center gap-2">
+                    <DimensionIcon size={18} className="text-gray-500" />
+                    Levels of {dimension}
+                  </h4>
+                  <div dangerouslySetInnerHTML={{ __html: levels }} />
+                </div>
+              )}
+              
+              {tips && (
+                <div>
+                  <h4 className="text-lg font-medium mb-2 flex items-center gap-2">
+                    <DimensionIcon size={18} className="text-gray-500" />
+                    Development Tips
+                  </h4>
+                  <div dangerouslySetInnerHTML={{ __html: tips }} />
+                </div>
+              )}
+            </>
+          ) : (
+            // For desktop, keep the original layout
+            <>
+              {levels && (
+                <div className="mb-4">
+                  <h4 className="text-lg font-medium uppercase mb-2 flex items-center gap-2">
+                    <DimensionIcon size={18} className="text-gray-500" />
+                    {dimension}
+                  </h4>
+                  <div dangerouslySetInnerHTML={{ __html: levels }} />
+                </div>
+              )}
+              
+              {tips && (
+                <div>
+                  <h4 className="text-lg font-medium mb-2 flex items-center gap-2">
+                    <DimensionIcon size={18} className="text-gray-500" />
+                    Tips for increasing your {dimension} leadership:
+                  </h4>
+                  <div dangerouslySetInnerHTML={{ __html: tips }} />
+                </div>
+              )}
+            </>
           )}
         </div>
       </CardContent>

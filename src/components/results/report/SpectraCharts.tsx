@@ -42,12 +42,12 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
     activeDotSize: 8,
   };
   
-  const iconSize = isMobile ? 20 : 18;
+  const iconSize = isMobile ? 18 : 18;
   const iconColor = "text-gray-500";
 
   const ChartWithIcons = ({ data, title, chartColor }) => (
     <div className="relative">
-      <p className="text-center font-medium text-xl text-indigo-600 mb-2">{title}</p>
+      <p className="text-center font-medium text-lg text-indigo-600 mb-2">{title}</p>
       <div className={`h-[${isMobile ? '280px' : '400px'}] pdf-chart-container relative`}>
         {/* Icon overlays */}
         <div className="absolute inset-0 pointer-events-none">
@@ -134,18 +134,30 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
           />
         </div>
         
-        <div className={`flex-1 bg-slate-50 p-4 rounded-lg pdf-chart-column ${isMobile ? 'mb-6' : ''}`}>
+        {!isMobile && (
+          <div className="flex-1 bg-slate-50 p-4 rounded-lg pdf-chart-column">
+            <ChartWithIcons 
+              data={benchmarkData} 
+              title="Global HEARTI:Leader Benchmark" 
+              chartColor={comparisonColors.average} 
+            />
+          </div>
+        )}
+      </div>
+      
+      {isMobile && (
+        <div className="flex-1 bg-slate-50 p-4 rounded-lg pdf-chart-column mt-4">
           <ChartWithIcons 
             data={benchmarkData} 
             title="Global HEARTI:Leader Benchmark" 
             chartColor={comparisonColors.average} 
           />
         </div>
-      </div>
+      )}
       
       <p className="text-sm text-muted-foreground mt-4">
         The HEARTI:Leader Quotient report provides you with information about your strengths and areas that you can develop further. 
-        {isMobile ? 'Above are visualizations of your HEARTI competencies and the global benchmark for comparison.' : 
+        {isMobile ? 'The visualizations above show your HEARTI competencies and the global benchmark for comparison.' : 
         'On the left side is your HEARTI:Leader Spectra - a visualization of your HEARTI competencies based on your responses. On the right is the global benchmark for visual comparison.'} 
         This information is a reference point only. 
         No leader is strongest in every competency, but learning how your results compare to other 21st century leaders can be insightful.
