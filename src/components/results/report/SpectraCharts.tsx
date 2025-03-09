@@ -46,7 +46,7 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
       <h3 className="text-2xl font-medium mb-4 pdf-section-title">Your HEARTI:Leader Spectra</h3>
       <div className="flex flex-col lg:flex-row gap-8 pdf-charts-grid">
         <div className="flex-1 bg-slate-50 p-6 rounded-lg pdf-chart-column">
-          <p className="text-center font-medium text-xl text-indigo-600 mb-4">Your Results</p>
+          <p className="text-center font-medium text-xl text-indigo-600 mb-4">Your HEARTI Spectra</p>
           <div className="h-[550px] pdf-chart-container">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart 
@@ -72,7 +72,7 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
                   tick={{ fill: '#6b7280', fontSize: isMobile ? 8 : 12 }} 
                 />
                 <Radar
-                  name="Your Score"
+                  name="Your HEARTI Spectra"
                   dataKey="value"
                   stroke={userColor}
                   fill={userColor}
@@ -90,7 +90,7 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
         </div>
         
         <div className="flex-1 bg-slate-50 p-6 rounded-lg pdf-chart-column">
-          <p className="text-center font-medium text-xl text-purple-600 mb-4">Global Benchmark</p>
+          <p className="text-center font-medium text-xl text-purple-600 mb-4">Global HEARTI:Leader Benchmark</p>
           <div className="h-[550px] pdf-chart-container">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart 

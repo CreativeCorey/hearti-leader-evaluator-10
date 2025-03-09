@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { HEARTIAssessment, HEARTIDimension } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -12,7 +11,6 @@ interface ComparisonTabProps {
   assessment: HEARTIAssessment;
 }
 
-// Aggregated comparison data
 const aggregateData = {
   averageScores: {
     humility: 3.8,
@@ -54,7 +52,6 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
     .sort(([, a], [, b]) => b - a)
     .map(([dimension]) => dimension as HEARTIDimension);
 
-  // Spider chart configuration
   const spiderConfig = {
     gridType: "polygon" as "polygon",
     axisLineType: "polygon" as "polygon",
@@ -133,7 +130,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
     <div>
       <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h3 className="text-lg font-medium mb-2">Compare Your Results</h3>
+          <h3 className="text-lg font-medium mb-2">HEARTI:Leader Spectra Comparison</h3>
           <p className="text-sm text-muted-foreground">See how your scores compare to others</p>
         </div>
         
@@ -208,7 +205,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
                 />
                 <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280' }} />
                 <Radar
-                  name="Your Score"
+                  name="Your HEARTI Spectra"
                   dataKey="value"
                   stroke={userColor}
                   fill={userColor}
@@ -243,7 +240,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-slate-50 p-4 rounded-lg h-[300px]">
-              <p className="text-center font-medium text-indigo-600 mb-2">Your Results</p>
+              <p className="text-center font-medium text-indigo-600 mb-2">Your HEARTI Spectra</p>
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
                   <PolarGrid gridType={spiderConfig.gridType} />
@@ -258,7 +255,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
                   />
                   <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280', fontSize: isMobile ? 8 : 10 }} />
                   <Radar
-                    name="Your Score"
+                    name="Your HEARTI Spectra"
                     dataKey="value"
                     stroke={userColor}
                     fill={userColor}

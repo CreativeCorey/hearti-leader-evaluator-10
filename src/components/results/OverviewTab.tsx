@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { HEARTIAssessment, HEARTIDimension } from '@/types';
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Tooltip, Legend } from 'recharts';
@@ -44,7 +45,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ assessment }) => {
   return (
     <div className="flex flex-col lg:flex-row gap-8">
       <div className="flex-1">
-        <h3 className="text-lg font-medium mb-4">Your HEARTI Profile</h3>
+        <h3 className="text-lg font-medium mb-4">HEARTI:Leader Spectra</h3>
         <div className="bg-slate-50 p-4 rounded-lg h-[400px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
@@ -60,7 +61,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ assessment }) => {
               />
               <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280' }} />
               <Radar
-                name="Your Score"
+                name="Your HEARTI Spectra"
                 dataKey="value"
                 stroke={userColor}
                 fill={userColor}
