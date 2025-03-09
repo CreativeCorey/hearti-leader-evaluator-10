@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { HEARTIDimension } from '@/types';
-import { Award, BookText, Brain, BarChart, Headphones, Leaf, Check, Plus } from 'lucide-react';
+import { Award, BookText, Brain, BarChart, Headphones, Leaf, Check, Plus, Clock } from 'lucide-react';
 import { activityData } from '@/data/heartActivities';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -9,6 +9,8 @@ import { addActivityToHabitTracker } from '@/services/habitTrackerService';
 import { useToast } from '@/hooks/use-toast';
 import { getOrCreateAnonymousId } from '@/utils/localStorage';
 import { LucideIcon } from 'lucide-react';
+import { Toggle } from '@/components/ui/toggle';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface DevelopmentTabProps {
   focusDimension: HEARTIDimension;
@@ -24,12 +26,23 @@ const dimensionIcons: Record<string, LucideIcon> = {
   inclusivity: Headphones,
 };
 
+const dimensionLabels = {
+  humility: 'Humility',
+  empathy: 'Empathy',
+  accountability: 'Accountability',
+  resiliency: 'Resiliency',
+  transparency: 'Transparency',
+  inclusivity: 'Inclusivity'
+};
+
 const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
   const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
+  const [activeDimension, setActiveDimension] = useState<HEARTIDimension>(focusDimension);
+  const [selectedFrequency, setSelectedFrequency] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const { toast } = useToast();
   
-  // Filter activities for this dimension
-  const activities = activityData.filter(activity => activity.dimension === focusDimension);
+  // Filter activities for the active dimension
+  const activities = activityData.filter(activity => activity.dimension === activeDimension);
   
   const handleSelectActivity = (activityId: string) => {
     // Toggle selection (max 3)
@@ -51,15 +64,15 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
     if (!activity) return;
     
     const userId = getOrCreateAnonymousId();
-    addActivityToHabitTracker(userId, activity, 'daily');
+    addActivityToHabitTracker(userId, activity, selectedFrequency);
     
     toast({
       title: "Added to Habit Tracker",
-      description: "This activity has been added to your daily habits. Go to the Habits tab to track your progress.",
+      description: `This activity has been added to your ${selectedFrequency} habits. Go to the Habits tab to track your progress.`,
     });
   };
   
-  const DimensionIcon = dimensionIcons[focusDimension] || Award;
+  const DimensionIcon = dimensionIcons[activeDimension] || Award;
   
   return (
     <div className="mb-4">
@@ -70,20 +83,55 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
         </h3>
         <p className="text-indigo-700 mt-1">
           Choose 3 behaviors below that will help strengthen your leadership dimensions. We recommend focusing on your development area: 
-          <strong className="uppercase"> {focusDimension}</strong>
+          <strong className="uppercase"> {dimensionLabels[focusDimension]}</strong>
         </p>
         <p className="text-indigo-700 mt-2 text-sm">
           Practice each behavior 30 times to develop a new habit and master the skill.
         </p>
       </div>
       
+      {/* HEARTI Navigation */}
+      <Tabs 
+        value={activeDimension} 
+        onValueChange={(value) => setActiveDimension(value as HEARTIDimension)}
+        className="mb-6"
+      >
+        <div className="mb-2 text-sm font-medium">Choose a dimension:</div>
+        <TabsList className="grid grid-cols-3 md:grid-cols-6 mb-4">
+          <TabsTrigger value="humility" className="text-xs flex flex-col items-center gap-1 py-2">
+            <Award size={16} />
+            <span>Humility</span>
+          </TabsTrigger>
+          <TabsTrigger value="empathy" className="text-xs flex flex-col items-center gap-1 py-2">
+            <Brain size={16} />
+            <span>Empathy</span>
+          </TabsTrigger>
+          <TabsTrigger value="accountability" className="text-xs flex flex-col items-center gap-1 py-2">
+            <BarChart size={16} />
+            <span>Accountability</span>
+          </TabsTrigger>
+          <TabsTrigger value="resiliency" className="text-xs flex flex-col items-center gap-1 py-2">
+            <Leaf size={16} />
+            <span>Resiliency</span>
+          </TabsTrigger>
+          <TabsTrigger value="transparency" className="text-xs flex flex-col items-center gap-1 py-2">
+            <BookText size={16} />
+            <span>Transparency</span>
+          </TabsTrigger>
+          <TabsTrigger value="inclusivity" className="text-xs flex flex-col items-center gap-1 py-2">
+            <Headphones size={16} />
+            <span>Inclusivity</span>
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
+      
       <div className="mt-6">
         <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
           <DimensionIcon className="text-indigo-600" size={24} />
-          Choose Activities for: {focusDimension.toUpperCase()}
+          Choose Activities for: {dimensionLabels[activeDimension].toUpperCase()}
         </h3>
         <p className="text-muted-foreground mb-6">
-          These activities are designed to help you develop your {focusDimension} leadership dimension.
+          These activities are designed to help you develop your {activeDimension} leadership dimension.
           Select up to 3 activities to focus on.
         </p>
         
@@ -109,6 +157,35 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
                   </div>
                   {isSelected && (
                     <div className="mt-3 pt-3 border-t">
+                      <div className="mb-3">
+                        <label className="text-sm flex items-center gap-1 mb-1 text-indigo-700">
+                          <Clock size={14} />
+                          Frequency:
+                        </label>
+                        <div className="flex gap-2">
+                          <Toggle
+                            pressed={selectedFrequency === 'daily'}
+                            onPressedChange={() => setSelectedFrequency('daily')}
+                            className={`flex-1 text-xs py-1 px-2 h-8 ${selectedFrequency === 'daily' ? 'bg-blue-100 border-blue-300 text-blue-800' : ''}`}
+                          >
+                            Daily
+                          </Toggle>
+                          <Toggle
+                            pressed={selectedFrequency === 'weekly'}
+                            onPressedChange={() => setSelectedFrequency('weekly')}
+                            className={`flex-1 text-xs py-1 px-2 h-8 ${selectedFrequency === 'weekly' ? 'bg-purple-100 border-purple-300 text-purple-800' : ''}`}
+                          >
+                            Weekly
+                          </Toggle>
+                          <Toggle
+                            pressed={selectedFrequency === 'monthly'}
+                            onPressedChange={() => setSelectedFrequency('monthly')}
+                            className={`flex-1 text-xs py-1 px-2 h-8 ${selectedFrequency === 'monthly' ? 'bg-orange-100 border-orange-300 text-orange-800' : ''}`}
+                          >
+                            Monthly
+                          </Toggle>
+                        </div>
+                      </div>
                       <Button 
                         variant="outline" 
                         size="sm" 
