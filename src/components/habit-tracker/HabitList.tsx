@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { format, isSameDay } from 'date-fns';
 import { Button } from '@/components/ui/button';
-import { X, Plus, Minus, Check, Calendar, ArrowRight, Trophy } from 'lucide-react';
+import { X, Plus, Minus, Check, Calendar, ArrowRight, Trophy, Award, BookText, Brain, BarChart, Headphones, Leaf } from 'lucide-react';
 import { HEARTIDimension } from '@/types';
 import { Habit } from '@/hooks/useHabits';
 import HabitProgressCircle from './HabitProgressCircle';
@@ -32,6 +33,15 @@ const dimensionLabels = {
   resiliency: 'Resiliency',
   transparency: 'Transparency',
   inclusivity: 'Inclusivity'
+};
+
+const dimensionIcons = {
+  humility: Award,
+  empathy: Brain,
+  accountability: BarChart,
+  resiliency: Leaf,
+  transparency: BookText,
+  inclusivity: Headphones
 };
 
 const dimensionProgressColors = {
@@ -74,11 +84,14 @@ const HabitList: React.FC<HabitListProps> = ({
         const completionPercentage = Math.min((completionCount / TARGET_COMPLETIONS) * 100, 100);
         const isHabitMastered = completionCount >= TARGET_COMPLETIONS;
         
+        const DimensionIcon = dimensionIcons[habit.dimension] || Award;
+        
         return (
           <div key={habit.id} className={`bg-white rounded-xl ${isMobile ? 'p-3' : 'p-5'} shadow-sm border border-gray-100 hover:shadow-md transition-shadow ${isHabitMastered ? 'border-2 border-green-300' : ''}`}>
             <div className="flex justify-between items-center mb-3">
               <div className="flex items-center space-x-2">
-                <div className={`px-2 py-1 rounded-md text-xs font-medium ${dimensionColors[habit.dimension]}`}>
+                <div className={`px-2 py-1 rounded-md text-xs font-medium ${dimensionColors[habit.dimension]} flex items-center gap-1`}>
+                  <DimensionIcon size={12} />
                   {isMobile ? habit.dimension.charAt(0).toUpperCase() : dimensionLabels[habit.dimension]}
                 </div>
                 <span className="text-xs text-muted-foreground">{habit.frequency === 'daily' ? 'Daily' : 'Weekly'}</span>
@@ -101,7 +114,10 @@ const HabitList: React.FC<HabitListProps> = ({
               </Button>
             </div>
             
-            <h3 className={`${isMobile ? 'text-base' : 'text-lg'} font-bold mb-1`}>{habit.description}</h3>
+            <h3 className={`${isMobile ? 'text-base' : 'text-lg'} font-bold mb-1 flex items-center gap-2`}>
+              <DimensionIcon size={isMobile ? 16 : 20} className="text-gray-500" />
+              {habit.description}
+            </h3>
             
             <div className="flex justify-between items-center mb-2">
               <div className="text-xs text-muted-foreground flex items-center gap-1">
