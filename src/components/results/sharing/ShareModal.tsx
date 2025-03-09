@@ -1,20 +1,13 @@
+
 import React, { useState, useRef } from 'react';
 import { HEARTIAssessment, HEARTIDimension } from '@/types';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
-import ShareResultsCard from './ShareResultsCard';
-import SocialShareButton from './SocialShareButton';
+import { Share, Copy } from 'lucide-react';
 import html2canvas from 'html2canvas';
-import { 
-  Linkedin, Twitter, Instagram, Mail, Share, Download, Copy, 
-  MessageCircle, Check, Slack
-} from 'lucide-react';
 import { showSuccessToast, showErrorToast } from '@/utils/notifications';
+import ImageShareTab from './ImageShareTab';
+import LinkShareTab from './LinkShareTab';
 
 interface ShareModalProps {
   assessment: HEARTIAssessment;
@@ -27,7 +20,6 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
   const [isCopied, setIsCopied] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-  const { toast } = useToast();
   
   const shareableLink = window.location.href;
   
@@ -113,7 +105,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
           blueSkyLink.href = imageUrl;
           blueSkyLink.click();
           
-          toast({
+          showSuccessToast({
             title: "Share to Bluesky",
             description: "Image downloaded. Copy your caption and upload the image to Bluesky.",
             duration: 5000,
@@ -127,7 +119,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
           slackLink.href = imageUrl;
           slackLink.click();
           
-          toast({
+          showSuccessToast({
             title: "Share to Slack",
             description: "Image downloaded. Upload to Slack and paste your caption.",
             duration: 5000,
@@ -141,7 +133,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
           teamsLink.href = imageUrl;
           teamsLink.click();
           
-          toast({
+          showSuccessToast({
             title: "Share to Microsoft Teams",
             description: "Image downloaded. Upload to Teams and paste your caption.",
             duration: 5000,
@@ -169,7 +161,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
           // After downloading, copy the caption to clipboard
           await navigator.clipboard.writeText(captionText);
           
-          toast({
+          showSuccessToast({
             title: `Share to ${platform.charAt(0).toUpperCase() + platform.slice(1)}`,
             description: "Image downloaded and caption copied to clipboard. You can now upload it manually.",
             duration: 5000,
@@ -209,130 +201,24 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
           </TabsList>
           
           <TabsContent value="image">
-            <div className="mb-4" ref={cardRef}>
-              <ShareResultsCard assessment={assessment} />
-            </div>
-            
-            <div className="mb-4">
-              <Label htmlFor="caption">Caption</Label>
-              <div className="flex gap-2 mt-1">
-                <Input 
-                  id="caption"
-                  value={captionText} 
-                  onChange={(e) => setCaptionText(e.target.value)}
-                  className="flex-1"
-                />
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={resetCaptionToDefault}
-                  className="whitespace-nowrap"
-                >
-                  Reset
-                </Button>
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                This caption will be used when sharing to social media platforms.
-              </p>
-            </div>
-            
-            <div className="flex flex-col gap-2 mb-4">
-              <Button 
-                variant="secondary" 
-                className="w-full" 
-                onClick={downloadImage}
-                disabled={isDownloading}
-              >
-                <Download size={18} className="mr-2" />
-                {isDownloading ? "Downloading..." : "Download Image"}
-              </Button>
-            </div>
-            
-            <Separator className="my-4" />
-            
-            <h4 className="font-medium mb-2">Share to:</h4>
-            <div className="grid grid-cols-2 gap-2">
-              <SocialShareButton 
-                icon={<Linkedin size={18} />} 
-                label="LinkedIn" 
-                onClick={() => shareToSocial('linkedin')}
-              />
-              
-              <SocialShareButton 
-                icon={<Twitter size={18} />} 
-                label="Twitter/X" 
-                onClick={() => shareToSocial('twitter')}
-              />
-              
-              <SocialShareButton 
-                icon={<Instagram size={18} />} 
-                label="Instagram" 
-                onClick={() => shareToSocial('instagram')}
-              />
-              
-              <SocialShareButton 
-                icon={<MessageCircle size={18} />} 
-                label="WhatsApp" 
-                onClick={() => shareToSocial('whatsapp')}
-              />
-              
-              <SocialShareButton 
-                icon={<MessageCircle size={18} />} 
-                label="Bluesky" 
-                onClick={() => shareToSocial('bluesky')}
-              />
-              
-              <SocialShareButton 
-                icon={<Slack size={18} />} 
-                label="Slack" 
-                onClick={() => shareToSocial('slack')}
-              />
-              
-              <SocialShareButton 
-                icon={<Mail size={18} />} 
-                label="Email" 
-                onClick={() => shareToSocial('email')}
-              />
-              
-              <SocialShareButton 
-                icon={<MessageCircle size={18} />} 
-                label="Teams" 
-                onClick={() => shareToSocial('teams')}
-              />
-              
-              <SocialShareButton 
-                icon={<MessageCircle size={18} />} 
-                label="Threads" 
-                onClick={() => shareToSocial('threads')}
-                className="col-span-2 md:col-span-1"
-              />
-              
-              <SocialShareButton 
-                icon={<MessageCircle size={18} />} 
-                label="Fanbase" 
-                onClick={() => shareToSocial('fanbase')}
-                className="col-span-2 md:col-span-1"
-              />
-            </div>
+            <ImageShareTab
+              cardRef={cardRef}
+              assessment={assessment}
+              captionText={captionText}
+              isDownloading={isDownloading}
+              onCaptionChange={setCaptionText}
+              onResetCaption={resetCaptionToDefault}
+              onDownloadImage={downloadImage}
+              onShareToSocial={shareToSocial}
+            />
           </TabsContent>
           
           <TabsContent value="link">
-            <div className="mb-4 border p-2 rounded-md bg-gray-50 flex items-center justify-between">
-              <p className="text-sm truncate mr-2">{shareableLink}</p>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleCopyLink}
-                className="flex items-center gap-1 shrink-0"
-              >
-                {isCopied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
-                {isCopied ? "Copied" : "Copy"}
-              </Button>
-            </div>
-            
-            <p className="text-sm text-muted-foreground mb-4">
-              Share this link with others to allow them to see your results directly.
-            </p>
+            <LinkShareTab
+              shareableLink={shareableLink}
+              isCopied={isCopied}
+              onCopyLink={handleCopyLink}
+            />
           </TabsContent>
         </Tabs>
       </DialogContent>
