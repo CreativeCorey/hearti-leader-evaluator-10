@@ -30,7 +30,7 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
   const iconColor = "text-gray-500";
 
   return (
-    <div className="relative h-full">
+    <div className="relative h-full w-full flex items-center justify-center">
       {showIcons && (
         <div className="absolute inset-0 pointer-events-none">
           {/* Top (Humility) - Adjusted position to move down slightly */}
@@ -65,8 +65,8 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
         </div>
       )}
       
-      <ResponsiveContainer width="100%" height="100%">
-        <RadarChart cx="50%" cy="50%" outerRadius="65%" data={data}>
+      <ResponsiveContainer width="100%" height="100%" className="flex-1">
+        <RadarChart cx="50%" cy="50%" outerRadius="60%" data={data}>
           <PolarGrid gridType={spiderConfig.gridType} />
           <PolarAngleAxis 
             dataKey="name" 

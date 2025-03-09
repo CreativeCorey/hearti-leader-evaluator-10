@@ -42,8 +42,9 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
           <CardTitle>HEARTI Spectra</CardTitle>
           <CardDescription>Your leadership dimension scores</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="h-[300px]">
+        <CardContent className="pt-0 pb-4">
+          {/* Increased height and added padding to prevent overflow */}
+          <div className="h-[340px] px-2">
             <DimensionChart 
               dimensionScores={dimensionScores}
               activeDimension="humility"

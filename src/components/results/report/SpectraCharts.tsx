@@ -48,7 +48,7 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
   const ChartWithIcons = ({ data, title, chartColor }) => (
     <div className="relative">
       <p className="text-center font-medium text-lg text-indigo-600 mb-2">{title}</p>
-      <div className={`h-[${isMobile ? '280px' : '400px'}] pdf-chart-container relative`}>
+      <div className={`h-[${isMobile ? '260px' : '320px'}] pdf-chart-container relative`}>
         {/* Icon overlays */}
         <div className="absolute inset-0 pointer-events-none">
           {/* Top (Humility) - Adjusted position */}

@@ -1,9 +1,9 @@
-
 import { useState } from 'react';
 import { useToast } from "./use-toast";
 import { setUseSupabase, getOrCreateAnonymousId } from '../utils/localStorage';
 import { syncLocalDataToSupabase } from '../utils/localStorage';
 import { supabase } from '../integrations/supabase/client';
+import { HEARTIAssessment } from '../types';
 
 export const useSupabaseSync = (loadAssessments: () => Promise<void>) => {
   const { toast } = useToast();

@@ -30,9 +30,9 @@ const SeparateCharts: React.FC<SeparateChartsProps> = ({
 }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div className="bg-slate-50 p-4 rounded-lg h-[300px]">
+      <div className="bg-slate-50 p-4 rounded-lg h-[320px]">
         <p className="text-center font-medium text-indigo-600 mb-2">Your HEARTI Spectra</p>
-        <div className="relative h-full">
+        <div className="relative h-[calc(100%-30px)]">
           <ChartWithIcons 
             data={chartData} 
             chartColor={userColor} 
@@ -42,9 +42,9 @@ const SeparateCharts: React.FC<SeparateChartsProps> = ({
       </div>
       
       {compareMode !== 'none' && (
-        <div className="bg-slate-50 p-4 rounded-lg h-[300px]">
+        <div className="bg-slate-50 p-4 rounded-lg h-[320px]">
           <p className="text-center font-medium" style={{ color: getComparisonColor() }}>{getComparisonLabel()} Results</p>
-          <div className="relative h-full">
+          <div className="relative h-[calc(100%-30px)]">
             <ChartWithIcons 
               data={getComparisonData()} 
               chartColor={getComparisonColor()} 

@@ -39,6 +39,13 @@ const Index: React.FC = () => {
     );
   }
 
+  // Pass proper function with assessment parameter for sendLatestToSheets
+  const handleSendLatestToSheets = () => {
+    if (latestAssessment) {
+      sendLatestToSheets(latestAssessment);
+    }
+  };
+
   return (
     <Layout>
       <IndexContent
@@ -60,7 +67,7 @@ const Index: React.FC = () => {
         handleGoogleSignIn={handleGoogleSignIn}
         handleConfigureWorkloadIdentity={handleConfigureWorkloadIdentity}
         testGoogleSheets={testGoogleSheets}
-        sendLatestToSheets={sendLatestToSheets}
+        sendLatestToSheets={handleSendLatestToSheets}
         configuringWorkloadIdentity={configuringWorkloadIdentity}
         isMobile={isMobile}
       />
