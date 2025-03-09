@@ -20,3 +20,13 @@ export const dimensionLabels: Record<HEARTIDimension, string> = {
   transparency: 'Transparency',
   inclusivity: 'Inclusivity'
 };
+
+// Export standardized dimension colors
+export const dimensionColors: Record<HEARTIDimension, string> = {
+  humility: '#6366F1',    // Indigo
+  empathy: '#EC4899',     // Pink
+  accountability: '#F59E0B', // Amber
+  resiliency: '#10B981',  // Emerald
+  transparency: '#06B6D4', // Cyan
+  inclusivity: '#8B5CF6'  // Violet
+};

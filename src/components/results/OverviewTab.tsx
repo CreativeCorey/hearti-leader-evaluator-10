@@ -36,15 +36,15 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* HEARTI Spectra Chart */}
+      {/* HEARTI Spectra Chart - Fixed height and padding to prevent overflow */}
       <Card>
         <CardHeader className="pb-2">
           <CardTitle>HEARTI Spectra</CardTitle>
           <CardDescription>Your leadership dimension scores</CardDescription>
         </CardHeader>
-        <CardContent className="pt-0 pb-4">
-          {/* Increased height and added padding to prevent overflow */}
-          <div className="h-[340px] px-2">
+        <CardContent className="pt-0 pb-6">
+          {/* Increased height and ensured proper padding to prevent overflow */}
+          <div className="h-[360px] px-4 -mx-2">
             <DimensionChart 
               dimensionScores={dimensionScores}
               activeDimension="humility"
@@ -80,7 +80,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
                   .map(([dimension, score]) => (
                     <div key={dimension} className="space-y-1">
                       <p className="font-medium capitalize">{dimension}</p>
-                      <Badge variant="default">{score}/5</Badge>
+                      <Badge variant="default" className={`dimension-${dimension.toLowerCase()}`}>{score}/5</Badge>
                     </div>
                   ))}
               </div>
@@ -96,7 +96,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
                   .map(([dimension, score]) => (
                     <div key={dimension} className="space-y-1">
                       <p className="font-medium capitalize">{dimension}</p>
-                      <Badge variant="outline">{score}/5</Badge>
+                      <Badge variant="outline" className={`dimension-${dimension.toLowerCase()}`}>{score}/5</Badge>
                     </div>
                   ))}
               </div>

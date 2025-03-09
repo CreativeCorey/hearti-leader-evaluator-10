@@ -7,6 +7,7 @@ import { formatDataForRadarChart, getFeedback } from '@/utils/calculations';
 import { Crown } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Gauge, HeartHandshake, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
+import { dimensionColors } from '../development/DimensionIcons';
 
 interface ShareResultsCardProps {
   assessment: HEARTIAssessment;
@@ -26,7 +27,6 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
   const userColor = "#6366f1";
   
   const iconSize = isMobile ? 20 : 18;
-  const iconColor = "text-gray-500";
 
   return (
     <Card className="w-full shadow-lg overflow-hidden bg-white">
@@ -41,32 +41,32 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
           <div className="absolute inset-0 pointer-events-none">
             {/* Top (Humility) - Adjusted position */}
             <div className="absolute top-[10%] left-[50%] transform -translate-x-1/2">
-              <Gauge size={iconSize} className={iconColor} />
+              <Gauge size={iconSize} style={{ color: dimensionColors.humility }} />
             </div>
             
             {/* Top Right (Empathy) */}
             <div className="absolute top-[25%] right-[15%] transform">
-              <HeartHandshake size={iconSize} className={iconColor} />
+              <HeartHandshake size={iconSize} style={{ color: dimensionColors.empathy }} />
             </div>
             
             {/* Bottom Right (Accountability) */}
             <div className="absolute bottom-[25%] right-[15%] transform">
-              <ChartNoAxesCombined size={iconSize} className={iconColor} />
+              <ChartNoAxesCombined size={iconSize} style={{ color: dimensionColors.accountability }} />
             </div>
             
             {/* Bottom (Resiliency) - Adjusted position */}
             <div className="absolute bottom-[10%] left-[50%] transform -translate-x-1/2">
-              <TreePalm size={iconSize} className={iconColor} />
+              <TreePalm size={iconSize} style={{ color: dimensionColors.resiliency }} />
             </div>
             
             {/* Bottom Left (Transparency) */}
             <div className="absolute bottom-[25%] left-[15%] transform">
-              <Blend size={iconSize} className={iconColor} />
+              <Blend size={iconSize} style={{ color: dimensionColors.transparency }} />
             </div>
             
             {/* Top Left (Inclusivity) */}
             <div className="absolute top-[25%] left-[15%] transform">
-              <Users size={iconSize} className={iconColor} />
+              <Users size={iconSize} style={{ color: dimensionColors.inclusivity }} />
             </div>
           </div>
           

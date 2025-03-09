@@ -3,6 +3,7 @@ import React from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { Gauge, HeartHandshake, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
+import { dimensionColors } from '../../development/DimensionIcons';
 
 interface CombinedChartProps {
   combinedChartData: any[];
@@ -37,32 +38,32 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
         <div className="absolute inset-0 pointer-events-none">
           {/* Top (Humility) - Adjusted position - moved down slightly */}
           <div className="absolute top-[15%] left-[50%] transform -translate-x-1/2">
-            <Gauge size={isMobile ? 24 : 18} className="text-gray-600" />
+            <Gauge size={isMobile ? 24 : 18} style={{ color: dimensionColors.humility }} />
           </div>
           
           {/* Top Right (Empathy) */}
           <div className="absolute top-[20%] right-[9%] transform">
-            <HeartHandshake size={isMobile ? 24 : 18} className="text-gray-600" />
+            <HeartHandshake size={isMobile ? 24 : 18} style={{ color: dimensionColors.empathy }} />
           </div>
           
           {/* Bottom Right (Accountability) */}
           <div className="absolute bottom-[20%] right-[9%] transform">
-            <ChartNoAxesCombined size={isMobile ? 24 : 18} className="text-gray-600" />
+            <ChartNoAxesCombined size={isMobile ? 24 : 18} style={{ color: dimensionColors.accountability }} />
           </div>
           
           {/* Bottom (Resiliency) - Adjusted position - moved up slightly */}
           <div className="absolute bottom-[15%] left-[50%] transform -translate-x-1/2">
-            <TreePalm size={isMobile ? 24 : 18} className="text-gray-600" />
+            <TreePalm size={isMobile ? 24 : 18} style={{ color: dimensionColors.resiliency }} />
           </div>
           
           {/* Bottom Left (Transparency) */}
           <div className="absolute bottom-[20%] left-[9%] transform">
-            <Blend size={isMobile ? 24 : 18} className="text-gray-600" />
+            <Blend size={isMobile ? 24 : 18} style={{ color: dimensionColors.transparency }} />
           </div>
           
           {/* Top Left (Inclusivity) */}
           <div className="absolute top-[20%] left-[9%] transform">
-            <Users size={isMobile ? 24 : 18} className="text-gray-600" />
+            <Users size={isMobile ? 24 : 18} style={{ color: dimensionColors.inclusivity }} />
           </div>
         </div>
         

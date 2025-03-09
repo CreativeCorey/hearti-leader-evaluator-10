@@ -1,5 +1,6 @@
 
 import { HEARTIDimension } from '@/types';
+import { dimensionColors } from '../development/DimensionIcons';
 
 // Extracted aggregate data to a separate file for better maintainability
 export const aggregateData = {
@@ -37,7 +38,7 @@ export const userColor = "#6366f1";
 
 export const comparisonColors = {
   average: "#8b5cf6",
-  men: "#3b82f6",     // Changed from pink (#ec4899) to blue (#3b82f6)
+  men: "#3b82f6",
   women: "#f97316"
 };
 
