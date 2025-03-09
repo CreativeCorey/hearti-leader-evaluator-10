@@ -8,10 +8,10 @@ import {
   storeActivities 
 } from '@/utils/activityStorage';
 import { 
-  loadActivitiesFromSources,
-  saveActivityToSources,
-  toggleActivityCompletionInSources,
-  removeActivityFromSources,
+  getSavedActivities,
+  saveActivity,
+  toggleActivityCompletion,
+  removeSavedActivity,
   addActivityToHabitTracker
 } from '@/services/activityService';
 
@@ -36,8 +36,8 @@ export const useActivities = () => {
         setSavedActivities(storedActivities);
       }
       
-      // Try to load from all sources
-      const activities = await loadActivitiesFromSources(userId);
+      // Try to load from Supabase
+      const activities = await getSavedActivities(userId);
       if (activities.length > 0) {
         setSavedActivities(activities);
         // Save to localStorage as backup
@@ -54,7 +54,7 @@ export const useActivities = () => {
     }
   };
   
-  const saveActivity = async (activity: SkillActivity, addToHabitTracker: boolean = false) => {
+  const handleSaveActivity = async (activity: SkillActivity, addToHabitTracker: boolean = false, frequency: 'daily' | 'weekly' | 'monthly' = 'daily') => {
     try {
       const userId = getOrCreateAnonymousId();
       
@@ -67,18 +67,8 @@ export const useActivities = () => {
         return;
       }
       
-      // Save the activity to all sources
-      const newSavedActivity = await saveActivityToSources(activity, userId);
-      
-      // If the user wants to add this to the habit tracker
-      if (addToHabitTracker) {
-        await addActivityToHabitTracker(userId, activity);
-        
-        showSuccessToast(
-          "Habit Created",
-          "The activity has been added to your habit tracker"
-        );
-      }
+      // Save the activity using our service
+      const newSavedActivity = await saveActivity(userId, activity, addToHabitTracker, frequency);
       
       // Update local state
       const updatedSavedActivities = [...savedActivities, newSavedActivity];
@@ -100,20 +90,27 @@ export const useActivities = () => {
     }
   };
   
-  const toggleActivityCompletion = async (savedActivityId: string | undefined) => {
+  const handleToggleActivityCompletion = async (savedActivityId: string | undefined) => {
     if (!savedActivityId) return;
     
     try {
-      // Update in all sources
-      const updatedActivity = await toggleActivityCompletionInSources(
-        savedActivityId, 
-        savedActivities
-      );
+      // Find the current activity
+      const currentActivity = savedActivities.find(a => a.id === savedActivityId);
+      if (!currentActivity) return;
+      
+      // Toggle the completion status
+      const newCompletionStatus = !currentActivity.completed;
+      
+      // Update in Supabase
+      await toggleActivityCompletion(savedActivityId, newCompletionStatus);
       
       // Update local state
       const updatedSavedActivities = savedActivities.map(activity => {
         if (activity.id === savedActivityId) {
-          return updatedActivity;
+          return {
+            ...activity,
+            completed: newCompletionStatus
+          };
         }
         return activity;
       });
@@ -131,12 +128,12 @@ export const useActivities = () => {
     }
   };
   
-  const removeSavedActivity = async (savedActivityId: string | undefined) => {
+  const handleRemoveSavedActivity = async (savedActivityId: string | undefined) => {
     if (!savedActivityId) return;
     
     try {
-      // Remove from all sources
-      await removeActivityFromSources(savedActivityId);
+      // Remove from Supabase
+      await removeSavedActivity(savedActivityId);
       
       // Update local state
       const updatedSavedActivities = savedActivities.filter(
@@ -164,8 +161,8 @@ export const useActivities = () => {
   return { 
     savedActivities, 
     loading, 
-    saveActivity, 
-    toggleActivityCompletion, 
-    removeSavedActivity 
+    saveActivity: handleSaveActivity, 
+    toggleActivityCompletion: handleToggleActivityCompletion, 
+    removeSavedActivity: handleRemoveSavedActivity 
   };
 };

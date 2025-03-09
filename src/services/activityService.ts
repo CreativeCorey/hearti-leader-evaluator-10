@@ -17,7 +17,8 @@ export const saveActivity = async (
     userId,
     activityId: activity.id,
     completed: false,
-    createdAt: new Date().toISOString(),
+    dimension: activity.dimension,
+    savedAt: new Date().toISOString(),
   };
 
   // Try to save to Supabase
@@ -29,7 +30,8 @@ export const saveActivity = async (
         user_id: savedActivity.userId,
         activity_id: savedActivity.activityId,
         completed: savedActivity.completed,
-        created_at: savedActivity.createdAt
+        dimension: savedActivity.dimension,
+        saved_at: savedActivity.savedAt
       })
       .select();
 
@@ -117,12 +119,13 @@ export const getSavedActivities = async (userId: string): Promise<SavedActivity[
       return [];
     }
 
-    return data.map((item) => ({
+    return data.map((item: any) => ({
       id: item.id,
       userId: item.user_id,
       activityId: item.activity_id,
       completed: item.completed,
-      createdAt: item.created_at
+      dimension: item.dimension || 'accountability', // Default if missing
+      savedAt: item.saved_at || item.created_at
     }));
   } catch (error) {
     console.error('Error fetching saved activities:', error);
