@@ -50,32 +50,32 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
         <div className="absolute inset-0 pointer-events-none">
           {/* Top (Humility) */}
           <div className="absolute top-[3%] left-[50%] transform -translate-x-1/2">
-            <Gauge size={20} className="text-gray-500" />
+            <Gauge size={isMobile ? 24 : 20} className="text-gray-600" />
           </div>
           
           {/* Top Right (Empathy) */}
           <div className="absolute top-[20%] right-[9%] transform">
-            <HeartHandshake size={20} className="text-gray-500" />
+            <HeartHandshake size={isMobile ? 24 : 20} className="text-gray-600" />
           </div>
           
           {/* Bottom Right (Accountability) */}
           <div className="absolute bottom-[20%] right-[9%] transform">
-            <ChartNoAxesCombined size={20} className="text-gray-500" />
+            <ChartNoAxesCombined size={isMobile ? 24 : 20} className="text-gray-600" />
           </div>
           
           {/* Bottom (Resiliency) */}
           <div className="absolute bottom-[3%] left-[50%] transform -translate-x-1/2">
-            <TreePalm size={20} className="text-gray-500" />
+            <TreePalm size={isMobile ? 24 : 20} className="text-gray-600" />
           </div>
           
           {/* Bottom Left (Transparency) */}
           <div className="absolute bottom-[20%] left-[9%] transform">
-            <Blend size={20} className="text-gray-500" />
+            <Blend size={isMobile ? 24 : 20} className="text-gray-600" />
           </div>
           
           {/* Top Left (Inclusivity) */}
           <div className="absolute top-[20%] left-[9%] transform">
-            <Users size={20} className="text-gray-500" />
+            <Users size={isMobile ? 24 : 20} className="text-gray-600" />
           </div>
         </div>
         
@@ -89,9 +89,9 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
             <PolarGrid gridType={spiderConfig.gridType} />
             <PolarAngleAxis 
               dataKey="name" 
-              tick={{ 
+              tick={isMobile ? false : { 
                 fill: '#6b7280', 
-                fontSize: isMobile ? 10 : 12, 
+                fontSize: 12, 
                 fontWeight: 'medium' 
               }} 
               axisLineType={spiderConfig.axisLineType}
@@ -100,7 +100,10 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
             <PolarRadiusAxis 
               angle={30} 
               domain={[0, 5]} 
-              tick={{ fill: '#6b7280', fontSize: isMobile ? 8 : 10 }} 
+              tick={{ 
+                fill: isMobile ? '#C8C8C9' : '#6b7280', 
+                fontSize: isMobile ? 8 : 10 
+              }} 
             />
             <Radar
               name="Your HEARTI Spectra"

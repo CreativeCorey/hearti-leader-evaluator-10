@@ -38,11 +38,21 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
               <PolarGrid gridType="polygon" />
               <PolarAngleAxis 
                 dataKey="name" 
-                tick={{ fill: '#6b7280', fontSize: isMobile ? 10 : 12 }} 
+                tick={isMobile ? false : { 
+                  fill: '#6b7280', 
+                  fontSize: 12 
+                }} 
                 axisLineType="polygon"
                 tickLine={false}
               />
-              <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280' }} />
+              <PolarRadiusAxis 
+                angle={30} 
+                domain={[0, 5]} 
+                tick={{ 
+                  fill: isMobile ? '#C8C8C9' : '#6b7280',
+                  fontSize: isMobile ? 8 : 10 
+                }} 
+              />
               <Radar
                 name="Your HEARTI Spectra"
                 dataKey="value"
