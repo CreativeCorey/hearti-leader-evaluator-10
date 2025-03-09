@@ -18,7 +18,7 @@ interface HabitItemProps {
   onDeleteHabit: (habitId: string | undefined) => void;
 }
 
-const TARGET_COMPLETIONS = 30;
+const TARGET_COMPLETIONS = 1;
 
 const HabitItem: React.FC<HabitItemProps> = ({
   habit,

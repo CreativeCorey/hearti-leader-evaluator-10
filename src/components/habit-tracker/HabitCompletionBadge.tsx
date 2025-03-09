@@ -12,7 +12,7 @@ const HabitCompletionBadge: React.FC = () => {
           </div>
         </div>
         <p className="text-sm text-green-700 text-center">
-          Congratulations! You've completed this habit 30 times and formed a lasting behavior.
+          Congratulations! You've completed this habit 1 time and formed a lasting behavior.
         </p>
       </div>
     </div>
