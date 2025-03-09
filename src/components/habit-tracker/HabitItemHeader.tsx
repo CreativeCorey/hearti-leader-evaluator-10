@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import { HEARTIDimension } from '@/types';
 import { LucideIcon } from 'lucide-react';
-import { Gauge, Ear, BarChart, TreeDeciduous, Search, Users } from 'lucide-react';
+import { Gauge, Ear, BarChart, TreePalm, Search, Users } from 'lucide-react';
 import CompletedHabitBadge from './CompletedHabitBadge';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -37,7 +37,7 @@ const dimensionIcons: Record<string, LucideIcon> = {
   humility: Gauge,
   empathy: Ear,
   accountability: BarChart,
-  resiliency: TreeDeciduous,
+  resiliency: TreePalm,
   transparency: Search,
   inclusivity: Users
 };

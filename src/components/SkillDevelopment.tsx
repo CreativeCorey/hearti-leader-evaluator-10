@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Gauge, Search, Ear, BarChart, Users, TreeDeciduous } from 'lucide-react';
+import { Gauge, Search, Ear, BarChart, Users, TreePalm } from 'lucide-react';
 import ActivityCard from './skill-development/ActivityCard';
 import SavedActivityCard from './skill-development/SavedActivityCard';
 import { useActivities } from '@/hooks/useActivities';
@@ -15,13 +15,13 @@ import { activityData as activities } from '@/data/heartActivities';
 const dimensionIcons: { [key: string]: React.FC<{ className?: string }> } = {
   intellectual: Search,
   social: Users,
-  spiritual: TreeDeciduous,
+  spiritual: TreePalm,
   emotional: Ear,
   physical: Gauge,
   accountability: BarChart,
   humility: Gauge,
   empathy: Ear,
-  resiliency: TreeDeciduous,
+  resiliency: TreePalm,
   transparency: Search,
   inclusivity: Users,
 };

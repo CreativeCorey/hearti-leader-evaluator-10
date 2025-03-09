@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { HEARTIDimension } from '@/types';
-import { Gauge, Ear, BarChart, TreeDeciduous, Search, Users } from 'lucide-react';
+import { Gauge, Ear, BarChart, TreePalm, Search, Users } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface DimensionTabsProps {
@@ -34,7 +34,7 @@ const DimensionTabs: React.FC<DimensionTabsProps> = ({
           <span>Accountability</span>
         </TabsTrigger>
         <TabsTrigger value="resiliency" className="text-xs flex flex-col items-center gap-1 py-2">
-          <TreeDeciduous size={16} />
+          <TreePalm size={16} />
           <span>Resiliency</span>
         </TabsTrigger>
         <TabsTrigger value="transparency" className="text-xs flex flex-col items-center gap-1 py-2">
