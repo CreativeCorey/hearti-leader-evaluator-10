@@ -19,6 +19,7 @@ export type { Habit, NewHabitForm };
 export const useHabits = (focusDimension?: HEARTIDimension) => {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [loading, setLoading] = useState(true);
+  const userId = getOrCreateAnonymousId();
   
   useEffect(() => {
     loadHabits();
@@ -28,13 +29,19 @@ export const useHabits = (focusDimension?: HEARTIDimension) => {
     try {
       setLoading(true);
       
-      // Get the current user ID
-      const userId = getOrCreateAnonymousId();
-      
       // Fetch habits from local storage initially
       const localHabits = getHabitsFromLocalStorage();
       if (localHabits.length > 0) {
-        setHabits(localHabits);
+        // Ensure all habits have IDs
+        const validatedHabits = localHabits.map(habit => {
+          if (!habit.id) {
+            // Add a UUID if missing
+            return { ...habit, id: uuidv4() };
+          }
+          return habit;
+        });
+        setHabits(validatedHabits);
+        saveHabitsToLocalStorage(validatedHabits);
       }
       
       // Try to fetch from Supabase if available
@@ -42,12 +49,20 @@ export const useHabits = (focusDimension?: HEARTIDimension) => {
         const supabaseHabits = await fetchHabitsFromSupabase(userId);
         
         if (supabaseHabits.length > 0) {
-          setHabits(supabaseHabits);
+          // Ensure all habits have IDs
+          const validatedHabits = supabaseHabits.map(habit => {
+            if (!habit.id) {
+              // Add a UUID if missing
+              return { ...habit, id: uuidv4() };
+            }
+            return habit;
+          });
+          setHabits(validatedHabits);
           // Save to local storage as backup
-          saveHabitsToLocalStorage(supabaseHabits);
+          saveHabitsToLocalStorage(validatedHabits);
         }
       } catch (e) {
-        console.log('Error fetching from Supabase, using local storage', e);
+        console.error('Error fetching from Supabase, using local storage', e);
       }
     } catch (error) {
       console.error('Error loading habits:', error);
@@ -73,7 +88,7 @@ export const useHabits = (focusDimension?: HEARTIDimension) => {
         await updateHabitInSupabase(habit);
       }
     } catch (e) {
-      console.log('Error saving to Supabase, saved to local storage only', e);
+      console.error('Error saving to Supabase, saved to local storage only', e);
     }
   };
   
@@ -94,8 +109,11 @@ export const useHabits = (focusDimension?: HEARTIDimension) => {
     return true;
   };
   
-  const toggleHabitCompletion = (habitId: string | undefined, date: Date) => {
-    if (!habitId) return;
+  const toggleHabitCompletion = (habitId: string, date: Date) => {
+    if (!habitId) {
+      console.error('Cannot toggle habit: missing habitId');
+      return;
+    }
     
     const dateStr = format(date, 'yyyy-MM-dd');
     
@@ -103,30 +121,36 @@ export const useHabits = (focusDimension?: HEARTIDimension) => {
       if (habit.id === habitId) {
         const wasCompleted = habit.completedDates.includes(dateStr);
         
-        return {
+        const updatedHabit = {
           ...habit,
           completedDates: wasCompleted
             ? habit.completedDates.filter(d => d !== dateStr)
             : [...habit.completedDates, dateStr]
         };
+        
+        // Try to update in Supabase
+        updateHabitInSupabase(updatedHabit).catch(e => 
+          console.error('Error updating habit completion in Supabase', e)
+        );
+        
+        return updatedHabit;
       }
       return habit;
     });
     
     setHabits(updatedHabits);
-    saveHabits(updatedHabits);
+    saveHabitsToLocalStorage(updatedHabits);
   };
   
-  const deleteHabit = async (habitId: string | undefined) => {
-    if (!habitId) return;
+  const deleteHabit = async (habitId: string) => {
+    if (!habitId) {
+      console.error('Cannot delete habit: missing habitId');
+      return;
+    }
     
     try {
       // Try to delete from Supabase
-      try {
-        await deleteHabitFromSupabase(habitId);
-      } catch (e) {
-        console.log('Error deleting from Supabase', e);
-      }
+      await deleteHabitFromSupabase(habitId, userId);
       
       // Remove from local state
       const updatedHabits = habits.filter(habit => habit.id !== habitId);
@@ -139,10 +163,15 @@ export const useHabits = (focusDimension?: HEARTIDimension) => {
       });
     } catch (error) {
       console.error('Error deleting habit:', error);
+      
+      // Even if Supabase fails, still remove from local state
+      const updatedHabits = habits.filter(habit => habit.id !== habitId);
+      setHabits(updatedHabits);
+      saveHabitsToLocalStorage(updatedHabits);
+      
       toast({
-        title: "Error",
-        description: "Could not delete the habit",
-        variant: "destructive",
+        title: "Habit deleted locally",
+        description: "The habit could not be deleted from the server but was removed locally",
       });
     }
   };

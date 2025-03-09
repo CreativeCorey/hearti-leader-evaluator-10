@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState } from 'react';
 import { startOfWeek, addDays } from 'date-fns';
 import { HEARTIDimension } from '@/types';
@@ -49,7 +50,23 @@ export const HabitTrackerProvider: React.FC<{
       });
       return;
     }
-    toggleHabitCompletion(habitId, date);
+    
+    try {
+      toggleHabitCompletion(habitId, date);
+      
+      // Show success toast
+      toast({
+        title: "Success",
+        description: "Habit status updated"
+      });
+    } catch (error) {
+      console.error("Error toggling habit completion:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update habit status. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   // Create a safe delete function that checks for valid ID
@@ -63,7 +80,17 @@ export const HabitTrackerProvider: React.FC<{
       });
       return;
     }
-    deleteHabit(habitId);
+    
+    try {
+      deleteHabit(habitId);
+    } catch (error) {
+      console.error("Error deleting habit:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete habit. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const value = {

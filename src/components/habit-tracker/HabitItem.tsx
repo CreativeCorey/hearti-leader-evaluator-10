@@ -29,11 +29,31 @@ const HabitItem: React.FC<HabitItemProps> = ({
   const isMobile = useIsMobile();
   const today = new Date();
   const todayStr = format(today, 'yyyy-MM-dd');
-  const isCompletedToday = habit.completedDates.includes(todayStr);
   
-  const completionCount = habit.completedDates.length;
+  // Validate the habit object
+  if (!habit || typeof habit !== 'object') {
+    console.error("Invalid habit object", habit);
+    return null;
+  }
+
+  const isCompletedToday = habit.completedDates?.includes(todayStr) || false;
+  
+  const completionCount = habit.completedDates?.length || 0;
   const completionPercentage = Math.min((completionCount / TARGET_COMPLETIONS) * 100, 100);
   const isHabitMastered = completionCount >= TARGET_COMPLETIONS;
+  
+  // Create safe click handlers
+  const handleToggle = () => {
+    if (habit.id) {
+      onToggleHabit(habit.id, today);
+    }
+  };
+
+  const handleDelete = () => {
+    if (habit.id) {
+      onDeleteHabit(habit.id);
+    }
+  };
   
   return (
     <div className={`bg-white rounded-xl ${isMobile ? 'p-3' : 'p-5'} shadow-sm border border-gray-100 hover:shadow-md transition-shadow ${isHabitMastered ? 'border-2 border-green-300' : ''}`}>
@@ -41,7 +61,7 @@ const HabitItem: React.FC<HabitItemProps> = ({
         dimension={habit.dimension}
         frequency={habit.frequency}
         isHabitMastered={isHabitMastered}
-        onDeleteHabit={() => onDeleteHabit(habit.id)}
+        onDeleteHabit={handleDelete}
       />
       
       <HabitItemTitle
@@ -56,7 +76,7 @@ const HabitItem: React.FC<HabitItemProps> = ({
             percentage={completionPercentage}
             dimension={habit.dimension} 
             size={isMobile ? 80 : 100}
-            onClick={() => onToggleHabit(habit.id, today)}
+            onClick={handleToggle}
             completionCount={completionCount}
             targetCount={TARGET_COMPLETIONS}
           />
@@ -68,7 +88,7 @@ const HabitItem: React.FC<HabitItemProps> = ({
               variant="outline"
               size="sm"
               className="rounded-full h-10 w-10 p-0 flex items-center justify-center bg-slate-50"
-              onClick={() => onToggleHabit(habit.id, today)}
+              onClick={handleToggle}
             >
               <Minus size={18} />
             </Button>
@@ -77,7 +97,7 @@ const HabitItem: React.FC<HabitItemProps> = ({
               variant="outline"
               size="sm"
               className="rounded-full h-10 w-10 p-0 flex items-center justify-center bg-slate-50"
-              onClick={() => onToggleHabit(habit.id, today)}
+              onClick={handleToggle}
             >
               <Plus size={18} />
             </Button>
@@ -88,7 +108,7 @@ const HabitItem: React.FC<HabitItemProps> = ({
       <HabitItemActions
         isCompletedToday={isCompletedToday}
         isHabitMastered={isHabitMastered}
-        onToggleHabit={() => onToggleHabit(habit.id, today)}
+        onToggleHabit={handleToggle}
       />
       
       {isHabitMastered && <HabitCompletionBadge />}

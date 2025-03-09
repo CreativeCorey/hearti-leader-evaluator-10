@@ -23,8 +23,30 @@ export const addActivityToHabitTracker = async (
       createdAt: new Date().toISOString(),
     };
 
-    // Log that we would save to Supabase
-    console.log('Would save habit to Supabase if table existed:', habit);
+    // Try to save to Supabase
+    try {
+      const { data, error } = await supabase
+        .from('habits')
+        .insert({
+          id: habit.id,
+          user_id: habit.userId,
+          dimension: habit.dimension,
+          description: habit.description,
+          frequency: habit.frequency,
+          completed_dates: habit.completedDates,
+          created_at: habit.createdAt
+        })
+        .select('id')
+        .single();
+      
+      if (error) {
+        console.error('Error saving to Supabase:', error);
+      } else if (data) {
+        habit.id = data.id; // Use the Supabase-generated ID
+      }
+    } catch (e) {
+      console.error('Error saving to Supabase:', e);
+    }
     
     // Also save to local storage as a backup
     const existingHabits = getHabitsFromLocalStorage();
@@ -38,6 +60,11 @@ export const addActivityToHabitTracker = async (
     return true;
   } catch (e) {
     console.error('Error adding to habit tracker:', e);
+    toast({
+      title: "Error",
+      description: "Could not add activity to habit tracker",
+      variant: "destructive"
+    });
     return false;
   }
 };

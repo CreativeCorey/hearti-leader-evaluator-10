@@ -1,8 +1,10 @@
+
 import { format } from 'date-fns';
 import { toast } from '@/hooks/use-toast';
 import { Habit, NewHabitForm } from '@/types/habits';
 import { getOrCreateAnonymousId } from '@/utils/localStorage';
 import { v4 as uuidv4 } from 'uuid';
+import { supabase } from '@/integrations/supabase/client';
 
 const SUPABASE_API_URL = 'https://odwkgxdkjyccnkydxvjw.supabase.co/rest/v1';
 const SUPABASE_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9kd2tneGRranljY25reWR4dmp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA2ODE5MDUsImV4cCI6MjA1NjI1NzkwNX0.J8GU8omDDQ5OzXJM-DiF-A-hDU0vc7fL1dvoVtaWJE8';
@@ -13,7 +15,8 @@ export const fetchHabitsFromSupabase = async (userId: string): Promise<Habit[]> 
     const response = await fetch(`${SUPABASE_API_URL}/habits?user_id=eq.${userId}`, {
       headers: {
         'apikey': SUPABASE_API_KEY,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'x-anonymous-id': userId  // Add anonymous ID header for RLS
       }
     });
     
@@ -43,14 +46,13 @@ export const fetchHabitsFromSupabase = async (userId: string): Promise<Habit[]> 
 // Save a habit to Supabase
 export const saveHabitToSupabase = async (habit: Habit): Promise<string | undefined> => {
   try {
-    const response = await fetch(`${SUPABASE_API_URL}/habits`, {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_API_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=representation'
-      },
-      body: JSON.stringify({
+    // Set the anonymous ID header for RLS
+    const anonymousIdHeader = { 'x-anonymous-id': habit.userId };
+    
+    const response = await supabase
+      .from('habits')
+      .insert({
+        id: habit.id,  // Use the pre-generated UUID
         user_id: habit.userId,
         dimension: habit.dimension,
         description: habit.description,
@@ -58,17 +60,17 @@ export const saveHabitToSupabase = async (habit: Habit): Promise<string | undefi
         completed_dates: habit.completedDates,
         created_at: habit.createdAt
       })
-    });
+      .select('id')
+      .single();
     
-    if (response.ok) {
-      const data = await response.json();
-      if (data && data.length > 0) {
-        return data[0].id;
-      }
+    if (response.error) {
+      console.error('Error saving habit to Supabase:', response.error);
+      return undefined;
     }
-    return undefined;
+    
+    return response.data?.id;
   } catch (e) {
-    console.log('Error saving to Supabase', e);
+    console.error('Error saving to Supabase', e);
     return undefined;
   }
 };
@@ -78,39 +80,51 @@ export const updateHabitInSupabase = async (habit: Habit): Promise<boolean> => {
   if (!habit.id) return false;
   
   try {
-    await fetch(`${SUPABASE_API_URL}/habits?id=eq.${habit.id}`, {
-      method: 'PATCH',
-      headers: {
-        'apikey': SUPABASE_API_KEY,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
+    // Set the anonymous ID header for RLS
+    const anonymousIdHeader = { 'x-anonymous-id': habit.userId };
+    
+    const response = await supabase
+      .from('habits')
+      .update({
         user_id: habit.userId,
         dimension: habit.dimension,
         description: habit.description,
         frequency: habit.frequency,
         completed_dates: habit.completedDates
       })
-    });
+      .eq('id', habit.id);
+    
+    if (response.error) {
+      console.error('Error updating habit in Supabase:', response.error);
+      return false;
+    }
+    
     return true;
   } catch (e) {
-    console.log('Error updating in Supabase', e);
+    console.error('Error updating in Supabase', e);
     return false;
   }
 };
 
 // Delete a habit from Supabase
-export const deleteHabitFromSupabase = async (habitId: string): Promise<boolean> => {
+export const deleteHabitFromSupabase = async (habitId: string, userId: string): Promise<boolean> => {
   try {
-    await fetch(`${SUPABASE_API_URL}/habits?id=eq.${habitId}`, {
-      method: 'DELETE',
-      headers: {
-        'apikey': SUPABASE_API_KEY
-      }
-    });
+    // Set the anonymous ID header for RLS
+    const anonymousIdHeader = { 'x-anonymous-id': userId };
+    
+    const response = await supabase
+      .from('habits')
+      .delete()
+      .eq('id', habitId);
+    
+    if (response.error) {
+      console.error('Error deleting habit from Supabase:', response.error);
+      return false;
+    }
+    
     return true;
   } catch (e) {
-    console.log('Error deleting from Supabase', e);
+    console.error('Error deleting from Supabase', e);
     return false;
   }
 };
