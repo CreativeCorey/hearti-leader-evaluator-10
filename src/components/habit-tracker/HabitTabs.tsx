@@ -5,6 +5,7 @@ import { HEARTIDimension } from '@/types';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Gauge, Ear, ChartNoAxesCombined, TreePalm, Search, Users } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
+import { dimensionLabels } from '../results/development/DimensionIcons';
 
 interface HabitTabsProps {
   activeDimension: HEARTIDimension | 'all';
@@ -48,9 +49,12 @@ const HabitTabs: React.FC<HabitTabsProps> = ({
               onClick={() => onDimensionChange(dimension as HEARTIDimension)}
             >
               <Icon size={isMobile ? 14 : 16} className="mr-1" />
-              {isMobile 
-                ? dimension.charAt(0).toUpperCase() 
-                : dimension.charAt(0).toUpperCase() + dimension.slice(1)}
+              {dimension === 'humility' ? 'Humility' :
+               dimension === 'empathy' ? 'Empathy' :
+               dimension === 'accountability' ? 'Accountability' :
+               dimension === 'resiliency' ? 'Resiliency' :
+               dimension === 'transparency' ? 'Transparency' :
+               dimension === 'inclusivity' ? 'Inclusivity' : dimension}
             </TabsTrigger>
           ))}
       </TabsList>
