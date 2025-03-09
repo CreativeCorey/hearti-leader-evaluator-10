@@ -1,17 +1,19 @@
 
 import React, { useState, useRef } from 'react';
-import { HEARTIAssessment } from '@/types';
+import { HEARTIAssessment, HEARTIDimension } from '@/types';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import ShareResultsCard from './ShareResultsCard';
 import SocialShareButton from './SocialShareButton';
 import html2canvas from 'html2canvas';
 import { 
   Linkedin, Twitter, Instagram, Mail, Share, Download, Copy, 
-  MessageCircle, Check
+  MessageCircle, Check, Slack, BrandBluesky
 } from 'lucide-react';
 import { showSuccessToast, showErrorToast } from '@/utils/notifications';
 
@@ -29,6 +31,20 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
   const { toast } = useToast();
   
   const shareableLink = window.location.href;
+  
+  // Get top strength dimension
+  const sortedDimensions = Object.entries(assessment.dimensionScores)
+    .sort(([, a], [, b]) => b - a)
+    .map(([dimension]) => dimension as HEARTIDimension);
+  
+  const topStrength = sortedDimensions[0];
+  const capitalizedTopStrength = topStrength.charAt(0).toUpperCase() + topStrength.slice(1);
+  
+  // Default caption text
+  const defaultCaptionText = `The top strength in my HEARTI:Leader Quotient is ${capitalizedTopStrength}. Get yours at takehearti.com today #HEARTILeader`;
+  
+  // State for custom caption
+  const [captionText, setCaptionText] = useState(defaultCaptionText);
   
   const handleCopyLink = async () => {
     try {
@@ -80,37 +96,83 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
       });
       
       const imageUrl = canvas.toDataURL('image/png');
-      const shareText = `Check out my HEARTI:Leader assessment results! Overall score: ${assessment.overallScore}/5`;
       
       // Platform-specific share logic
       switch (platform) {
         case 'linkedin':
-          window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareableLink)}`, '_blank');
+          window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareableLink)}&summary=${encodeURIComponent(captionText)}`, '_blank');
           break;
           
         case 'twitter':
-          window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareableLink)}`, '_blank');
+          window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(captionText)}&url=${encodeURIComponent(shareableLink)}`, '_blank');
+          break;
+          
+        case 'bluesky':
+          // Bluesky doesn't have a direct web share API, so download the image
+          const blueSkyLink = document.createElement('a');
+          blueSkyLink.download = `HEARTI-Leader-Results-${new Date().toISOString().split('T')[0]}.png`;
+          blueSkyLink.href = imageUrl;
+          blueSkyLink.click();
+          
+          toast({
+            title: "Share to Bluesky",
+            description: "Image downloaded. Copy your caption and upload the image to Bluesky.",
+            duration: 5000,
+          });
+          break;
+          
+        case 'slack':
+          // Slack doesn't have a direct web share API, download image and provide instructions
+          const slackLink = document.createElement('a');
+          slackLink.download = `HEARTI-Leader-Results-${new Date().toISOString().split('T')[0]}.png`;
+          slackLink.href = imageUrl;
+          slackLink.click();
+          
+          toast({
+            title: "Share to Slack",
+            description: "Image downloaded. Upload to Slack and paste your caption.",
+            duration: 5000,
+          });
+          break;
+          
+        case 'teams':
+          // Microsoft Teams doesn't have a direct web share API
+          const teamsLink = document.createElement('a');
+          teamsLink.download = `HEARTI-Leader-Results-${new Date().toISOString().split('T')[0]}.png`;
+          teamsLink.href = imageUrl;
+          teamsLink.click();
+          
+          toast({
+            title: "Share to Microsoft Teams",
+            description: "Image downloaded. Upload to Teams and paste your caption.",
+            duration: 5000,
+          });
           break;
           
         case 'email':
-          window.location.href = `mailto:?subject=My HEARTI:Leader Results&body=${encodeURIComponent(shareText + '\n\n' + shareableLink)}`;
+          window.location.href = `mailto:?subject=My HEARTI:Leader Results&body=${encodeURIComponent(captionText + '\n\n' + shareableLink)}`;
           break;
           
         case 'whatsapp':
-          window.open(`https://wa.me/?text=${encodeURIComponent(shareText + '\n\n' + shareableLink)}`, '_blank');
+          window.open(`https://wa.me/?text=${encodeURIComponent(captionText + '\n\n' + shareableLink)}`, '_blank');
           break;
           
+        case 'instagram':
+        case 'threads':
+        case 'fanbase':
         default:
           // For platforms that don't have direct sharing APIs
-          // First download the image, then show instructions
           const link = document.createElement('a');
           link.download = `HEARTI-Leader-Results-${new Date().toISOString().split('T')[0]}.png`;
           link.href = imageUrl;
           link.click();
           
+          // After downloading, copy the caption to clipboard
+          await navigator.clipboard.writeText(captionText);
+          
           toast({
-            title: `Share to ${platform}`,
-            description: "Image downloaded. You can now upload it manually to your platform of choice.",
+            title: `Share to ${platform.charAt(0).toUpperCase() + platform.slice(1)}`,
+            description: "Image downloaded and caption copied to clipboard. You can now upload it manually.",
             duration: 5000,
           });
       }
@@ -119,6 +181,10 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
       console.error(`Failed to share to ${platform}:`, error);
       showErrorToast("Sharing failed", `Could not share to ${platform}. Please try again.`);
     }
+  };
+  
+  const resetCaptionToDefault = () => {
+    setCaptionText(defaultCaptionText);
   };
   
   return (
@@ -146,6 +212,29 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
           <TabsContent value="image">
             <div className="mb-4" ref={cardRef}>
               <ShareResultsCard assessment={assessment} />
+            </div>
+            
+            <div className="mb-4">
+              <Label htmlFor="caption">Caption</Label>
+              <div className="flex gap-2 mt-1">
+                <Input 
+                  id="caption"
+                  value={captionText} 
+                  onChange={(e) => setCaptionText(e.target.value)}
+                  className="flex-1"
+                />
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={resetCaptionToDefault}
+                  className="whitespace-nowrap"
+                >
+                  Reset
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                This caption will be used when sharing to social media platforms.
+              </p>
             </div>
             
             <div className="flex flex-col gap-2 mb-4">
@@ -189,10 +278,41 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
               />
               
               <SocialShareButton 
+                icon={<BrandBluesky size={18} />} 
+                label="Bluesky" 
+                onClick={() => shareToSocial('bluesky')}
+              />
+              
+              <SocialShareButton 
+                icon={<Slack size={18} />} 
+                label="Slack" 
+                onClick={() => shareToSocial('slack')}
+              />
+              
+              <SocialShareButton 
                 icon={<Mail size={18} />} 
                 label="Email" 
                 onClick={() => shareToSocial('email')}
-                className="col-span-2"
+              />
+              
+              <SocialShareButton 
+                icon={<MessageCircle size={18} />} 
+                label="Teams" 
+                onClick={() => shareToSocial('teams')}
+              />
+              
+              <SocialShareButton 
+                icon={<MessageCircle size={18} />} 
+                label="Threads" 
+                onClick={() => shareToSocial('threads')}
+                className="col-span-2 md:col-span-1"
+              />
+              
+              <SocialShareButton 
+                icon={<MessageCircle size={18} />} 
+                label="Fanbase" 
+                onClick={() => shareToSocial('fanbase')}
+                className="col-span-2 md:col-span-1"
               />
             </div>
           </TabsContent>
