@@ -30,8 +30,8 @@ const dimensionIcons: Record<HEARTIDimension | 'all', LucideIcon> = {
   humility: Sun,         // Humility: Sun
   empathy: Heart,        // Empathy: Heart
   accountability: BarChart, // Accountability: Chart (using BarChart as the closest alternative)
-  resiliency: Leaf,     // Resiliency: Plant (using Leaf as the closest alternative)
-  transparency: Eye,     // Transparency: Eye
+  resiliency: Leaf,      // Resiliency: Plant (using Leaf as the closest alternative)
+  transparency: Eye,     // Transparency: Eye (for looking glass)
   inclusivity: Users,    // Inclusivity: Users
   all: Hexagon           // All dimensions
 };

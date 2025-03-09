@@ -3,10 +3,11 @@ import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Plus, BookmarkPlus, CheckCircle2, Clock } from 'lucide-react';
+import { Plus, BookmarkPlus, CheckCircle2, Clock, ArrowLeft, ArrowRight } from 'lucide-react';
 import { SkillActivity, SavedActivity, dimensionColors, dimensionTitles } from '@/data/heartActivities';
 import { Toggle } from '@/components/ui/toggle';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useSwipeable } from 'react-swipeable';
 
 interface ActivityCardProps {
   activity: SkillActivity;
@@ -21,14 +22,75 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
   const maxSavedReached = savedCount >= 3;
   const [expanded, setExpanded] = useState(false);
   const [frequency, setFrequency] = useState<'daily' | 'weekly' | 'monthly'>('daily');
+  const [swipeState, setSwipeState] = useState<'default' | 'swiping-save' | 'swiping-tracker' | 'saved'>('default');
   
   const handleSave = (addToHabitTracker?: boolean) => {
     onSave(activity, addToHabitTracker, frequency);
+    setSwipeState('saved');
+  };
+
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => {
+      if (!isSaved && !maxSavedReached) {
+        handleSave(true); // Add to tracker
+      }
+    },
+    onSwipedRight: () => {
+      if (!isSaved && !maxSavedReached) {
+        handleSave(); // Save only
+      }
+    },
+    onSwiping: (event) => {
+      if (isSaved || maxSavedReached) return;
+      
+      if (event.dir === 'Left' && Math.abs(event.deltaX) > 40) {
+        setSwipeState('swiping-tracker');
+      } else if (event.dir === 'Right' && Math.abs(event.deltaX) > 40) {
+        setSwipeState('swiping-save');
+      } else {
+        setSwipeState('default');
+      }
+    },
+    onSwipeEnd: () => {
+      if (swipeState !== 'saved') {
+        setSwipeState('default');
+      }
+    },
+    trackMouse: false
+  });
+
+  const getSwipeIndicatorStyles = () => {
+    switch (swipeState) {
+      case 'swiping-save':
+        return 'bg-blue-50 border-blue-200';
+      case 'swiping-tracker':
+        return 'bg-green-50 border-green-200';
+      case 'saved':
+        return 'bg-green-50 border-green-200';
+      default:
+        return '';
+    }
   };
 
   return (
-    <Card className={`p-4 hover:shadow-md transition-shadow ${expanded ? 'border-primary' : ''}`}>
-      <div className="flex flex-col gap-3">
+    <Card 
+      className={`p-4 hover:shadow-md transition-shadow relative overflow-hidden ${expanded ? 'border-primary' : ''} ${getSwipeIndicatorStyles()}`}
+      {...swipeHandlers}
+    >
+      {!isSaved && isMobile && (
+        <div className="absolute inset-0 pointer-events-none flex items-center justify-between px-4 opacity-30">
+          <div className={`${swipeState === 'swiping-save' ? 'opacity-100' : 'opacity-30'}`}>
+            <ArrowRight className="h-6 w-6 text-blue-500" />
+            <span className="text-xs">Save</span>
+          </div>
+          <div className={`${swipeState === 'swiping-tracker' ? 'opacity-100' : 'opacity-30'}`}>
+            <ArrowLeft className="h-6 w-6 text-green-500" />
+            <span className="text-xs">Add to Tracker</span>
+          </div>
+        </div>
+      )}
+      
+      <div className="flex flex-col gap-3 relative z-10">
         <div>
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center">
@@ -39,7 +101,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
                 {activity.category}
               </span>
             </div>
-            {!isSaved && !expanded && (
+            {!isSaved && !expanded && !isMobile && (
               <Button 
                 variant="ghost" 
                 size="sm" 
@@ -67,7 +129,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
               Saved
             </Button>
           </div>
-        ) : expanded && (
+        ) : expanded && !isMobile ? (
           <div className="mt-2 space-y-3">
             <div className="bg-muted p-2 rounded-md">
               <p className="text-xs font-medium mb-2 flex items-center">
@@ -102,7 +164,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
               </div>
             </div>
             
-            <div className={`grid ${isMobile ? 'grid-cols-1 gap-2' : 'grid-cols-2 gap-2'}`}>
+            <div className="grid grid-cols-2 gap-2">
               <Button 
                 variant="outline" 
                 size="sm" 
@@ -131,6 +193,10 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
                 You've already selected 3 activities. Remove some to add more.
               </div>
             )}
+          </div>
+        ) : isMobile && (
+          <div className="text-xs text-muted-foreground text-center italic mt-1">
+            Swipe right to save or left to add to tracker
           </div>
         )}
       </div>

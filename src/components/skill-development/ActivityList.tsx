@@ -4,6 +4,8 @@ import { SkillActivity, SavedActivity } from '@/data/heartActivities';
 import ActivityCard from './ActivityCard';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Info } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
+import SwipeInstructions from './SwipeInstructions';
 
 interface ActivityListProps {
   groupedActivities: Record<string, SkillActivity[]>;
@@ -18,6 +20,7 @@ const ActivityList: React.FC<ActivityListProps> = ({
 }) => {
   const savedActivitiesCount = savedActivities.length;
   const isRecommendationVisible = savedActivitiesCount < 3;
+  const isMobile = useIsMobile();
 
   if (Object.entries(groupedActivities).length === 0) {
     return (
@@ -37,6 +40,8 @@ const ActivityList: React.FC<ActivityListProps> = ({
           </AlertDescription>
         </Alert>
       )}
+      
+      {isMobile && <SwipeInstructions />}
       
       {Object.entries(groupedActivities).map(([category, activities]) => (
         <div key={category} className="mb-6">
