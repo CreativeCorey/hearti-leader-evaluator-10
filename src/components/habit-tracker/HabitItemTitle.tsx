@@ -2,7 +2,7 @@
 import React from 'react';
 import { Calendar } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
-import { Gauge, Ear, BarChart, TreePalm, Search, Users } from 'lucide-react';
+import { Gauge, Ear, ChartNoAxesCombined, TreePalm, Search, Users } from 'lucide-react';
 import { HEARTIDimension } from '@/types';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -15,7 +15,7 @@ interface HabitItemTitleProps {
 const dimensionIcons: Record<string, LucideIcon> = {
   humility: Gauge,
   empathy: Ear,
-  accountability: BarChart,
+  accountability: ChartNoAxesCombined,
   resiliency: TreePalm,
   transparency: Search,
   inclusivity: Users
