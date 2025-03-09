@@ -24,9 +24,7 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
         </p>
       </div>
       
-      {/* Modify this to pass the focusDimension */}
       <div className="mt-6">
-        {/* We'll remove the direct import and handle the focus dimension differently */}
         <h3 className="text-xl font-semibold mb-4">Choose Activities for: {focusDimension.toUpperCase()}</h3>
         <p className="text-muted-foreground mb-6">
           These activities are designed to help you develop your {focusDimension} leadership dimension.

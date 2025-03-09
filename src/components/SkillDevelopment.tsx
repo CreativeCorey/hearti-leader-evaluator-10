@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Award, BookText, Brain, BarChart, Headphones, Leaf } from 'lucide-react';
 import ActivityCard from './skill-development/ActivityCard';
@@ -10,7 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { useToast } from "@/hooks/use-toast"
 
 // Get activities from the module
-import { activities } from '@/data/heartActivities';
+import { activityData as activities } from '@/data/heartActivities';
 
 const dimensionIcons: { [key: string]: React.FC<{ className?: string }> } = {
   intellectual: BookText,
