@@ -5,7 +5,7 @@ import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Responsi
 import { formatDataForRadarChart, getFeedback } from '@/utils/calculations';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Flame, ShieldAlert } from 'lucide-react';
+import { Crown, ShieldAlert } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface OverviewTabProps {
@@ -115,7 +115,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ assessment }) => {
           <div className="space-y-4 text-sm">
             <div className="bg-green-50 p-3 rounded-md border border-green-100">
               <p className="font-medium flex items-center text-green-800">
-                <Flame size={16} className="mr-2" />
+                <Crown size={16} className="mr-2" />
                 Top Strength: {topStrength.charAt(0).toUpperCase() + topStrength.slice(1)}
               </p>
               <p className="text-green-700 mt-1">{getFeedback(assessment.dimensionScores[topStrength], topStrength)}</p>
