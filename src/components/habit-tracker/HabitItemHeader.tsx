@@ -5,6 +5,7 @@ import { Trash } from 'lucide-react';
 import { HEARTIDimension } from '@/types';
 import { Gauge, Ear, ChartNoAxesCombined, TreePalm, Search, Users } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { LucideIcon } from 'lucide-react';
 
 interface HabitItemHeaderProps {
   dimension: HEARTIDimension;
@@ -13,7 +14,8 @@ interface HabitItemHeaderProps {
   onDeleteHabit: () => void;
 }
 
-const dimensionIcons: Record<string, React.FC<{ size?: number, className?: string }>> = {
+// Updated type definition to use LucideIcon
+const dimensionIcons: Record<string, LucideIcon> = {
   humility: Gauge,
   empathy: Ear,
   accountability: ChartNoAxesCombined,

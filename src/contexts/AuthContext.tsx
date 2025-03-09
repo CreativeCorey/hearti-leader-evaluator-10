@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, User } from "@supabase/supabase-js";
@@ -23,7 +22,7 @@ type AuthContextType = {
   anonymousId: string;
   session: Session | null;
   isLoading: boolean;
-  signUp: (email: string, password: string, name?: string) => Promise<void>;
+  signUp: (email: string, password: string, name?: string, organization?: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   error: string | null;
@@ -73,7 +72,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, name?: string) => {
+  const signUp = async (email: string, password: string, name?: string, organization?: string) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -82,7 +81,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         password,
         options: {
           data: {
-            name: name || null
+            name: name || null,
+            organization: organization || null
           },
           emailRedirectTo: `${window.location.origin}/auth`
         }
@@ -115,7 +115,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           .insert({
             id: data.user.id,
             email: data.user.email!,
-            name: name || null
+            name: name || null,
+            organization: organization || null
           });
 
         if (profileError) {
