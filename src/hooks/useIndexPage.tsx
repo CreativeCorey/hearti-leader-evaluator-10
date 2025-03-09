@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useToast } from "./use-toast";
 import { useIsMobile } from './use-mobile';
 import { HEARTIAssessment, UserProfile } from '../types';
-import { getCurrentUser, setUseSupabase, getOrCreateAnonymousId } from '../utils/localStorage';
+import { getUserProfile, setUseSupabase, getOrCreateAnonymousId } from '../utils/localStorage';
 import { useAssessments } from './useAssessments';
 import { useSupabaseSync } from './useSupabaseSync';
 import { useGoogleIntegration } from './useGoogleIntegration';
@@ -55,7 +55,7 @@ export const useIndexPage = () => {
         console.log("Anonymous user ID:", anonymousId);
         
         // Get user profile - this should now work with the profile created above
-        const userProfile = await getCurrentUser();
+        const userProfile = await getUserProfile();
         setProfile(userProfile);
         
         // Get assessment data

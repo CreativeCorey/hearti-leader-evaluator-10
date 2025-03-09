@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Loader2 } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { useToast } from "@/hooks/use-toast";
-import { getOrCreateAnonymousId, ensureUserExists } from "../utils/localStorage";
+import { getOrCreateAnonymousId, getUserProfile } from "../utils/localStorage";
 
 const AuthGuard = () => {
   const { user, isLoading } = useAuth();
@@ -21,7 +21,7 @@ const AuthGuard = () => {
           console.log("Using anonymous ID:", anonymousId);
           
           // Try to ensure the user profile exists in localStorage
-          const userProfile = await ensureUserExists();
+          const userProfile = await getUserProfile();
           console.log("User profile created or retrieved:", userProfile);
         } catch (error) {
           console.error("Error initializing anonymous user:", error);

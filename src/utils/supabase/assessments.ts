@@ -1,6 +1,6 @@
 
 import { supabase } from '../../integrations/supabase/client';
-import { HEARTIAssessment } from '../../types';
+import { HEARTIAssessment, HEARTIDimension, HEARTIAnswer, Demographics } from '../../types';
 import { Json } from '../../integrations/supabase/types';
 import { isValidAnswersArray, isValidDimensionScores, isValidDemographics } from './types';
 
