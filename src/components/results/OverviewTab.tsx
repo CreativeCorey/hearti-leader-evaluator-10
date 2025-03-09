@@ -45,7 +45,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ assessment }) => {
 
   return (
     <div className="flex flex-col lg:flex-row gap-8">
-      <div className="flex-1">
+      <div className="flex-1 flex flex-col">
         <h3 className="text-lg font-medium mb-4">HEARTI:Leader Spectra</h3>
         <div className="bg-slate-50 p-4 rounded-lg h-[400px] w-full">
           <div className="relative h-full">
@@ -114,6 +114,28 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ assessment }) => {
             </ResponsiveContainer>
           </div>
         </div>
+
+        {/* Key Insights section - moved here */}
+        <div className="mt-6">
+          <h3 className="text-lg font-medium mb-2">Key Insights</h3>
+          <div className="space-y-4 text-sm">
+            <div className="bg-green-50 p-3 rounded-md border border-green-100">
+              <p className="font-medium flex items-center text-green-800">
+                <Crown size={16} className="mr-2" />
+                Top Strength: {topStrength.charAt(0).toUpperCase() + topStrength.slice(1)}
+              </p>
+              <p className="text-green-700 mt-1">{getFeedback(assessment.dimensionScores[topStrength], topStrength)}</p>
+            </div>
+            
+            <div className="bg-amber-50 p-3 rounded-md border border-amber-100">
+              <p className="font-medium flex items-center text-amber-800">
+                <ShieldAlert size={16} className="mr-2" />
+                Vulnerability: {developmentArea.charAt(0).toUpperCase() + developmentArea.slice(1)}
+              </p>
+              <p className="text-amber-700 mt-1">{getFeedback(assessment.dimensionScores[developmentArea], developmentArea)}</p>
+            </div>
+          </div>
+        </div>
       </div>
       
       <div className="flex-1">
@@ -153,29 +175,6 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ assessment }) => {
                 </Badge>
               );
             })}
-          </div>
-        </div>
-        
-        <Separator className="my-4" />
-        
-        <div>
-          <h3 className="text-lg font-medium mb-2">Key Insights</h3>
-          <div className="space-y-4 text-sm">
-            <div className="bg-green-50 p-3 rounded-md border border-green-100">
-              <p className="font-medium flex items-center text-green-800">
-                <Crown size={16} className="mr-2" />
-                Top Strength: {topStrength.charAt(0).toUpperCase() + topStrength.slice(1)}
-              </p>
-              <p className="text-green-700 mt-1">{getFeedback(assessment.dimensionScores[topStrength], topStrength)}</p>
-            </div>
-            
-            <div className="bg-amber-50 p-3 rounded-md border border-amber-100">
-              <p className="font-medium flex items-center text-amber-800">
-                <ShieldAlert size={16} className="mr-2" />
-                Vulnerability: {developmentArea.charAt(0).toUpperCase() + developmentArea.slice(1)}
-              </p>
-              <p className="text-amber-700 mt-1">{getFeedback(assessment.dimensionScores[developmentArea], developmentArea)}</p>
-            </div>
           </div>
         </div>
       </div>
