@@ -1,117 +1,174 @@
 
+import { supabase } from '@/integrations/supabase/client';
 import { SavedActivity, SkillActivity } from '@/data/heartActivities';
-import { 
-  fetchSavedActivities, 
-  saveActivityToSupabase, 
-  updateActivityCompletionInSupabase, 
-  deleteActivityFromSupabase,
-  saveHabitToSupabase
-} from '@/api/savedActivitiesApi';
-import { 
-  getStoredActivities, 
-  storeActivities, 
-  storeNewHabit 
-} from '@/utils/activityStorage';
+import { v4 as uuidv4 } from 'uuid';
+import { getHabitsFromLocalStorage, saveHabitsToLocalStorage } from './habitsService';
+import { toast } from '@/hooks/use-toast';
 
-/**
- * Load activities from all available sources (Supabase and localStorage)
- */
-export const loadActivitiesFromSources = async (userId: string): Promise<SavedActivity[]> => {
-  try {
-    const supabaseActivities = await fetchSavedActivities(userId);
-    return supabaseActivities;
-  } catch (e) {
-    console.log('Error fetching from Supabase, using local storage', e);
-    return getStoredActivities();
-  }
-};
-
-/**
- * Save an activity to all available sources
- */
-export const saveActivityToSources = async (
-  activity: SkillActivity, 
-  userId: string
+// Create a new saved activity
+export const saveActivity = async (
+  userId: string,
+  activity: SkillActivity,
+  addToHabitTracker: boolean = false,
+  frequency: 'daily' | 'weekly' | 'monthly' = 'daily'
 ): Promise<SavedActivity> => {
-  const newSavedActivity: SavedActivity = {
-    id: crypto.randomUUID(),
+  const savedActivity: SavedActivity = {
+    id: uuidv4(),
     userId,
     activityId: activity.id,
-    dimension: activity.dimension,
     completed: false,
-    savedAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   };
-  
+
   // Try to save to Supabase
   try {
-    const savedId = await saveActivityToSupabase(activity, userId);
-    if (savedId) {
-      newSavedActivity.id = savedId;
+    const { data, error } = await supabase
+      .from('saved_activities')
+      .insert({
+        id: savedActivity.id,
+        user_id: savedActivity.userId,
+        activity_id: savedActivity.activityId,
+        completed: savedActivity.completed,
+        created_at: savedActivity.createdAt
+      })
+      .select();
+
+    if (error) {
+      console.error('Error saving activity to Supabase:', error);
     }
-  } catch (e) {
-    console.log('Error saving to Supabase, will save to local storage only', e);
+  } catch (error) {
+    console.error('Error saving activity to Supabase:', error);
   }
-  
-  return newSavedActivity;
+
+  // If requested, also add to habit tracker
+  if (addToHabitTracker) {
+    await addActivityToHabitTracker(userId, activity, frequency);
+  }
+
+  return savedActivity;
 };
 
-/**
- * Toggle the completion status of an activity in all sources
- */
-export const toggleActivityCompletionInSources = async (
-  savedActivityId: string,
-  savedActivities: SavedActivity[]
-): Promise<SavedActivity> => {
-  // Find the activity to update
-  const activityToUpdate = savedActivities.find(a => a.id === savedActivityId);
-  
-  if (!activityToUpdate) {
-    throw new Error('Activity not found');
-  }
-  
-  // Toggle the completed status
-  const updatedActivity = { 
-    ...activityToUpdate, 
-    completed: !activityToUpdate.completed 
-  };
-  
-  // Try to update in Supabase
-  try {
-    await updateActivityCompletionInSupabase(savedActivityId, updatedActivity.completed);
-  } catch (e) {
-    console.log('Error updating in Supabase, updated in local storage only', e);
-  }
-  
-  return updatedActivity;
-};
-
-/**
- * Remove an activity from all sources
- */
-export const removeActivityFromSources = async (savedActivityId: string): Promise<void> => {
-  // Try to delete from Supabase
-  try {
-    await deleteActivityFromSupabase(savedActivityId);
-  } catch (e) {
-    console.log('Error deleting from Supabase, removed from local storage only', e);
-  }
-};
-
-/**
- * Add an activity to the habit tracker
- */
+// Add activity to habit tracker
 export const addActivityToHabitTracker = async (
-  userId: string,
-  activity: SkillActivity
-): Promise<void> => {
+  userId: string, 
+  activity: SkillActivity,
+  frequency: 'daily' | 'weekly' | 'monthly' = 'daily'
+) => {
   try {
-    // Save to local storage
-    storeNewHabit(userId, activity.dimension, activity.description);
-    
-    // Add to Supabase habits table
-    await saveHabitToSupabase(userId, activity);
+    // Create a habit object
+    const habit = {
+      id: uuidv4(),
+      userId,
+      dimension: activity.dimension,
+      description: activity.description,
+      frequency,
+      completedDates: [],
+      createdAt: new Date().toISOString(),
+    };
+
+    // Add to Supabase
+    try {
+      const { data, error } = await supabase
+        .from('habits')
+        .insert({
+          id: habit.id,
+          user_id: habit.userId,
+          dimension: habit.dimension,
+          description: habit.description,
+          frequency: habit.frequency,
+          completed_dates: habit.completedDates,
+          created_at: habit.createdAt
+        })
+        .select();
+
+      if (error) {
+        console.error('Error adding habit to Supabase:', error);
+      }
+    } catch (error) {
+      console.error('Error adding habit to Supabase:', error);
+    }
+
+    // Also save to local storage as a backup
+    const existingHabits = getHabitsFromLocalStorage();
+    saveHabitsToLocalStorage([...existingHabits, habit]);
+
+    toast({
+      title: "Added to Habit Tracker",
+      description: `The activity is now in your ${frequency} habits`,
+    });
+
+    return true;
   } catch (e) {
-    console.log('Error adding to habit tracker', e);
-    throw new Error('Failed to add activity to habit tracker');
+    console.error('Error adding to habit tracker:', e);
+    return false;
+  }
+};
+
+// Get saved activities for user
+export const getSavedActivities = async (userId: string): Promise<SavedActivity[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('saved_activities')
+      .select('*')
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Error fetching saved activities:', error);
+      return [];
+    }
+
+    return data.map((item) => ({
+      id: item.id,
+      userId: item.user_id,
+      activityId: item.activity_id,
+      completed: item.completed,
+      createdAt: item.created_at
+    }));
+  } catch (error) {
+    console.error('Error fetching saved activities:', error);
+    return [];
+  }
+};
+
+// Toggle completion status
+export const toggleActivityCompletion = async (
+  activityId: string,
+  isCompleted: boolean
+): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('saved_activities')
+      .update({ completed: isCompleted })
+      .eq('id', activityId);
+
+    if (error) {
+      console.error('Error updating activity completion:', error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error updating activity completion:', error);
+    return false;
+  }
+};
+
+// Remove a saved activity
+export const removeSavedActivity = async (activityId: string): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('saved_activities')
+      .delete()
+      .eq('id', activityId);
+
+    if (error) {
+      console.error('Error removing saved activity:', error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error removing saved activity:', error);
+    return false;
   }
 };

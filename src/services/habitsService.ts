@@ -27,7 +27,7 @@ export const fetchHabitsFromSupabase = async (userId: string): Promise<Habit[]> 
           userId: habit.user_id,
           dimension: habit.dimension,
           description: habit.description,
-          frequency: habit.frequency,
+          frequency: habit.frequency || 'daily', // Ensure backward compatibility
           completedDates: habit.completed_dates || [],
           createdAt: habit.created_at
         }));

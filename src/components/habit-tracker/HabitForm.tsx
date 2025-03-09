@@ -4,10 +4,11 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Save, X } from 'lucide-react';
+import { Save, X, Clock } from 'lucide-react';
 import { HEARTIDimension } from '@/types';
 import { NewHabitForm } from '@/hooks/useHabits';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Toggle } from '@/components/ui/toggle';
 
 interface HabitFormProps {
   newHabit: NewHabitForm;
@@ -47,16 +48,33 @@ const HabitForm: React.FC<HabitFormProps> = ({
             </div>
             
             <div>
-              <Label htmlFor="habit-frequency" className="text-sm font-medium mb-1.5">Frequency</Label>
-              <select
-                id="habit-frequency"
-                value={newHabit.frequency}
-                onChange={(e) => onHabitChange({ frequency: e.target.value as 'daily' | 'weekly' })}
-                className="w-full p-2.5 rounded-lg border border-gray-200 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-              >
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-              </select>
+              <Label htmlFor="habit-frequency" className="text-sm font-medium mb-1.5 flex items-center">
+                <Clock size={14} className="mr-1" />
+                Frequency
+              </Label>
+              <div className="flex gap-2 mt-1">
+                <Toggle
+                  pressed={newHabit.frequency === 'daily'}
+                  onPressedChange={() => onHabitChange({ frequency: 'daily' })}
+                  className={`flex-1 text-xs py-1 px-2 h-8 ${newHabit.frequency === 'daily' ? 'bg-blue-100 border-blue-300 text-blue-800' : ''}`}
+                >
+                  Daily
+                </Toggle>
+                <Toggle
+                  pressed={newHabit.frequency === 'weekly'}
+                  onPressedChange={() => onHabitChange({ frequency: 'weekly' })}
+                  className={`flex-1 text-xs py-1 px-2 h-8 ${newHabit.frequency === 'weekly' ? 'bg-purple-100 border-purple-300 text-purple-800' : ''}`}
+                >
+                  Weekly
+                </Toggle>
+                <Toggle
+                  pressed={newHabit.frequency === 'monthly'}
+                  onPressedChange={() => onHabitChange({ frequency: 'monthly' })}
+                  className={`flex-1 text-xs py-1 px-2 h-8 ${newHabit.frequency === 'monthly' ? 'bg-orange-100 border-orange-300 text-orange-800' : ''}`}
+                >
+                  Monthly
+                </Toggle>
+              </div>
             </div>
           </div>
           

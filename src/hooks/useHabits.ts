@@ -88,7 +88,7 @@ export const useHabits = (focusDimension?: HEARTIDimension) => {
     
     toast({
       title: "Habit added",
-      description: "Your new habit has been created",
+      description: `Your new ${newHabitForm.frequency} habit has been created`,
     });
     
     return true;

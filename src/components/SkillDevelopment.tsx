@@ -3,13 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Hexagon, ListFilter } from 'lucide-react';
+import { Hexagon, ListFilter, Heart, Shield, LucideIcon, Users, Rocket, Eye, Sun } from 'lucide-react';
 import { HEARTIDimension } from '../types';
 import { activityData } from '@/data/heartActivities';
 import { useActivities } from '@/hooks/useActivities';
 import ActivityList from './skill-development/ActivityList';
 import SavedActivityList from './skill-development/SavedActivityList';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Toggle } from '@/components/ui/toggle';
 
 interface SkillDevelopmentProps {
   focusDimension?: HEARTIDimension;
@@ -22,6 +23,17 @@ const dimensionLabels = {
   resiliency: 'Resiliency',
   transparency: 'Transparency',
   inclusivity: 'Inclusivity'
+};
+
+// Map dimensions to their corresponding icons
+const dimensionIcons: Record<HEARTIDimension | 'all', LucideIcon> = {
+  humility: Sun,        // Represents humility with a sun - shines on others, not itself
+  empathy: Heart,       // Represents empathy with a heart - feeling for others
+  accountability: Shield, // Represents accountability with a shield - responsibility
+  resiliency: Rocket,   // Represents resiliency with a rocket - overcoming challenges
+  transparency: Eye,    // Represents transparency with an eye - seeing clearly
+  inclusivity: Users,   // Represents inclusivity with users - bringing people together
+  all: Hexagon          // Represents all dimensions with the HEARTI hexagon
 };
 
 const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension }) => {
@@ -59,6 +71,11 @@ const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension }) =
     activeDimension === 'all' || activity.dimension === activeDimension
   );
 
+  const renderDimensionIcon = (dimension: HEARTIDimension | 'all', size = 16) => {
+    const IconComponent = dimensionIcons[dimension];
+    return <IconComponent size={size} />;
+  };
+
   return (
     <Card className="shadow-md border-0">
       <CardHeader className="bg-gradient-to-r from-orange to-yellow rounded-t-lg">
@@ -74,46 +91,53 @@ const SkillDevelopment: React.FC<SkillDevelopmentProps> = ({ focusDimension }) =
         <Tabs defaultValue={activeDimension} onValueChange={(value) => setActiveDimension(value as HEARTIDimension | 'all')}>
           <div className="flex flex-col gap-4 mb-6">
             <div className="mobile-tabs-container">
-              <TabsList className="mobile-tabs">
-                <TabsTrigger value="all" className="mobile-tab">All</TabsTrigger>
-                <TabsTrigger value="humility" className="mobile-tab">
-                  {isMobile ? 'H' : 'Humility'}
+              <TabsList className="grid grid-cols-7 gap-1 w-full">
+                <TabsTrigger value="all" className="flex flex-col items-center gap-1 p-2">
+                  {renderDimensionIcon('all')}
+                  <span className={isMobile ? "text-[10px]" : "text-xs"}>All</span>
                 </TabsTrigger>
-                <TabsTrigger value="empathy" className="mobile-tab">
-                  {isMobile ? 'E' : 'Empathy'}
+                <TabsTrigger value="humility" className="flex flex-col items-center gap-1 p-2">
+                  {renderDimensionIcon('humility')}
+                  <span className={isMobile ? "text-[10px]" : "text-xs"}>{isMobile ? 'H' : 'Humility'}</span>
                 </TabsTrigger>
-                <TabsTrigger value="accountability" className="mobile-tab">
-                  {isMobile ? 'A' : 'Account.'}
+                <TabsTrigger value="empathy" className="flex flex-col items-center gap-1 p-2">
+                  {renderDimensionIcon('empathy')}
+                  <span className={isMobile ? "text-[10px]" : "text-xs"}>{isMobile ? 'E' : 'Empathy'}</span>
                 </TabsTrigger>
-                <TabsTrigger value="resiliency" className="mobile-tab">
-                  {isMobile ? 'R' : 'Resiliency'}
+                <TabsTrigger value="accountability" className="flex flex-col items-center gap-1 p-2">
+                  {renderDimensionIcon('accountability')}
+                  <span className={isMobile ? "text-[10px]" : "text-xs"}>{isMobile ? 'A' : 'Account.'}</span>
                 </TabsTrigger>
-                <TabsTrigger value="transparency" className="mobile-tab">
-                  {isMobile ? 'T' : 'Transp.'}
+                <TabsTrigger value="resiliency" className="flex flex-col items-center gap-1 p-2">
+                  {renderDimensionIcon('resiliency')}
+                  <span className={isMobile ? "text-[10px]" : "text-xs"}>{isMobile ? 'R' : 'Resiliency'}</span>
                 </TabsTrigger>
-                <TabsTrigger value="inclusivity" className="mobile-tab">
-                  {isMobile ? 'I' : 'Inclusivity'}
+                <TabsTrigger value="transparency" className="flex flex-col items-center gap-1 p-2">
+                  {renderDimensionIcon('transparency')}
+                  <span className={isMobile ? "text-[10px]" : "text-xs"}>{isMobile ? 'T' : 'Transp.'}</span>
+                </TabsTrigger>
+                <TabsTrigger value="inclusivity" className="flex flex-col items-center gap-1 p-2">
+                  {renderDimensionIcon('inclusivity')}
+                  <span className={isMobile ? "text-[10px]" : "text-xs"}>{isMobile ? 'I' : 'Inclusivity'}</span>
                 </TabsTrigger>
               </TabsList>
             </div>
             
-            <div className="p-1 inline-flex items-center justify-center rounded-lg bg-muted text-xs">
-              <Button 
-                size="sm" 
-                variant={activeView === 'explore' ? "default" : "ghost"}
-                className="rounded-md text-xs h-7"
-                onClick={() => setActiveView('explore')}
+            <div className="flex items-center justify-center p-1 rounded-lg bg-muted">
+              <Toggle
+                pressed={activeView === 'explore'}
+                onPressedChange={() => setActiveView('explore')}
+                className={`w-1/2 rounded-md ${activeView === 'explore' ? 'bg-primary text-white' : ''}`}
               >
-                Explore Activities
-              </Button>
-              <Button 
-                size="sm" 
-                variant={activeView === 'saved' ? "default" : "ghost"}
-                className="rounded-md text-xs h-7"
-                onClick={() => setActiveView('saved')}
+                <span className="text-xs">Explore Activities</span>
+              </Toggle>
+              <Toggle
+                pressed={activeView === 'saved'}
+                onPressedChange={() => setActiveView('saved')}
+                className={`w-1/2 rounded-md ${activeView === 'saved' ? 'bg-primary text-white' : ''}`}
               >
-                My Activities ({savedActivities.length}/3)
-              </Button>
+                <span className="text-xs">My Activities ({savedActivities.length}/3)</span>
+              </Toggle>
             </div>
           </div>
           
