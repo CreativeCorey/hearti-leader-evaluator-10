@@ -25,6 +25,7 @@ export interface UseCarouselReturn {
   scrollNext: () => void
   canScrollPrev: boolean
   canScrollNext: boolean
+  orientation: "horizontal" | "vertical"
   currentPage?: number
   setActivePage?: React.Dispatch<React.SetStateAction<number>>
 }
@@ -32,7 +33,7 @@ export interface UseCarouselReturn {
 export function useCarousel({
   opts,
   plugins,
-  orientation,
+  orientation = "horizontal",
   setApi,
   currentPage,
   setActivePage,
@@ -105,6 +106,7 @@ export function useCarousel({
     scrollNext,
     canScrollPrev,
     canScrollNext,
+    orientation,
     currentPage,
     setActivePage,
   }
