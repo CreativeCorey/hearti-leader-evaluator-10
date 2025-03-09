@@ -41,39 +41,39 @@ const RadarChartDisplay: React.FC<RadarChartDisplayProps> = ({
       {showIcons && (
         <div className="absolute inset-0 pointer-events-none">
           {/* Top (Humility) */}
-          <div className="absolute top-[5%] left-[50%] transform -translate-x-1/2">
-            <Gauge size={20} className="text-gray-400" />
+          <div className="absolute top-[3%] left-[50%] transform -translate-x-1/2">
+            <Gauge size={18} className="text-gray-400" />
           </div>
           
           {/* Top Right (Empathy) */}
-          <div className="absolute top-[25%] right-[15%] transform">
-            <HeartHandshake size={20} className="text-gray-400" />
+          <div className="absolute top-[20%] right-[9%] transform">
+            <HeartHandshake size={18} className="text-gray-400" />
           </div>
           
           {/* Bottom Right (Accountability) */}
-          <div className="absolute bottom-[25%] right-[15%] transform">
-            <ChartNoAxesCombined size={20} className="text-gray-400" />
+          <div className="absolute bottom-[20%] right-[9%] transform">
+            <ChartNoAxesCombined size={18} className="text-gray-400" />
           </div>
           
           {/* Bottom (Resiliency) */}
-          <div className="absolute bottom-[5%] left-[50%] transform -translate-x-1/2">
-            <TreePalm size={20} className="text-gray-400" />
+          <div className="absolute bottom-[3%] left-[50%] transform -translate-x-1/2">
+            <TreePalm size={18} className="text-gray-400" />
           </div>
           
           {/* Bottom Left (Transparency) */}
-          <div className="absolute bottom-[25%] left-[15%] transform">
-            <Blend size={20} className="text-gray-400" />
+          <div className="absolute bottom-[20%] left-[9%] transform">
+            <Blend size={18} className="text-gray-400" />
           </div>
           
           {/* Top Left (Inclusivity) */}
-          <div className="absolute top-[25%] left-[15%] transform">
-            <Users size={20} className="text-gray-400" />
+          <div className="absolute top-[20%] left-[9%] transform">
+            <Users size={18} className="text-gray-400" />
           </div>
         </div>
       )}
       
       <ResponsiveContainer width="100%" height="100%">
-        <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
+        <RadarChart cx="50%" cy="50%" outerRadius="65%" data={data}>
           <PolarGrid gridType={spiderConfig.gridType} />
           <PolarAngleAxis 
             dataKey="name" 
@@ -83,6 +83,7 @@ const RadarChartDisplay: React.FC<RadarChartDisplayProps> = ({
             }} 
             axisLineType={spiderConfig.axisLineType}
             tickLine={false}
+            tickMargin={10}
           />
           <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280' }} />
           <Radar
@@ -98,7 +99,6 @@ const RadarChartDisplay: React.FC<RadarChartDisplayProps> = ({
             animationBegin={100}
             animationDuration={1000}
           />
-          {/* Additional Radar for combined view with comparison data will be handled in the Combined Chart section */}
           <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
           <Legend />
         </RadarChart>
@@ -110,41 +110,41 @@ const RadarChartDisplay: React.FC<RadarChartDisplayProps> = ({
     return (
       <div className="bg-slate-50 p-6 rounded-lg h-[450px] w-full">
         <div className="relative h-full">
-          {/* Icons in combined view */}
+          {/* Icons in combined view - positioned more carefully */}
           <div className="absolute inset-0 pointer-events-none">
             {/* Top (Humility) */}
-            <div className="absolute top-[5%] left-[50%] transform -translate-x-1/2">
-              <Gauge size={20} className="text-gray-400" />
+            <div className="absolute top-[3%] left-[50%] transform -translate-x-1/2">
+              <Gauge size={18} className="text-gray-400" />
             </div>
             
             {/* Top Right (Empathy) */}
-            <div className="absolute top-[25%] right-[15%] transform">
-              <HeartHandshake size={20} className="text-gray-400" />
+            <div className="absolute top-[20%] right-[9%] transform">
+              <HeartHandshake size={18} className="text-gray-400" />
             </div>
             
             {/* Bottom Right (Accountability) */}
-            <div className="absolute bottom-[25%] right-[15%] transform">
-              <ChartNoAxesCombined size={20} className="text-gray-400" />
+            <div className="absolute bottom-[20%] right-[9%] transform">
+              <ChartNoAxesCombined size={18} className="text-gray-400" />
             </div>
             
             {/* Bottom (Resiliency) */}
-            <div className="absolute bottom-[5%] left-[50%] transform -translate-x-1/2">
-              <TreePalm size={20} className="text-gray-400" />
+            <div className="absolute bottom-[3%] left-[50%] transform -translate-x-1/2">
+              <TreePalm size={18} className="text-gray-400" />
             </div>
             
             {/* Bottom Left (Transparency) */}
-            <div className="absolute bottom-[25%] left-[15%] transform">
-              <Blend size={20} className="text-gray-400" />
+            <div className="absolute bottom-[20%] left-[9%] transform">
+              <Blend size={18} className="text-gray-400" />
             </div>
             
             {/* Top Left (Inclusivity) */}
-            <div className="absolute top-[25%] left-[15%] transform">
-              <Users size={20} className="text-gray-400" />
+            <div className="absolute top-[20%] left-[9%] transform">
+              <Users size={18} className="text-gray-400" />
             </div>
           </div>
           
           <ResponsiveContainer width="100%" height="100%">
-            <RadarChart cx="50%" cy="50%" outerRadius="70%" data={combinedChartData}>
+            <RadarChart cx="50%" cy="50%" outerRadius="65%" data={combinedChartData}>
               <PolarGrid gridType={spiderConfig.gridType} />
               <PolarAngleAxis 
                 dataKey="name" 
@@ -154,6 +154,7 @@ const RadarChartDisplay: React.FC<RadarChartDisplayProps> = ({
                 }} 
                 axisLineType={spiderConfig.axisLineType}
                 tickLine={false}
+                tickMargin={10}
               />
               <PolarRadiusAxis angle={30} domain={[0, 5]} tick={{ fill: '#6b7280' }} />
               <Radar

@@ -36,7 +36,7 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
   const spiderConfig = {
     gridType: "polygon" as "polygon",
     axisLineType: "polygon" as "polygon",
-    outerRadius: isMobile ? 70 : 80,
+    outerRadius: isMobile ? 65 : 75,
     fillOpacity: 0.5,
     strokeWidth: 2,
     dotSize: 5,
@@ -47,36 +47,36 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
     <div className="relative">
       <p className="text-center font-medium text-xl text-indigo-600 mb-2">{title}</p>
       <div className={`h-[${isMobile ? '300px' : '450px'}] pdf-chart-container`}>
-        {/* Icon overlays */}
+        {/* Icon overlays - positioned more carefully to avoid text overlap */}
         <div className="absolute inset-0 pointer-events-none">
           {/* Top (Humility) */}
-          <div className="absolute top-[5%] left-[50%] transform -translate-x-1/2">
-            <Gauge size={24} className="text-gray-500" />
+          <div className="absolute top-[3%] left-[50%] transform -translate-x-1/2">
+            <Gauge size={20} className="text-gray-500" />
           </div>
           
           {/* Top Right (Empathy) */}
-          <div className="absolute top-[25%] right-[15%] transform">
-            <HeartHandshake size={24} className="text-gray-500" />
+          <div className="absolute top-[20%] right-[9%] transform">
+            <HeartHandshake size={20} className="text-gray-500" />
           </div>
           
           {/* Bottom Right (Accountability) */}
-          <div className="absolute bottom-[25%] right-[15%] transform">
-            <ChartNoAxesCombined size={24} className="text-gray-500" />
+          <div className="absolute bottom-[20%] right-[9%] transform">
+            <ChartNoAxesCombined size={20} className="text-gray-500" />
           </div>
           
           {/* Bottom (Resiliency) */}
-          <div className="absolute bottom-[5%] left-[50%] transform -translate-x-1/2">
-            <TreePalm size={24} className="text-gray-500" />
+          <div className="absolute bottom-[3%] left-[50%] transform -translate-x-1/2">
+            <TreePalm size={20} className="text-gray-500" />
           </div>
           
           {/* Bottom Left (Transparency) */}
-          <div className="absolute bottom-[25%] left-[15%] transform">
-            <Blend size={24} className="text-gray-500" />
+          <div className="absolute bottom-[20%] left-[9%] transform">
+            <Blend size={20} className="text-gray-500" />
           </div>
           
           {/* Top Left (Inclusivity) */}
-          <div className="absolute top-[25%] left-[15%] transform">
-            <Users size={24} className="text-gray-500" />
+          <div className="absolute top-[20%] left-[9%] transform">
+            <Users size={20} className="text-gray-500" />
           </div>
         </div>
         
@@ -92,16 +92,18 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
               dataKey="name" 
               tick={{ 
                 fill: '#6b7280', 
-                fontSize: isMobile ? 10 : 14, 
-                fontWeight: 'bold' 
+                fontSize: isMobile ? 10 : 12, 
+                fontWeight: 'medium' 
               }} 
               axisLineType={spiderConfig.axisLineType}
               tickLine={false}
+              // Add more margin to avoid overlap with icons
+              tickMargin={10}
             />
             <PolarRadiusAxis 
               angle={30} 
               domain={[0, 5]} 
-              tick={{ fill: '#6b7280', fontSize: isMobile ? 8 : 12 }} 
+              tick={{ fill: '#6b7280', fontSize: isMobile ? 8 : 10 }} 
             />
             <Radar
               name="Your HEARTI Spectra"

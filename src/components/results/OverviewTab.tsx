@@ -49,41 +49,41 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ assessment }) => {
         <h3 className="text-lg font-medium mb-4">HEARTI:Leader Spectra</h3>
         <div className="bg-slate-50 p-4 rounded-lg h-[400px] w-full">
           <div className="relative h-full">
-            {/* Icon overlays */}
+            {/* Icon overlays - positioned more carefully to avoid text overlap */}
             <div className="absolute inset-0 pointer-events-none">
               {/* Top (Humility) */}
-              <div className="absolute top-[5%] left-[50%] transform -translate-x-1/2">
-                <Gauge size={20} className="text-gray-400" />
+              <div className="absolute top-[3%] left-[50%] transform -translate-x-1/2">
+                <Gauge size={18} className="text-gray-400" />
               </div>
               
               {/* Top Right (Empathy) */}
-              <div className="absolute top-[25%] right-[15%] transform">
-                <HeartHandshake size={20} className="text-gray-400" />
+              <div className="absolute top-[20%] right-[9%] transform">
+                <HeartHandshake size={18} className="text-gray-400" />
               </div>
               
               {/* Bottom Right (Accountability) */}
-              <div className="absolute bottom-[25%] right-[15%] transform">
-                <ChartNoAxesCombined size={20} className="text-gray-400" />
+              <div className="absolute bottom-[20%] right-[9%] transform">
+                <ChartNoAxesCombined size={18} className="text-gray-400" />
               </div>
               
               {/* Bottom (Resiliency) */}
-              <div className="absolute bottom-[5%] left-[50%] transform -translate-x-1/2">
-                <TreePalm size={20} className="text-gray-400" />
+              <div className="absolute bottom-[3%] left-[50%] transform -translate-x-1/2">
+                <TreePalm size={18} className="text-gray-400" />
               </div>
               
               {/* Bottom Left (Transparency) */}
-              <div className="absolute bottom-[25%] left-[15%] transform">
-                <Blend size={20} className="text-gray-400" />
+              <div className="absolute bottom-[20%] left-[9%] transform">
+                <Blend size={18} className="text-gray-400" />
               </div>
               
               {/* Top Left (Inclusivity) */}
-              <div className="absolute top-[25%] left-[15%] transform">
-                <Users size={20} className="text-gray-400" />
+              <div className="absolute top-[20%] left-[9%] transform">
+                <Users size={18} className="text-gray-400" />
               </div>
             </div>
             
             <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="70%" data={chartData}>
+              <RadarChart cx="50%" cy="50%" outerRadius="65%" data={chartData}>
                 <PolarGrid gridType={spiderConfig.gridType} />
                 <PolarAngleAxis 
                   dataKey="name" 
