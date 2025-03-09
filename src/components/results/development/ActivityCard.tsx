@@ -4,12 +4,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BarChart, Check, Plus } from 'lucide-react';
 import FrequencySelector from './FrequencySelector';
+import { dimensionIcons } from './DimensionIcons';
 
 interface ActivityCardProps {
   activity: {
     id: string;
     category: string;
     description: string;
+    dimension?: string;
   };
   isSelected: boolean;
   selectedFrequency: 'daily' | 'weekly' | 'monthly';
@@ -26,6 +28,10 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
   onFrequencyChange,
   onAddToHabitTracker
 }) => {
+  // Get the appropriate dimension icon or default to Plus
+  const dimensionName = activity.dimension || 'humility';
+  const DimensionIcon = dimensionIcons[dimensionName] || Plus;
+
   return (
     <Card 
       key={activity.id} 
@@ -35,7 +41,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
       <CardContent className="p-4">
         <div className="flex items-start gap-2 mb-2">
           <div className={`mt-1 ${isSelected ? 'text-indigo-600' : 'text-gray-400'}`}>
-            {isSelected ? <Check size={18} /> : <Plus size={18} />}
+            {isSelected ? <Check size={18} /> : <DimensionIcon size={18} />}
           </div>
           <div>
             <h4 className="font-medium text-gray-800">{activity.category}</h4>

@@ -1,35 +1,16 @@
 
 import React from 'react';
 import { HEARTIDimension } from '@/types';
-import { Calendar, Gauge, Ear, ChartNoAxesCombined, TreePalm, Search, Users } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import HabitTracker from '../HabitTracker';
-import { LucideIcon } from 'lucide-react';
+import { dimensionIcons, dimensionLabels } from './development/DimensionIcons';
 
 interface HabitTabProps {
   focusDimension: HEARTIDimension;
 }
 
-const dimensionLabels = {
-  humility: 'Humility',
-  empathy: 'Empathy',
-  accountability: 'Accountability',
-  resiliency: 'Resiliency',
-  transparency: 'Transparency',
-  inclusivity: 'Inclusivity'
-};
-
-// Updated to use LucideIcon type
-const dimensionIcons: Record<string, LucideIcon> = {
-  humility: Gauge,
-  empathy: Ear,
-  accountability: ChartNoAxesCombined,
-  resiliency: TreePalm,
-  transparency: Search,
-  inclusivity: Users
-};
-
 const HabitTab: React.FC<HabitTabProps> = ({ focusDimension }) => {
-  const DimensionIcon = dimensionIcons[focusDimension] || Gauge;
+  const DimensionIcon = dimensionIcons[focusDimension] || dimensionIcons.humility;
   
   return (
     <div className="mb-4">

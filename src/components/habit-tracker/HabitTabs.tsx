@@ -3,24 +3,12 @@ import React from 'react';
 import { TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HEARTIDimension } from '@/types';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Gauge, Ear, ChartNoAxesCombined, TreePalm, Search, Users } from 'lucide-react';
-import { LucideIcon } from 'lucide-react';
-import { dimensionLabels } from '../results/development/DimensionIcons';
+import { dimensionIcons, dimensionLabels } from '../results/development/DimensionIcons';
 
 interface HabitTabsProps {
   activeDimension: HEARTIDimension | 'all';
   onDimensionChange: (value: HEARTIDimension | 'all') => void;
 }
-
-const dimensionIcons: Record<string, LucideIcon> = {
-  humility: Gauge,
-  empathy: Ear,
-  accountability: ChartNoAxesCombined,
-  resiliency: TreePalm,
-  transparency: Search,
-  inclusivity: Users,
-  all: Search, // Default icon for "All" category
-};
 
 const HabitTabs: React.FC<HabitTabsProps> = ({ 
   activeDimension, 
@@ -29,32 +17,32 @@ const HabitTabs: React.FC<HabitTabsProps> = ({
   const isMobile = useIsMobile();
   
   return (
-    <div className="mobile-tabs-container">
-      <TabsList className="w-full flex flex-wrap">
+    <div className="mobile-tabs-container space-y-2">
+      {/* All tab in its own row, spanning full width */}
+      <TabsList className="w-full flex justify-center">
         <TabsTrigger 
           value="all" 
-          className="flex items-center gap-1"
+          className="flex items-center gap-1 w-full"
           onClick={() => onDimensionChange('all')}
         >
           <span className="mr-1">🔍</span>
-          All
+          All Habits
         </TabsTrigger>
+      </TabsList>
+      
+      {/* Dimension tabs in a 2-column grid */}
+      <TabsList className="w-full grid grid-cols-2 md:grid-cols-3 gap-1">
         {Object.entries(dimensionIcons)
           .filter(([key]) => key !== 'all')
           .map(([dimension, Icon]) => (
             <TabsTrigger 
               key={dimension}
               value={dimension} 
-              className="flex items-center gap-1"
+              className="flex items-center justify-center gap-1"
               onClick={() => onDimensionChange(dimension as HEARTIDimension)}
             >
               <Icon size={isMobile ? 14 : 16} className="mr-1" />
-              {dimension === 'humility' ? 'Humility' :
-               dimension === 'empathy' ? 'Empathy' :
-               dimension === 'accountability' ? 'Accountability' :
-               dimension === 'resiliency' ? 'Resiliency' :
-               dimension === 'transparency' ? 'Transparency' :
-               dimension === 'inclusivity' ? 'Inclusivity' : dimension}
+              {dimensionLabels[dimension as HEARTIDimension]}
             </TabsTrigger>
           ))}
       </TabsList>

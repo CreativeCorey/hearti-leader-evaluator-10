@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,23 +7,13 @@ import { SkillActivity, SavedActivity, dimensionColors, dimensionTitles } from '
 import { Toggle } from '@/components/ui/toggle';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSwipeable } from 'react-swipeable';
-import { Gauge, Ear, ChartNoAxesCombined, TreePalm, Search, Users } from 'lucide-react';
-import { LucideIcon } from 'lucide-react';
+import { dimensionIcons } from '@/components/results/development/DimensionIcons';
 
 interface ActivityCardProps {
   activity: SkillActivity;
   savedActivities: SavedActivity[];
   onSave: (activity: SkillActivity, addToHabitTracker?: boolean, frequency?: 'daily' | 'weekly' | 'monthly') => void;
 }
-
-const dimensionIcons: Record<string, LucideIcon> = {
-  humility: Gauge,
-  empathy: Ear,
-  accountability: ChartNoAxesCombined,
-  resiliency: TreePalm,
-  transparency: Search,
-  inclusivity: Users
-};
 
 const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, onSave }) => {
   const isMobile = useIsMobile();
@@ -35,7 +24,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
   const [frequency, setFrequency] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const [swipeState, setSwipeState] = useState<'default' | 'swiping-save' | 'swiping-tracker' | 'saved'>('default');
   
-  const DimensionIcon = dimensionIcons[activity.dimension] || Gauge;
+  const DimensionIcon = dimensionIcons[activity.dimension] || dimensionIcons.humility;
   
   const handleSave = (addToHabitTracker?: boolean) => {
     onSave(activity, addToHabitTracker, frequency);
