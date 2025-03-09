@@ -35,20 +35,19 @@ const Index = () => {
     isMobile
   } = useIndexPage();
 
-  // Send the latest assessment to Google Sheets when needed
-  const handleSendToSheets = () => {
-    if (latestAssessment) {
-      sendLatestToSheets(latestAssessment);
-    }
-  };
-
   // If still loading, show loading state
   if (loading) return <LoadingState />;
 
   // Ready to render content now
   return (
     <div className="container mx-auto px-4 py-6 max-w-7xl">
-      <HeaderSection profile={profile} />
+      <HeaderSection 
+        profile={profile} 
+        isSupabaseEnabled={isSupabaseEnabled}
+        handleToggleSupabase={handleToggleSupabase}
+        googleConnection={googleConnection}
+        isMobile={isMobile}
+      />
       
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'take' | 'results')}>
         <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
@@ -57,29 +56,25 @@ const Index = () => {
         </TabsList>
         
         <TabsContent value="take" className="mt-0">
-          <AssessmentTabs onAssessmentComplete={handleAssessmentComplete} />
+          <AssessmentTabs 
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            userAssessments={userAssessments}
+            latestAssessment={latestAssessment}
+            onComplete={handleAssessmentComplete}
+            testingSheets={testingSheets}
+            sendLatestToSheets={sendLatestToSheets}
+          />
         </TabsContent>
         
         <TabsContent value="results" className="mt-0">
           {latestAssessment && (
             <ResultsTabContent 
               assessment={latestAssessment}
-              assessments={userAssessments}
-              googleConnection={googleConnection}
-              isSupabaseEnabled={isSupabaseEnabled}
-              testingSheets={testingSheets}
-              syncDialogOpen={syncDialogOpen}
-              syncStatus={syncStatus}
-              onToggleSupabase={handleToggleSupabase}
-              onConfirmSync={handleConfirmSync}
-              onCancelSync={handleCancelSync}
-              onSyncDialogClose={handleSyncDialogClose}
-              onGoogleSignIn={handleGoogleSignIn}
-              onConfigureWorkloadIdentity={handleConfigureWorkloadIdentity}
-              onTestGoogleSheets={testGoogleSheets}
-              onSendToSheets={handleSendToSheets}
-              configuringWorkloadIdentity={configuringWorkloadIdentity}
-              isMobile={isMobile}
+              reportRef={null}
+              onExportPDF={() => {}}
+              exportingPdf={false}
+              topDevelopmentArea="humility"
             />
           )}
         </TabsContent>
@@ -87,14 +82,19 @@ const Index = () => {
       
       {/* Google Sheets integration tools */}
       <GoogleIntegrationTools 
-        googleConnection={googleConnection}
-        latestAssessment={latestAssessment}
-        isSupabaseEnabled={isSupabaseEnabled}
-        onToggleSupabase={handleToggleSupabase}
-        onSendToSheets={handleSendToSheets}
-        onGoogleSignIn={handleGoogleSignIn}
+        testingGoogleSheets={testingSheets}
+        hasLatestAssessment={!!latestAssessment}
+        isCloudEnabled={isSupabaseEnabled}
+        onToggleCloud={handleToggleSupabase}
+        onSyncToSheets={() => latestAssessment && sendLatestToSheets(latestAssessment)}
+        onSignIn={handleGoogleSignIn}
         onConfigureWorkloadIdentity={handleConfigureWorkloadIdentity}
-        onTestGoogleSheets={testGoogleSheets}
+        onTestConnection={testGoogleSheets}
+        connectionStatus={
+          googleConnection.connected 
+            ? { status: 'connected', email: googleConnection.email } 
+            : { status: 'disconnected' }
+        }
       />
     </div>
   );

@@ -3,7 +3,12 @@
 import { HEARTIAnswer, Demographics, HEARTIDimension } from '../../types';
 import { Json } from '../../integrations/supabase/types';
 
-export function isValidAnswersArray(answers: Json[]): answers is HEARTIAnswer[] {
+// Helper function to check if an object has specific properties
+function hasProperties(obj: any, properties: string[]): boolean {
+  return properties.every(prop => prop in obj);
+}
+
+export function isValidAnswersArray(answers: Json): answers is Json[] {
   if (!Array.isArray(answers)) {
     return false;
   }
@@ -12,9 +17,7 @@ export function isValidAnswersArray(answers: Json[]): answers is HEARTIAnswer[] 
     return (
       typeof answer === 'object' && 
       answer !== null &&
-      'questionId' in answer &&
-      'answerValue' in answer &&
-      'dimension' in answer
+      hasProperties(answer, ['questionId', 'score', 'dimension'])
     );
   });
 }
@@ -34,7 +37,7 @@ export function isValidDimensionScores(scores: Json): scores is Record<HEARTIDim
   });
 }
 
-export function isValidDemographics(demographics: Json): demographics is Demographics {
+export function isValidDemographics(demographics: Json): demographics is Json {
   if (typeof demographics !== 'object' || demographics === null) {
     return false;
   }
@@ -42,5 +45,5 @@ export function isValidDemographics(demographics: Json): demographics is Demogra
   // Check for the primary required demographics fields
   const requiredFields = ['age', 'gender', 'role', 'location', 'yearsInRole', 'managementLevel'];
   
-  return requiredFields.every(field => field in demographics);
+  return hasProperties(demographics, requiredFields);
 }

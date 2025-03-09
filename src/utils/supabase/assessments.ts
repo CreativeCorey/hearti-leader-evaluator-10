@@ -24,24 +24,22 @@ function parseAssessment(assessment: any): HEARTIAssessment {
     demographics: {
       age: '',
       gender: '',
-      race: '',
       role: '',
       location: '',
       yearsInRole: '',
-      companySize: '',
-      industry: '',
-      managementLevel: ''
+      managementLevel: undefined,
+      companySize: undefined
     }
   };
 
   // Safely parse the answers array
   if (assessment.answers && isValidAnswersArray(assessment.answers)) {
-    parsedAssessment.answers = assessment.answers;
+    parsedAssessment.answers = assessment.answers as any;
   }
 
   // Safely parse the dimension scores
   if (assessment.dimension_scores && isValidDimensionScores(assessment.dimension_scores)) {
-    parsedAssessment.dimensionScores = assessment.dimension_scores;
+    parsedAssessment.dimensionScores = assessment.dimension_scores as any;
   }
 
   // Parse overall score
@@ -51,7 +49,7 @@ function parseAssessment(assessment: any): HEARTIAssessment {
 
   // Safely parse demographics
   if (assessment.demographics && isValidDemographics(assessment.demographics)) {
-    parsedAssessment.demographics = assessment.demographics;
+    parsedAssessment.demographics = assessment.demographics as any;
   }
 
   return parsedAssessment;
@@ -129,6 +127,21 @@ export async function fetchRecentAssessments(limit = 100): Promise<HEARTIAssessm
   }
 }
 
+// Added these functions to match what's imported in localStorage.ts
+export async function saveAssessmentToSupabase(assessment: HEARTIAssessment): Promise<boolean> {
+  try {
+    await saveAssessment(assessment);
+    return true;
+  } catch (error) {
+    console.error('Error saving assessment to Supabase:', error);
+    return false;
+  }
+}
+
+export async function getUserAssessmentsFromSupabase(userId: string): Promise<HEARTIAssessment[]> {
+  return await fetchUserAssessments(userId);
+}
+
 export async function saveAssessment(assessment: HEARTIAssessment): Promise<string> {
   try {
     // Convert from our frontend model to the database model
@@ -136,10 +149,10 @@ export async function saveAssessment(assessment: HEARTIAssessment): Promise<stri
       id: assessment.id,
       user_id: assessment.userId,
       organization_id: assessment.organizationId,
-      answers: assessment.answers,
-      dimension_scores: assessment.dimensionScores,
+      answers: assessment.answers as unknown as Json,
+      dimension_scores: assessment.dimensionScores as unknown as Json,
       overall_score: assessment.overallScore,
-      demographics: assessment.demographics,
+      demographics: assessment.demographics as unknown as Json,
     };
 
     const { data, error } = await supabase

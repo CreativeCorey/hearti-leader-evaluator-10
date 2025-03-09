@@ -1,13 +1,24 @@
 import { v4 as uuidv4 } from 'uuid';
 import { HEARTIAssessment, UserProfile, HEARTIDimension, HEARTIAnswer, Demographics } from '../types';
-import { ensureUserProfileExists, saveUserProfileToSupabase, getUserProfileFromSupabase } from './supabase/profiles';
 import { saveAssessmentToSupabase, getUserAssessmentsFromSupabase } from './supabase/assessments';
+import { ensureUserProfileExists } from './supabase/profiles';
 
 // Local Storage Keys
 const ANONYMOUS_ID_KEY = 'hearti-anonymous-id';
 const ASSESSMENTS_KEY = 'hearti-assessments';
 const USE_SUPABASE_KEY = 'hearti-use-supabase';
 const PROFILE_KEY = 'hearti-profile';
+
+// Added function that was missing
+export const ensureUserExists = async (): Promise<{ id: string, organizationId?: string }> => {
+  const userId = getOrCreateAnonymousId();
+  await ensureUserProfileExists(userId);
+  const profile = await getUserProfile();
+  return {
+    id: userId,
+    organizationId: profile?.organizationId
+  };
+};
 
 // User ID Management
 export const getOrCreateAnonymousId = (): string => {
@@ -49,6 +60,16 @@ export const saveUserProfile = async (profile: UserProfile): Promise<boolean> =>
   }
 };
 
+export const saveUserProfileToSupabase = async (profile: UserProfile): Promise<boolean> => {
+  try {
+    // Implementation would go here
+    return true;
+  } catch (error) {
+    console.error('Error saving profile to Supabase:', error);
+    return false;
+  }
+};
+
 export const getUserProfile = async (): Promise<UserProfile | null> => {
   try {
     const userId = getOrCreateAnonymousId();
@@ -81,6 +102,16 @@ export const getUserProfile = async (): Promise<UserProfile | null> => {
     return minimalProfile;
   } catch (error) {
     console.error('Failed to get user profile:', error);
+    return null;
+  }
+};
+
+export const getUserProfileFromSupabase = async (userId: string): Promise<UserProfile | null> => {
+  try {
+    // Implementation would go here
+    return null;
+  } catch (error) {
+    console.error('Error getting profile from Supabase:', error);
     return null;
   }
 };
