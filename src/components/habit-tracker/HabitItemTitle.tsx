@@ -1,0 +1,49 @@
+
+import React from 'react';
+import { Calendar } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
+import { Award, BookText, Brain, BarChart, Headphones, Leaf } from 'lucide-react';
+import { HEARTIDimension } from '@/types';
+import { useIsMobile } from '@/hooks/use-mobile';
+
+interface HabitItemTitleProps {
+  dimension: HEARTIDimension;
+  description: string;
+  streakCount: number;
+}
+
+const dimensionIcons: Record<string, LucideIcon> = {
+  humility: Award,
+  empathy: Brain,
+  accountability: BarChart,
+  resiliency: Leaf,
+  transparency: BookText,
+  inclusivity: Headphones
+};
+
+const HabitItemTitle: React.FC<HabitItemTitleProps> = ({
+  dimension,
+  description,
+  streakCount
+}) => {
+  const isMobile = useIsMobile();
+  const DimensionIcon = dimensionIcons[dimension] || Award;
+  
+  return (
+    <>
+      <h3 className={`${isMobile ? 'text-base' : 'text-lg'} font-bold mb-1 flex items-center gap-2`}>
+        <DimensionIcon size={isMobile ? 16 : 20} className="text-gray-500" />
+        {description}
+      </h3>
+      
+      <div className="flex justify-between items-center mb-2">
+        <div className="text-xs text-muted-foreground flex items-center gap-1">
+          <Calendar size={12} />
+          Current streak: {streakCount} {streakCount === 1 ? 'day' : 'days'}
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default HabitItemTitle;
