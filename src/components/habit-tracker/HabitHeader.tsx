@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Plus, X } from 'lucide-react';
+import { Plus, X, CalendarDays } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -19,7 +19,10 @@ const HabitHeader: React.FC<HabitHeaderProps> = ({
   
   return (
     <div className={`${isMobile ? 'mb-3 px-1' : 'mb-6'} flex justify-between items-center`}>
-      <h3 className={`${isMobile ? 'text-base' : 'text-lg'} font-medium text-blue`}>Your Habits</h3>
+      <h3 className={`${isMobile ? 'text-base' : 'text-lg'} font-medium text-blue flex items-center gap-2`}>
+        <CalendarDays size={isMobile ? 18 : 20} className="text-blue-600" />
+        Your Habits
+      </h3>
       
       {!addingHabit ? (
         <Button 

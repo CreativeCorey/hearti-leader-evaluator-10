@@ -1,20 +1,29 @@
+
 import React, { useState, useEffect } from 'react';
 import { Award, BookText, Brain, BarChart, Headphones, Leaf } from 'lucide-react';
 import ActivityCard from './skill-development/ActivityCard';
 import SavedActivityCard from './skill-development/SavedActivityCard';
 import { useActivities } from '@/hooks/useActivities';
-import { SkillActivity, SavedActivity, activities } from '@/data/heartActivities';
+import { SkillActivity, SavedActivity } from '@/data/heartActivities';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useToast } from "@/hooks/use-toast"
 
-const dimensionIcons: { [key: string]: React.FC } = {
+// Get activities from the module
+import { activities } from '@/data/heartActivities';
+
+const dimensionIcons: { [key: string]: React.FC<{ className?: string }> } = {
   intellectual: BookText,
   social: Headphones,
   spiritual: Leaf,
   emotional: Brain,
   physical: Award,
   accountability: BarChart,
+  humility: Award,
+  empathy: Brain,
+  resiliency: Leaf,
+  transparency: BookText,
+  inclusivity: Headphones,
 };
 
 const SkillDevelopment: React.FC = () => {

@@ -14,7 +14,7 @@ const Header: React.FC = () => {
         <Link to="/" className="flex items-center">
           <img 
             src="/lovable-uploads/4d98c01d-a453-45c9-913f-72d63347fd2a.png" 
-            alt="HEARTI Leader Quotient Logo" 
+            alt="HEARTI™ Leader Quotient Logo" 
             className="h-10 md:h-12"
           />
         </Link>
