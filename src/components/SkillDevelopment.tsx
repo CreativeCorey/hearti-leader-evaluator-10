@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { Award, BookText, Brain, BarChart, Headphones, Leaf } from 'lucide-react';
+import { Gauge, Search, Ear, BarChart, Users, TreeDeciduous } from 'lucide-react';
 import ActivityCard from './skill-development/ActivityCard';
 import SavedActivityCard from './skill-development/SavedActivityCard';
 import { useActivities } from '@/hooks/useActivities';
@@ -12,17 +13,17 @@ import { useToast } from "@/hooks/use-toast"
 import { activityData as activities } from '@/data/heartActivities';
 
 const dimensionIcons: { [key: string]: React.FC<{ className?: string }> } = {
-  intellectual: BookText,
-  social: Headphones,
-  spiritual: Leaf,
-  emotional: Brain,
-  physical: Award,
+  intellectual: Search,
+  social: Users,
+  spiritual: TreeDeciduous,
+  emotional: Ear,
+  physical: Gauge,
   accountability: BarChart,
-  humility: Award,
-  empathy: Brain,
-  resiliency: Leaf,
-  transparency: BookText,
-  inclusivity: Headphones,
+  humility: Gauge,
+  empathy: Ear,
+  resiliency: TreeDeciduous,
+  transparency: Search,
+  inclusivity: Users,
 };
 
 const SkillDevelopment: React.FC = () => {

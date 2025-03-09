@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import { HEARTIDimension } from '@/types';
 import { LucideIcon } from 'lucide-react';
-import { Award, BookText, Brain, BarChart, Headphones, Leaf } from 'lucide-react';
+import { Gauge, Ear, BarChart, TreeDeciduous, Search, Users } from 'lucide-react';
 import CompletedHabitBadge from './CompletedHabitBadge';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -34,12 +34,12 @@ const dimensionLabels = {
 };
 
 const dimensionIcons: Record<string, LucideIcon> = {
-  humility: Award,
-  empathy: Brain,
+  humility: Gauge,
+  empathy: Ear,
   accountability: BarChart,
-  resiliency: Leaf,
-  transparency: BookText,
-  inclusivity: Headphones
+  resiliency: TreeDeciduous,
+  transparency: Search,
+  inclusivity: Users
 };
 
 const HabitItemHeader: React.FC<HabitItemHeaderProps> = ({
@@ -49,7 +49,7 @@ const HabitItemHeader: React.FC<HabitItemHeaderProps> = ({
   onDeleteHabit
 }) => {
   const isMobile = useIsMobile();
-  const DimensionIcon = dimensionIcons[dimension] || Award;
+  const DimensionIcon = dimensionIcons[dimension] || Gauge;
   
   return (
     <div className="flex justify-between items-center mb-3">

@@ -1,15 +1,15 @@
 
 import { LucideIcon } from 'lucide-react';
-import { Award, Brain, BarChart, Leaf, BookText, Headphones } from 'lucide-react';
+import { Gauge, Ear, BarChart, TreeDeciduous, Search, Users } from 'lucide-react';
 import { HEARTIDimension } from '@/types';
 
 export const dimensionIcons: Record<string, LucideIcon> = {
-  humility: Award,
-  empathy: Brain,
+  humility: Gauge,
+  empathy: Ear,
   accountability: BarChart,
-  resiliency: Leaf,
-  transparency: BookText,
-  inclusivity: Headphones,
+  resiliency: TreeDeciduous,
+  transparency: Search,
+  inclusivity: Users,
 };
 
 export const dimensionLabels: Record<HEARTIDimension, string> = {
