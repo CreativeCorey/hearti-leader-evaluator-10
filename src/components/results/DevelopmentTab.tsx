@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface DevelopmentTabProps {
   focusDimension: HEARTIDimension;
@@ -25,6 +26,7 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
   const [activeDimension, setActiveDimension] = useState<HEARTIDimension>(focusDimension);
   const [selectedFrequency, setSelectedFrequency] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const [chartView, setChartView] = useState<'focused' | 'all'>('focused');
+  const [showActivities, setShowActivities] = useState(true);
   const { toast } = useToast();
   const isMobile = useIsMobile();
   
@@ -94,6 +96,10 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
     inclusivity: '#8B5CF6'
   };
   
+  const toggleActivities = () => {
+    setShowActivities(prev => !prev);
+  };
+  
   return (
     <div className="mb-4">
       <InfoBanner focusDimension={focusDimension} />
@@ -107,7 +113,7 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
       {/* Chart section */}
       <div className="mb-6">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-medium">HEARTI Dimension Visualization</h3>
+          <h3 className="text-lg font-medium">HEARTI Spectra</h3>
           <Tabs 
             value={chartView} 
             onValueChange={(value) => setChartView(value as 'focused' | 'all')}
@@ -172,15 +178,27 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
         </CardContent>
       </Card>
       
-      <ActivityList
-        activeDimension={activeDimension}
-        activities={activities}
-        selectedActivities={selectedActivities}
-        selectedFrequency={selectedFrequency}
-        onActivitySelect={handleSelectActivity}
-        onFrequencyChange={setSelectedFrequency}
-        onAddToHabitTracker={handleAddToHabitTracker}
-      />
+      {/* Toggle for Activities */}
+      <Button 
+        variant="outline" 
+        onClick={toggleActivities}
+        className="w-full mb-4 flex justify-between items-center"
+      >
+        <span>Developmental Activities</span>
+        {showActivities ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+      </Button>
+      
+      {showActivities && (
+        <ActivityList
+          activeDimension={activeDimension}
+          activities={activities}
+          selectedActivities={selectedActivities}
+          selectedFrequency={selectedFrequency}
+          onActivitySelect={handleSelectActivity}
+          onFrequencyChange={setSelectedFrequency}
+          onAddToHabitTracker={handleAddToHabitTracker}
+        />
+      )}
     </div>
   );
 };

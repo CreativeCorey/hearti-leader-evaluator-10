@@ -13,23 +13,31 @@ import {
 
 interface ResultsTabContentProps {
   assessment: HEARTIAssessment;
+  assessments?: HEARTIAssessment[];
   reportRef: React.RefObject<HTMLDivElement>;
   onExportPDF: () => Promise<void>;
   exportingPdf: boolean;
   topDevelopmentArea: HEARTIDimension;
+  onSelectAssessment?: (assessment: HEARTIAssessment) => void;
 }
 
 const ResultsTabContent: React.FC<ResultsTabContentProps> = ({ 
-  assessment, 
+  assessment,
+  assessments = [],
   reportRef, 
   onExportPDF, 
   exportingPdf,
-  topDevelopmentArea
+  topDevelopmentArea,
+  onSelectAssessment
 }) => {
   return (
     <>
       <TabsContent value="overview" className="space-y-6">
-        <OverviewTabContent assessment={assessment} />
+        <OverviewTabContent 
+          assessment={assessment} 
+          assessments={assessments}
+          onSelectAssessment={onSelectAssessment}
+        />
       </TabsContent>
       
       <TabsContent value="dimensions" className="space-y-6">

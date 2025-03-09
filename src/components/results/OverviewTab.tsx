@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import ShareResultsCard from './sharing/ShareResultsCard';
 import DemographicsSection from './DemographicsSection';
 import HistoricalResults from '../HistoricalResults';
+import DimensionChart from './development/DimensionChart';
 
 interface OverviewTabProps {
   assessment: HEARTIAssessment;
@@ -30,8 +31,28 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
+  // Sample dimension scores from the assessment
+  const dimensionScores = assessment.dimensionScores;
+
   return (
     <div className="space-y-6">
+      {/* HEARTI Spectra Chart */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle>HEARTI Spectra</CardTitle>
+          <CardDescription>Your leadership dimension scores</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[300px]">
+            <DimensionChart 
+              dimensionScores={dimensionScores}
+              activeDimension="humility"
+              showAllDimensions={true}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
       {/* HEARTI:Leader Score Card */}
       <Card>
         <CardHeader className="pb-2">
