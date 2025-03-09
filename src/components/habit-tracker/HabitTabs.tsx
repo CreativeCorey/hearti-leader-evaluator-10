@@ -23,7 +23,7 @@ const HabitTabs: React.FC<HabitTabsProps> = ({
       <TabsList className="w-full flex justify-center">
         <TabsTrigger 
           value="all" 
-          className={`flex items-center gap-1 w-full ${activeDimension === 'all' ? 'bg-blue-100' : ''}`}
+          className={`flex items-center gap-1 w-full py-2 ${activeDimension === 'all' ? 'bg-blue-100' : ''}`}
           onClick={() => onDimensionChange('all')}
         >
           <Search className="text-gray-600" size={isMobile ? 16 : 18} />
@@ -31,7 +31,7 @@ const HabitTabs: React.FC<HabitTabsProps> = ({
         </TabsTrigger>
       </TabsList>
       
-      {/* Dimension tabs in a 3-column grid regardless of screen size */}
+      {/* Dimension tabs in a 3-column grid - styled to match development tabs */}
       <TabsList className="w-full grid grid-cols-3 gap-1">
         {Object.entries(dimensionIcons)
           .filter(([key]) => key !== 'all')
@@ -39,10 +39,10 @@ const HabitTabs: React.FC<HabitTabsProps> = ({
             <TabsTrigger 
               key={dimension}
               value={dimension} 
-              className={`flex items-center justify-center gap-1 py-2 ${activeDimension === dimension ? 'bg-blue-100' : ''}`}
+              className={`flex flex-col items-center justify-center gap-1 py-3 ${activeDimension === dimension ? 'bg-blue-100' : ''}`}
               onClick={() => onDimensionChange(dimension as HEARTIDimension)}
             >
-              <Icon size={isMobile ? 14 : 16} className="mr-1" />
+              <Icon size={isMobile ? 16 : 18} />
               <span className={isMobile ? "text-xs" : "text-sm"}>{dimensionLabels[dimension as HEARTIDimension]}</span>
             </TabsTrigger>
           ))}
