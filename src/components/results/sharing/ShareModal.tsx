@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { HEARTIAssessment, HEARTIDimension } from '@/types';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -105,11 +104,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
           blueSkyLink.href = imageUrl;
           blueSkyLink.click();
           
-          showSuccessToast({
-            title: "Share to Bluesky",
-            description: "Image downloaded. Copy your caption and upload the image to Bluesky.",
-            duration: 5000,
-          });
+          showSuccessToast("Share to Bluesky", "Image downloaded. Copy your caption and upload the image to Bluesky.");
           break;
           
         case 'slack':
@@ -119,11 +114,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
           slackLink.href = imageUrl;
           slackLink.click();
           
-          showSuccessToast({
-            title: "Share to Slack",
-            description: "Image downloaded. Upload to Slack and paste your caption.",
-            duration: 5000,
-          });
+          showSuccessToast("Share to Slack", "Image downloaded. Upload to Slack and paste your caption.");
           break;
           
         case 'teams':
@@ -133,11 +124,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
           teamsLink.href = imageUrl;
           teamsLink.click();
           
-          showSuccessToast({
-            title: "Share to Microsoft Teams",
-            description: "Image downloaded. Upload to Teams and paste your caption.",
-            duration: 5000,
-          });
+          showSuccessToast("Share to Microsoft Teams", "Image downloaded. Upload to Teams and paste your caption.");
           break;
           
         case 'email':
@@ -161,11 +148,8 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
           // After downloading, copy the caption to clipboard
           await navigator.clipboard.writeText(captionText);
           
-          showSuccessToast({
-            title: `Share to ${platform.charAt(0).toUpperCase() + platform.slice(1)}`,
-            description: "Image downloaded and caption copied to clipboard. You can now upload it manually.",
-            duration: 5000,
-          });
+          showSuccessToast("Share to " + platform.charAt(0).toUpperCase() + platform.slice(1), "Image downloaded and caption copied to clipboard. You can now upload it manually.");
+          break;
       }
       
     } catch (error) {
