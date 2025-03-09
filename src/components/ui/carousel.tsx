@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
@@ -17,6 +18,8 @@ type CarouselProps = {
   plugins?: CarouselPlugin
   orientation?: "horizontal" | "vertical"
   setApi?: (api: CarouselApi) => void
+  currentPage?: number
+  setActivePage?: React.Dispatch<React.SetStateAction<number>>
 }
 
 type CarouselContextProps = {
@@ -26,6 +29,8 @@ type CarouselContextProps = {
   scrollNext: () => void
   canScrollPrev: boolean
   canScrollNext: boolean
+  currentPage?: number
+  setActivePage?: React.Dispatch<React.SetStateAction<number>>
 } & CarouselProps
 
 const CarouselContext = React.createContext<CarouselContextProps | null>(null)
@@ -52,6 +57,8 @@ const Carousel = React.forwardRef<
       plugins,
       className,
       children,
+      currentPage,
+      setActivePage,
       ...props
     },
     ref
@@ -73,7 +80,12 @@ const Carousel = React.forwardRef<
 
       setCanScrollPrev(api.canScrollPrev())
       setCanScrollNext(api.canScrollNext())
-    }, [])
+      
+      // Update the active page when the carousel slides
+      if (setActivePage) {
+        setActivePage(api.selectedScrollSnap())
+      }
+    }, [setActivePage])
 
     const scrollPrev = React.useCallback(() => {
       api?.scrollPrev()
@@ -118,6 +130,13 @@ const Carousel = React.forwardRef<
       }
     }, [api, onSelect])
 
+    // Sync carousel position with currentPage prop if it changes externally
+    React.useEffect(() => {
+      if (api && currentPage !== undefined && api.selectedScrollSnap() !== currentPage) {
+        api.scrollTo(currentPage)
+      }
+    }, [api, currentPage])
+
     return (
       <CarouselContext.Provider
         value={{
@@ -130,6 +149,8 @@ const Carousel = React.forwardRef<
           scrollNext,
           canScrollPrev,
           canScrollNext,
+          currentPage,
+          setActivePage,
         }}
       >
         <div

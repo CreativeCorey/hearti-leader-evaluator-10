@@ -113,8 +113,8 @@ const ReportTab: React.FC<ReportTabProps> = ({
             /* For mobile, render a carousel */
             <Carousel 
               className="w-full" 
-              setActivePage={setCurrentPage}
               currentPage={currentPage}
+              setActivePage={setCurrentPage}
             >
               <CarouselContent>
                 {/* Page 1: Report Header */}
