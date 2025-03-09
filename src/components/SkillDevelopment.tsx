@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Hexagon, ListFilter, Heart, Chart, LucideIcon, Users, Plant, Eye, Sun } from 'lucide-react';
+import { Hexagon, ListFilter, Heart, BarChart, LucideIcon, Users, Leaf, Eye, Sun } from 'lucide-react';
 import { HEARTIDimension } from '../types';
 import { activityData } from '@/data/heartActivities';
 import { useActivities } from '@/hooks/useActivities';
@@ -28,8 +29,8 @@ const dimensionLabels = {
 const dimensionIcons: Record<HEARTIDimension | 'all', LucideIcon> = {
   humility: Sun,         // Humility: Sun
   empathy: Heart,        // Empathy: Heart
-  accountability: Chart, // Accountability: Chart
-  resiliency: Plant,     // Resiliency: Plant
+  accountability: BarChart, // Accountability: Chart (using BarChart as the closest alternative)
+  resiliency: Leaf,     // Resiliency: Plant (using Leaf as the closest alternative)
   transparency: Eye,     // Transparency: Eye
   inclusivity: Users,    // Inclusivity: Users
   all: Hexagon           // All dimensions

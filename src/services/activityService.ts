@@ -21,11 +21,14 @@ export const saveActivity = async (
     savedAt: new Date().toISOString(),
   };
 
-  // Try to save to Supabase
+  // Try to save to Supabase - but since the tables don't exist yet, we'll just log the error
   try {
+    console.log('Would save to Supabase if table existed:', savedActivity);
+    // When the table is created, we would uncomment this code:
+    /*
     const { error } = await supabase
-      .from('saved_activities') // Using string directly for table name
-      .insert([{  // Use array form for insert
+      .from('saved_activities')
+      .insert([{
         id: savedActivity.id,
         user_id: savedActivity.userId,
         activity_id: savedActivity.activityId,
@@ -37,6 +40,7 @@ export const saveActivity = async (
     if (error) {
       console.error('Error saving activity to Supabase:', error);
     }
+    */
   } catch (error) {
     console.error('Error saving activity to Supabase:', error);
   }
@@ -67,11 +71,14 @@ export const addActivityToHabitTracker = async (
       createdAt: new Date().toISOString(),
     };
 
-    // Add to Supabase
+    // Add to Supabase - but since the tables don't exist yet, we'll just log
     try {
+      console.log('Would save habit to Supabase if table existed:', habit);
+      // When the table is created, we would uncomment this code:
+      /*
       const { error } = await supabase
-        .from('habits') // Using string directly for table name
-        .insert([{  // Use array form for insert
+        .from('habits')
+        .insert([{
           id: habit.id,
           user_id: habit.userId,
           dimension: habit.dimension,
@@ -84,6 +91,7 @@ export const addActivityToHabitTracker = async (
       if (error) {
         console.error('Error adding habit to Supabase:', error);
       }
+      */
     } catch (error) {
       console.error('Error adding habit to Supabase:', error);
     }
@@ -107,8 +115,12 @@ export const addActivityToHabitTracker = async (
 // Get saved activities for user
 export const getSavedActivities = async (userId: string): Promise<SavedActivity[]> => {
   try {
+    // Since the table doesn't exist yet, we'll return an empty array
+    console.log('Would fetch activities for user:', userId);
+    // When the table is created, we would uncomment this code:
+    /*
     const { data, error } = await supabase
-      .from('saved_activities') // Using string directly for table name
+      .from('saved_activities')
       .select('*')
       .eq('user_id', userId);
 
@@ -122,9 +134,12 @@ export const getSavedActivities = async (userId: string): Promise<SavedActivity[
       userId: item.user_id,
       activityId: item.activity_id,
       completed: item.completed,
-      dimension: item.dimension || 'accountability', // Default if missing
+      dimension: item.dimension || 'accountability',
       savedAt: item.saved_at || item.created_at
     }));
+    */
+    
+    return [];
   } catch (error) {
     console.error('Error fetching saved activities:', error);
     return [];
@@ -137,8 +152,11 @@ export const toggleActivityCompletion = async (
   isCompleted: boolean
 ): Promise<boolean> => {
   try {
+    console.log('Would toggle activity completion if table existed:', activityId, isCompleted);
+    // When the table is created, we would uncomment this code:
+    /*
     const { error } = await supabase
-      .from('saved_activities') // Using string directly for table name
+      .from('saved_activities')
       .update({
         completed: isCompleted
       })
@@ -148,6 +166,7 @@ export const toggleActivityCompletion = async (
       console.error('Error updating activity completion:', error);
       return false;
     }
+    */
 
     return true;
   } catch (error) {
@@ -159,8 +178,11 @@ export const toggleActivityCompletion = async (
 // Remove a saved activity
 export const removeSavedActivity = async (activityId: string): Promise<boolean> => {
   try {
+    console.log('Would remove activity if table existed:', activityId);
+    // When the table is created, we would uncomment this code:
+    /*
     const { error } = await supabase
-      .from('saved_activities') // Using string directly for table name
+      .from('saved_activities')
       .delete()
       .eq('id', activityId);
 
@@ -168,6 +190,7 @@ export const removeSavedActivity = async (activityId: string): Promise<boolean> 
       console.error('Error removing saved activity:', error);
       return false;
     }
+    */
 
     return true;
   } catch (error) {
