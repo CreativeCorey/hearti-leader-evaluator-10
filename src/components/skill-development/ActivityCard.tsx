@@ -51,7 +51,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
         setSwipeState('default');
       }
     },
-    onSwipeEnd: () => {
+    // Fix: Replace onSwipeEnd with onSwiped
+    onSwiped: () => {
       if (swipeState !== 'saved') {
         setSwipeState('default');
       }
