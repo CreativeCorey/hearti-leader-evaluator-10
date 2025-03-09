@@ -5,7 +5,7 @@ import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Responsi
 import { formatDataForRadarChart, getFeedback } from '@/utils/calculations';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Flame, Shield } from 'lucide-react';
+import { Flame, Unlink2 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface OverviewTabProps {
@@ -123,7 +123,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ assessment }) => {
             
             <div className="bg-amber-50 p-3 rounded-md border border-amber-100">
               <p className="font-medium flex items-center text-amber-800">
-                <Shield size={16} className="mr-2" />
+                <Unlink2 size={16} className="mr-2" />
                 Vulnerability: {developmentArea.charAt(0).toUpperCase() + developmentArea.slice(1)}
               </p>
               <p className="text-amber-700 mt-1">{getFeedback(assessment.dimensionScores[developmentArea], developmentArea)}</p>
