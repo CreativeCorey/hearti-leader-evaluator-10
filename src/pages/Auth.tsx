@@ -16,6 +16,7 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
+  const [organization, setOrganization] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [currentTab, setCurrentTab] = useState("signin");
 
@@ -46,7 +47,7 @@ const Auth = () => {
       return;
     }
     
-    await signUp(email, password, name);
+    await signUp(email, password, name, organization);
   };
 
   return (
@@ -112,6 +113,16 @@ const Auth = () => {
                       placeholder="John Doe"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-organization">Organization</Label>
+                    <Input
+                      id="signup-organization"
+                      type="text"
+                      placeholder="Company or Team Name"
+                      value={organization}
+                      onChange={(e) => setOrganization(e.target.value)}
                     />
                   </div>
                   <div className="space-y-2">

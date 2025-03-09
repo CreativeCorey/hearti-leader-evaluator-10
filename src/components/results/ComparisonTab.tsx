@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { HEARTIAssessment, HEARTIDimension } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Users } from 'lucide-react';
+import { ChartScatter } from 'lucide-react';
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { formatDataForRadarChart } from '@/utils/calculations';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -148,7 +148,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
             onClick={() => setCompareMode('average')}
             className="bg-purple-600 hover:bg-purple-700"
           >
-            <Users size={16} className="mr-1" /> Average
+            <ChartScatter size={16} className="mr-1" /> Average
           </Button>
           <Button 
             size="sm" 
