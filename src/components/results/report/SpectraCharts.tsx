@@ -44,10 +44,10 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
   return (
     <div className="my-8 pdf-section">
       <h3 className="text-2xl font-medium mb-4 pdf-section-title">Your HEARTI:Leader Spectra</h3>
-      <div className="flex flex-col lg:flex-row gap-4 pdf-charts-grid">
-        <div className="flex-1 bg-slate-50 p-4 rounded-lg pdf-chart-column">
+      <div className={`flex flex-col ${isMobile ? '' : 'lg:flex-row'} gap-4 pdf-charts-grid`}>
+        <div className={`flex-1 bg-slate-50 p-4 rounded-lg pdf-chart-column ${isMobile ? 'mb-6' : ''}`}>
           <p className="text-center font-medium text-xl text-indigo-600 mb-2">Your HEARTI Spectra</p>
-          <div className={`h-[${isMobile ? '350px' : '450px'}] pdf-chart-container`}>
+          <div className={`h-[${isMobile ? '300px' : '450px'}] pdf-chart-container`}>
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart 
                 cx="50%" 
@@ -87,9 +87,9 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
           </div>
         </div>
         
-        <div className="flex-1 bg-slate-50 p-4 rounded-lg pdf-chart-column">
+        <div className={`flex-1 bg-slate-50 p-4 rounded-lg pdf-chart-column ${isMobile ? 'mb-6' : ''}`}>
           <p className="text-center font-medium text-xl text-purple-600 mb-2">Global HEARTI:Leader Benchmark</p>
-          <div className={`h-[${isMobile ? '350px' : '450px'}] pdf-chart-container`}>
+          <div className={`h-[${isMobile ? '300px' : '450px'}] pdf-chart-container`}>
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart 
                 cx="50%" 
@@ -132,8 +132,9 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
       
       <p className="text-sm text-muted-foreground mt-4">
         The HEARTI:Leader Quotient report provides you with information about your strengths and areas that you can develop further. 
-        On the left side is your HEARTI:Leader Spectra - a visualization of your HEARTI competencies based on your responses. 
-        On the right is the global benchmark for visual comparison. This information is a reference point only. 
+        {isMobile ? 'Above are visualizations of your HEARTI competencies and the global benchmark for comparison.' : 
+        'On the left side is your HEARTI:Leader Spectra - a visualization of your HEARTI competencies based on your responses. On the right is the global benchmark for visual comparison.'} 
+        This information is a reference point only. 
         No leader is strongest in every competency, but learning how your results compare to other 21st century leaders can be insightful.
       </p>
     </div>

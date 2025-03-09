@@ -8,12 +8,23 @@ import { SkillActivity, SavedActivity, dimensionColors, dimensionTitles } from '
 import { Toggle } from '@/components/ui/toggle';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSwipeable } from 'react-swipeable';
+import { Gauge, Ear, ChartNoAxesCombined, TreePalm, Search, Users } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
 
 interface ActivityCardProps {
   activity: SkillActivity;
   savedActivities: SavedActivity[];
   onSave: (activity: SkillActivity, addToHabitTracker?: boolean, frequency?: 'daily' | 'weekly' | 'monthly') => void;
 }
+
+const dimensionIcons: Record<string, LucideIcon> = {
+  humility: Gauge,
+  empathy: Ear,
+  accountability: ChartNoAxesCombined,
+  resiliency: TreePalm,
+  transparency: Search,
+  inclusivity: Users
+};
 
 const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, onSave }) => {
   const isMobile = useIsMobile();
@@ -23,6 +34,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
   const [expanded, setExpanded] = useState(false);
   const [frequency, setFrequency] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const [swipeState, setSwipeState] = useState<'default' | 'swiping-save' | 'swiping-tracker' | 'saved'>('default');
+  
+  const DimensionIcon = dimensionIcons[activity.dimension] || Gauge;
   
   const handleSave = (addToHabitTracker?: boolean) => {
     onSave(activity, addToHabitTracker, frequency);
@@ -94,7 +107,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
         <div>
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center">
-              <Badge className={`${dimensionColors[activity.dimension]} font-normal mr-2`}>
+              <Badge className={`${dimensionColors[activity.dimension]} font-normal mr-2 flex items-center gap-1`}>
+                <DimensionIcon size={14} />
                 {dimensionTitles[activity.dimension]}
               </Badge>
               <span className="text-xs text-muted-foreground">

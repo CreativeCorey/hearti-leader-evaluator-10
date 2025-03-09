@@ -1,3 +1,4 @@
+
 /* 
  * PDF Report Stylesheet
  * 
@@ -100,16 +101,37 @@
   
   .pdf-charts-grid {
     display: flex;
-    flex-direction: row !important;
-    justify-content: space-between;
+    flex-direction: column !important;
     margin-bottom: 0.5in;
     page-break-inside: avoid;
-    page-break-after: always;
+  }
+  
+  @media screen and (min-width: 768px) {
+    .pdf-charts-grid {
+      flex-direction: row !important;
+      justify-content: space-between;
+    }
+  }
+  
+  @media print {
+    .pdf-charts-grid {
+      flex-direction: row !important;
+      justify-content: space-between;
+      page-break-after: always;
+    }
   }
   
   .pdf-chart-column {
-    width: 3.5in;
+    width: 100%;
     padding: 0.3in !important;
+    margin-bottom: 0.3in;
+  }
+  
+  @media screen and (min-width: 768px), print {
+    .pdf-chart-column {
+      width: 48%;
+      margin-bottom: 0;
+    }
   }
   
   /* Chart-specific styles */
@@ -224,27 +246,29 @@
    * 6. LAYOUT OVERRIDES FOR PDF
    * ==================================== */
   /* Override any flex layout issues for PDF */
-  .pdf-container .flex {
-    display: block;
-  }
-  
-  .pdf-container .flex-col,
-  .pdf-container .flex-row {
-    display: block;
-  }
-  
-  .pdf-container .lg\:flex-row {
-    display: flex !important;
-    flex-direction: row !important;
-  }
-  
-  .pdf-container .gap-8 > * {
-    margin-bottom: 0.3in;
-  }
-  
-  .pdf-container .lg\:flex-row > * {
-    width: 48%;
-    margin-right: 2%;
+  @media print {
+    .pdf-container .flex {
+      display: block;
+    }
+    
+    .pdf-container .flex-col,
+    .pdf-container .flex-row {
+      display: block;
+    }
+    
+    .pdf-container .lg\:flex-row {
+      display: flex !important;
+      flex-direction: row !important;
+    }
+    
+    .pdf-container .gap-8 > * {
+      margin-bottom: 0.3in;
+    }
+    
+    .pdf-container .lg\:flex-row > * {
+      width: 48%;
+      margin-right: 2%;
+    }
   }
 
   /* ====================================
@@ -284,5 +308,33 @@
   @page {
     size: letter portrait;
     margin: 0;
+  }
+  
+  /* Mobile responsive adjustments */
+  @media screen and (max-width: 767px) {
+    .pdf-container {
+      width: 100%;
+      padding: 1rem;
+    }
+    
+    .pdf-chart-container {
+      height: 300px !important;
+    }
+    
+    .pdf-dimension-card {
+      margin-bottom: 1.5rem !important;
+    }
+    
+    .pdf-container h2 {
+      font-size: 1.5rem !important;
+    }
+    
+    .pdf-container h3 {
+      font-size: 1.25rem !important;
+    }
+    
+    .pdf-container p {
+      font-size: 0.875rem !important;
+    }
   }
 }

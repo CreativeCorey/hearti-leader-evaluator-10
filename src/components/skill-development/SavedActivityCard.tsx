@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,6 +9,8 @@ import { getOrCreateAnonymousId } from '@/utils/localStorage';
 import { toast } from '@/hooks/use-toast';
 import { Toggle } from '@/components/ui/toggle';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Gauge, Ear, ChartNoAxesCombined, TreePalm, Search, Users } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
 
 interface SavedActivityCardProps {
   savedActivity: SavedActivity;
@@ -17,6 +18,15 @@ interface SavedActivityCardProps {
   onToggleCompletion: (savedActivityId: string | undefined) => void;
   onRemove: (savedActivityId: string | undefined) => void;
 }
+
+const dimensionIcons: Record<string, LucideIcon> = {
+  humility: Gauge,
+  empathy: Ear,
+  accountability: ChartNoAxesCombined,
+  resiliency: TreePalm,
+  transparency: Search,
+  inclusivity: Users
+};
 
 const SavedActivityCard: React.FC<SavedActivityCardProps> = ({ 
   savedActivity, 
@@ -27,6 +37,8 @@ const SavedActivityCard: React.FC<SavedActivityCardProps> = ({
   const isMobile = useIsMobile();
   const [frequency, setFrequency] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const [showFrequency, setShowFrequency] = useState(false);
+  
+  const DimensionIcon = dimensionIcons[activityDetails.dimension] || Gauge;
   
   const handleAddToHabitTracker = async () => {
     try {
@@ -120,7 +132,8 @@ const SavedActivityCard: React.FC<SavedActivityCardProps> = ({
       <div className="flex flex-col gap-3">
         <div>
           <div className="flex items-center mb-2">
-            <Badge className={`${dimensionColors[activityDetails.dimension]} font-normal mr-2`}>
+            <Badge className={`${dimensionColors[activityDetails.dimension]} font-normal mr-2 flex items-center gap-1`}>
+              <DimensionIcon size={14} />
               {dimensionTitles[activityDetails.dimension]}
             </Badge>
             <span className="text-xs text-muted-foreground">
