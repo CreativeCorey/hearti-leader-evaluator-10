@@ -8,12 +8,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { addActivityToHabitTracker } from '@/services/habitTrackerService';
 import { useToast } from '@/hooks/use-toast';
 import { getOrCreateAnonymousId } from '@/utils/localStorage';
+import { LucideIcon } from 'lucide-react';
 
 interface DevelopmentTabProps {
   focusDimension: HEARTIDimension;
 }
 
-const dimensionIcons: Record<string, React.FC<{ className?: string; size?: number }>> = {
+// Updated type definition to use LucideIcon type
+const dimensionIcons: Record<string, LucideIcon> = {
   humility: Award,
   empathy: Brain,
   accountability: BarChart,
@@ -64,7 +66,7 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
       <div className="bg-indigo-50 border-l-4 border-indigo-400 p-4 mb-6 rounded-md">
         <h3 className="font-medium flex items-center gap-2 text-indigo-800">
           <DimensionIcon className="text-indigo-600" size={20} />
-          Development Recommendations
+          Development Recommendations for HEARTI™ Leadership
         </h3>
         <p className="text-indigo-700 mt-1">
           Choose 3 behaviors below that will help strengthen your leadership dimensions. We recommend focusing on your development area: 

@@ -3,6 +3,7 @@ import React from 'react';
 import { HEARTIDimension } from '@/types';
 import { Calendar, Award, BookText, Brain, BarChart, Headphones, Leaf } from 'lucide-react';
 import HabitTracker from '../HabitTracker';
+import { LucideIcon } from 'lucide-react';
 
 interface HabitTabProps {
   focusDimension: HEARTIDimension;
@@ -17,7 +18,8 @@ const dimensionLabels = {
   inclusivity: 'Inclusivity'
 };
 
-const dimensionIcons = {
+// Updated to use LucideIcon type
+const dimensionIcons: Record<string, LucideIcon> = {
   humility: Award,
   empathy: Brain,
   accountability: BarChart,

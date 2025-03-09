@@ -8,6 +8,7 @@ import { Habit } from '@/hooks/useHabits';
 import HabitProgressCircle from './HabitProgressCircle';
 import { useIsMobile } from '@/hooks/use-mobile';
 import CompletedHabitBadge from './CompletedHabitBadge';
+import { LucideIcon } from 'lucide-react';
 
 interface HabitListProps {
   habits: Habit[];
@@ -35,7 +36,8 @@ const dimensionLabels = {
   inclusivity: 'Inclusivity'
 };
 
-const dimensionIcons = {
+// Updated to use LucideIcon type
+const dimensionIcons: Record<string, LucideIcon> = {
   humility: Award,
   empathy: Brain,
   accountability: BarChart,
