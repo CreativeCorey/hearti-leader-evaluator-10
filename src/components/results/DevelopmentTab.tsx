@@ -5,6 +5,8 @@ import { activityData } from '@/data/heartActivities';
 import { addActivityToHabitTracker } from '@/services/habitTrackerService';
 import { useToast } from '@/hooks/use-toast';
 import { getOrCreateAnonymousId } from '@/utils/localStorage';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { format } from 'date-fns';
 import DimensionTabs from './development/DimensionTabs';
 import DimensionChart from './development/DimensionChart';
 import InfoBanner from './development/InfoBanner';
@@ -12,6 +14,7 @@ import ActivityList from './development/ActivityList';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface DevelopmentTabProps {
   focusDimension: HEARTIDimension;
@@ -36,6 +39,21 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
     resiliency: 3.7,
     transparency: 3.9,
     inclusivity: 3.5
+  };
+  
+  // Sample historical data for the selected dimension
+  const getDimensionProgressData = () => {
+    // This would normally be fetched from a real data source
+    return [
+      { date: '2023-10-15', score: 2.7 },
+      { date: '2023-11-20', score: 3.0 },
+      { date: '2023-12-25', score: 3.2 },
+      { date: '2024-01-30', score: 3.5 },
+      { date: '2024-03-05', score: dimensionScores[activeDimension] }
+    ].map(item => ({
+      ...item,
+      formattedDate: format(new Date(item.date), 'MMM d, yy')
+    }));
   };
   
   const handleSelectActivity = (activityId: string) => {
@@ -64,6 +82,16 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
       title: "Added to Habit Tracker",
       description: `This activity has been added to your ${selectedFrequency} habits. Go to the Habits tab to track your progress.`,
     });
+  };
+  
+  const progressData = getDimensionProgressData();
+  const dimensionColors = {
+    humility: '#6366F1',
+    empathy: '#10B981',
+    accountability: '#F59E0B', 
+    resiliency: '#EC4899',
+    transparency: '#06B6D4',
+    inclusivity: '#8B5CF6'
   };
   
   return (
@@ -108,6 +136,41 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
             : `This chart shows all your HEARTI dimensions, with ${activeDimension} in context of your overall profile.`}
         </p>
       </div>
+      
+      {/* Dimension Progress Chart */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Your {activeDimension.charAt(0).toUpperCase() + activeDimension.slice(1)} Progress</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[250px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={progressData}
+                margin={{ top: 10, right: 30, left: 0, bottom: 10 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="formattedDate" />
+                <YAxis domain={[0, 5]} />
+                <Tooltip
+                  formatter={(value) => [`${value}/5`, 'Score']}
+                  labelFormatter={(label) => `Date: ${label}`}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="score"
+                  name={activeDimension.charAt(0).toUpperCase() + activeDimension.slice(1)}
+                  stroke={dimensionColors[activeDimension]}
+                  activeDot={{ r: 8 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <p className="text-sm text-muted-foreground mt-2">
+            This chart shows your progress in the {activeDimension} dimension over time.
+          </p>
+        </CardContent>
+      </Card>
       
       <ActivityList
         activeDimension={activeDimension}
