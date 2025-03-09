@@ -1,9 +1,8 @@
-
 import React, { useState, useRef } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HEARTIAssessment } from '@/types';
 import ResultsTabContent from './ResultsTabContent';
-import { exportToPDF } from './ResultsExportPDF';
+import { exportToPDF } from './export'; // Updated import path
 
 interface ResultsDisplayProps {
   assessment: HEARTIAssessment;
