@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { calculateStreaks } from '@/utils/habitUtils';
@@ -47,6 +46,9 @@ const HabitTrackerContent: React.FC = () => {
 
   const handleDimensionChange = (dimension: typeof activeDimension) => {
     setActiveDimension(dimension);
+    if (dimension !== 'all') {
+      resetForm(dimension);
+    }
   };
 
   return (
@@ -72,7 +74,7 @@ const HabitTrackerContent: React.FC = () => {
         </div>
       )}
     
-      <Tabs defaultValue={activeDimension} value={activeDimension}>
+      <Tabs defaultValue={activeDimension} value={activeDimension} className="w-full">
         <HabitTabs 
           activeDimension={activeDimension} 
           onDimensionChange={handleDimensionChange}
