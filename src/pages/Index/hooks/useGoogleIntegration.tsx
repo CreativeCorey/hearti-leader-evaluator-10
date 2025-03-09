@@ -1,14 +1,15 @@
 
 import { useState } from 'react';
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from '@/integrations/supabase/client';
 import { signInWithGoogle, testGoogleSheetsConnection, setupWorkloadIdentity } from '@/utils/googleAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { HEARTIAssessment } from '@/types';
 
 export const useGoogleIntegration = () => {
   const { toast } = useToast();
   const [testingSheets, setTestingSheets] = useState(false);
   const [configuringWorkloadIdentity, setConfiguringWorkloadIdentity] = useState(false);
-
+  
   const handleGoogleSignIn = async () => {
     try {
       toast({
@@ -48,7 +49,6 @@ export const useGoogleIntegration = () => {
     setConfiguringWorkloadIdentity(true);
     
     try {
-      // First test Google Sheets connection
       const result = await setupWorkloadIdentity();
       
       if (result.success) {
@@ -105,8 +105,7 @@ export const useGoogleIntegration = () => {
     }
   };
   
-  // Send latest assessment directly to Google Sheets
-  const sendLatestToSheets = async (latestAssessment: any) => {
+  const sendLatestToSheets = async (latestAssessment: HEARTIAssessment | null) => {
     if (!latestAssessment) {
       toast({
         title: "No Assessment Available",
@@ -157,7 +156,7 @@ export const useGoogleIntegration = () => {
       setTestingSheets(false);
     }
   };
-
+  
   return {
     testingSheets,
     configuringWorkloadIdentity,
