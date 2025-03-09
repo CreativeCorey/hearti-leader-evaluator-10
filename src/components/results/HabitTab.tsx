@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { HEARTIDimension } from '@/types';
-import { Calendar, Gauge, Ear, BarChart, TreePalm, Search, Users } from 'lucide-react';
+import { Calendar, Gauge, Ear, ChartNoAxesCombined, TreePalm, Search, Users } from 'lucide-react';
 import HabitTracker from '../HabitTracker';
 import { LucideIcon } from 'lucide-react';
 
@@ -22,7 +22,7 @@ const dimensionLabels = {
 const dimensionIcons: Record<string, LucideIcon> = {
   humility: Gauge,
   empathy: Ear,
-  accountability: BarChart,
+  accountability: ChartNoAxesCombined,
   resiliency: TreePalm,
   transparency: Search,
   inclusivity: Users
