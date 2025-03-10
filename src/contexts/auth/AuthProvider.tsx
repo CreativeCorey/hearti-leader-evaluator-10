@@ -3,7 +3,9 @@ import { useState, useEffect } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { getOrCreateAnonymousId } from "@/utils/auth-utils";
+import { getOrCreateAnonymousId, handleMarketingConsent, signUpWithEmail, 
+  signInWithEmail, signOut as authSignOut, sendMagicLink as authSendMagicLink,
+  sendPasswordReset, updateUserProfile } from "@/utils/auth-helpers";
 import AuthContext, { AuthContextType } from "./AuthContext";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -52,18 +54,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            name: name || null,
-            organization: organization || null,
-            marketing_consent: localStorage.getItem("marketing_consent") === "true"
-          },
-          emailRedirectTo: `${window.location.origin}/auth`
-        }
-      });
+      const { data, error } = await signUpWithEmail(email, password, name, organization);
 
       if (error) {
         setError(error.message);
@@ -86,34 +77,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           return;
         }
 
-        // Try to manually create the profile
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert({
-            id: data.user.id,
-            email: data.user.email!,
-            name: name || null,
-            organization: organization || null,
-            marketing_consent: localStorage.getItem("marketing_consent") === "true"
-          });
-
-        if (profileError) {
-          console.error("Error creating profile:", profileError);
-          toast({
-            title: "Profile creation failed",
-            description: "Your account was created but we couldn't set up your profile. This won't affect your ability to use the app.",
-            variant: "destructive"
-          });
-        }
-
         // If user has consented to marketing emails, trigger our marketing integrations
-        if (localStorage.getItem("marketing_consent") === "true") {
-          try {
-            // In the future, we would call an Edge Function to add them to HubSpot and Mailchimp
-            console.log("User consented to marketing emails, would add to CRM:", data.user.email);
-          } catch (error) {
-            console.error("Failed to add user to marketing lists:", error);
-          }
+        if (localStorage.getItem("marketing_consent") === "true" && data.user.id) {
+          await handleMarketingConsent(data.user.id, data.user.email || email, name);
         }
 
         toast({
@@ -139,19 +105,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+      const { data, error } = await signInWithEmail(email, password);
 
       if (error) {
         let errorMessage = error.message;
         
         // Check if user exists but hasn't confirmed their email
-        const { data: userData } = await supabase.auth.signUp({
-          email,
-          password
-        });
+        const { data: userData } = await signUpWithEmail(email, password);
 
         if (userData?.user?.identities?.length === 0) {
           errorMessage = "Please check your email and verify your account before signing in.";
@@ -166,17 +126,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return;
       }
 
-      if (data.session) {
+      if (data.session && data.user) {
         // If user has consented to marketing, update the profile
         if (localStorage.getItem("marketing_consent") === "true") {
-          const { error: updateError } = await supabase
-            .from('profiles')
-            .update({ marketing_consent: true })
-            .eq('id', data.user.id);
+          await updateUserProfile(data.user.id, {
+            marketing_consent: true
+          });
           
-          if (updateError) {
-            console.error("Error updating marketing consent:", updateError);
-          }
+          // Also trigger marketing integrations
+          await handleMarketingConsent(data.user.id, data.user.email || email);
         }
 
         toast({
@@ -201,7 +159,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signOut = async () => {
     setIsLoading(true);
     try {
-      await supabase.auth.signOut();
+      await authSignOut();
       toast({
         title: "Signed out",
         description: "You have been successfully signed out."
@@ -222,12 +180,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth`
-        }
-      });
+      const { error } = await authSendMagicLink(email);
 
       if (error) {
         setError(error.message);
@@ -261,9 +214,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth?reset=true`,
-      });
+      const { error } = await sendPasswordReset(email);
 
       if (error) {
         setError(error.message);

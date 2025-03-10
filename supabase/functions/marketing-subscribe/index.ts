@@ -62,9 +62,33 @@ serve(async (req) => {
     if (hubspotApiKey && email) {
       try {
         console.log(`Adding ${email} to HubSpot...`);
-        // This is a placeholder for actual HubSpot API integration
-        // In a real implementation, you would call the HubSpot API here
-        operations.push("hubspot");
+        // HubSpot API integration using v3 API
+        const hubspotUrl = "https://api.hubapi.com/contacts/v1/contact";
+        const hubspotData = {
+          properties: [
+            { property: "email", value: email },
+            { property: "firstname", value: name ? name.split(' ')[0] : '' },
+            { property: "lastname", value: name ? name.split(' ').slice(1).join(' ') : '' },
+            { property: "hearti_app_user", value: "true" },
+            { property: "lead_source", value: "HEARTI App" }
+          ]
+        };
+
+        const hubspotResponse = await fetch(`${hubspotUrl}/createOrUpdate/email/${email}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${hubspotApiKey}`
+          },
+          body: JSON.stringify(hubspotData)
+        });
+
+        if (hubspotResponse.ok) {
+          console.log("Successfully added to HubSpot");
+          operations.push("hubspot");
+        } else {
+          console.error("Error adding to HubSpot:", await hubspotResponse.text());
+        }
       } catch (error) {
         console.error("Error adding contact to HubSpot:", error);
       }
@@ -74,9 +98,36 @@ serve(async (req) => {
     if (mailchimpApiKey && mailchimpListId && email) {
       try {
         console.log(`Adding ${email} to Mailchimp list ${mailchimpListId}...`);
-        // This is a placeholder for actual Mailchimp API integration
-        // In a real implementation, you would call the Mailchimp API here
-        operations.push("mailchimp");
+        // Extract server prefix from API key (e.g., us6, us12, etc.)
+        const serverPrefix = mailchimpApiKey.split('-')[1];
+        
+        // Implement Mailchimp API v3
+        const mailchimpUrl = `https://${serverPrefix}.api.mailchimp.com/3.0/lists/${mailchimpListId}/members`;
+        const mailchimpData = {
+          email_address: email,
+          status: "subscribed",
+          merge_fields: {
+            FNAME: name ? name.split(' ')[0] : '',
+            LNAME: name ? name.split(' ').slice(1).join(' ') : ''
+          },
+          tags: ["HEARTI App"]
+        };
+
+        const mailchimpResponse = await fetch(mailchimpUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Basic ${btoa(`apikey:${mailchimpApiKey}`)}`
+          },
+          body: JSON.stringify(mailchimpData)
+        });
+
+        if (mailchimpResponse.ok) {
+          console.log("Successfully added to Mailchimp");
+          operations.push("mailchimp");
+        } else {
+          console.error("Error adding to Mailchimp:", await mailchimpResponse.text());
+        }
       } catch (error) {
         console.error("Error adding subscriber to Mailchimp:", error);
       }

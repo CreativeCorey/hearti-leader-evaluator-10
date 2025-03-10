@@ -22,8 +22,6 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     autoRefreshToken: true,
     detectSessionInUrl: true,
     flowType: 'pkce', // More secure flow for handling redirect URLs
-    // Use the dynamic base URL for redirects
-    redirectTo: `${getBaseUrl()}/auth`
   },
   realtime: {
     params: {
@@ -31,6 +29,11 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     }
   }
 });
+
+// Add a function to get auth redirect URL dynamically
+export const getAuthRedirectUrl = () => {
+  return `${getBaseUrl()}/auth/callback`;
+};
 
 // Create an admin client for serverless functions (not used in browser)
 export const createAdminClient = (serviceRoleKey: string) => {
