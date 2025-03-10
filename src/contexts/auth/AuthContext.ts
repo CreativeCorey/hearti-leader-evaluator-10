@@ -13,6 +13,8 @@ export type AuthContextType = {
   sendMagicLink: (email: string) => Promise<void>;
   sendPasswordResetEmail: (email: string) => Promise<void>;
   error: string | null;
+  anonymousMode: boolean;
+  toggleAnonymousMode: () => void;
 };
 
 // Create the Auth context with undefined as default value

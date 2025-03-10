@@ -1,4 +1,3 @@
-
 import { supabase, getAuthRedirectUrl } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
 
@@ -13,6 +12,22 @@ export const getOrCreateAnonymousId = (): string => {
   }
   
   return anonymousId;
+};
+
+// Create a mock anonymous user (for testing without auth)
+export const createMockAnonymousUser = () => {
+  const anonymousId = getOrCreateAnonymousId();
+  return {
+    id: anonymousId,
+    email: `anonymous-${anonymousId.slice(0, 8)}@hearti-app.local`,
+    user_metadata: {
+      name: "Anonymous User",
+      anonymous: true
+    },
+    app_metadata: {
+      provider: "anonymous"
+    }
+  };
 };
 
 // Helper function to handle marketing consent
@@ -111,4 +126,19 @@ export const updateUserProfile = async (userId: string, updates: Record<string, 
 // Helper for fetching the current session
 export const getCurrentSession = async () => {
   return await supabase.auth.getSession();
+};
+
+// Helper to bypass authentication for testing
+export const allowAnonymousAccess = (enabled = true) => {
+  if (enabled) {
+    localStorage.setItem("hearti-anonymous-access", "enabled");
+  } else {
+    localStorage.removeItem("hearti-anonymous-access");
+  }
+  return enabled;
+};
+
+// Check if anonymous access is enabled
+export const isAnonymousAccessEnabled = () => {
+  return localStorage.getItem("hearti-anonymous-access") === "enabled";
 };

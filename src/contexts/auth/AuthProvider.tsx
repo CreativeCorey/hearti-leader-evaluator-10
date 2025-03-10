@@ -1,11 +1,10 @@
-
 import { useState, useEffect } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { getOrCreateAnonymousId, handleMarketingConsent, signUpWithEmail, 
   signInWithEmail, signOut as authSignOut, sendMagicLink as authSendMagicLink,
-  sendPasswordReset, updateUserProfile } from "@/utils/auth-helpers";
+  sendPasswordReset, updateUserProfile, createMockAnonymousUser, isAnonymousAccessEnabled } from "@/utils/auth-helpers";
 import AuthContext, { AuthContextType } from "./AuthContext";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -14,24 +13,40 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [anonymousMode, setAnonymousMode] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     const getSession = async () => {
       setIsLoading(true);
       try {
-        const { data } = await supabase.auth.getSession();
-        setSession(data.session);
-        setUser(data.session?.user ?? null);
+        const anonymousEnabled = isAnonymousAccessEnabled();
+        setAnonymousMode(anonymousEnabled);
         
-        // Always get or create an anonymous ID
+        const { data } = await supabase.auth.getSession();
+        
+        if (data.session) {
+          setSession(data.session);
+          setUser(data.session.user);
+        } else if (anonymousEnabled) {
+          const mockUser = createMockAnonymousUser();
+          setUser(mockUser as unknown as User);
+          console.log("Using anonymous user:", mockUser);
+          toast({
+            title: "Anonymous Mode Active",
+            description: "Using anonymous access for testing purposes",
+          });
+        } else {
+          setUser(null);
+          setSession(null);
+        }
+        
         const anonId = getOrCreateAnonymousId();
         setAnonymousId(anonId);
       } catch (error) {
         console.error("Error getting session:", error);
         setError("Failed to get session");
         
-        // Still set an anonymous ID in case of error
         const anonId = getOrCreateAnonymousId();
         setAnonymousId(anonId);
       } finally {
@@ -42,13 +57,38 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     getSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+      if (!isAnonymousAccessEnabled()) {
+        setSession(session);
+        setUser(session?.user ?? null);
+      }
       setIsLoading(false);
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [toast]);
+
+  const toggleAnonymousMode = () => {
+    const newMode = !anonymousMode;
+    setAnonymousMode(newMode);
+    
+    if (newMode) {
+      const mockUser = createMockAnonymousUser();
+      setUser(mockUser as unknown as User);
+      localStorage.setItem("hearti-anonymous-access", "enabled");
+      toast({
+        title: "Anonymous Mode Enabled",
+        description: "You can now use the app without signing in",
+      });
+    } else {
+      setUser(null);
+      setSession(null);
+      localStorage.removeItem("hearti-anonymous-access");
+      toast({
+        title: "Anonymous Mode Disabled",
+        description: "Normal authentication is now required",
+      });
+    }
+  };
 
   const signUp = async (email: string, password: string, name?: string, organization?: string) => {
     setIsLoading(true);
@@ -66,7 +106,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return;
       }
 
-      // If successful registration
       if (data.user) {
         if (data.user.identities?.length === 0) {
           toast({
@@ -77,7 +116,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           return;
         }
 
-        // If user has consented to marketing emails, trigger our marketing integrations
         if (localStorage.getItem("marketing_consent") === "true" && data.user.id) {
           await handleMarketingConsent(data.user.id, data.user.email || email, name);
         }
@@ -110,7 +148,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (error) {
         let errorMessage = error.message;
         
-        // Check if user exists but hasn't confirmed their email
         const { data: userData } = await signUpWithEmail(email, password);
 
         if (userData?.user?.identities?.length === 0) {
@@ -127,13 +164,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       if (data.session && data.user) {
-        // If user has consented to marketing, update the profile
         if (localStorage.getItem("marketing_consent") === "true") {
           await updateUserProfile(data.user.id, {
             marketing_consent: true
           });
           
-          // Also trigger marketing integrations
           await handleMarketingConsent(data.user.id, data.user.email || email);
         }
 
@@ -244,7 +279,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  // Create the context value with all the auth functions and state
   const contextValue: AuthContextType = {
     user,
     anonymousId,
@@ -255,7 +289,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     signOut,
     sendMagicLink,
     sendPasswordResetEmail,
-    error
+    error,
+    anonymousMode,
+    toggleAnonymousMode
   };
 
   return (

@@ -1,20 +1,18 @@
-
 import { useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader2 } from "lucide-react";
-import { v4 as uuidv4 } from "uuid";
 import { useToast } from "@/hooks/use-toast";
 import { getOrCreateAnonymousId, getUserProfile } from "../utils/localStorage";
 
 const AuthGuard = () => {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, anonymousMode } = useAuth();
   const { toast } = useToast();
   
   // Set up anonymous user ID if not authenticated
   useEffect(() => {
     const initializeAnonymousUser = async () => {
-      if (!isLoading && !user) {
+      if (!isLoading && !user && !anonymousMode) {
         try {
           // Get or create anonymous ID and ensure user exists
           const anonymousId = getOrCreateAnonymousId();
@@ -35,7 +33,7 @@ const AuthGuard = () => {
     };
     
     initializeAnonymousUser();
-  }, [user, isLoading, toast]);
+  }, [user, isLoading, anonymousMode, toast]);
 
   if (isLoading) {
     return (
@@ -46,7 +44,13 @@ const AuthGuard = () => {
     );
   }
 
-  return <Outlet />;
+  // Allow access if user is logged in OR anonymous mode is enabled
+  if (user || anonymousMode) {
+    return <Outlet />;
+  }
+
+  // Otherwise redirect to auth page
+  return <Navigate to="/auth" replace />;
 };
 
 export default AuthGuard;
