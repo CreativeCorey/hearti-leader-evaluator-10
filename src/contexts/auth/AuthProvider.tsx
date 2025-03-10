@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { v4 as uuidv4 } from 'uuid';
@@ -80,7 +81,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [anonymousMode]);
 
   // Sign up function
-  const signUp = async (email: string, password: string, name?: string, organization?: string) => {
+  const signUp = async (email: string, password: string, name?: string, organization?: string): Promise<void> => {
     setIsLoading(true);
     setError(null);
     
@@ -101,7 +102,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
       }
       
-      return data;
+      // We're explicitly ignoring the return value to match the Promise<void> type
     } catch (err: any) {
       setError(err.message);
       toast({

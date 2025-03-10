@@ -1,5 +1,6 @@
 import { supabase, getAuthRedirectUrl } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
+import { User } from "@supabase/supabase-js";
 
 // Get or create an anonymous user ID from localStorage
 export const getOrCreateAnonymousId = (): string => {
@@ -15,8 +16,10 @@ export const getOrCreateAnonymousId = (): string => {
 };
 
 // Create a mock anonymous user (for testing without auth)
-export const createMockAnonymousUser = () => {
+export const createMockAnonymousUser = (): Partial<User> => {
   const anonymousId = getOrCreateAnonymousId();
+  const now = new Date().toISOString();
+  
   return {
     id: anonymousId,
     email: `anonymous-${anonymousId.slice(0, 8)}@hearti-app.local`,
@@ -26,7 +29,9 @@ export const createMockAnonymousUser = () => {
     },
     app_metadata: {
       provider: "anonymous"
-    }
+    },
+    aud: "authenticated",
+    created_at: now
   };
 };
 
