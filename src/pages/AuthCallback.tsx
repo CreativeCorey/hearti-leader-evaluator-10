@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -9,6 +9,7 @@ const AuthCallback = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   useEffect(() => {
     const handleAuthRedirect = async () => {
@@ -22,9 +23,11 @@ const AuthCallback = () => {
         
         // Log more details for debugging
         console.log('Auth callback URL:', window.location.href);
+        console.log('Query params:', Object.fromEntries(queryParams.entries()));
+        console.log('Hash params:', Object.fromEntries(hashParams.entries()));
         console.log('Is recovery flow:', isRecovery);
         
-        // Process the hash fragment to extract access_token, etc.
+        // Process the session
         const { data, error } = await supabase.auth.getSession();
         
         if (error) {
@@ -41,9 +44,18 @@ const AuthCallback = () => {
             title: "Authentication Successful",
             description: "You have been signed in successfully.",
           });
+          
+          // Force navigate to root to avoid any callback URL issues
+          navigate('/', { replace: true });
         } else {
           console.log('No session found, but no error either');
-          // This could be a normal redirect without a session
+          // This is unexpected - we should have either a session or an error
+          setError('Authentication failed: No session established');
+          toast({
+            title: "Authentication Failed",
+            description: "No session was established. Please try again.",
+            variant: "destructive",
+          });
         }
       } catch (err) {
         console.error('Unexpected error in auth callback:', err);
@@ -59,7 +71,7 @@ const AuthCallback = () => {
     };
 
     handleAuthRedirect();
-  }, [toast]);
+  }, [toast, navigate]);
 
   if (isLoading) {
     return (
@@ -92,7 +104,7 @@ const AuthCallback = () => {
     );
   }
 
-  // Redirect to the home page on success
+  // Redirect to the home page on success (this will likely not be reached due to the navigate() call above)
   return <Navigate to="/" replace />;
 };
 

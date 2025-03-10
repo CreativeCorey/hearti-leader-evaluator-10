@@ -45,6 +45,8 @@ export const handleMarketingConsent = async (userId: string, email: string, name
 // Helper for sign-up
 export const signUpWithEmail = async (email: string, password: string, name?: string, organization?: string) => {
   const redirectUrl = getAuthRedirectUrl();
+  console.log("Signup redirect URL:", redirectUrl);
+  
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -77,10 +79,13 @@ export const signOut = async () => {
 // Helper for magic link
 export const sendMagicLink = async (email: string) => {
   const redirectUrl = getAuthRedirectUrl();
+  console.log("Magic link redirect URL:", redirectUrl);
+  
   return await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: redirectUrl
+      emailRedirectTo: redirectUrl,
+      shouldCreateUser: true
     }
   });
 };
@@ -88,6 +93,8 @@ export const sendMagicLink = async (email: string) => {
 // Helper for password reset
 export const sendPasswordReset = async (email: string) => {
   const redirectUrl = getAuthRedirectUrl();
+  console.log("Password reset redirect URL:", redirectUrl);
+  
   return await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${redirectUrl}?reset=true`,
   });

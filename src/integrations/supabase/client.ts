@@ -9,8 +9,9 @@ const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 const getBaseUrl = () => {
   // Check if window is defined (browser environment) 
   if (typeof window !== 'undefined') {
-    // For production deployments, use the current window location
-    return window.location.origin;
+    // Use the current window location as the base URL
+    const url = new URL(window.location.href);
+    return `${url.protocol}//${url.host}`;
   }
   // Fallback to a default URL for server-side rendering or edge functions
   return 'https://hearti-app.com';

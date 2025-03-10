@@ -13,7 +13,7 @@ const Header: React.FC = () => {
       <div className="flex items-center">
         <Link to="/" className="flex items-center">
           <img 
-            src="/lovable-uploads/f52625fd-8dcf-4e6f-8753-456776fcdaf9.png" 
+            src="/lovable-uploads/6737e1c8-0875-4724-ad2d-2f5ebc24702b.png" 
             alt="HEARTI™ Leader Quotient Logo" 
             className="h-10 md:h-12"
           />
