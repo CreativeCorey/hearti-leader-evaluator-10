@@ -220,7 +220,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const sendMagicLink = async (email: string) => {
+  const sendMagicLink = async (email: string): Promise<void> => {
     setIsLoading(true);
     setError(null);
     try {
@@ -246,7 +246,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         description: "Please check your email for the login link",
       });
       
-      return data;
+      // Don't return data, just return void
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);
@@ -261,7 +261,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const sendPasswordResetEmail = async (email: string) => {
+  const sendPasswordResetEmail = async (email: string): Promise<void> => {
     setIsLoading(true);
     setError(null);
     try {
@@ -284,6 +284,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         description: "Please check your email for the password reset link",
       });
       
+      // Don't need to return anything
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message);

@@ -4,13 +4,13 @@ import IndexContent from './components/IndexContent';
 import LoadingState from '../../components/index/LoadingState';
 import { useAuth } from '../../contexts/AuthContext';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { HEARTIAssessment } from '../../types';
-import { getAssessments } from '../../utils/localStorage/assessments';
-import { getSettings } from '../../utils/localStorage/settings';
+import { HEARTIAssessment, UserProfile } from '../../types';
+import { getLocalAssessments, getCurrentUserAssessments } from '../../utils/localStorage/assessments';
+import { getUseSupabase } from '../../utils/localStorage/settings';
 import { useSupabaseSync } from './hooks/useSupabaseSync';
 import { useGoogleIntegration } from './hooks/useGoogleIntegration';
 import { useAssessments } from './hooks/useAssessments';
-import { useMobile } from '../../hooks/use-mobile';
+import { useIsMobile } from '../../hooks/use-mobile';
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
@@ -18,7 +18,7 @@ const Index = () => {
   const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
 
   // All hooks
   const { 
@@ -29,10 +29,9 @@ const Index = () => {
     handleConfirmSync,
     handleCancelSync,
     handleSyncDialogClose
-  } = useSupabaseSync();
+  } = useSupabaseSync(loadAssessments); // Pass loadAssessments as argument
 
   const {
-    googleConnection,
     testingSheets,
     handleGoogleSignIn,
     testGoogleSheets,
@@ -44,15 +43,16 @@ const Index = () => {
   const {
     userAssessments,
     latestAssessment,
-    handleAssessmentComplete
+    handleAssessmentComplete,
+    loadAssessments
   } = useAssessments();
 
   useEffect(() => {
     const init = async () => {
       try {
         // Load user data
-        const settings = getSettings();
-        const assessments = getAssessments();
+        const useSupabase = getUseSupabase();
+        const assessments = await getLocalAssessments();
         
         // Check URL for tab parameter
         const searchParams = new URLSearchParams(location.search);
@@ -75,12 +75,19 @@ const Index = () => {
   }, [location]);
 
   // Get user profile information
-  const profile = user ? {
+  const profile: UserProfile | null = user ? {
     id: user.id,
     name: user.user_metadata?.name || "User",
     email: user.email || "",
-    avatar: user.user_metadata?.avatar_url || null
+    avatar: user.user_metadata?.avatar_url || null,
+    createdAt: new Date().toISOString() // Add missing required field
   } : null;
+
+  // Create a googleConnection object based on Google integration state
+  const googleConnection = {
+    connected: testingSheets !== undefined ? false : false, // Default to false if not available
+    email: undefined
+  };
 
   // If still loading, show loading state
   if (loading) return <LoadingState />;
@@ -105,7 +112,7 @@ const Index = () => {
       handleCancelSync={handleCancelSync}
       handleSyncDialogClose={handleSyncDialogClose}
       handleGoogleSignIn={handleGoogleSignIn}
-      handleConfigureWorkloadIdentity={handleConfigureWorkloadIdentity}
+      handleConfigureWorkloadIdentity={() => handleConfigureWorkloadIdentity(googleConnection)} // Fix the argument
       testGoogleSheets={testGoogleSheets}
       sendLatestToSheets={sendLatestToSheets}
       configuringWorkloadIdentity={configuringWorkloadIdentity}
