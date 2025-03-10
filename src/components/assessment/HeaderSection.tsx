@@ -22,21 +22,21 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
   isMobile
 }) => {
   return (
-    <div className="flex flex-col md:flex-row md:items-start justify-between gap-3 sm:gap-6 mb-4 sm:mb-8 w-full">
+    <div className="flex flex-col md:flex-row md:items-start justify-between gap-2 sm:gap-6 mb-3 sm:mb-8 w-full">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">HEARTI™ Leadership Assessment</h1>
-        <p className="text-sm sm:text-base text-muted-foreground mt-1">
+        <h1 className="text-xl sm:text-3xl font-bold tracking-tight">HEARTI™ Leadership Assessment</h1>
+        <p className="text-sm text-muted-foreground mt-1">
           Measure your growth in Humility, Empathy, Accountability, Resiliency, Transparency, and Inclusivity
         </p>
       </div>
       
-      <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 md:mt-0">
+      <div className="flex flex-wrap items-center gap-2 mt-2 md:mt-0">
         <Toggle
           pressed={isSupabaseEnabled}
           onPressedChange={handleToggleSupabase}
-          className="data-[state=on]:bg-blue-500 px-2 sm:px-4 text-xs sm:text-sm"
+          className="data-[state=on]:bg-blue-500 px-2 sm:px-4 text-xs sm:text-sm h-7 sm:h-auto"
         >
-          {isMobile ? (isSupabaseEnabled ? 'Cloud' : 'Local') : (isSupabaseEnabled ? 'Cloud Storage (Google Sheets)' : 'Local Storage')}
+          {isMobile ? (isSupabaseEnabled ? 'Cloud' : 'Local') : (isSupabaseEnabled ? 'Cloud Storage' : 'Local Storage')}
         </Toggle>
         
         {profile && (

@@ -1,6 +1,5 @@
 
 import { useEffect } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ResultsTabContent from '@/components/results/ResultsTabContent';
 import AssessmentTabs from '@/components/assessment/AssessmentTabs';
 import { useIndexPage } from '@/hooks/useIndexPage';
@@ -18,28 +17,14 @@ const Index = () => {
     setActiveTab,
     userAssessments,
     latestAssessment,
-    currentAssessment,
-    setCurrentAssessment,
-    setUserAssessments,
     assessmentStatus,
     googleConnection,
     isSupabaseEnabled,
     testingSheets,
-    syncDialogOpen,
-    syncStatus,
-    syncSettings,
-    setSyncSettings,
-    triggerSync,
     handleToggleSupabase,
     handleAssessmentComplete,
-    handleConfirmSync,
-    handleCancelSync,
-    handleSyncDialogClose,
-    handleGoogleSignIn,
-    handleConfigureWorkloadIdentity,
     testGoogleSheets,
     sendLatestToSheets,
-    configuringWorkloadIdentity,
     isMobile
   } = useIndexPage();
 
@@ -60,8 +45,8 @@ const Index = () => {
 
   // Ready to render content now
   return (
-    <div className="w-full mx-auto px-2 sm:px-4 py-4 sm:py-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="w-full mx-auto py-2 sm:py-6">
+      <div className="w-full mx-auto">
         <HeaderSection 
           profile={profile} 
           isSupabaseEnabled={isSupabaseEnabled}
@@ -77,7 +62,7 @@ const Index = () => {
           latestAssessment={latestAssessment}
           onComplete={handleAssessmentComplete}
           testingSheets={testingSheets}
-          sendLatestToSheets={() => latestAssessment && sendLatestToSheets(latestAssessment)}
+          sendLatestToSheets={sendLatestToSheets}
         />
         
         {/* Google Sheets integration tools */}

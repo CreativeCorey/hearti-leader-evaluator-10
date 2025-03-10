@@ -14,6 +14,7 @@ export const useIndexPage = () => {
   const [activeTab, setActiveTab] = useState<'take' | 'results'>('take');
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [initialized, setInitialized] = useState(false);
   
   // Use our custom hooks with memoized callbacks
   const { 
@@ -52,6 +53,8 @@ export const useIndexPage = () => {
 
   // Memoize initialization function
   const initializeApp = useCallback(async () => {
+    if (initialized) return; // Prevent multiple initializations
+    
     try {
       // Enable Supabase by default for Google Sheets integration
       const supabaseEnabled = true;
@@ -67,6 +70,8 @@ export const useIndexPage = () => {
       
       // Load assessment data
       await loadAssessments();
+      
+      setInitialized(true);
     } catch (error) {
       console.error('Error initializing:', error);
       toast({
@@ -77,7 +82,7 @@ export const useIndexPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [toast, loadAssessments]);
+  }, [toast, loadAssessments, initialized]);
 
   // Initialize app once on mount
   useEffect(() => {
@@ -107,7 +112,7 @@ export const useIndexPage = () => {
     toast({
       title: "Assessment Complete!",
       description: isSupabaseEnabled
-        ? "Your assessment has been saved and sent to Google Sheets. It may take a few moments to appear in the sheet."
+        ? "Your assessment has been saved and sent to Google Sheets."
         : "Your assessment has been saved locally. To send to Google Sheets, enable Cloud Storage.",
       duration: 5000,
     });

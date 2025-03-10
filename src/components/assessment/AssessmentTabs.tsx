@@ -1,4 +1,5 @@
-import React, { memo } from 'react';
+
+import React, { memo, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HEARTIAssessment } from '@/types';
 import AssessmentForm from '@/components/AssessmentForm';
@@ -30,8 +31,19 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
 }) => {
   const isMobile = useIsMobile();
 
+  // Handle tab change when orientation changes
+  useEffect(() => {
+    const handleResize = () => {
+      // Force re-render on orientation change
+      window.dispatchEvent(new Event('resize'));
+    };
+    
+    window.addEventListener('orientationchange', handleResize);
+    return () => window.removeEventListener('orientationchange', handleResize);
+  }, []);
+
   return (
-    <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'take' | 'results')}>
+    <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'take' | 'results')} className="w-full">
       <div className="w-full overflow-hidden mb-4">
         <TabsList className="w-full grid grid-cols-2 gap-1">
           <TabsTrigger value="take" className="px-4 py-2">Take Assessment</TabsTrigger>
@@ -39,25 +51,25 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
         </TabsList>
       </div>
       
-      <TabsContent value="take">
+      <TabsContent value="take" className="mt-0">
         <AssessmentForm onComplete={onComplete} />
       </TabsContent>
       
-      <TabsContent value="results">
-        <div className="space-y-8">
+      <TabsContent value="results" className="mt-0">
+        <div className="space-y-4 sm:space-y-8">
           {latestAssessment && (
             <div>
               <h2 className="text-xl font-bold mb-4 text-orange">Latest Assessment Results</h2>
               <ResultsDisplay assessment={latestAssessment} />
               
-              <div className="mt-6 flex gap-3">
+              <div className="mt-4 sm:mt-6 flex gap-2 sm:gap-3">
                 <Button 
                   onClick={() => sendLatestToSheets()}
                   disabled={testingSheets}
                   variant="outline"
-                  className="flex items-center gap-2 border-green text-green hover:bg-green/10"
+                  className="flex items-center gap-1.5 sm:gap-2 border-green text-green hover:bg-green/10 text-xs sm:text-sm py-1.5 sm:py-2 h-auto"
                 >
-                  {testingSheets && <Loader2 className="h-4 w-4 animate-spin" />}
+                  {testingSheets && <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />}
                   Send to Google Sheets
                 </Button>
               </div>
@@ -66,11 +78,11 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
           
           {userAssessments.length > 1 && (
             <div>
-              <Separator className="my-8" />
+              <Separator className="my-4 sm:my-8" />
               <h2 className="text-xl font-bold mb-4 text-blue">Assessment History</h2>
               <HistoricalResults 
                 assessments={userAssessments} 
-                onSelect={(assessment) => latestAssessment = assessment} 
+                onSelect={(assessment) => {}} 
               />
             </div>
           )}
