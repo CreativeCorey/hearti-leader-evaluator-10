@@ -48,7 +48,11 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
             </Badge>
             
             <Link to="/auth">
-              <Button variant="ghost" size={isMobile ? "xs" : "sm"} className="text-xs sm:text-sm h-7 sm:h-9">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className={`text-xs sm:text-sm ${isMobile ? 'h-7 py-1 px-2' : 'h-9'}`}
+              >
                 {profile.email ? 'Account' : 'Sign In'}
               </Button>
             </Link>
