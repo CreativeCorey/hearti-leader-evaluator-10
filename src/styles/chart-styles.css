@@ -9,6 +9,36 @@
   .radar-chart-container:hover {
     filter: drop-shadow(0px 0px 8px rgba(0, 0, 0, 0.1));
   }
+  
+  /* Base radar chart styles */
+  .radar-base {
+    font-family: sans-serif;
+    --chart-primary: #6366F1;
+    --chart-secondary: #EC4899;
+    --chart-compare: #8b5cf6;
+  }
+  
+  .radar-base .recharts-polar-grid-angle line,
+  .radar-base .recharts-polar-grid-concentric circle {
+    stroke: rgba(0, 0, 0, 0.1);
+  }
+
+  .radar-base .recharts-polar-angle-axis-tick text {
+    font-size: 12px;
+    fill: #333;
+  }
+
+  .radar-base .recharts-legend-item-text {
+    font-size: 14px;
+    color: #333;
+  }
+  
+  /* Safari-specific optimizations */
+  @supports (-webkit-touch-callout: none) {
+    .radar-base {
+      will-change: transform;
+    }
+  }
 
   /* Polar chart styles - inspired by Washington hiking visualization */
   .polar-chart-container {

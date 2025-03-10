@@ -28,7 +28,12 @@
     padding: 0.5rem;
     border-radius: 0.25rem;
   }
-
+  
+  /* Mobile-optimized chart components */
+  .radar-chart-container {
+    transition: height 0.3s ease;
+  }
+  
   @media (max-width: 640px) {
     .results-tabs {
       grid-template-columns: repeat(3, 1fr);
@@ -37,6 +42,19 @@
     .results-tab {
       font-size: 0.75rem;
       padding: 0.25rem 0.5rem;
+    }
+    
+    .radar-chart-container {
+      height: 280px;
+    }
+    
+    .radar-chart-legend {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .radar-chart-legend-item {
+      margin: 0.25rem 0;
     }
   }
 }

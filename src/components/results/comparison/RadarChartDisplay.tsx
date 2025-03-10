@@ -11,7 +11,7 @@ interface RadarChartDisplayProps {
   getComparisonLabel: () => string;
   getComparisonColor: () => string;
   userColor: string;
-  spiderConfig: {
+  spiderConfig?: {
     gridType: "polygon";
     axisLineType: "polygon";
     strokeWidth: number;
@@ -29,8 +29,7 @@ const RadarChartDisplay: React.FC<RadarChartDisplayProps> = ({
   compareMode,
   getComparisonLabel,
   getComparisonColor,
-  userColor,
-  spiderConfig
+  userColor
 }) => {
   if (chartView === 'combined') {
     return (
@@ -40,7 +39,6 @@ const RadarChartDisplay: React.FC<RadarChartDisplayProps> = ({
         userColor={userColor}
         getComparisonColor={getComparisonColor}
         getComparisonLabel={getComparisonLabel}
-        spiderConfig={spiderConfig}
       />
     );
   }
@@ -53,7 +51,6 @@ const RadarChartDisplay: React.FC<RadarChartDisplayProps> = ({
       userColor={userColor}
       getComparisonLabel={getComparisonLabel}
       getComparisonColor={getComparisonColor}
-      spiderConfig={spiderConfig}
     />
   );
 };

@@ -9,14 +9,7 @@ interface SeparateChartsProps {
   userColor: string;
   getComparisonLabel: () => string;
   getComparisonColor: () => string;
-  spiderConfig: {
-    gridType: "polygon";
-    axisLineType: "polygon";
-    strokeWidth: number;
-    fillOpacity: number;
-    dotSize: number;
-    activeDotSize: number;
-  };
+  spiderConfig?: any;  // Kept for backward compatibility
 }
 
 const SeparateCharts: React.FC<SeparateChartsProps> = ({
@@ -25,8 +18,7 @@ const SeparateCharts: React.FC<SeparateChartsProps> = ({
   compareMode,
   userColor,
   getComparisonLabel,
-  getComparisonColor,
-  spiderConfig
+  getComparisonColor
 }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -35,8 +27,7 @@ const SeparateCharts: React.FC<SeparateChartsProps> = ({
         <div className="relative h-[calc(100%-30px)]">
           <ChartWithIcons 
             data={chartData} 
-            chartColor={userColor} 
-            spiderConfig={spiderConfig}
+            chartColor={userColor}
           />
         </div>
       </div>
@@ -49,7 +40,6 @@ const SeparateCharts: React.FC<SeparateChartsProps> = ({
               data={getComparisonData()} 
               chartColor={getComparisonColor()} 
               showIcons={true}
-              spiderConfig={spiderConfig}
             />
           </div>
         </div>

@@ -1,10 +1,9 @@
+
 import React from 'react';
 import { HEARTIAssessment } from '@/types';
-import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer } from 'recharts';
 import { formatDataForRadarChart } from '@/utils/calculations';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Gauge, HeartHandshake, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
-import { dimensionColors } from '../development/DimensionIcons';
+import RadarSpectraChart from './RadarSpectraChart';
 
 interface SpectraChartsProps {
   assessment: HEARTIAssessment;
@@ -31,114 +30,24 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
     average: "#8b5cf6",
   };
 
-  // Configuration for the spider chart appearance
-  const spiderConfig = {
-    gridType: "polygon" as "polygon",
-    axisLineType: "polygon" as "polygon",
-    outerRadius: isMobile ? 65 : 75,
-    fillOpacity: 0.5,
-    strokeWidth: 2,
-    dotSize: 5,
-    activeDotSize: 8,
-  };
-  
-  const iconSize = isMobile ? 18 : 18;
-
-  const ChartWithIcons = ({ data, title, chartColor }) => (
-    <div className="relative">
-      <p className="text-center font-medium text-lg text-indigo-600 mb-2">{title}</p>
-      <div className={`h-[${isMobile ? '260px' : '320px'}] pdf-chart-container relative`}>
-        {/* Icon overlays */}
-        <div className="absolute inset-0 pointer-events-none">
-          {/* Top (Humility) - Adjusted position */}
-          <div className="absolute top-[10%] left-[50%] transform -translate-x-1/2">
-            <Gauge size={iconSize} style={{ color: dimensionColors.humility }} />
-          </div>
-          
-          {/* Top Right (Empathy) */}
-          <div className="absolute top-[25%] right-[15%] transform">
-            <HeartHandshake size={iconSize} style={{ color: dimensionColors.empathy }} />
-          </div>
-          
-          {/* Bottom Right (Accountability) */}
-          <div className="absolute bottom-[25%] right-[15%] transform">
-            <ChartNoAxesCombined size={iconSize} style={{ color: dimensionColors.accountability }} />
-          </div>
-          
-          {/* Bottom (Resiliency) - Adjusted position */}
-          <div className="absolute bottom-[10%] left-[50%] transform -translate-x-1/2">
-            <TreePalm size={iconSize} style={{ color: dimensionColors.resiliency }} />
-          </div>
-          
-          {/* Bottom Left (Transparency) */}
-          <div className="absolute bottom-[25%] left-[15%] transform">
-            <Blend size={iconSize} style={{ color: dimensionColors.transparency }} />
-          </div>
-          
-          {/* Top Left (Inclusivity) */}
-          <div className="absolute top-[25%] left-[15%] transform">
-            <Users size={iconSize} style={{ color: dimensionColors.inclusivity }} />
-          </div>
-        </div>
-        
-        <ResponsiveContainer width="100%" height="100%">
-          <RadarChart 
-            cx="50%" 
-            cy="50%" 
-            outerRadius={`${spiderConfig.outerRadius}%`} 
-            data={data}
-          >
-            <PolarGrid gridType={spiderConfig.gridType} />
-            <PolarAngleAxis 
-              dataKey="name" 
-              tick={false} 
-              axisLineType={spiderConfig.axisLineType}
-              tickLine={false}
-            />
-            <PolarRadiusAxis 
-              angle={30} 
-              domain={[0, 5]} 
-              tick={{ 
-                fill: '#C8C8C9', 
-                fontSize: isMobile ? 7 : 9,
-                opacity: 0.7
-              }} 
-            />
-            <Radar
-              name="Your HEARTI Spectra"
-              dataKey="value"
-              stroke={chartColor}
-              fill={chartColor}
-              fillOpacity={spiderConfig.fillOpacity}
-              strokeWidth={spiderConfig.strokeWidth}
-              dot={{ r: spiderConfig.dotSize }}
-              activeDot={{ r: spiderConfig.activeDotSize }}
-              isAnimationActive={false}
-            />
-          </RadarChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  );
-
   return (
     <div className="my-8 pdf-section">
       <h3 className="text-2xl font-medium mb-4 pdf-section-title">Your HEARTI:Leader Spectra</h3>
       <div className={`flex flex-col ${isMobile ? '' : 'lg:flex-row'} gap-4 pdf-charts-grid`}>
         <div className={`flex-1 bg-slate-50 p-4 rounded-lg pdf-chart-column ${isMobile ? 'mb-6' : ''}`}>
-          <ChartWithIcons 
-            data={chartData} 
-            title="Your HEARTI Spectra" 
-            chartColor={userColor} 
+          <RadarSpectraChart
+            data={chartData}
+            title="Your HEARTI Spectra"
+            chartColor={userColor}
           />
         </div>
         
         {!isMobile && (
           <div className="flex-1 bg-slate-50 p-4 rounded-lg pdf-chart-column">
-            <ChartWithIcons 
-              data={benchmarkData} 
-              title="Global HEARTI:Leader Benchmark" 
-              chartColor={comparisonColors.average} 
+            <RadarSpectraChart
+              data={benchmarkData}
+              title="Global HEARTI:Leader Benchmark"
+              chartColor={comparisonColors.average}
             />
           </div>
         )}
@@ -146,10 +55,10 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
       
       {isMobile && (
         <div className="flex-1 bg-slate-50 p-4 rounded-lg pdf-chart-column mt-4">
-          <ChartWithIcons 
-            data={benchmarkData} 
-            title="Global HEARTI:Leader Benchmark" 
-            chartColor={comparisonColors.average} 
+          <RadarSpectraChart
+            data={benchmarkData}
+            title="Global HEARTI:Leader Benchmark"
+            chartColor={comparisonColors.average}
           />
         </div>
       )}

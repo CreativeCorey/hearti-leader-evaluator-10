@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { Gauge, HeartHandshake, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
-import { dimensionColors } from '../../development/DimensionIcons';
+import { Radar, Tooltip, Legend } from 'recharts';
+import { useRadarChartConfig } from '@/hooks/use-radar-chart-config';
+import BaseRadarChart from './BaseRadarChart';
+import DimensionIcons from './DimensionIcons';
 
 interface CombinedChartProps {
   combinedChartData: any[];
@@ -11,14 +11,7 @@ interface CombinedChartProps {
   userColor: string;
   getComparisonColor: () => string;
   getComparisonLabel: () => string;
-  spiderConfig: {
-    gridType: "polygon";
-    axisLineType: "polygon";
-    strokeWidth: number;
-    fillOpacity: number;
-    dotSize: number;
-    activeDotSize: number;
-  };
+  spiderConfig?: any;  // Kept for backward compatibility
 }
 
 const CombinedChart: React.FC<CombinedChartProps> = ({
@@ -26,99 +19,49 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
   compareMode,
   userColor,
   getComparisonColor,
-  getComparisonLabel,
-  spiderConfig
+  getComparisonLabel
 }) => {
-  const isMobile = useIsMobile();
-
+  const { config, iconSize } = useRadarChartConfig();
+  
   return (
     <div className="bg-slate-50 p-6 rounded-lg h-[450px] w-full">
       <div className="relative h-full">
-        {/* Icons in combined view - positioned more carefully */}
-        <div className="absolute inset-0 pointer-events-none">
-          {/* Top (Humility) - Adjusted position - moved down slightly */}
-          <div className="absolute top-[15%] left-[50%] transform -translate-x-1/2">
-            <Gauge size={isMobile ? 24 : 18} style={{ color: dimensionColors.humility }} />
-          </div>
-          
-          {/* Top Right (Empathy) */}
-          <div className="absolute top-[20%] right-[9%] transform">
-            <HeartHandshake size={isMobile ? 24 : 18} style={{ color: dimensionColors.empathy }} />
-          </div>
-          
-          {/* Bottom Right (Accountability) */}
-          <div className="absolute bottom-[20%] right-[9%] transform">
-            <ChartNoAxesCombined size={isMobile ? 24 : 18} style={{ color: dimensionColors.accountability }} />
-          </div>
-          
-          {/* Bottom (Resiliency) - Adjusted position - moved up slightly */}
-          <div className="absolute bottom-[15%] left-[50%] transform -translate-x-1/2">
-            <TreePalm size={isMobile ? 24 : 18} style={{ color: dimensionColors.resiliency }} />
-          </div>
-          
-          {/* Bottom Left (Transparency) */}
-          <div className="absolute bottom-[20%] left-[9%] transform">
-            <Blend size={isMobile ? 24 : 18} style={{ color: dimensionColors.transparency }} />
-          </div>
-          
-          {/* Top Left (Inclusivity) */}
-          <div className="absolute top-[20%] left-[9%] transform">
-            <Users size={isMobile ? 24 : 18} style={{ color: dimensionColors.inclusivity }} />
-          </div>
-        </div>
+        <DimensionIcons iconSize={iconSize} />
         
-        <ResponsiveContainer width="100%" height="100%">
-          <RadarChart cx="50%" cy="50%" outerRadius="65%" data={combinedChartData}>
-            <PolarGrid gridType={spiderConfig.gridType} />
-            <PolarAngleAxis 
-              dataKey="name" 
-              tick={isMobile ? false : { 
-                fill: '#6b7280', 
-                fontSize: 12
-              }} 
-              axisLineType={spiderConfig.axisLineType}
-              tickLine={false}
-            />
-            <PolarRadiusAxis 
-              angle={30} 
-              domain={[0, 5]} 
-              tick={{ 
-                fill: isMobile ? '#C8C8C9' : '#6b7280',
-                fontSize: isMobile ? 8 : 10 
-              }} 
-            />
+        <BaseRadarChart data={combinedChartData} config={config}>
+          <Radar
+            name="Your HEARTI Spectra"
+            dataKey="value"
+            stroke={userColor}
+            fill={userColor}
+            fillOpacity={config.fillOpacity}
+            strokeWidth={config.strokeWidth}
+            dot={{ r: config.dotSize }}
+            activeDot={{ r: config.activeDotSize }}
+            isAnimationActive={true}
+            animationBegin={100}
+            animationDuration={1000}
+          />
+          
+          {compareMode !== 'none' && (
             <Radar
-              name="Your HEARTI Spectra"
-              dataKey="value"
-              stroke={userColor}
-              fill={userColor}
-              fillOpacity={spiderConfig.fillOpacity}
-              strokeWidth={spiderConfig.strokeWidth}
-              dot={{ r: spiderConfig.dotSize }}
-              activeDot={{ r: spiderConfig.activeDotSize }}
+              name={getComparisonLabel()}
+              dataKey="comparisonValue"
+              stroke={getComparisonColor()}
+              fill={getComparisonColor()}
+              fillOpacity={config.fillOpacity}
+              strokeWidth={config.strokeWidth}
+              dot={{ r: config.dotSize }}
+              activeDot={{ r: config.activeDotSize }}
               isAnimationActive={true}
-              animationBegin={100}
+              animationBegin={200}
               animationDuration={1000}
             />
-            {compareMode !== 'none' && (
-              <Radar
-                name={getComparisonLabel()}
-                dataKey="comparisonValue"
-                stroke={getComparisonColor()}
-                fill={getComparisonColor()}
-                fillOpacity={spiderConfig.fillOpacity}
-                strokeWidth={spiderConfig.strokeWidth}
-                dot={{ r: spiderConfig.dotSize }}
-                activeDot={{ r: spiderConfig.activeDotSize }}
-                isAnimationActive={true}
-                animationBegin={200}
-                animationDuration={1000}
-              />
-            )}
-            <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
-            <Legend />
-          </RadarChart>
-        </ResponsiveContainer>
+          )}
+          
+          <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
+          <Legend />
+        </BaseRadarChart>
       </div>
     </div>
   );
