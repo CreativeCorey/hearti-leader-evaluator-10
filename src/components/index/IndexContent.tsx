@@ -24,7 +24,7 @@ interface IndexContentProps {
   handleGoogleSignIn: () => Promise<void>;
   handleConfigureWorkloadIdentity: () => Promise<void>;
   testGoogleSheets: () => Promise<void>;
-  sendLatestToSheets: () => void;
+  sendLatestToSheets: (assessment?: HEARTIAssessment) => Promise<void>;
   configuringWorkloadIdentity: boolean;
   isMobile: boolean;
 }
@@ -65,7 +65,7 @@ const IndexContent: React.FC<IndexContentProps> = ({
         latestAssessment={latestAssessment}
         onComplete={handleAssessmentComplete}
         testingSheets={testingSheets}
-        sendLatestToSheets={sendLatestToSheets}
+        sendLatestToSheets={() => latestAssessment && sendLatestToSheets(latestAssessment)}
       />
       
       {/* Debug and development tools are hidden */}

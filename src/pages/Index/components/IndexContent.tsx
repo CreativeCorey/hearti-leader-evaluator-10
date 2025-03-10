@@ -28,7 +28,7 @@ interface IndexContentProps {
   userAssessments: HEARTIAssessment[];
   latestAssessment: HEARTIAssessment | null;
   onComplete: (assessment: HEARTIAssessment) => void;
-  sendLatestToSheets: () => void;
+  sendLatestToSheets: (assessment?: HEARTIAssessment) => Promise<void>;
   
   // Supabase sync
   isSupabaseEnabled: boolean;
@@ -80,7 +80,7 @@ const IndexContent: React.FC<IndexContentProps> = ({
         latestAssessment={latestAssessment}
         onComplete={onComplete}
         testingSheets={testingSheets}
-        sendLatestToSheets={sendLatestToSheets}
+        sendLatestToSheets={() => latestAssessment && sendLatestToSheets(latestAssessment)}
       />
       
       <GoogleSheetsSetup

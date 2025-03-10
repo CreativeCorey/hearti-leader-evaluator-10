@@ -5,12 +5,23 @@ import { Loader2 } from 'lucide-react';
 
 interface GoogleIntegrationToolsProps {
   testGoogleSheets: () => void;
-  testingSheets: boolean;
+  testingSheets?: boolean;
+  hasLatestAssessment?: boolean;
+  isCloudEnabled?: boolean;
+  onToggleCloud?: (enabled: boolean) => void;
+  onSyncToSheets?: () => Promise<void>;
+  onSignIn?: () => Promise<void>;
+  onConfigureWorkloadIdentity?: () => Promise<void>;
+  onTestConnection?: () => Promise<void>;
+  connectionStatus?: {
+    status: 'connected' | 'disconnected';
+    email?: string;
+  };
 }
 
 const GoogleIntegrationTools: React.FC<GoogleIntegrationToolsProps> = ({
   testGoogleSheets,
-  testingSheets
+  testingSheets = false
 }) => {
   // Component is now hidden by default, and only shown for development
   return null;

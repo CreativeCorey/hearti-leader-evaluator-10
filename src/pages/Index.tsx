@@ -62,18 +62,7 @@ const Index = () => {
       {/* Google Sheets integration tools */}
       <GoogleIntegrationTools 
         testGoogleSheets={testGoogleSheets}
-        hasLatestAssessment={!!latestAssessment}
-        isCloudEnabled={isSupabaseEnabled}
-        onToggleCloud={handleToggleSupabase}
-        onSyncToSheets={async () => latestAssessment && await sendLatestToSheets(latestAssessment)}
-        onSignIn={handleGoogleSignIn}
-        onConfigureWorkloadIdentity={handleConfigureWorkloadIdentity}
-        onTestConnection={testGoogleSheets}
-        connectionStatus={
-          googleConnection.connected 
-            ? { status: 'connected', email: googleConnection.email } 
-            : { status: 'disconnected' }
-        }
+        testingSheets={testingSheets}
       />
     </div>
   );
