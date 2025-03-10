@@ -8,7 +8,7 @@ function hasProperties(obj: any, properties: string[]): boolean {
   return properties.every(prop => prop in obj);
 }
 
-export function isValidAnswersArray(answers: Json): boolean {
+export function isValidAnswersArray(answers: Json): answers is Json[] {
   if (!Array.isArray(answers)) {
     return false;
   }
@@ -43,7 +43,7 @@ export function isValidDemographics(demographics: Json): boolean {
   }
   
   // Check for the primary required demographics fields
-  const requiredFields = ['age', 'gender', 'role', 'location', 'yearsInRole'];
+  const requiredFields = ['ageRange', 'genderIdentity', 'jobRole', 'location', 'managementLevel', 'companySize'];
   
   return hasProperties(demographics, requiredFields);
 }

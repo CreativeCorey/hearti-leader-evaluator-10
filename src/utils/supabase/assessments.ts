@@ -1,4 +1,3 @@
-
 import { supabase } from '../../integrations/supabase/client';
 import { HEARTIAssessment, HEARTIDimension, HEARTIAnswer, Demographics } from '../../types';
 import { Json } from '../../integrations/supabase/types';
@@ -22,13 +21,13 @@ function parseAssessment(assessment: any): HEARTIAssessment {
     },
     overallScore: 0,
     demographics: {
-      age: '',
-      gender: '',
-      role: '',
-      location: '',
-      yearsInRole: '',
-      managementLevel: null,
-      companySize: null
+      managementLevel: assessment.demographics?.managementLevel || undefined,
+      companySize: assessment.demographics?.companySize || undefined,
+      jobRole: assessment.demographics?.jobRole || undefined,
+      location: assessment.demographics?.location || undefined,
+      ageRange: assessment.demographics?.ageRange || undefined,
+      genderIdentity: assessment.demographics?.genderIdentity || undefined,
+      raceEthnicity: assessment.demographics?.raceEthnicity || undefined
     }
   };
 

@@ -49,40 +49,19 @@ const Index = () => {
         isMobile={isMobile}
       />
       
-      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'take' | 'results')}>
-        <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
-          <TabsTrigger value="take">Take Assessment</TabsTrigger>
-          <TabsTrigger value="results" disabled={!latestAssessment}>Your Results</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="take" className="mt-0">
-          <AssessmentTabs 
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            userAssessments={userAssessments}
-            latestAssessment={latestAssessment}
-            onComplete={handleAssessmentComplete}
-            testingSheets={testingSheets}
-            sendToSheets={() => latestAssessment && sendLatestToSheets(latestAssessment)}
-          />
-        </TabsContent>
-        
-        <TabsContent value="results" className="mt-0">
-          {latestAssessment && (
-            <ResultsTabContent 
-              assessment={latestAssessment}
-              reportRef={null}
-              onExportPDF={() => {}}
-              exportingPdf={false}
-              topDevelopmentArea="humility"
-            />
-          )}
-        </TabsContent>
-      </Tabs>
+      <AssessmentTabs 
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        userAssessments={userAssessments}
+        latestAssessment={latestAssessment}
+        onComplete={handleAssessmentComplete}
+        testingSheets={testingSheets}
+        sendLatestToSheets={() => latestAssessment && sendLatestToSheets(latestAssessment)}
+      />
       
       {/* Google Sheets integration tools */}
       <GoogleIntegrationTools 
-        testGoogleSheets={testingSheets}
+        testGoogleSheets={testGoogleSheets}
         hasLatestAssessment={!!latestAssessment}
         isCloudEnabled={isSupabaseEnabled}
         onToggleCloud={handleToggleSupabase}

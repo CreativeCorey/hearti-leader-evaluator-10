@@ -27,12 +27,27 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
   const userColor = "#6366f1";
   
   const iconSize = isMobile ? 20 : 18;
+  
+  const getDimensionIcon = (dimension: HEARTIDimension) => {
+    switch(dimension) {
+      case 'humility': return <Gauge size={24} style={{ color: dimensionColors.humility }} />;
+      case 'empathy': return <HeartHandshake size={24} style={{ color: dimensionColors.empathy }} />;
+      case 'accountability': return <ChartNoAxesCombined size={24} style={{ color: dimensionColors.accountability }} />;
+      case 'resiliency': return <TreePalm size={24} style={{ color: dimensionColors.resiliency }} />;
+      case 'transparency': return <Blend size={24} style={{ color: dimensionColors.transparency }} />;
+      case 'inclusivity': return <Users size={24} style={{ color: dimensionColors.inclusivity }} />;
+      default: return null;
+    }
+  };
 
   return (
     <Card className="w-full shadow-lg overflow-hidden bg-white">
       <CardContent className="p-4">
-        <div className="text-center mb-4">
-          <h3 className="text-xl font-bold text-gray-800">HEARTI:Leader Spectra</h3>
+        {/* Logo and Header */}
+        <div className="text-center mb-2">
+          <div className="flex justify-center items-center mb-1">
+            <h3 className="text-xl font-bold text-gray-800">HEARTI:Leader Spectra</h3>
+          </div>
           <p className="text-sm text-gray-600">Overall Score: {assessment.overallScore}/5</p>
         </div>
         
@@ -102,15 +117,23 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
         </div>
         
         {showDetails && (
-          <div className="mt-4 bg-green-50 p-3 rounded-md border border-green-100">
-            <p className="font-medium flex items-center text-green-800">
-              <Crown size={16} className="mr-2" />
-              Top Strength: {topStrength.charAt(0).toUpperCase() + topStrength.slice(1)} ({topStrengthScore}/5)
-            </p>
-            <p className="text-green-700 mt-1 text-sm">
-              {getFeedback(topStrengthScore, topStrength)}
-            </p>
-          </div>
+          <>
+            <div className="mt-4 bg-green-50 p-3 rounded-md border border-green-100">
+              <p className="font-medium flex items-center text-green-800">
+                <Crown size={16} className="mr-2" />
+                Top Strength: {topStrength.charAt(0).toUpperCase() + topStrength.slice(1)} ({topStrengthScore}/5)
+                {getDimensionIcon(topStrength)}
+              </p>
+              <p className="text-green-700 mt-1 text-sm">
+                {getFeedback(topStrengthScore, topStrength)}
+              </p>
+            </div>
+            
+            {/* App URL */}
+            <div className="mt-3 text-center border-t pt-2">
+              <p className="text-indigo-600 font-medium">takehearti.com</p>
+            </div>
+          </>
         )}
       </CardContent>
     </Card>

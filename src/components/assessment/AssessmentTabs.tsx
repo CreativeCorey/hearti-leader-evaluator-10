@@ -17,7 +17,7 @@ interface AssessmentTabsProps {
   latestAssessment: HEARTIAssessment | null;
   onComplete: (assessment: HEARTIAssessment) => void;
   testingSheets: boolean;
-  sendLatestToSheets: () => void;
+  sendLatestToSheets: () => Promise<void>;
 }
 
 const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
@@ -53,7 +53,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
               
               <div className="mt-6 flex gap-3">
                 <Button 
-                  onClick={sendLatestToSheets}
+                  onClick={() => sendLatestToSheets()}
                   disabled={testingSheets}
                   variant="outline"
                   className="flex items-center gap-2 border-green text-green hover:bg-green/10"
