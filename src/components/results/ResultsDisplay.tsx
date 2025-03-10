@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HEARTIAssessment } from '@/types';
@@ -41,19 +42,19 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
     >
       <TabsList className="w-full grid grid-cols-2 md:grid-cols-6 gap-1 p-1 h-auto flex-wrap">
         <TabsTrigger value="overview" className="text-xs md:text-sm whitespace-nowrap">
-          Overview
+          Summary
         </TabsTrigger>
         <TabsTrigger value="dimensions" className="text-xs md:text-sm whitespace-nowrap">
           Dimensions
         </TabsTrigger>
         <TabsTrigger value="comparison" className="text-xs md:text-sm whitespace-nowrap">
-          Comparisons
+          Benchmarks
         </TabsTrigger>
         <TabsTrigger value="report" className="text-xs md:text-sm whitespace-nowrap">
-          Full Report
+          Report
         </TabsTrigger>
         <TabsTrigger value="development" className="text-xs md:text-sm whitespace-nowrap">
-          Development
+          Develop Skills
         </TabsTrigger>
         <TabsTrigger value="habits" className="text-xs md:text-sm whitespace-nowrap">
           Build Habits

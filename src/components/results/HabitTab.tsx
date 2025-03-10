@@ -17,7 +17,7 @@ const HabitTab: React.FC<HabitTabProps> = ({ focusDimension }) => {
       <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6 rounded-md">
         <h3 className="font-medium flex items-center gap-2 text-blue-800">
           <DimensionIcon className="text-blue-600" size={20} />
-          Habit Building for HEARTI™ Leadership
+          Habit Tracker for HEARTI™ Leadership
         </h3>
         <p className="text-blue-700 mt-1">
           Track your progress as you build consistent habits for your chosen behaviors. Complete each behavior 30 times to turn it into a lasting habit.
