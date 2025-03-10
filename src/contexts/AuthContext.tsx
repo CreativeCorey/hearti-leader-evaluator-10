@@ -25,6 +25,8 @@ type AuthContextType = {
   signUp: (email: string, password: string, name?: string, organization?: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  sendMagicLink: (email: string) => Promise<void>;
+  sendPasswordResetEmail: (email: string) => Promise<void>;
   error: string | null;
 };
 
@@ -218,8 +220,97 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const sendMagicLink = async (email: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const { data, error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth`
+        }
+      });
+
+      if (error) {
+        setError(error.message);
+        toast({
+          title: "Failed to send magic link",
+          description: error.message,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      toast({
+        title: "Magic link sent",
+        description: "Please check your email for the login link",
+      });
+      
+      return data;
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+        toast({
+          title: "Failed to send magic link",
+          description: error.message,
+          variant: "destructive"
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const sendPasswordResetEmail = async (email: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth?reset=true`,
+      });
+
+      if (error) {
+        setError(error.message);
+        toast({
+          title: "Failed to send reset email",
+          description: error.message,
+          variant: "destructive"
+        });
+        return;
+      }
+
+      toast({
+        title: "Password reset email sent",
+        description: "Please check your email for the password reset link",
+      });
+      
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+        toast({
+          title: "Failed to send reset email",
+          description: error.message,
+          variant: "destructive"
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, anonymousId, session, isLoading, signUp, signIn, signOut, error }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      anonymousId, 
+      session, 
+      isLoading, 
+      signUp, 
+      signIn, 
+      signOut, 
+      sendMagicLink,
+      sendPasswordResetEmail,
+      error 
+    }}>
       {children}
     </AuthContext.Provider>
   );
