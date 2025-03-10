@@ -26,7 +26,7 @@ const ReportTab: React.FC<ReportTabProps> = ({
   const totalPages = Object.keys(assessment.dimensionScores).length + 2; // Header, Charts, 6 Dimensions, Footer
   
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 w-full">
       <ReportActionButtons 
         assessment={assessment}
         onExportPDF={onExportPDF}
@@ -43,8 +43,8 @@ const ReportTab: React.FC<ReportTabProps> = ({
         />
       )}
       
-      <Card className="p-6">
-        <div className="pdf-container" ref={reportRef}>
+      <Card className="p-3 sm:p-6 w-full">
+        <div className="pdf-container w-full" ref={reportRef}>
           {/* For desktop, render everything as before */}
           {!isMobile ? (
             <DesktopReportView assessment={assessment} />

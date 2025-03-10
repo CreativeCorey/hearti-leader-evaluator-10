@@ -60,30 +60,32 @@ const Index = () => {
 
   // Ready to render content now
   return (
-    <div className="container mx-auto px-4 py-6 max-w-7xl">
-      <HeaderSection 
-        profile={profile} 
-        isSupabaseEnabled={isSupabaseEnabled}
-        handleToggleSupabase={handleToggleSupabase}
-        googleConnection={googleConnection}
-        isMobile={isMobile}
-      />
-      
-      <AssessmentTabs 
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        userAssessments={userAssessments}
-        latestAssessment={latestAssessment}
-        onComplete={handleAssessmentComplete}
-        testingSheets={testingSheets}
-        sendLatestToSheets={() => latestAssessment && sendLatestToSheets(latestAssessment)}
-      />
-      
-      {/* Google Sheets integration tools */}
-      <GoogleIntegrationTools 
-        testGoogleSheets={testGoogleSheets}
-        testingSheets={testingSheets}
-      />
+    <div className="w-full mx-auto px-2 sm:px-4 py-4 sm:py-6">
+      <div className="max-w-7xl mx-auto">
+        <HeaderSection 
+          profile={profile} 
+          isSupabaseEnabled={isSupabaseEnabled}
+          handleToggleSupabase={handleToggleSupabase}
+          googleConnection={googleConnection}
+          isMobile={isMobile}
+        />
+        
+        <AssessmentTabs 
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          userAssessments={userAssessments}
+          latestAssessment={latestAssessment}
+          onComplete={handleAssessmentComplete}
+          testingSheets={testingSheets}
+          sendLatestToSheets={() => latestAssessment && sendLatestToSheets(latestAssessment)}
+        />
+        
+        {/* Google Sheets integration tools */}
+        <GoogleIntegrationTools 
+          testGoogleSheets={testGoogleSheets}
+          testingSheets={testingSheets}
+        />
+      </div>
     </div>
   );
 };

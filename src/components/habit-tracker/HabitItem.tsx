@@ -56,7 +56,7 @@ const HabitItem: React.FC<HabitItemProps> = ({
   };
   
   return (
-    <div className={`bg-white rounded-xl ${isMobile ? 'p-3' : 'p-5'} shadow-sm border border-gray-100 hover:shadow-md transition-shadow ${isHabitMastered ? 'border-2 border-green-300' : ''}`}>
+    <div className={`bg-white rounded-xl ${isMobile ? 'p-3' : 'p-5'} shadow-sm border border-gray-100 hover:shadow-md transition-shadow ${isHabitMastered ? 'border-2 border-green-300' : ''} w-full`}>
       <HabitItemHeader
         dimension={habit.dimension}
         frequency={habit.frequency}
@@ -75,7 +75,7 @@ const HabitItem: React.FC<HabitItemProps> = ({
           <HabitProgressCircle 
             percentage={completionPercentage}
             dimension={habit.dimension} 
-            size={isMobile ? 80 : 100}
+            size={isMobile ? 70 : 100}
             onClick={handleToggle}
             completionCount={completionCount}
             targetCount={TARGET_COMPLETIONS}

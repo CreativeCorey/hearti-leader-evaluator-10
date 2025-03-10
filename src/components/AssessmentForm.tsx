@@ -64,7 +64,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
   const currentScore = getCurrentAnswer();
 
   return (
-    <Card className="w-full max-w-3xl mx-auto shadow-sm">
+    <Card className="w-full mx-auto shadow-sm">
       <CardHeader className="relative pb-0">
         <div className="h-1 w-full bg-orange/20 absolute top-0 left-0 right-0">
           <div 
@@ -72,7 +72,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
             style={{ width: `${progressPercentage}%` }}
           />
         </div>
-        <CardTitle className="text-2xl">
+        <CardTitle className="text-xl sm:text-2xl">
           HEARTI Leadership Assessment
         </CardTitle>
         <CardDescription>
@@ -96,26 +96,28 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
           />
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between border-t p-6">
+      <CardFooter className="flex justify-between border-t p-4 sm:p-6">
         <Button 
           variant="outline" 
           onClick={handlePrevious}
           disabled={currentQuestionIndex === 0}
-          className="flex items-center gap-2"
+          className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
+          size={isMobile ? "sm" : "default"}
         >
-          <ArrowLeft className="h-4 w-4" /> Previous
+          <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" /> Previous
         </Button>
         
-        <div className="text-sm text-muted-foreground font-medium">
+        <div className="text-xs sm:text-sm text-muted-foreground font-medium">
           {currentQuestionIndex + 1} of {totalQuestions}
         </div>
         
         <Button 
           onClick={handleNext}
-          className="flex items-center gap-2"
+          className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
+          size={isMobile ? "sm" : "default"}
         >
           {currentQuestionIndex === totalQuestions - 1 ? 'Complete' : 'Next'} 
-          {currentQuestionIndex !== totalQuestions - 1 && <ArrowRight className="h-4 w-4" />}
+          {currentQuestionIndex !== totalQuestions - 1 && <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />}
         </Button>
       </CardFooter>
       
