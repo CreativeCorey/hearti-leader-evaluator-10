@@ -1,96 +1,133 @@
 
 import { useState } from 'react';
 import { useToast } from "./use-toast";
-import { saveAssessmentAndSyncToSheet } from '../utils/supabase';
-import { getUseSupabase, setUseSupabase } from '../utils/localStorage';
-import { HEARTIAssessment } from '@/types';
+import { HEARTIAssessment } from '../types';
+import { getUseSupabase, setUseSupabase, syncLocalDataToSupabase } from '../utils/localStorage';
+import { saveAssessmentAndSyncToSheet } from '../utils/supabase/assessments';
 
-export const useSupabaseSync = (reloadAssessments: () => Promise<void>) => {
+type SyncStatus = 'idle' | 'syncing' | 'success' | 'error';
+
+interface UseSupabaseSyncProps {
+  loadAssessments: () => Promise<void>;
+}
+
+export const useSupabaseSync = (loadAssessments: () => Promise<void>) => {
   const { toast } = useToast();
-  const [syncDialogOpen, setSyncDialogOpen] = useState(false);
-  const [isSupabaseEnabled, setIsSupabaseEnabled] = useState(getUseSupabase());
-  const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'success' | 'error'>('idle');
-
-  // Function to send latest assessment to Google Sheets
-  const sendLatestToSheets = async (latestAssessment: HEARTIAssessment) => {
-    if (!latestAssessment) {
-      toast({
-        title: "No assessments found",
-        description: "Complete an assessment first to send to Google Sheets.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    // If Supabase is not enabled, show confirmation dialog
-    if (!isSupabaseEnabled) {
+  const [isSupabaseEnabled, setIsSupabaseEnabled] = useState<boolean>(getUseSupabase());
+  const [syncDialogOpen, setSyncDialogOpen] = useState<boolean>(false);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
+  
+  const handleToggleSupabase = (enabled: boolean) => {
+    // If enabling Supabase and it wasn't enabled before, show sync dialog
+    if (enabled && !isSupabaseEnabled) {
       setSyncDialogOpen(true);
       return;
     }
-
-    // If already enabled, sync directly
-    try {
-      setSyncStatus('syncing');
-      await saveAssessmentAndSyncToSheet(latestAssessment);
-      setSyncStatus('success');
+    
+    // If disabling, just update the setting
+    if (!enabled) {
+      setUseSupabase(false);
+      setIsSupabaseEnabled(false);
       
       toast({
-        title: "Sync Successful",
-        description: "Your assessment has been sent to Google Sheets.",
+        title: "Cloud Storage Disabled",
+        description: "Your data will now be stored locally only.",
       });
+    }
+  };
+  
+  const handleConfirmSync = async () => {
+    setSyncStatus('syncing');
+    
+    try {
+      // Sync local data to Supabase
+      const success = await syncLocalDataToSupabase();
+      
+      if (success) {
+        // Update setting
+        setUseSupabase(true);
+        setIsSupabaseEnabled(true);
+        setSyncStatus('success');
+        
+        // Reload assessments to get the latest from Supabase
+        await loadAssessments();
+        
+        toast({
+          title: "Cloud Storage Enabled",
+          description: "Your data has been successfully synced to the cloud.",
+        });
+      } else {
+        setSyncStatus('error');
+        toast({
+          title: "Sync Error",
+          description: "There was a problem syncing your data. Please try again.",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
-      console.error("Error syncing to sheets:", error);
+      console.error("Error during sync:", error);
       setSyncStatus('error');
       
       toast({
-        title: "Sync Failed",
-        description: "There was a problem sending your assessment to Google Sheets.",
+        title: "Sync Error",
+        description: "There was a problem syncing your data. Please try again.",
         variant: "destructive",
       });
     }
   };
-
-  // Function to toggle Supabase storage
-  const handleToggleSupabase = (enabled: boolean) => {
-    if (enabled === isSupabaseEnabled) return;
-    
-    if (enabled) {
-      // If enabling, show confirmation dialog
-      setSyncDialogOpen(true);
-    } else {
-      // If disabling, update right away
-      setUseSupabase(false);
-      setIsSupabaseEnabled(false);
+  
+  const handleCancelSync = () => {
+    setSyncDialogOpen(false);
+    setSyncStatus('idle');
+  };
+  
+  const handleSyncDialogClose = () => {
+    setSyncDialogOpen(false);
+    setSyncStatus('idle');
+  };
+  
+  const sendLatestToSheets = async (latestAssessment: HEARTIAssessment): Promise<void> => {
+    if (!latestAssessment) {
       toast({
-        title: "Cloud Storage Disabled",
-        description: "Your assessments will now be stored locally only.",
+        title: "No Assessment",
+        description: "Please complete an assessment first.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!isSupabaseEnabled) {
+      toast({
+        title: "Cloud Storage Required",
+        description: "Please enable cloud storage first to sync with Google Sheets.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      toast({
+        title: "Syncing...",
+        description: "Sending assessment to Google Sheets.",
+      });
+      
+      await saveAssessmentAndSyncToSheet(latestAssessment);
+      
+      toast({
+        title: "Sync Complete",
+        description: "Assessment has been sent to Google Sheets.",
+      });
+    } catch (error) {
+      console.error("Error syncing to sheets:", error);
+      
+      toast({
+        title: "Sync Error",
+        description: "There was a problem syncing to Google Sheets. Please try again.",
+        variant: "destructive",
       });
     }
   };
-
-  // Function to confirm sync when dialog is accepted
-  const handleConfirmSync = async () => {
-    setUseSupabase(true);
-    setIsSupabaseEnabled(true);
-    setSyncDialogOpen(false);
-    
-    // Reload assessments to sync data
-    await reloadAssessments();
-    
-    toast({
-      title: "Cloud Storage Enabled",
-      description: "Your assessments will now be stored and synced across devices.",
-    });
-  };
-
-  const handleCancelSync = () => {
-    setSyncDialogOpen(false);
-  };
-
-  const handleSyncDialogClose = () => {
-    setSyncDialogOpen(false);
-  };
-
+  
   return {
     isSupabaseEnabled,
     syncDialogOpen,

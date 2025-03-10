@@ -27,8 +27,8 @@ function parseAssessment(assessment: any): HEARTIAssessment {
       role: '',
       location: '',
       yearsInRole: '',
-      managementLevel: undefined,
-      companySize: undefined
+      managementLevel: null,
+      companySize: null
     }
   };
 

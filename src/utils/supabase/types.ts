@@ -8,7 +8,7 @@ function hasProperties(obj: any, properties: string[]): boolean {
   return properties.every(prop => prop in obj);
 }
 
-export function isValidAnswersArray(answers: Json): answers is Json[] {
+export function isValidAnswersArray(answers: Json): boolean {
   if (!Array.isArray(answers)) {
     return false;
   }
@@ -22,7 +22,7 @@ export function isValidAnswersArray(answers: Json): answers is Json[] {
   });
 }
 
-export function isValidDimensionScores(scores: Json): scores is Record<HEARTIDimension, number> {
+export function isValidDimensionScores(scores: Json): boolean {
   if (typeof scores !== 'object' || scores === null) {
     return false;
   }
@@ -37,13 +37,13 @@ export function isValidDimensionScores(scores: Json): scores is Record<HEARTIDim
   });
 }
 
-export function isValidDemographics(demographics: Json): demographics is Json {
+export function isValidDemographics(demographics: Json): boolean {
   if (typeof demographics !== 'object' || demographics === null) {
     return false;
   }
   
   // Check for the primary required demographics fields
-  const requiredFields = ['age', 'gender', 'role', 'location', 'yearsInRole', 'managementLevel'];
+  const requiredFields = ['age', 'gender', 'role', 'location', 'yearsInRole'];
   
   return hasProperties(demographics, requiredFields);
 }

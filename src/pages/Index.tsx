@@ -63,7 +63,7 @@ const Index = () => {
             latestAssessment={latestAssessment}
             onComplete={handleAssessmentComplete}
             testingSheets={testingSheets}
-            sendLatestToSheets={sendLatestToSheets}
+            sendToSheets={() => latestAssessment && sendLatestToSheets(latestAssessment)}
           />
         </TabsContent>
         
@@ -82,11 +82,11 @@ const Index = () => {
       
       {/* Google Sheets integration tools */}
       <GoogleIntegrationTools 
-        testingGoogleSheets={testingSheets}
+        testGoogleSheets={testingSheets}
         hasLatestAssessment={!!latestAssessment}
         isCloudEnabled={isSupabaseEnabled}
         onToggleCloud={handleToggleSupabase}
-        onSyncToSheets={() => latestAssessment && sendLatestToSheets(latestAssessment)}
+        onSyncToSheets={async () => latestAssessment && await sendLatestToSheets(latestAssessment)}
         onSignIn={handleGoogleSignIn}
         onConfigureWorkloadIdentity={handleConfigureWorkloadIdentity}
         onTestConnection={testGoogleSheets}
