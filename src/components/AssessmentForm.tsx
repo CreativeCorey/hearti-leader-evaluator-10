@@ -4,7 +4,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { HEARTIAssessment } from '@/types';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import DemographicForm from './DemographicForm';
 import QuestionDisplay from './assessment/QuestionDisplay';
 import DebugTools from './assessment/DebugTools';
@@ -34,8 +34,22 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     handleSkipDemographics
   } = useAssessmentForm(onComplete);
 
-  if (loading || !currentQuestion) {
-    return <div className="flex justify-center p-6">Loading assessment questions...</div>;
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center p-6 space-y-4">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p>Loading assessment questions...</p>
+      </div>
+    );
+  }
+
+  if (!currentQuestion) {
+    return (
+      <div className="flex flex-col items-center justify-center p-6 space-y-4">
+        <p className="text-red-500">Error: Could not load questions.</p>
+        <Button onClick={() => window.location.reload()}>Reload Page</Button>
+      </div>
+    );
   }
 
   if (assessmentComplete) {

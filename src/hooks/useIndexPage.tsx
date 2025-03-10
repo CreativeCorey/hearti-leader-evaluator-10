@@ -53,6 +53,9 @@ export const useIndexPage = () => {
   useEffect(() => {
     const init = async () => {
       try {
+        // Set loading to true while initializing
+        setLoading(true);
+        
         // Enable Supabase by default for Google Sheets integration
         const supabaseEnabled = true;
         setUseSupabase(supabaseEnabled);
@@ -65,8 +68,19 @@ export const useIndexPage = () => {
         const userProfile = await getUserProfile();
         setProfile(userProfile);
         
-        // Get assessment data
-        await loadAssessments();
+        // Get assessment data with a timeout to prevent hanging
+        const timeout = setTimeout(() => {
+          console.log("Loading assessments took too long, continuing anyway");
+          setLoading(false);
+        }, 5000); // 5 second timeout
+        
+        try {
+          await loadAssessments();
+          clearTimeout(timeout);
+        } catch (error) {
+          console.error("Error loading assessments:", error);
+          // Continue anyway, we'll try to load them again later
+        }
       } catch (error) {
         console.error('Error initializing:', error);
         toast({
@@ -75,6 +89,7 @@ export const useIndexPage = () => {
           variant: "destructive",
         });
       } finally {
+        // Ensure loading is set to false even if there was an error
         setLoading(false);
       }
     };
