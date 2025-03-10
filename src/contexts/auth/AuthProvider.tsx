@@ -58,7 +58,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         options: {
           data: {
             name: name || null,
-            organization: organization || null
+            organization: organization || null,
+            marketing_consent: localStorage.getItem("marketing_consent") === "true"
           },
           emailRedirectTo: `${window.location.origin}/auth`
         }
@@ -92,7 +93,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             id: data.user.id,
             email: data.user.email!,
             name: name || null,
-            organization: organization || null
+            organization: organization || null,
+            marketing_consent: localStorage.getItem("marketing_consent") === "true"
           });
 
         if (profileError) {
@@ -102,6 +104,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             description: "Your account was created but we couldn't set up your profile. This won't affect your ability to use the app.",
             variant: "destructive"
           });
+        }
+
+        // If user has consented to marketing emails, trigger our marketing integrations
+        if (localStorage.getItem("marketing_consent") === "true") {
+          try {
+            // In the future, we would call an Edge Function to add them to HubSpot and Mailchimp
+            console.log("User consented to marketing emails, would add to CRM:", data.user.email);
+          } catch (error) {
+            console.error("Failed to add user to marketing lists:", error);
+          }
         }
 
         toast({
@@ -155,6 +167,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       if (data.session) {
+        // If user has consented to marketing, update the profile
+        if (localStorage.getItem("marketing_consent") === "true") {
+          const { error: updateError } = await supabase
+            .from('profiles')
+            .update({ marketing_consent: true })
+            .eq('id', data.user.id);
+          
+          if (updateError) {
+            console.error("Error updating marketing consent:", updateError);
+          }
+        }
+
         toast({
           title: "Sign in successful",
           description: "You have been successfully signed in."

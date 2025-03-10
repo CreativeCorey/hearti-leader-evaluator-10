@@ -1,14 +1,17 @@
 
 import React, { useEffect, useState } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const AuthCallback: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(true);
   const [debugInfo, setDebugInfo] = useState<any>(null);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     const handleAuthCallback = async () => {
@@ -41,6 +44,19 @@ const AuthCallback: React.FC = () => {
           return;
         }
         
+        // Extract access token from URL hash for direct token handling
+        let accessToken = null;
+        let refreshToken = null;
+        
+        if (location.hash) {
+          const hashParams = new URLSearchParams(location.hash.substring(1));
+          accessToken = hashParams.get('access_token');
+          refreshToken = hashParams.get('refresh_token');
+          
+          debug.has_access_token = !!accessToken;
+          debug.has_refresh_token = !!refreshToken;
+        }
+        
         // If we have a code, let Supabase handle the exchange
         if (code) {
           console.log('Found authorization code in URL, exchanging for tokens');
@@ -64,11 +80,24 @@ const AuthCallback: React.FC = () => {
               debug.user_id = data.session.user.id;
               debug.provider = data.session.user.app_metadata.provider;
               
-              console.log('Successfully authenticated with Google', {
+              console.log('Successfully authenticated user', {
                 user: data.session.user.id,
                 email: data.session.user.email,
                 provider: data.session.user.app_metadata.provider
               });
+              
+              toast({
+                title: 'Authentication successful',
+                description: 'You have been successfully signed in.',
+              });
+              
+              // Make sure we're redirecting to the app's origin
+              const appOrigin = window.location.origin;
+              const redirectPath = '/';
+              
+              // Use React Router to navigate to the home page
+              navigate(redirectPath);
+              return;
             }
           } catch (exchangeError) {
             console.error('Exception during code exchange:', exchangeError);
@@ -77,36 +106,39 @@ const AuthCallback: React.FC = () => {
             return;
           }
         } 
-        // Check for token in hash (SPA redirect)
-        else if (location.hash) {
-          const hashParams = new URLSearchParams(location.hash.substring(1));
-          const accessToken = hashParams.get('access_token');
-          
+        // Try to use access token directly if present in hash 
+        else if (accessToken && refreshToken) {
           debug.attempting = 'hash_token';
-          debug.has_access_token = !!accessToken;
+          console.log('Found access token in URL hash, setting session');
           
-          if (accessToken) {
-            console.log('Found access token in URL hash, setting session');
-            try {
-              const { error } = await supabase.auth.setSession({
-                access_token: accessToken,
-                refresh_token: hashParams.get('refresh_token') || '',
-              });
-              
-              debug.session_result = error ? 'error' : 'success';
-              debug.session_error = error?.message;
-              
-              if (error) {
-                console.error('Error setting session:', error);
-                setError(`Authentication failed: ${error.message}`);
-                return;
-              }
-            } catch (sessionError) {
-              console.error('Exception during session setting:', sessionError);
-              debug.session_exception = String(sessionError);
-              setError(`Error setting session: ${sessionError instanceof Error ? sessionError.message : String(sessionError)}`);
+          try {
+            const { error } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken,
+            });
+            
+            debug.session_result = error ? 'error' : 'success';
+            debug.session_error = error?.message;
+            
+            if (error) {
+              console.error('Error setting session from hash:', error);
+              setError(`Authentication failed: ${error.message}`);
               return;
             }
+            
+            toast({
+              title: 'Authentication successful',
+              description: 'You have been successfully signed in.',
+            });
+            
+            // Navigate to the home page if successful
+            navigate('/');
+            return;
+          } catch (sessionError) {
+            console.error('Exception during session setting:', sessionError);
+            debug.session_exception = String(sessionError);
+            setError(`Error setting session: ${sessionError instanceof Error ? sessionError.message : String(sessionError)}`);
+            return;
           }
         } 
         // If no code or token was found, but we're at the callback URL
@@ -132,6 +164,10 @@ const AuthCallback: React.FC = () => {
               setError('Authentication failed: No session established');
               return;
             }
+            
+            // If we have a session, redirect to home
+            navigate('/');
+            return;
           } catch (sessionError) {
             console.error('Exception during session retrieval:', sessionError);
             debug.get_session_exception = String(sessionError);
@@ -150,7 +186,7 @@ const AuthCallback: React.FC = () => {
     };
 
     handleAuthCallback();
-  }, [location]);
+  }, [location, navigate, toast]);
 
   if (processing) {
     return (
@@ -184,7 +220,7 @@ const AuthCallback: React.FC = () => {
             </a>
           </div>
           <div className="mt-8 border-t pt-6 text-sm text-gray-500">
-            <p>If the problem persists, please check your Google OAuth configuration.</p>
+            <p>If the problem persists, please try signing in with email and password instead.</p>
             {debugInfo && (
               <details className="mt-4 text-left">
                 <summary className="cursor-pointer font-medium">Debug Information</summary>
@@ -199,7 +235,7 @@ const AuthCallback: React.FC = () => {
     );
   }
 
-  // If we reach here, authentication was successful
+  // If we reach here, authentication was successful but not redirected
   return <Navigate to="/" replace />;
 };
 

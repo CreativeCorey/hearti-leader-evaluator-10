@@ -1,123 +1,119 @@
 
-import { useEffect, useState } from 'react';
-import IndexContent from './components/IndexContent';
-import LoadingState from '../../components/index/LoadingState';
-import { useAuth } from '../../contexts/AuthContext';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { HEARTIAssessment, UserProfile } from '../../types';
-import { getLocalAssessments, getCurrentUserAssessments } from '../../utils/localStorage/assessments';
-import { getUseSupabase } from '../../utils/localStorage/settings';
-import { useSupabaseSync } from './hooks/useSupabaseSync';
-import { useGoogleIntegration } from './hooks/useGoogleIntegration';
-import { useAssessments } from './hooks/useAssessments';
-import { useIsMobile } from '../../hooks/use-mobile';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Layout from "@/components/Layout";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { HEARTIAssessment, UserProfile } from "@/types";
+import IndexContent from "./components/IndexContent";
+import { useAssessments } from "./hooks/useAssessments";
+import { useGoogleIntegration } from "./hooks/useGoogleIntegration";
+import { useSupabaseSync } from "./hooks/useSupabaseSync";
+import LoadingState from "./components/LoadingState";
 
 const Index = () => {
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'results' | 'take'>('results');
-  const { user } = useAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<"take" | "results">("take");
+  const { anonymousId, user } = useAuth();
+  const { toast } = useToast();
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
-  // All hooks
   const { 
-    isSupabaseEnabled,
-    handleToggleSupabase,
-    syncDialogOpen,
-    syncStatus,
-    handleConfirmSync,
-    handleCancelSync,
-    handleSyncDialogClose
-  } = useSupabaseSync(loadAssessments); // Pass loadAssessments as argument
-
-  const {
-    testingSheets,
-    handleGoogleSignIn,
-    testGoogleSheets,
-    sendLatestToSheets,
-    configuringWorkloadIdentity,
-    handleConfigureWorkloadIdentity
-  } = useGoogleIntegration();
-
-  const {
-    userAssessments,
-    latestAssessment,
-    handleAssessmentComplete,
+    userAssessments, 
+    currentAssessment, 
+    setCurrentAssessment, 
+    setUserAssessments,
+    assessmentStatus,
     loadAssessments
   } = useAssessments();
 
-  useEffect(() => {
-    const init = async () => {
-      try {
-        // Load user data
-        const useSupabase = getUseSupabase();
-        const assessments = await getLocalAssessments();
-        
-        // Check URL for tab parameter
-        const searchParams = new URLSearchParams(location.search);
-        const tabParam = searchParams.get('tab');
-        if (tabParam === 'take' || tabParam === 'results') {
-          setActiveTab(tabParam);
-        } else if (assessments.length === 0) {
-          // If no assessments, default to take tab
-          setActiveTab('take');
-        }
-
-      } catch (error) {
-        console.error("Error initializing:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    init();
-  }, [location]);
-
-  // Get user profile information
-  const profile: UserProfile | null = user ? {
-    id: user.id,
-    name: user.user_metadata?.name || "User",
-    email: user.email || "",
-    avatar: user.user_metadata?.avatar_url || null,
-    createdAt: new Date().toISOString() // Add missing required field
-  } : null;
-
-  // Create a googleConnection object based on Google integration state
+  const { 
+    testingSheets, 
+    configuringWorkloadIdentity, 
+    handleGoogleSignIn, 
+    handleConfigureWorkloadIdentity, 
+    testGoogleSheets, 
+    sendLatestToSheets 
+  } = useGoogleIntegration();
+  
+  // Create googleConnection object as required by useSupabaseSync hook
   const googleConnection = {
-    connected: testingSheets !== undefined ? false : false, // Default to false if not available
-    email: undefined
+    connected: false,
+    email: user?.email || undefined
+  };
+  
+  const { 
+    syncStatus, 
+    triggerSync, 
+    setSyncSettings, 
+    syncSettings 
+  } = useSupabaseSync({ googleConnection, handleConfigureWorkloadIdentity, loadAssessments });
+
+  useEffect(() => {
+    // Simulate loading delay
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <Layout>
+        <LoadingState />
+      </Layout>
+    );
+  }
+
+  // Create a profile object with required properties
+  const profile: UserProfile = {
+    id: user?.id || anonymousId,
+    name: user?.user_metadata?.name || "Anonymous User",
+    email: user?.email || "anonymous@example.com",
+    createdAt: new Date().toISOString(),
+    // Add other required fields with default values
+    organization: user?.user_metadata?.organization || "",
+    role: "user",
+    organization_id: null,
+    updated_at: new Date().toISOString(),
+    marketing_consent: user?.user_metadata?.marketing_consent || false
   };
 
-  // If still loading, show loading state
-  if (loading) return <LoadingState />;
+  // Wrapper function to pass the required parameter to handleConfigureWorkloadIdentity
+  const handleWorkloadIdentityConfig = () => {
+    return handleConfigureWorkloadIdentity({
+      connected: !!user,
+      email: user?.email
+    });
+  };
 
-  // Ready to render content now
   return (
-    <IndexContent
-      loading={loading}
-      profile={profile}
-      activeTab={activeTab}
-      setActiveTab={setActiveTab}
-      userAssessments={userAssessments}
-      latestAssessment={latestAssessment}
-      googleConnection={googleConnection}
-      isSupabaseEnabled={isSupabaseEnabled}
-      testingSheets={testingSheets}
-      syncDialogOpen={syncDialogOpen}
-      syncStatus={syncStatus}
-      handleToggleSupabase={handleToggleSupabase}
-      handleAssessmentComplete={handleAssessmentComplete}
-      handleConfirmSync={handleConfirmSync}
-      handleCancelSync={handleCancelSync}
-      handleSyncDialogClose={handleSyncDialogClose}
-      handleGoogleSignIn={handleGoogleSignIn}
-      handleConfigureWorkloadIdentity={() => handleConfigureWorkloadIdentity(googleConnection)} // Fix the argument
-      testGoogleSheets={testGoogleSheets}
-      sendLatestToSheets={sendLatestToSheets}
-      configuringWorkloadIdentity={configuringWorkloadIdentity}
-      isMobile={isMobile}
-    />
+    <Layout>
+      <IndexContent
+        profile={profile}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        userAssessments={userAssessments}
+        currentAssessment={currentAssessment}
+        setCurrentAssessment={setCurrentAssessment}
+        assessmentStatus={assessmentStatus}
+        setUserAssessments={setUserAssessments}
+        handleGoogleSignIn={handleGoogleSignIn}
+        testGoogleSheets={testGoogleSheets}
+        testingSheets={testingSheets}
+        configuringWorkloadIdentity={configuringWorkloadIdentity}
+        handleConfigureWorkloadIdentity={handleWorkloadIdentityConfig}
+        triggerSync={triggerSync}
+        syncStatus={syncStatus}
+        setSyncSettings={setSyncSettings}
+        syncSettings={syncSettings}
+        sendLatestToSheets={sendLatestToSheets}
+        isMobile={isMobile}
+      />
+    </Layout>
   );
 };
 
