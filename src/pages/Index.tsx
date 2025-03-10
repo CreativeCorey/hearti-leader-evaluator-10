@@ -7,9 +7,10 @@ import { useIndexPage } from '@/hooks/useIndexPage';
 import LoadingState from '@/components/index/LoadingState';
 import GoogleIntegrationTools from '@/components/google-integration/GoogleIntegrationTools';
 import HeaderSection from '@/components/assessment/HeaderSection';
-import { HEARTIAssessment } from '@/types';
+import { useToast } from '@/hooks/use-toast';
 
 const Index = () => {
+  const { toast } = useToast();
   const {
     loading,
     profile,
@@ -41,6 +42,18 @@ const Index = () => {
     configuringWorkloadIdentity,
     isMobile
   } = useIndexPage();
+
+  // If error occurs during load, show error toast
+  useEffect(() => {
+    if (assessmentStatus === 'error') {
+      toast({
+        title: "Connection Issue",
+        description: "We couldn't connect to our servers. Your data will be saved locally for now.",
+        variant: "destructive",
+        duration: 5000,
+      });
+    }
+  }, [assessmentStatus, toast]);
 
   // If still loading, show loading state
   if (loading) return <LoadingState />;
