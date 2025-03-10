@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useToast } from "./use-toast";
 import { useIsMobile } from './use-mobile';
 import { HEARTIAssessment, UserProfile } from '../types';
@@ -15,7 +15,7 @@ export const useIndexPage = () => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   
-  // Use our custom hooks
+  // Use our custom hooks with memoized callbacks
   const { 
     latestAssessment, 
     currentAssessment,
@@ -50,75 +50,68 @@ export const useIndexPage = () => {
     testGoogleSheets
   } = useGoogleIntegration();
 
-  useEffect(() => {
-    const init = async () => {
-      try {
-        // Set loading to true while initializing
-        setLoading(true);
-        
-        // Enable Supabase by default for Google Sheets integration
-        const supabaseEnabled = true;
-        setUseSupabase(supabaseEnabled);
-        
-        // Get or create anonymous ID
-        const anonymousId = getOrCreateAnonymousId();
-        console.log("Anonymous user ID:", anonymousId);
-        
-        // Get user profile - this should now work with the profile created above
-        const userProfile = await getUserProfile();
-        setProfile(userProfile);
-        
-        // Get assessment data with a timeout to prevent hanging
-        const timeout = setTimeout(() => {
-          console.log("Loading assessments took too long, continuing anyway");
-          setLoading(false);
-        }, 5000); // 5 second timeout
-        
-        try {
-          await loadAssessments();
-          clearTimeout(timeout);
-        } catch (error) {
-          console.error("Error loading assessments:", error);
-          // Continue anyway, we'll try to load them again later
-        }
-      } catch (error) {
-        console.error('Error initializing:', error);
-        toast({
-          title: "Initialization Error",
-          description: "There was a problem loading your data. Please try refreshing the page.",
-          variant: "destructive",
-        });
-      } finally {
-        // Ensure loading is set to false even if there was an error
-        setLoading(false);
-      }
-    };
-    
-    init();
+  // Memoize initialization function
+  const initializeApp = useCallback(async () => {
+    try {
+      // Enable Supabase by default for Google Sheets integration
+      const supabaseEnabled = true;
+      setUseSupabase(supabaseEnabled);
+      
+      // Get or create anonymous ID
+      const anonymousId = getOrCreateAnonymousId();
+      console.log("Anonymous user ID:", anonymousId);
+      
+      // Get user profile
+      const userProfile = await getUserProfile();
+      setProfile(userProfile);
+      
+      // Load assessment data
+      await loadAssessments();
+    } catch (error) {
+      console.error('Error initializing:', error);
+      toast({
+        title: "Initialization Error",
+        description: "There was a problem loading your data. Please try refreshing the page.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   }, [toast, loadAssessments]);
 
-  const handleAssessmentComplete = (assessment: HEARTIAssessment) => {
+  // Initialize app once on mount
+  useEffect(() => {
+    initializeApp();
+  }, [initializeApp]);
+
+  // Show error toast only when assessment status changes to error
+  useEffect(() => {
+    if (assessmentStatus === 'error') {
+      toast({
+        title: "Connection Issue",
+        description: "We couldn't connect to our servers. Your data will be saved locally for now.",
+        variant: "destructive",
+        duration: 5000,
+      });
+    }
+  }, [assessmentStatus, toast]);
+
+  const handleAssessmentComplete = useCallback((assessment: HEARTIAssessment) => {
     // Use the handler from useAssessments
     onAssessmentComplete(assessment);
     
     // Switch to results tab
     setActiveTab('results');
     
-    // Show success message with more specific information
-    if (isSupabaseEnabled) {
-      toast({
-        title: "Assessment Complete!",
-        description: "Your assessment has been saved and sent to Google Sheets. It may take a few moments to appear in the sheet.",
-        duration: 5000,
-      });
-    } else {
-      toast({
-        title: "Assessment Complete!",
-        description: "Your assessment has been saved locally. To send to Google Sheets, enable Cloud Storage.",
-        duration: 5000,
-      });
-    }
-  };
+    // Show success message
+    toast({
+      title: "Assessment Complete!",
+      description: isSupabaseEnabled
+        ? "Your assessment has been saved and sent to Google Sheets. It may take a few moments to appear in the sheet."
+        : "Your assessment has been saved locally. To send to Google Sheets, enable Cloud Storage.",
+      duration: 5000,
+    });
+  }, [isSupabaseEnabled, onAssessmentComplete, toast]);
 
   return {
     loading,

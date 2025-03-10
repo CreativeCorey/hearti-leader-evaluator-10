@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { memo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HEARTIAssessment } from '@/types';
 import AssessmentForm from '@/components/AssessmentForm';
@@ -20,7 +19,7 @@ interface AssessmentTabsProps {
   sendLatestToSheets: () => Promise<void>;
 }
 
-const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
+const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
   activeTab,
   setActiveTab,
   userAssessments,
@@ -79,6 +78,6 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
       </TabsContent>
     </Tabs>
   );
-};
+});
 
 export default AssessmentTabs;
