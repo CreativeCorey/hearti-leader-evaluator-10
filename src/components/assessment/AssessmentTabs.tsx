@@ -18,6 +18,7 @@ interface AssessmentTabsProps {
   onComplete: (assessment: HEARTIAssessment) => void;
   testingSheets: boolean;
   sendLatestToSheets: () => Promise<void>;
+  viewTransitioning?: boolean;
 }
 
 const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
@@ -27,7 +28,8 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
   latestAssessment,
   onComplete,
   testingSheets,
-  sendLatestToSheets
+  sendLatestToSheets,
+  viewTransitioning = false
 }) => {
   const isMobile = useIsMobile();
 
@@ -44,7 +46,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
 
   return (
     <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'take' | 'results')} className="w-full">
-      <div className="w-full overflow-hidden mb-4">
+      <div className={`w-full overflow-hidden mb-4 ${viewTransitioning ? 'opacity-75 transition-opacity' : ''}`}>
         <TabsList className="w-full grid grid-cols-2 gap-1">
           <TabsTrigger value="take" className="px-4 py-2">Take Assessment</TabsTrigger>
           <TabsTrigger value="results" className="px-4 py-2" disabled={userAssessments.length === 0}>View Results</TabsTrigger>

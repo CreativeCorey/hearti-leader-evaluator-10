@@ -8,43 +8,67 @@ export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
   
   React.useEffect(() => {
-    // Initial check for client-side only
+    // Create a throttled resize handler to improve performance
+    let resizeTimeoutId: ReturnType<typeof setTimeout> | null = null;
+    let orientationTimeoutId: ReturnType<typeof setTimeout> | null = null;
+    
+    // Check if running in browser environment
     if (typeof window !== 'undefined') {
+      // Initial check
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
       
-      // Set up the resize handler with debouncing to prevent excessive calls
-      let timeoutId: ReturnType<typeof setTimeout> | null = null
-      
+      // Throttled resize handler
       const handleResize = () => {
-        if (timeoutId) {
-          clearTimeout(timeoutId)
+        if (resizeTimeoutId) {
+          clearTimeout(resizeTimeoutId)
         }
         
-        timeoutId = setTimeout(() => {
+        resizeTimeoutId = setTimeout(() => {
           setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-        }, 150) // Debounce resize events
+        }, 100) // Throttle resize events
       }
       
-      // Handle orientation change explicitly for mobile
+      // Handle orientation change with a separate handler
       const handleOrientationChange = () => {
-        // Force a recalculation after orientation change completes
-        setTimeout(() => {
-          setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
-        }, 200)
+        // Clear any pending resize timeout
+        if (resizeTimeoutId) {
+          clearTimeout(resizeTimeoutId);
+          resizeTimeoutId = null;
+        }
+        
+        // Clear any pending orientation timeout
+        if (orientationTimeoutId) {
+          clearTimeout(orientationTimeoutId);
+        }
+        
+        // Set a delay before checking dimensions after orientation change
+        orientationTimeoutId = setTimeout(() => {
+          setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+        }, 200);
       }
       
+      // Add event listeners
       window.addEventListener("resize", handleResize)
       window.addEventListener("orientationchange", handleOrientationChange)
       
-      // Clean up all event listeners
+      // Clean up event listeners
       return () => {
-        if (timeoutId) {
-          clearTimeout(timeoutId)
+        if (resizeTimeoutId) {
+          clearTimeout(resizeTimeoutId)
+        }
+        if (orientationTimeoutId) {
+          clearTimeout(orientationTimeoutId)
         }
         window.removeEventListener("resize", handleResize)
         window.removeEventListener("orientationchange", handleOrientationChange)
       }
     }
+    
+    // Default to false for SSR
+    return () => {
+      if (resizeTimeoutId) clearTimeout(resizeTimeoutId);
+      if (orientationTimeoutId) clearTimeout(orientationTimeoutId);
+    };
   }, [])
 
   // Return the current state (defaults to false when server-side or not yet determined)

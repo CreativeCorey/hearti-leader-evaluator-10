@@ -25,7 +25,8 @@ const Index = () => {
     handleAssessmentComplete,
     testGoogleSheets,
     sendLatestToSheets,
-    isMobile
+    isMobile,
+    viewTransitioning
   } = useIndexPage();
 
   // If error occurs during load, show error toast
@@ -45,7 +46,7 @@ const Index = () => {
 
   // Ready to render content now
   return (
-    <div className="w-full mx-auto py-2 sm:py-6">
+    <div className={`w-full mx-auto py-2 sm:py-6 ${viewTransitioning ? 'opacity-90 transition-opacity duration-150' : ''}`}>
       <div className="w-full mx-auto">
         <HeaderSection 
           profile={profile} 
@@ -68,6 +69,7 @@ const Index = () => {
             }
             return Promise.resolve();
           }}
+          viewTransitioning={viewTransitioning}
         />
         
         {/* Google Sheets integration tools */}
