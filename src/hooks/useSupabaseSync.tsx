@@ -7,6 +7,11 @@ import { saveAssessmentAndSyncToSheet } from '../utils/supabase/assessments';
 
 type SyncStatus = 'idle' | 'syncing' | 'success' | 'error';
 
+interface SyncSettings {
+  autoSync: boolean;
+  syncOnComplete: boolean;
+}
+
 interface UseSupabaseSyncProps {
   loadAssessments: () => Promise<void>;
 }
@@ -16,8 +21,12 @@ export const useSupabaseSync = (loadAssessments: () => Promise<void>) => {
   const [isSupabaseEnabled, setIsSupabaseEnabled] = useState<boolean>(getUseSupabase());
   const [syncDialogOpen, setSyncDialogOpen] = useState<boolean>(false);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
+  const [syncSettings, setSyncSettings] = useState<SyncSettings>({
+    autoSync: true,
+    syncOnComplete: true
+  });
   
-  const handleToggleSupabase = (enabled: boolean) => {
+  const handleToggleSupabase = async (enabled: boolean) => {
     // If enabling Supabase and it wasn't enabled before, show sync dialog
     if (enabled && !isSupabaseEnabled) {
       setSyncDialogOpen(true);
@@ -33,6 +42,45 @@ export const useSupabaseSync = (loadAssessments: () => Promise<void>) => {
         title: "Cloud Storage Disabled",
         description: "Your data will now be stored locally only.",
       });
+    }
+  };
+  
+  const triggerSync = async () => {
+    setSyncStatus('syncing');
+    
+    try {
+      // Sync local data to Supabase
+      const success = await syncLocalDataToSupabase();
+      
+      if (success) {
+        setSyncStatus('success');
+        toast({
+          title: "Sync Complete",
+          description: "Your data has been successfully synced to the cloud.",
+        });
+        
+        return true;
+      } else {
+        setSyncStatus('error');
+        toast({
+          title: "Sync Error",
+          description: "There was a problem syncing your data. Please try again.",
+          variant: "destructive",
+        });
+        
+        return false;
+      }
+    } catch (error) {
+      console.error("Error during sync:", error);
+      setSyncStatus('error');
+      
+      toast({
+        title: "Sync Error",
+        description: "There was a problem syncing your data. Please try again.",
+        variant: "destructive",
+      });
+      
+      return false;
     }
   };
   
@@ -132,6 +180,9 @@ export const useSupabaseSync = (loadAssessments: () => Promise<void>) => {
     isSupabaseEnabled,
     syncDialogOpen,
     syncStatus,
+    syncSettings,
+    setSyncSettings,
+    triggerSync,
     handleToggleSupabase,
     handleConfirmSync,
     handleCancelSync,
