@@ -7,6 +7,7 @@ import LoadingState from '@/components/index/LoadingState';
 import GoogleIntegrationTools from '@/components/google-integration/GoogleIntegrationTools';
 import HeaderSection from '@/components/assessment/HeaderSection';
 import { useToast } from '@/hooks/use-toast';
+import Header from '@/components/Header';
 
 const Index = () => {
   const { toast } = useToast();
@@ -48,6 +49,8 @@ const Index = () => {
   return (
     <div className={`w-full mx-auto py-2 sm:py-6 ${viewTransitioning ? 'opacity-90 transition-opacity duration-150' : ''}`}>
       <div className="w-full mx-auto">
+        <Header />
+        
         <HeaderSection 
           profile={profile} 
           isSupabaseEnabled={isSupabaseEnabled}
