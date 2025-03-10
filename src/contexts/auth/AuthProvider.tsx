@@ -1,285 +1,289 @@
-import { useState, useEffect } from "react";
-import { Session, User } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { getOrCreateAnonymousId, handleMarketingConsent, signUpWithEmail, 
-  signInWithEmail, signOut as authSignOut, sendMagicLink as authSendMagicLink,
-  sendPasswordReset, updateUserProfile, createMockAnonymousUser, isAnonymousAccessEnabled } from "@/utils/auth-helpers";
-import AuthContext, { AuthContextType } from "./AuthContext";
+import React, { useEffect, useState } from 'react';
+import { User, Session } from '@supabase/supabase-js';
+import { v4 as uuidv4 } from 'uuid';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import AuthContext from './AuthContext';
+import { getOrCreateAnonymousId, allowAnonymousAccess, isAnonymousAccessEnabled } from '@/utils/auth-helpers';
+import { createMockAnonymousUser } from '@/utils/auth-helpers';
+import { 
+  signUpWithEmail,
+  signInWithEmail,
+  signOut as signOutUser,
+  sendMagicLink,
+  sendPasswordReset
+} from '@/utils/auth-helpers';
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { toast } = useToast();
   const [user, setUser] = useState<User | null>(null);
-  const [anonymousId, setAnonymousId] = useState<string>("");
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [anonymousMode, setAnonymousMode] = useState(false);
-  const { toast } = useToast();
+  const [anonymousId] = useState<string>(getOrCreateAnonymousId());
+  const [anonymousMode, setAnonymousMode] = useState<boolean>(isAnonymousAccessEnabled());
 
+  // Initialize auth state
   useEffect(() => {
-    const getSession = async () => {
-      setIsLoading(true);
+    setIsLoading(true);
+    
+    const checkAuth = async () => {
+      // If anonymous mode is enabled, set a mock user
+      if (anonymousMode) {
+        const mockUser = createMockAnonymousUser();
+        // Use a setTimeout to simulate auth loading
+        setTimeout(() => {
+          setUser(mockUser as User);
+          setSession(null); // No session for mock users
+          setIsLoading(false);
+        }, 300);
+        return;
+      }
+      
+      // Otherwise check with Supabase
       try {
-        const anonymousEnabled = isAnonymousAccessEnabled();
-        setAnonymousMode(anonymousEnabled);
+        const { data, error } = await supabase.auth.getSession();
         
-        const { data } = await supabase.auth.getSession();
-        
-        if (data.session) {
-          setSession(data.session);
-          setUser(data.session.user);
-        } else if (anonymousEnabled) {
-          const mockUser = createMockAnonymousUser();
-          setUser(mockUser as unknown as User);
-          console.log("Using anonymous user:", mockUser);
-          toast({
-            title: "Anonymous Mode Active",
-            description: "Using anonymous access for testing purposes",
-          });
-        } else {
+        if (error) {
+          console.error('Error fetching session:', error);
+          setError(error.message);
           setUser(null);
           setSession(null);
+        } else {
+          setSession(data.session);
+          setUser(data.session?.user || null);
         }
-        
-        const anonId = getOrCreateAnonymousId();
-        setAnonymousId(anonId);
-      } catch (error) {
-        console.error("Error getting session:", error);
-        setError("Failed to get session");
-        
-        const anonId = getOrCreateAnonymousId();
-        setAnonymousId(anonId);
+      } catch (err) {
+        console.error('Failed to check auth:', err);
+        setError('Failed to check authentication status');
       } finally {
         setIsLoading(false);
       }
     };
-
-    getSession();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!isAnonymousAccessEnabled()) {
-        setSession(session);
-        setUser(session?.user ?? null);
-      }
-      setIsLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [toast]);
-
-  const toggleAnonymousMode = () => {
-    const newMode = !anonymousMode;
-    setAnonymousMode(newMode);
     
-    if (newMode) {
-      const mockUser = createMockAnonymousUser();
-      setUser(mockUser as unknown as User);
-      localStorage.setItem("hearti-anonymous-access", "enabled");
-      toast({
-        title: "Anonymous Mode Enabled",
-        description: "You can now use the app without signing in",
-      });
-    } else {
-      setUser(null);
-      setSession(null);
-      localStorage.removeItem("hearti-anonymous-access");
-      toast({
-        title: "Anonymous Mode Disabled",
-        description: "Normal authentication is now required",
-      });
-    }
-  };
+    // Listen for auth changes
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+        setUser(session?.user || null);
+        setIsLoading(false);
+      }
+    );
+    
+    // Initial check
+    checkAuth();
+    
+    // Cleanup
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
+  }, [anonymousMode]);
 
+  // Sign up function
   const signUp = async (email: string, password: string, name?: string, organization?: string) => {
     setIsLoading(true);
     setError(null);
+    
     try {
       const { data, error } = await signUpWithEmail(email, password, name, organization);
-
+      
       if (error) {
         setError(error.message);
         toast({
           title: "Sign up failed",
           description: error.message,
-          variant: "destructive"
+          variant: "destructive",
         });
-        return;
-      }
-
-      if (data.user) {
-        if (data.user.identities?.length === 0) {
-          toast({
-            title: "Account already exists",
-            description: "Please sign in instead",
-            variant: "destructive"
-          });
-          return;
-        }
-
-        if (localStorage.getItem("marketing_consent") === "true" && data.user.id) {
-          await handleMarketingConsent(data.user.id, data.user.email || email, name);
-        }
-
+      } else {
         toast({
           title: "Sign up successful",
-          description: "Please check your email for the verification link before signing in.",
+          description: "Please check your email for verification link",
         });
       }
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-        toast({
-          title: "Sign up failed",
-          description: error.message,
-          variant: "destructive"
-        });
-      }
+      
+      return data;
+    } catch (err: any) {
+      setError(err.message);
+      toast({
+        title: "Sign up error",
+        description: err.message,
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Sign in function
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
     setError(null);
+    
     try {
       const { data, error } = await signInWithEmail(email, password);
-
+      
       if (error) {
-        let errorMessage = error.message;
-        
-        const { data: userData } = await signUpWithEmail(email, password);
-
-        if (userData?.user?.identities?.length === 0) {
-          errorMessage = "Please check your email and verify your account before signing in.";
-        }
-
-        setError(errorMessage);
-        toast({
-          title: "Sign in failed",
-          description: errorMessage,
-          variant: "destructive"
-        });
-        return;
-      }
-
-      if (data.session && data.user) {
-        if (localStorage.getItem("marketing_consent") === "true") {
-          await updateUserProfile(data.user.id, {
-            marketing_consent: true
-          });
-          
-          await handleMarketingConsent(data.user.id, data.user.email || email);
-        }
-
-        toast({
-          title: "Sign in successful",
-          description: "You have been successfully signed in."
-        });
-      }
-    } catch (error) {
-      if (error instanceof Error) {
         setError(error.message);
         toast({
           title: "Sign in failed",
           description: error.message,
-          variant: "destructive"
+          variant: "destructive",
+        });
+      } else if (data.user) {
+        toast({
+          title: "Welcome back!",
+          description: `You are now signed in as ${data.user.email}`,
         });
       }
+    } catch (err: any) {
+      setError(err.message);
+      toast({
+        title: "Sign in error",
+        description: err.message,
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Sign out function
   const signOut = async () => {
     setIsLoading(true);
+    
     try {
-      await authSignOut();
-      toast({
-        title: "Signed out",
-        description: "You have been successfully signed out."
-      });
-    } catch (error) {
-      console.error("Error signing out:", error);
-      toast({
-        title: "Error signing out",
-        description: "An error occurred while signing out.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const sendMagicLink = async (email: string): Promise<void> => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const { error } = await authSendMagicLink(email);
-
-      if (error) {
-        setError(error.message);
+      if (anonymousMode) {
+        setAnonymousMode(false);
+        allowAnonymousAccess(false);
+        setUser(null);
         toast({
-          title: "Failed to send magic link",
-          description: error.message,
-          variant: "destructive"
+          title: "Signed out",
+          description: "Anonymous mode disabled",
         });
         return;
       }
-
-      toast({
-        title: "Magic link sent",
-        description: "Please check your email for the login link",
-      });
-    } catch (error) {
-      if (error instanceof Error) {
+      
+      const { error } = await signOutUser();
+      
+      if (error) {
         setError(error.message);
         toast({
-          title: "Failed to send magic link",
+          title: "Sign out failed",
           description: error.message,
-          variant: "destructive"
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Signed out",
+          description: "You have been successfully signed out",
         });
       }
+    } catch (err: any) {
+      setError(err.message);
+      toast({
+        title: "Sign out error",
+        description: err.message,
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
   };
-
-  const sendPasswordResetEmail = async (email: string): Promise<void> => {
+  
+  // Send magic link function
+  const sendMagicLinkEmail = async (email: string) => {
     setIsLoading(true);
     setError(null);
+    
+    try {
+      const { error } = await sendMagicLink(email);
+      
+      if (error) {
+        setError(error.message);
+        toast({
+          title: "Magic link failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Magic link sent",
+          description: "Please check your email for your sign-in link",
+        });
+      }
+    } catch (err: any) {
+      setError(err.message);
+      toast({
+        title: "Magic link error",
+        description: err.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Send password reset function
+  const sendPasswordResetEmail = async (email: string) => {
+    setIsLoading(true);
+    setError(null);
+    
     try {
       const { error } = await sendPasswordReset(email);
-
+      
       if (error) {
         setError(error.message);
         toast({
-          title: "Failed to send reset email",
+          title: "Password reset failed",
           description: error.message,
-          variant: "destructive"
+          variant: "destructive",
         });
-        return;
-      }
-
-      toast({
-        title: "Password reset email sent",
-        description: "Please check your email for the password reset link",
-      });
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
+      } else {
         toast({
-          title: "Failed to send reset email",
-          description: error.message,
-          variant: "destructive"
+          title: "Password reset email sent",
+          description: "Please check your email for password reset instructions",
         });
       }
+    } catch (err: any) {
+      setError(err.message);
+      toast({
+        title: "Password reset error",
+        description: err.message,
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
   };
+  
+  // Toggle anonymous mode
+  const toggleAnonymousMode = () => {
+    if (anonymousMode) {
+      // Turn off anonymous mode
+      setAnonymousMode(false);
+      allowAnonymousAccess(false);
+      setUser(null); // Clear the mock user
+      
+      toast({
+        title: "Anonymous Mode Disabled",
+        description: "You need to sign in to access protected features",
+      });
+    } else {
+      // Turn on anonymous mode
+      setAnonymousMode(true);
+      allowAnonymousAccess(true);
+      const mockUser = createMockAnonymousUser();
+      setUser(mockUser as User);
+      
+      toast({
+        title: "Anonymous Mode Enabled",
+        description: "You can now access all features without signing in",
+      });
+    }
+  };
 
-  const contextValue: AuthContextType = {
+  // Provide context value
+  const value = {
     user,
     anonymousId,
     session,
@@ -287,16 +291,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     signUp,
     signIn,
     signOut,
-    sendMagicLink,
+    sendMagicLink: sendMagicLinkEmail,
     sendPasswordResetEmail,
     error,
     anonymousMode,
     toggleAnonymousMode
   };
 
-  return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
+export default AuthProvider;

@@ -2,7 +2,7 @@
 import React from 'react';
 import { LogOut, UserX, UserCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/use-auth';
 import { Button } from './ui/button';
 
 const Header: React.FC = () => {

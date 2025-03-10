@@ -1,3 +1,4 @@
+
 import { supabase } from '../../integrations/supabase/client';
 import { HEARTIAssessment, HEARTIDimension, HEARTIAnswer, Demographics } from '../../types';
 import { Json } from '../../integrations/supabase/types';
@@ -9,7 +10,7 @@ function parseAssessment(assessment: any): HEARTIAssessment {
     id: assessment.id,
     userId: assessment.user_id,
     organizationId: assessment.organization_id || '',
-    date: assessment.created_at,
+    date: assessment.date || new Date().toISOString(), // Use date field instead of created_at
     answers: [],
     dimensionScores: {
       humility: 0,
@@ -60,7 +61,7 @@ export async function fetchUserAssessments(userId: string): Promise<HEARTIAssess
       .from('assessments')
       .select('*')
       .eq('user_id', userId)
-      .order('created_at', { ascending: false });
+      .order('date', { ascending: false }); // Use date field instead of created_at
 
     if (error) {
       throw new Error(`Error fetching assessments: ${error.message}`);
@@ -84,7 +85,7 @@ export async function fetchAssessmentsByOrganization(organizationId: string): Pr
       .from('assessments')
       .select('*')
       .eq('organization_id', organizationId)
-      .order('created_at', { ascending: false });
+      .order('date', { ascending: false }); // Use date field instead of created_at
 
     if (error) {
       throw new Error(`Error fetching organization assessments: ${error.message}`);
@@ -107,7 +108,7 @@ export async function fetchRecentAssessments(limit = 100): Promise<HEARTIAssessm
     const { data, error } = await supabase
       .from('assessments')
       .select('*')
-      .order('created_at', { ascending: false })
+      .order('date', { ascending: false }) // Use date field instead of created_at
       .limit(limit);
 
     if (error) {
@@ -148,6 +149,7 @@ export async function saveAssessment(assessment: HEARTIAssessment): Promise<stri
       id: assessment.id,
       user_id: assessment.userId,
       organization_id: assessment.organizationId,
+      date: assessment.date, // Ensure date is properly stored
       answers: assessment.answers as unknown as Json,
       dimension_scores: assessment.dimensionScores as unknown as Json,
       overall_score: assessment.overallScore,
