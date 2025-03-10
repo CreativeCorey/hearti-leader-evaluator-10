@@ -1,119 +1,70 @@
 
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Layout from "@/components/Layout";
-import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/hooks/use-toast";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { HEARTIAssessment, UserProfile } from "@/types";
-import IndexContent from "./components/IndexContent";
-import { useAssessments } from "./hooks/useAssessments";
-import { useGoogleIntegration } from "./hooks/useGoogleIntegration";
-import { useSupabaseSync } from "./hooks/useSupabaseSync";
-import LoadingState from "./components/LoadingState";
+import { useEffect } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ResultsTabContent from '@/components/results/ResultsTabContent';
+import AssessmentTabs from '@/components/assessment/AssessmentTabs';
+import { useIndexPage } from '@/hooks/useIndexPage';
+import LoadingState from '@/components/index/LoadingState';
+import GoogleIntegrationTools from '@/components/google-integration/GoogleIntegrationTools';
+import HeaderSection from '@/components/assessment/HeaderSection';
+import { HEARTIAssessment } from '@/types';
 
 const Index = () => {
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"take" | "results">("take");
-  const { anonymousId, user } = useAuth();
-  const { toast } = useToast();
-  const isMobile = useIsMobile();
-  const navigate = useNavigate();
+  const {
+    loading,
+    profile,
+    activeTab,
+    setActiveTab,
+    userAssessments,
+    latestAssessment,
+    googleConnection,
+    isSupabaseEnabled,
+    testingSheets,
+    syncDialogOpen,
+    syncStatus,
+    handleToggleSupabase,
+    handleAssessmentComplete,
+    handleConfirmSync,
+    handleCancelSync,
+    handleSyncDialogClose,
+    handleGoogleSignIn,
+    handleConfigureWorkloadIdentity,
+    testGoogleSheets,
+    sendLatestToSheets,
+    configuringWorkloadIdentity,
+    isMobile
+  } = useIndexPage();
 
-  const { 
-    userAssessments, 
-    currentAssessment, 
-    setCurrentAssessment, 
-    setUserAssessments,
-    assessmentStatus,
-    loadAssessments
-  } = useAssessments();
+  // If still loading, show loading state
+  if (loading) return <LoadingState />;
 
-  const { 
-    testingSheets, 
-    configuringWorkloadIdentity, 
-    handleGoogleSignIn, 
-    handleConfigureWorkloadIdentity, 
-    testGoogleSheets, 
-    sendLatestToSheets 
-  } = useGoogleIntegration();
-  
-  // Create googleConnection object as required by useSupabaseSync hook
-  const googleConnection = {
-    connected: false,
-    email: user?.email || undefined
-  };
-  
-  const { 
-    syncStatus, 
-    triggerSync, 
-    setSyncSettings, 
-    syncSettings 
-  } = useSupabaseSync({ googleConnection, handleConfigureWorkloadIdentity, loadAssessments });
-
-  useEffect(() => {
-    // Simulate loading delay
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (loading) {
-    return (
-      <Layout>
-        <LoadingState />
-      </Layout>
-    );
-  }
-
-  // Create a profile object with required properties
-  const profile: UserProfile = {
-    id: user?.id || anonymousId,
-    name: user?.user_metadata?.name || "Anonymous User",
-    email: user?.email || "anonymous@example.com",
-    createdAt: new Date().toISOString(),
-    // Add other required fields with default values
-    organization: user?.user_metadata?.organization || "",
-    role: "user",
-    organization_id: null,
-    updated_at: new Date().toISOString(),
-    marketing_consent: user?.user_metadata?.marketing_consent || false
-  };
-
-  // Wrapper function to pass the required parameter to handleConfigureWorkloadIdentity
-  const handleWorkloadIdentityConfig = () => {
-    return handleConfigureWorkloadIdentity({
-      connected: !!user,
-      email: user?.email
-    });
-  };
-
+  // Ready to render content now
   return (
-    <Layout>
-      <IndexContent
-        profile={profile}
+    <div className="container mx-auto px-4 py-6 max-w-7xl">
+      <HeaderSection 
+        profile={profile} 
+        isSupabaseEnabled={isSupabaseEnabled}
+        handleToggleSupabase={handleToggleSupabase}
+        googleConnection={googleConnection}
+        isMobile={isMobile}
+      />
+      
+      <AssessmentTabs 
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         userAssessments={userAssessments}
-        currentAssessment={currentAssessment}
-        setCurrentAssessment={setCurrentAssessment}
-        assessmentStatus={assessmentStatus}
-        setUserAssessments={setUserAssessments}
-        handleGoogleSignIn={handleGoogleSignIn}
+        latestAssessment={latestAssessment}
+        onComplete={handleAssessmentComplete}
+        testingSheets={testingSheets}
+        sendLatestToSheets={() => latestAssessment && sendLatestToSheets(latestAssessment)}
+      />
+      
+      {/* Google Sheets integration tools */}
+      <GoogleIntegrationTools 
         testGoogleSheets={testGoogleSheets}
         testingSheets={testingSheets}
-        configuringWorkloadIdentity={configuringWorkloadIdentity}
-        handleConfigureWorkloadIdentity={handleWorkloadIdentityConfig}
-        triggerSync={triggerSync}
-        syncStatus={syncStatus}
-        setSyncSettings={setSyncSettings}
-        syncSettings={syncSettings}
-        sendLatestToSheets={sendLatestToSheets}
-        isMobile={isMobile}
       />
-    </Layout>
+    </div>
   );
 };
 
