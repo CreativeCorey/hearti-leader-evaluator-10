@@ -62,7 +62,12 @@ const Index = () => {
           latestAssessment={latestAssessment}
           onComplete={handleAssessmentComplete}
           testingSheets={testingSheets}
-          sendLatestToSheets={sendLatestToSheets}
+          sendLatestToSheets={() => {
+            if (latestAssessment) {
+              return sendLatestToSheets(latestAssessment);
+            }
+            return Promise.resolve();
+          }}
         />
         
         {/* Google Sheets integration tools */}

@@ -1,6 +1,8 @@
 
 @import './base.css';
-@import './components.css';
+@import './core-components.css';
+@import './chart-styles.css';
+@import './dimension-styles.css';
+@import './responsive-styles.css';
 @import './utilities.css';
 @import './pdf-report.css';
-

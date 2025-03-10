@@ -64,7 +64,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
               
               <div className="mt-4 sm:mt-6 flex gap-2 sm:gap-3">
                 <Button 
-                  onClick={() => sendLatestToSheets()}
+                  onClick={sendLatestToSheets}
                   disabled={testingSheets}
                   variant="outline"
                   className="flex items-center gap-1.5 sm:gap-2 border-green text-green hover:bg-green/10 text-xs sm:text-sm py-1.5 sm:py-2 h-auto"

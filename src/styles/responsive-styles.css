@@ -1,0 +1,42 @@
+
+@tailwind components;
+
+@layer components {
+  /* Improved tabs styling */
+  .results-tabs-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .results-tabs-container::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .results-tabs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 0.25rem;
+    width: 100%;
+  }
+  
+  .results-tab {
+    white-space: nowrap;
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+  }
+
+  @media (max-width: 640px) {
+    .results-tabs {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .results-tab {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+    }
+  }
+}

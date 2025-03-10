@@ -1,0 +1,29 @@
+
+@tailwind components;
+
+@layer components {
+  /* HEARTI dimension colors */
+  .dimension-humility {
+    color: #6366F1;
+  }
+  
+  .dimension-empathy {
+    color: #EC4899;
+  }
+  
+  .dimension-accountability {
+    color: #F59E0B;
+  }
+  
+  .dimension-resiliency {
+    color: #10B981;
+  }
+  
+  .dimension-transparency {
+    color: #06B6D4;
+  }
+  
+  .dimension-inclusivity {
+    color: #8B5CF6;
+  }
+}
