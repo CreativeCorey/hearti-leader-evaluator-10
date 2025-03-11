@@ -101,5 +101,17 @@
     .recharts-active-dot {
       r: 5px !important;
     }
+    
+    /* Mobile report charts fixes */
+    .pdf-chart-container {
+      height: 280px !important;
+      margin-bottom: 30px !important;
+      position: relative !important;
+    }
+    
+    /* Mobile report card spacing */
+    .pdf-section + .pdf-section {
+      margin-top: 2rem !important;
+    }
   }
 }

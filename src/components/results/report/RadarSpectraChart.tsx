@@ -22,6 +22,7 @@ const RadarSpectraChart: React.FC<RadarSpectraChartProps> = ({
   className = ""
 }) => {
   const { config, iconSize } = useRadarChartConfig(false); // No animation for reports
+  const isMobile = useIsMobile();
   
   // Determine if this is the user's chart to apply pink color
   const isUserChart = title.toLowerCase().includes("your") || title.toLowerCase().includes("you");
@@ -29,8 +30,8 @@ const RadarSpectraChart: React.FC<RadarSpectraChartProps> = ({
   
   return (
     <div className={`relative ${className}`}>
-      <p className="text-center font-medium text-lg text-indigo-600 mb-1">{title}</p>
-      <div className="h-[300px] pdf-chart-container relative">
+      <p className="text-center font-medium text-lg text-indigo-600 mb-2">{title}</p>
+      <div className="h-[280px] pdf-chart-container relative">
         <DimensionIcons iconSize={iconSize} />
         
         <BaseRadarChart data={data} config={config}>
@@ -41,12 +42,12 @@ const RadarSpectraChart: React.FC<RadarSpectraChartProps> = ({
             fill={finalChartColor}
             fillOpacity={config.fillOpacity}
             strokeWidth={config.strokeWidth}
-            dot={{ r: config.dotSize }}
-            activeDot={{ r: config.activeDotSize }}
+            dot={{ r: isMobile ? 3 : config.dotSize }}
+            activeDot={{ r: isMobile ? 5 : config.activeDotSize }}
             isAnimationActive={false}
           />
           <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
-          <Legend wrapperStyle={{ position: 'absolute', bottom: -15, fontSize: '10px' }} />
+          <Legend wrapperStyle={{ position: 'absolute', bottom: -15, fontSize: isMobile ? '9px' : '10px' }} />
         </BaseRadarChart>
       </div>
     </div>
