@@ -28,7 +28,7 @@ const Header: React.FC = () => {
       </div>
       
       <div className="flex items-center justify-end min-w-[100px]">
-        {user && (
+        {user ? (
           <Button
             variant="ghost"
             size="sm"
