@@ -12,7 +12,6 @@ interface CombinedChartProps {
   userColor: string;
   getComparisonColor: () => string;
   getComparisonLabel: () => string;
-  spiderConfig?: any;  // Kept for backward compatibility
 }
 
 const CombinedChart: React.FC<CombinedChartProps> = ({
@@ -24,9 +23,6 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
 }) => {
   const { config, iconSize } = useRadarChartConfig();
   const isMobile = useIsMobile();
-  
-  // Using pink color for user data instead of gold
-  const userPinkColor = "#D946EF";
   
   // Handle the case where no data should be shown (no comparison mode)
   if (compareMode === 'none') {
@@ -53,12 +49,11 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
           }}
           hideDimensionLabels={true}
           polarAngleProps={{
-            tick: false, // Always hide dimension labels
+            tick: false,
             tickLine: false,
             stroke: '#d1d5db'
           }}
         >
-          {/* Render comparison data first so user data appears on top */}
           {compareMode === 'average' && (
             <Radar
               name={`${getComparisonLabel()} HEARTI`}
@@ -75,12 +70,11 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
             />
           )}
           
-          {/* Render user data with pink color and ensure it's on top by being last */}
           <Radar
             name="Your HEARTI"
             dataKey="Your Score"
-            stroke={userPinkColor}
-            fill={userPinkColor}
+            stroke={userColor}
+            fill={userColor}
             fillOpacity={config.fillOpacity}
             strokeWidth={config.strokeWidth}
             dot={{ r: config.dotSize }}
