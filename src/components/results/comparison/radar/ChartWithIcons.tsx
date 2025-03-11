@@ -40,10 +40,16 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
       
       <BaseRadarChart 
         data={data} 
-        config={config}
+        config={{
+          ...config,
+          outerRadius: isMobile ? "50%" : "65%"
+        }}
         polarRadiusProps={polarRadiusProps}
-        polarAngleProps={polarAngleProps}
-        hideDimensionLabels={isMobile}
+        polarAngleProps={{
+          ...polarAngleProps,
+          tick: false // Always hide dimension labels on radar charts
+        }}
+        hideDimensionLabels={true}
       >
         <Radar
           name={chartTitle}
@@ -59,7 +65,7 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
           animationDuration={isAnimationActive ? 1000 : 0}
         />
         <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
-        <Legend wrapperStyle={{ position: 'absolute', bottom: -15, fontSize: '10px' }} />
+        <Legend wrapperStyle={{ position: 'absolute', bottom: -10, fontSize: '10px' }} />
       </BaseRadarChart>
     </div>
   );

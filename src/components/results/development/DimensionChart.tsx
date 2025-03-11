@@ -39,26 +39,23 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
     `Focus on ${activeDimension.charAt(0).toUpperCase() + activeDimension.slice(1)}`;
 
   return (
-    <div className="bg-slate-50 p-2 rounded-lg h-full">
+    <div className="bg-slate-50 p-2 rounded-lg h-full relative">
       <p className="text-center font-medium text-lg text-indigo-600 mb-1">{chartTitle}</p>
-      <div className={`radar-chart-container ${isMobile && showAllDimensions ? 'mobile-development-view' : ''} h-[220px] sm:h-[240px]`}>
+      <div className={`radar-chart-container h-[200px] sm:h-[240px] relative`}>
         <DimensionIcons iconSize={iconSize} />
         
         <BaseRadarChart 
           data={singleDimensionData} 
           config={{
             ...config,
-            outerRadius: isMobile ? "58%" : "65%"
+            outerRadius: isMobile ? "50%" : "65%"
           }}
           polarRadiusProps={polarRadiusProps}
           polarAngleProps={{
             ...polarAngleProps,
-            tick: {
-              ...polarAngleProps.tick,
-              fontSize: isMobile ? 8 : 10
-            }
+            tick: false // Always hide dimension labels
           }}
-          hideDimensionLabels={isMobile}
+          hideDimensionLabels={true}
         >
           <Radar
             name={showAllDimensions ? "Your HEARTI Spectra" : activeDimension}
@@ -74,7 +71,7 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
             animationDuration={1000}
           />
           <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
-          <Legend wrapperStyle={isMobile ? { bottom: -20, fontSize: "10px" } : { bottom: -10 }} />
+          <Legend wrapperStyle={isMobile ? { bottom: -15, fontSize: "10px" } : { bottom: -10 }} />
         </BaseRadarChart>
       </div>
     </div>

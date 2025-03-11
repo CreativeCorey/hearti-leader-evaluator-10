@@ -27,8 +27,9 @@ const DimensionTabs: React.FC<DimensionTabsProps> = ({
             value={dimension} 
             className="text-xs flex flex-col items-center gap-1 py-2"
             style={{ 
-              color: activeDimension === dimension ? dimensionColors[dimension as HEARTIDimension] : undefined,
-              backgroundColor: activeDimension === dimension ? `${dimensionColors[dimension as HEARTIDimension]}10` : undefined
+              color: dimensionColors[dimension as HEARTIDimension],
+              backgroundColor: activeDimension === dimension ? `${dimensionColors[dimension as HEARTIDimension]}10` : undefined,
+              fontWeight: activeDimension === dimension ? "500" : "400"
             }}
           >
             <Icon size={16} style={{ color: dimensionColors[dimension as HEARTIDimension] }} />

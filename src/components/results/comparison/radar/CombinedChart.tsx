@@ -29,7 +29,7 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
   const userPinkColor = "#D946EF";
   
   return (
-    <div className="bg-gray-50 p-3 sm:p-4 rounded-lg h-[350px] sm:h-[400px] w-full">
+    <div className="bg-gray-50 p-3 sm:p-4 rounded-lg h-[280px] sm:h-[350px] w-full">
       <div className="relative h-full">
         <DimensionIcons iconSize={iconSize} />
         
@@ -37,9 +37,14 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
           data={combinedChartData} 
           config={{
             ...config,
-            outerRadius: isMobile ? "60%" : "65%"
+            outerRadius: isMobile ? "50%" : "65%"
           }}
-          hideDimensionLabels={isMobile}
+          hideDimensionLabels={true}
+          polarAngleProps={{
+            tick: false, // Always hide dimension labels
+            tickLine: false,
+            stroke: '#d1d5db'
+          }}
         >
           {/* Render comparison data first so user data appears on top */}
           {compareMode !== 'none' && (
@@ -74,7 +79,7 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
           />
           
           <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
-          <Legend wrapperStyle={isMobile ? { bottom: -15 } : undefined} />
+          <Legend wrapperStyle={{ bottom: isMobile ? -5 : -10, fontSize: isMobile ? '9px' : '10px' }} />
         </BaseRadarChart>
       </div>
     </div>

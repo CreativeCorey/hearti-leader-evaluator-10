@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { HEARTIAssessment } from '@/types';
 import { formatDataForRadarChart } from '@/utils/calculations';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import DimensionSorter, { getSortedDimensions } from './comparison/DimensionSorter';
 import RadarChartDisplay from './comparison/RadarChartDisplay';
 import ComparisonControls from './comparison/ComparisonControls';
 import ComparisonAnalysis from './comparison/ComparisonAnalysis';
@@ -20,9 +19,6 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
   const [chartView, setChartView] = useState<'combined' | 'separate'>('combined');
   const [compareMode, setCompareMode] = useState<'none' | 'average' | 'men' | 'women'>('average');
   const isMobile = useIsMobile();
-  
-  // Get sorted dimensions using the utility function
-  const sortedDimensions = getSortedDimensions(assessment);
   
   // Format the chart data
   const chartData = formatDataForRadarChart(assessment.dimensionScores);
@@ -45,9 +41,9 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
   );
   
   // Determine chart colors and labels
-  const userColor = "#fbbf24"; // Gold
+  const userColor = "#D946EF"; // Pink for user data
 
-  // Helper function to get the appropriate comparison data that returns an array format for the chart
+  // Helper function to get the appropriate comparison data
   function getComparisonData(): any[] {
     let data = null;
     
@@ -110,15 +106,13 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <DimensionSorter assessment={assessment} />
-        
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
           <ViewTypeToggle chartView={chartView} setChartView={setChartView} />
           <ComparisonControls compareMode={compareMode} setCompareMode={setCompareMode} />
         </div>
         
-        <div className="bg-slate-50 p-4 rounded-lg">
-          <div className={`h-[${isMobile ? '380px' : '450px'}] w-full`}>
+        <div className="bg-slate-50 p-3 sm:p-4 rounded-lg">
+          <div className={`h-[300px] sm:h-[380px] w-full`}>
             <RadarChartDisplay 
               chartView={chartView}
               chartData={chartData}
@@ -135,7 +129,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
         <ComparisonAnalysis 
           assessment={assessment} 
           compareMode={compareMode}
-          sortedDimensions={sortedDimensions}
+          sortedDimensions={[]}
           getComparisonLabel={getComparisonLabel}
           getComparisonColor={getComparisonColor}
           aggregateData={aggregateData}

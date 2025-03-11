@@ -56,17 +56,7 @@ const BaseRadarChart: React.FC<BaseRadarChartProps> = ({
   };
 
   const defaultPolarAngleProps = {
-    tick: isMobile ? {
-      fill: '#6b7280', 
-      fontSize: 9,
-      fontWeight: 400,
-      opacity: 0.85
-    } : { 
-      fill: '#6b7280', 
-      fontSize: 11,
-      fontWeight: 400,
-      opacity: 0.85
-    },
+    tick: false, // Default to hiding dimension labels
     tickLine: false,
     stroke: '#d1d5db'
   };
@@ -84,7 +74,7 @@ const BaseRadarChart: React.FC<BaseRadarChartProps> = ({
         width={500}
         height={500}
         data={data}
-        margin={{ top: 15, right: 20, bottom: 15, left: 20 }}
+        margin={{ top: 15, right: 15, bottom: 15, left: 15 }}
       >
         <PolarGrid 
           gridType={config.gridType} 
@@ -94,7 +84,7 @@ const BaseRadarChart: React.FC<BaseRadarChartProps> = ({
         />
         <PolarAngleAxis 
           dataKey="name" 
-          tick={isMobile && hideDimensionLabels ? false : angleProps.tick}
+          tick={angleProps.tick}
           axisLineType={config.axisLineType}
           tickLine={angleProps.tickLine}
           stroke={angleProps.stroke}
