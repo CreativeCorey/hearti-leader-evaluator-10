@@ -13,6 +13,7 @@ export const ar = {
     back: "رجوع",
     complete: "إكمال",
     copyright: "© PrismWork, Inc. جميع الحقوق محفوظة.",
+    share: "مشاركة"
   },
   header: {
     signIn: "تسجيل الدخول",
@@ -23,14 +24,17 @@ export const ar = {
   },
   assessment: {
     title: "تقييم قيادة HEARTI™",
-    subtitle: "قياس نموك في التواضع والتعاطف والمساءلة والمرونة والشفافية والشمولية",
+    subtitle: "قياس نموك في Humility وEmpathy وAccountability وResiliency وTransparency وInclusivity",
     cloudStorage: "تخزين سحابي",
     localStorage: "تخزين محلي",
   },
   tabs: {
     summary: "ملخص",
     dimensions: "الأبعاد",
-    dataViz: "تصور البيانات",
+    dataViz: {
+      desktop: "HEARTI Spectra",
+      mobile: "Spectra"
+    },
     report: "تقرير",
     developSkills: "تطوير المهارات",
     buildHabits: "بناء العادات",
@@ -62,12 +66,12 @@ export const ar = {
       complete: "كامل",
     },
     dimensions: {
-      humility: "التواضع",
-      empathy: "التعاطف",
-      accountability: "المساءلة",
-      resiliency: "المرونة",
-      transparency: "الشفافية",
-      inclusivity: "الشمولية",
+      humility: "Humility",
+      empathy: "Empathy",
+      accountability: "Accountability",
+      resiliency: "Resiliency",
+      transparency: "Transparency",
+      inclusivity: "Inclusivity",
     },
     habits: {
       title: "عاداتك",

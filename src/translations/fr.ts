@@ -13,6 +13,7 @@ export const fr = {
     back: "Retour",
     complete: "Terminer",
     copyright: "© PrismWork, Inc. Tous droits réservés.",
+    share: "Partager"
   },
   header: {
     signIn: "Se connecter",
@@ -23,14 +24,17 @@ export const fr = {
   },
   assessment: {
     title: "Évaluation de Leadership HEARTI™",
-    subtitle: "Mesurez votre croissance en Humilité, Empathie, Responsabilité, Résilience, Transparence et Inclusivité",
+    subtitle: "Mesurez votre croissance en Humility, Empathy, Accountability, Resiliency, Transparency, et Inclusivity",
     cloudStorage: "Stockage cloud",
     localStorage: "Stockage local",
   },
   tabs: {
     summary: "Résumé",
     dimensions: "Dimensions",
-    dataViz: "Visualisation",
+    dataViz: {
+      desktop: "HEARTI Spectra",
+      mobile: "Spectra"
+    },
     report: "Rapport",
     developSkills: "Développer des compétences",
     buildHabits: "Créer des habitudes",
@@ -62,12 +66,12 @@ export const fr = {
       complete: "Complet",
     },
     dimensions: {
-      humility: "Humilité",
-      empathy: "Empathie",
-      accountability: "Responsabilité",
-      resiliency: "Résilience",
-      transparency: "Transparence",
-      inclusivity: "Inclusivité",
+      humility: "Humility",
+      empathy: "Empathy",
+      accountability: "Accountability",
+      resiliency: "Resiliency",
+      transparency: "Transparency",
+      inclusivity: "Inclusivity",
     },
     habits: {
       title: "Vos Habitudes",

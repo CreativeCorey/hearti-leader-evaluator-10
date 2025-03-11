@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { LogOut, UserX, UserCheck } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from './ui/button';
@@ -8,7 +8,7 @@ import { useLanguage } from '@/contexts/language/LanguageContext';
 import LanguageSelector from './LanguageSelector';
 
 const Header: React.FC = () => {
-  const { user, signOut, anonymousMode } = useAuth();
+  const { user, signOut } = useAuth();
   const { t } = useLanguage();
 
   return (
@@ -28,7 +28,7 @@ const Header: React.FC = () => {
       </div>
       
       <div className="flex items-center justify-end min-w-[100px]">
-        {user && !anonymousMode ? (
+        {user && (
           <Button
             variant="ghost"
             size="sm"
@@ -38,11 +38,11 @@ const Header: React.FC = () => {
             <LogOut size={16} />
             <span className="hidden md:inline">{t('header.signOut')}</span>
           </Button>
-        ) : !user && !anonymousMode ? (
+        ) : (
           <Button asChild size="sm" className="text-xs h-8 px-2 whitespace-nowrap">
             <Link to="/auth">{t('header.signIn')}</Link>
           </Button>
-        ) : null}
+        )}
       </div>
     </header>
   );

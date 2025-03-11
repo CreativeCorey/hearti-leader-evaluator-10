@@ -28,14 +28,15 @@ const DimensionsTab: React.FC<DimensionsTabProps> = ({ assessment }) => {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {sortedDimensions.map((dimension) => {
         const DimensionIcon = dimensionIcons[dimension];
-        const translatedDimension = t(`results.dimensions.${dimension}`);
+        // We're now using t to get the untranslated dimension name
+        const dimensionName = t(`results.dimensions.${dimension}`);
         
         return (
           <Card key={dimension} className="shadow-sm">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center gap-2">
                 <DimensionIcon size={20} style={{ color: dimensionColors[dimension] }} />
-                {translatedDimension}
+                {dimensionName}
               </CardTitle>
               <Badge variant={getBadgeVariant(assessment.dimensionScores[dimension])}>
                 {assessment.dimensionScores[dimension]}/5

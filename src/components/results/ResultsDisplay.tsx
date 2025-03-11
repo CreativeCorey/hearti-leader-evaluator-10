@@ -44,6 +44,13 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
     }
   };
   
+  // Use mobile or desktop version of the tab name based on device
+  const getDataVizTabName = () => {
+    return isMobile ? 
+      t('tabs.dataViz.mobile') : 
+      t('tabs.dataViz.desktop');
+  };
+  
   return (
     <Tabs 
       value={activeTab} 
@@ -58,7 +65,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
           {t('tabs.dimensions')}
         </TabsTrigger>
         <TabsTrigger value="comparison" className="text-xs md:text-sm whitespace-nowrap">
-          {t('tabs.dataViz')}
+          {getDataVizTabName()}
         </TabsTrigger>
         <TabsTrigger value="report" className="text-xs md:text-sm whitespace-nowrap">
           {t('tabs.report')}

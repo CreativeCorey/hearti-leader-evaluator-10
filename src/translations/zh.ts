@@ -1,3 +1,4 @@
+
 export const zh = {
   common: {
     loading: "加载中...",
@@ -23,14 +24,17 @@ export const zh = {
   },
   assessment: {
     title: "HEARTI™ 领导力评估",
-    subtitle: "衡量您在谦虚、同理心、责任感、韧性、透明度和包容性方面的成长",
+    subtitle: "衡量您在Humility、Empathy、Accountability、Resiliency、Transparency和Inclusivity方面的成长",
     cloudStorage: "云存储",
     localStorage: "本地存储",
   },
   tabs: {
     summary: "摘要",
     dimensions: "维度",
-    dataViz: "数据可视化",
+    dataViz: {
+      desktop: "HEARTI Spectra",
+      mobile: "Spectra"
+    },
     report: "报告",
     developSkills: "发展技能",
     buildHabits: "养成习惯",
@@ -62,12 +66,12 @@ export const zh = {
       complete: "完整",
     },
     dimensions: {
-      humility: "谦虚",
-      empathy: "同理心",
-      accountability: "责任感",
-      resiliency: "韧性",
-      transparency: "透明度",
-      inclusivity: "包容性",
+      humility: "Humility",
+      empathy: "Empathy",
+      accountability: "Accountability",
+      resiliency: "Resiliency",
+      transparency: "Transparency",
+      inclusivity: "Inclusivity",
     },
     habits: {
       title: "您的习惯",

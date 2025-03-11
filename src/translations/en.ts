@@ -31,7 +31,10 @@ export const en = {
   tabs: {
     summary: "Summary",
     dimensions: "Dimensions",
-    dataViz: "Data Viz",
+    dataViz: {
+      desktop: "HEARTI Spectra",
+      mobile: "Spectra"
+    },
     report: "Report",
     developSkills: "Develop Skills",
     buildHabits: "Build Habits",

@@ -13,6 +13,7 @@ export const ja = {
     back: "戻る",
     complete: "完了",
     copyright: "© PrismWork, Inc. All rights reserved.",
+    share: "共有"
   },
   header: {
     signIn: "サインイン",
@@ -23,14 +24,17 @@ export const ja = {
   },
   assessment: {
     title: "HEARTI™リーダーシップ評価",
-    subtitle: "謙虚さ、共感性、責任感、回復力、透明性、包括性における成長を測定",
+    subtitle: "Humility、Empathy、Accountability、Resiliency、Transparency、Inclusivityにおける成長を測定",
     cloudStorage: "クラウドストレージ",
     localStorage: "ローカルストレージ",
   },
   tabs: {
     summary: "概要",
     dimensions: "次元",
-    dataViz: "データ可視化",
+    dataViz: {
+      desktop: "HEARTI Spectra",
+      mobile: "Spectra"
+    },
     report: "レポート",
     developSkills: "スキル開発",
     buildHabits: "習慣構築",
@@ -62,12 +66,12 @@ export const ja = {
       complete: "完全",
     },
     dimensions: {
-      humility: "謙虚さ",
-      empathy: "共感性",
-      accountability: "責任感",
-      resiliency: "回復力",
-      transparency: "透明性",
-      inclusivity: "包括性",
+      humility: "Humility",
+      empathy: "Empathy",
+      accountability: "Accountability",
+      resiliency: "Resiliency",
+      transparency: "Transparency",
+      inclusivity: "Inclusivity",
     },
     habits: {
       title: "あなたの習慣",
