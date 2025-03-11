@@ -6,8 +6,10 @@
   /* Chart container styles */
   .pdf-chart-container {
     page-break-inside: avoid;
-    height: 4.5in !important;
+    height: 350px !important;
+    width: 100% !important;
     margin: 0.25in 0;
+    position: relative;
   }
   
   /* Charts grid layout */
@@ -84,6 +86,7 @@
   /* Radar polygon and curve styling */
   .pdf-container .recharts-radar-polygon {
     stroke-linejoin: round;
+    fill-opacity: 0.6 !important;
   }
   
   .pdf-container .recharts-radar-curve {
@@ -99,5 +102,12 @@
   .pdf-container .recharts-polar-angle-axis-tick-value {
     font-size: 11pt !important;
     font-weight: bold !important;
+  }
+  
+  /* Fix to maintain aspect ratio of radar charts */
+  .pdf-container .recharts-responsive-container {
+    aspect-ratio: 1/1;
+    height: auto !important;
+    max-height: 300px;
   }
 }

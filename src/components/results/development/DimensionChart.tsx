@@ -41,7 +41,7 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
   return (
     <div className="bg-slate-50 p-4 rounded-lg">
       <p className="text-center font-medium text-lg text-indigo-600 mb-2">{chartTitle}</p>
-      <div className={`${isMobile && showAllDimensions ? 'h-[400px]' : 'h-[300px]'} relative`}>
+      <div className={`radar-chart-container ${isMobile && showAllDimensions ? 'mobile-development-view' : ''}`}>
         <DimensionIcons iconSize={iconSize} />
         
         <BaseRadarChart data={singleDimensionData} config={config}>

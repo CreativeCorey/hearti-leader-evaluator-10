@@ -33,7 +33,7 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
   const finalChartColor = isUserChart ? USER_CHART_COLOR : chartColor;
   
   return (
-    <div className={`relative h-full w-full flex items-center justify-center ${className}`}>
+    <div className={`relative radar-chart-container flex items-center justify-center ${className}`}>
       {showIcons && <DimensionIcons iconSize={iconSize} />}
       
       <BaseRadarChart data={data} config={config}>
