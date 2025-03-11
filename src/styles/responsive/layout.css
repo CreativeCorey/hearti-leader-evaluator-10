@@ -41,5 +41,18 @@
     .hexagon-initial {
       font-size: 24px !important;
     }
+    
+    /* Side-by-side action buttons for PDF report */
+    .action-buttons-container {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+    }
+    
+    /* Ensure button text doesn't wrap on smaller screens */
+    .action-button {
+      white-space: nowrap;
+      font-size: 0.875rem;
+    }
   }
 }

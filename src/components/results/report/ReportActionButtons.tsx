@@ -22,25 +22,25 @@ const ReportActionButtons: React.FC<ReportActionButtonsProps> = ({
     <>
       <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
         <h2 className="text-2xl font-semibold">HEARTI:Leader Report</h2>
+        
+        {/* Action buttons group - always side-by-side */}
         <div className="flex gap-2">
           <Button 
             onClick={onExportPDF} 
             disabled={exportingPdf}
             className="flex items-center gap-2"
+            size={isMobile ? "sm" : "default"}
           >
             <Download size={16} />
-            {exportingPdf ? "Generating PDF..." : "Export PDF"}
+            {exportingPdf ? (isMobile ? "Generating..." : "Generating PDF...") : (isMobile ? "Export" : "Export PDF")}
           </Button>
+          
+          <ShareButton 
+            assessment={assessment} 
+            variant="outline"
+            size={isMobile ? "sm" : "default"}
+          />
         </div>
-      </div>
-      
-      {/* Action buttons in a full-width container before the card */}
-      <div className="flex flex-wrap gap-3 justify-center sm:justify-end mb-4">
-        <ShareButton 
-          assessment={assessment} 
-          variant="outline"
-          size={isMobile ? "sm" : "default"}
-        />
       </div>
     </>
   );

@@ -28,10 +28,10 @@ const ShareButton: React.FC<ShareButtonProps> = ({
         variant={variant}
         size={size}
         onClick={() => setIsShareModalOpen(true)}
-        className={className}
+        className={`whitespace-nowrap ${className || ''}`}
       >
-        <Share2 className={isMobile ? "mr-1" : "mr-2"} size={16} />
-        {isMobile ? "Share" : "Share Results"}
+        <Share2 className={size === "sm" ? "mr-1" : "mr-2"} size={16} />
+        {size === "sm" ? "Share" : "Share Results"}
       </Button>
       
       <ShareModal
