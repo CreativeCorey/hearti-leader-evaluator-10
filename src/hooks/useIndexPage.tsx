@@ -1,23 +1,18 @@
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import { useToast } from "./use-toast";
-import { useIsMobile } from './use-mobile';
-import { HEARTIAssessment, UserProfile } from '../types';
-import { getUserProfile, setUseSupabase, getOrCreateAnonymousId } from '../utils/localStorage';
+import { HEARTIAssessment } from '../types';
+import { setUseSupabase } from '../utils/localStorage';
 import { useAssessments } from './useAssessments';
 import { useSupabaseSync } from './useSupabaseSync';
 import { useGoogleIntegration } from './useGoogleIntegration';
+import { useViewTransitions } from './useViewTransitions';
+import { useAppInitialization } from './useAppInitialization';
+import { useTabManagement } from './useTabManagement';
 
 export const useIndexPage = () => {
   const { toast } = useToast();
-  const isMobile = useIsMobile();
-  const [activeTab, setActiveTab] = useState<'take' | 'results'>('take');
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [initialized, setInitialized] = useState(false);
-  const [viewTransitioning, setViewTransitioning] = useState(false);
-  const previousMobileState = useRef(isMobile);
-  
+
   // Use our custom hooks with memoized callbacks
   const { 
     latestAssessment, 
@@ -30,6 +25,19 @@ export const useIndexPage = () => {
     handleAssessmentComplete: onAssessmentComplete 
   } = useAssessments();
   
+  // App initialization hook
+  const { loading, profile, initialized } = useAppInitialization({ loadAssessments });
+  
+  // View transitions hook
+  const { isMobile, viewTransitioning } = useViewTransitions();
+  
+  // Tab management hook
+  const { activeTab, setActiveTab } = useTabManagement({ 
+    userAssessments, 
+    loading 
+  });
+  
+  // Supabase sync hook
   const {
     isSupabaseEnabled,
     syncDialogOpen,
@@ -44,6 +52,7 @@ export const useIndexPage = () => {
     sendLatestToSheets
   } = useSupabaseSync(loadAssessments);
   
+  // Google integration hook
   const {
     googleConnection,
     testingSheets,
@@ -52,91 +61,6 @@ export const useIndexPage = () => {
     handleConfigureWorkloadIdentity,
     testGoogleSheets
   } = useGoogleIntegration();
-
-  // Handle mobile view transitions to prevent freezing
-  useEffect(() => {
-    // Detect changes in mobile state
-    if (previousMobileState.current !== isMobile) {
-      setViewTransitioning(true);
-      
-      // Use a short timeout to allow the UI to update smoothly
-      const transitionTimer = setTimeout(() => {
-        setViewTransitioning(false);
-      }, 150);
-      
-      // Update the reference to the current mobile state
-      previousMobileState.current = isMobile;
-      
-      return () => clearTimeout(transitionTimer);
-    }
-  }, [isMobile]);
-
-  // Handle orientation change explicitly
-  useEffect(() => {
-    const handleOrientationChange = () => {
-      // Set transitioning state to true during orientation change
-      setViewTransitioning(true);
-      
-      // Use a slightly longer timeout for orientation changes
-      // as they take more time than regular resize events
-      setTimeout(() => {
-        setViewTransitioning(false);
-      }, 300);
-    };
-    
-    window.addEventListener('orientationchange', handleOrientationChange);
-    
-    return () => {
-      window.removeEventListener('orientationchange', handleOrientationChange);
-    };
-  }, []);
-
-  // Memoize initialization function
-  const initializeApp = useCallback(async () => {
-    if (initialized) return; // Prevent multiple initializations
-    
-    try {
-      console.log("Initializing app...");
-      // Enable Supabase by default for Google Sheets integration
-      const supabaseEnabled = true;
-      setUseSupabase(supabaseEnabled);
-      
-      // Get or create anonymous ID
-      const anonymousId = getOrCreateAnonymousId();
-      console.log("Anonymous user ID:", anonymousId);
-      
-      // Get user profile
-      const userProfile = await getUserProfile();
-      setProfile(userProfile);
-      
-      // Load assessment data
-      await loadAssessments();
-      
-      setInitialized(true);
-    } catch (error) {
-      console.error('Error initializing:', error);
-      toast({
-        title: "Initialization Error",
-        description: "There was a problem loading your data. Please try refreshing the page.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [toast, loadAssessments, initialized]);
-
-  // Initialize app once on mount
-  useEffect(() => {
-    initializeApp();
-  }, [initializeApp]);
-
-  // Auto-switch to results tab if user has assessments
-  useEffect(() => {
-    if (!loading && userAssessments.length > 0 && activeTab === 'take') {
-      console.log("Auto-switching to results tab due to existing assessment data");
-      setActiveTab('results');
-    }
-  }, [userAssessments, activeTab, loading]);
 
   // Show error toast only when assessment status changes to error
   useEffect(() => {
@@ -165,7 +89,7 @@ export const useIndexPage = () => {
         : "Your assessment has been saved locally. To send to Google Sheets, enable Cloud Storage.",
       duration: 5000,
     });
-  }, [isSupabaseEnabled, onAssessmentComplete, toast]);
+  }, [isSupabaseEnabled, onAssessmentComplete, toast, setActiveTab]);
 
   return {
     loading,

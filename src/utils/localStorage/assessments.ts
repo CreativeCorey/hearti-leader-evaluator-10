@@ -1,4 +1,3 @@
-
 import { HEARTIAssessment } from '../../types';
 import { saveAssessmentToSupabase, getUserAssessmentsFromSupabase } from '../supabase/assessments';
 import { ensureUserProfileExists } from '../supabase/profiles';
@@ -87,6 +86,12 @@ export const getCurrentUserAssessments = async (): Promise<HEARTIAssessment[]> =
             mergedAssessments.push(supabaseAssessment);
           }
         }
+        
+        // Store the merged assessments back in localStorage to keep it in sync
+        localStorage.setItem(ASSESSMENTS_KEY, JSON.stringify([
+          ...allAssessments.filter(a => a.userId !== userId),
+          ...mergedAssessments
+        ]));
         
         return mergedAssessments;
       } catch (error) {
