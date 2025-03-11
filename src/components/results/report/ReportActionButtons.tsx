@@ -30,7 +30,7 @@ const ReportActionButtons: React.FC<ReportActionButtonsProps> = ({
         disabled={exportingPdf}
       >
         <Download size={isMobile ? 14 : 16} className={isMobile ? "mr-1" : "mr-1.5"} />
-        {exportingPdf ? t('results.report.exporting') : t('results.report.export')}
+        {exportingPdf ? "Exporting..." : "Export PDF"}
       </Button>
     </div>
   );

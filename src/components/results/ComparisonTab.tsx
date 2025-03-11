@@ -36,7 +36,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
   // Determine chart colors and labels
   const userColor = "#D946EF"; // Pink for user data
   const getComparisonColor = () => "#8b5cf6"; // Purple for average
-  const getComparisonLabel = () => "Global Average";
+  const getComparisonLabel = () => "The World";
 
   // Create comparison data for the separate charts view
   const getComparisonData = () => {
@@ -53,50 +53,52 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
   const sortedDimensions = Object.keys(assessment.dimensionScores).map(key => key as HEARTIDimension);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>HEARTI Comparison</CardTitle>
-        <CardDescription>
-          Compare your results with global benchmarks
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-          <ViewTypeToggle chartView={chartView} setChartView={setChartView} />
-          <ComparisonControls compareMode={compareMode} setCompareMode={setCompareMode} />
-        </div>
-        
-        <div className="bg-slate-50 p-3 sm:p-4 rounded-lg">
-          <div className={`h-[300px] sm:h-[380px] w-full`}>
-            <RadarChartDisplay 
-              chartView={chartView}
-              chartData={chartData}
-              combinedChartData={combinedChartData}
+    <div className="space-y-8">
+      <Card>
+        <CardHeader>
+          <CardTitle>HEARTI Comparison</CardTitle>
+          <CardDescription>
+            Compare your results with global benchmarks
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+            <ViewTypeToggle chartView={chartView} setChartView={setChartView} />
+            <ComparisonControls compareMode={compareMode} setCompareMode={setCompareMode} />
+          </div>
+          
+          <div className="bg-slate-50 p-3 sm:p-4 rounded-lg">
+            <div className={`h-[300px] sm:h-[380px] w-full`}>
+              <RadarChartDisplay 
+                chartView={chartView}
+                chartData={chartData}
+                combinedChartData={combinedChartData}
+                compareMode={compareMode}
+                getComparisonLabel={getComparisonLabel}
+                getComparisonColor={getComparisonColor}
+                userColor={userColor}
+                getComparisonData={getComparisonData}
+              />
+            </div>
+          </div>
+          
+          {compareMode !== 'none' && (
+            <ComparisonAnalysis 
+              assessment={assessment} 
               compareMode={compareMode}
+              sortedDimensions={sortedDimensions}
               getComparisonLabel={getComparisonLabel}
               getComparisonColor={getComparisonColor}
-              userColor={userColor}
-              getComparisonData={getComparisonData}
+              aggregateData={aggregateData}
             />
-          </div>
-        </div>
-        
-        {compareMode !== 'none' && (
-          <ComparisonAnalysis 
-            assessment={assessment} 
-            compareMode={compareMode}
-            sortedDimensions={sortedDimensions}
-            getComparisonLabel={getComparisonLabel}
-            getComparisonColor={getComparisonColor}
-            aggregateData={aggregateData}
-          />
-        )}
-        
-        {hasMultipleAssessments && (
-          <ProgressChart assessments={assessments} />
-        )}
-      </CardContent>
-    </Card>
+          )}
+        </CardContent>
+      </Card>
+      
+      {hasMultipleAssessments && (
+        <ProgressChart assessments={assessments} />
+      )}
+    </div>
   );
 };
 

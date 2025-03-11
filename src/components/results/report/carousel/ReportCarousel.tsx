@@ -67,11 +67,37 @@ const ReportCarousel: React.FC<ReportCarouselProps> = ({
     }
   };
   
+  // For PDF export, we need to render all pages but make only the current one visible
+  const totalPages = dimensionEntries.length + 3; // Header, Charts, Dimensions, Footer
+  
   return (
     <div className="relative pdf-page">
       {/* Page content */}
       <div className="min-h-[70vh]">
+        {/* Render current page for display */}
         {renderPageContent()}
+        
+        {/* For PDF export, render all pages but hide them - they'll be processed in exportToPDF.ts */}
+        {Array.from({ length: totalPages }).map((_, index) => {
+          if (index === currentPage) return null; // Skip current page as it's already rendered
+          
+          // These elements are hidden in the UI but used during PDF export
+          return (
+            <div key={`pdf-page-${index}`} className="pdf-page" style={{ display: 'none' }}>
+              {index === 0 ? <ReportHeader assessment={assessment} /> :
+               index === 1 ? <SpectraCharts assessment={assessment} assessments={assessments} /> :
+               index < dimensionEntries.length + 2 ? (
+                 <div className="pdf-section">
+                   <h3 className="text-2xl font-medium mb-4 pdf-section-title">HEARTI Dimension Analysis</h3>
+                   <DimensionCard 
+                     dimension={dimensionEntries[index - 2][0] as 'humility' | 'empathy' | 'accountability' | 'resiliency' | 'transparency' | 'inclusivity'}
+                     score={dimensionEntries[index - 2][1]}
+                   />
+                 </div>
+               ) : <ReportFooter />}
+            </div>
+          );
+        })}
       </div>
       
       {/* Navigation buttons for swipe */}

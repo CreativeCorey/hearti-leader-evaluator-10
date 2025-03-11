@@ -16,9 +16,17 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ assessments }) => {
   // Only proceed if we have assessments
   if (!assessments || assessments.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[250px]">
-        <p className="text-muted-foreground">No assessment data available.</p>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className={isMobile ? 'text-lg' : ''}>HEARTI Progress Over Time</CardTitle>
+          <CardDescription className={isMobile ? 'text-xs' : ''}>Track your leadership development journey</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center h-[250px]">
+            <p className="text-muted-foreground">No assessment data available.</p>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -50,10 +58,10 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ assessments }) => {
   // Calculate chart height based on mobile view and data points
   const chartHeight = isMobile 
     ? progressData.length > 3 ? 250 : 200 
-    : 250;
+    : 300;
 
   return (
-    <Card className="mt-8 mb-8">
+    <Card>
       <CardHeader className={`${isMobile ? 'pb-1 pt-3' : 'pb-2'}`}>
         <CardTitle className={isMobile ? 'text-lg' : ''}>HEARTI Progress Over Time</CardTitle>
         <CardDescription className={isMobile ? 'text-xs' : ''}>Track your leadership development journey</CardDescription>

@@ -19,7 +19,16 @@ export const exportToPDF = async (element: HTMLElement, assessment: HEARTIAssess
     // Force browser to calculate layout with PDF styles
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // Determine the height of the content
+    // Clone the element to avoid modifying the original DOM
+    const clonedElement = element.cloneNode(true) as HTMLElement;
+    
+    // Find all carousel pages and ensure they're visible
+    const carouselItems = clonedElement.querySelectorAll('.pdf-page');
+    carouselItems.forEach((item) => {
+      (item as HTMLElement).style.display = 'block';
+    });
+    
+    // Determine the height of the content with all pages visible
     const contentHeight = tempContainer.scrollHeight;
     const docPageHeight = 10 * 96; // 10 inches (11 - 1 margin) at 96 DPI
     

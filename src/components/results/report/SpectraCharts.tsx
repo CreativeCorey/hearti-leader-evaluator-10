@@ -53,6 +53,7 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment, assessments =
       <div className={`${isMobile ? 'flex flex-col space-y-8' : 'lg:grid lg:grid-cols-2'} gap-6 pdf-charts-grid`}>
         <div className={`bg-gradient-to-br from-white to-gray-50 p-5 rounded-lg shadow-sm pdf-chart-column relative overflow-hidden`}>
           <div className="absolute inset-0 opacity-5 bg-pattern"></div>
+          <div className="text-center font-medium text-fuchsia-600 mb-3">Your HEARTI Spectra</div>
           <RadarSpectraChart
             data={chartData}
             title="Your HEARTI Spectra"
@@ -66,9 +67,10 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment, assessments =
         
         <div className={`bg-gradient-to-br from-white to-gray-50 p-5 rounded-lg shadow-sm pdf-chart-column relative overflow-hidden ${isMobile ? 'mt-4' : ''}`}>
           <div className="absolute inset-0 opacity-5 bg-pattern"></div>
+          <div className="text-center font-medium text-indigo-600 mb-3">The World HEARTI:Leader Benchmark</div>
           <RadarSpectraChart
             data={benchmarkData}
-            title="Global HEARTI:Leader Benchmark"
+            title="The World HEARTI:Leader Benchmark"
             chartColor={comparisonColors.average}
             className="mb-2 relative z-10"
           />
@@ -80,7 +82,7 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment, assessments =
       
       <p className="text-sm text-muted-foreground mt-6 leading-relaxed">
         The HEARTI:Leader Quotient report provides you with information about your strengths and areas that you can develop further. 
-        The charts show your HEARTI:Leader Spectra - a visualization of your HEARTI competencies based on your responses, and the global benchmark for visual comparison.
+        The charts show your HEARTI:Leader Spectra - a visualization of your HEARTI competencies based on your responses, and the world benchmark for visual comparison.
         This information is a reference point only. 
         No leader is strongest in every competency, but learning how your results compare to other 21st century leaders can be insightful.
       </p>
