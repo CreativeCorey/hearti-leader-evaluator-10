@@ -91,10 +91,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
         <div className="space-y-4 py-4">
           <div className="text-center mb-2">
             <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium">
-              {t('assessment.questionCount', {
-                current: currentQuestionIndex + 1,
-                total: totalQuestions
-              })}
+              {t('assessment.questionCount', { current: String(currentQuestionIndex + 1), total: String(totalQuestions) })}
             </span>
           </div>
           

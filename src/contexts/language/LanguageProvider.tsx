@@ -32,9 +32,9 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     setCurrentLanguage(language);
   };
 
-  // Translation function
-  const t = (key: string) => {
-    return getTranslation(currentLanguage, key);
+  // Translation function with support for string interpolation
+  const t = (key: string, params?: Record<string, string>) => {
+    return getTranslation(currentLanguage, key, params);
   };
 
   return (
