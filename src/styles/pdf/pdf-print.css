@@ -1,0 +1,10 @@
+
+/* ====================================
+ * PRINT SETTINGS
+ * ==================================== */
+@media print, screen {
+  @page {
+    size: letter portrait;
+    margin: 0;
+  }
+}

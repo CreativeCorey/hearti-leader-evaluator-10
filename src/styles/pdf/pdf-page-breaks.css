@@ -1,0 +1,14 @@
+
+/* ====================================
+ * PAGE BREAK RULES
+ * ==================================== */
+@media print, screen {
+  /* Add rules to create page breaks after specific components */
+  .pdf-container .pdf-section-title + .pdf-charts-grid {
+    page-break-after: always;
+  }
+  
+  .pdf-container .pdf-dimension-card:nth-child(even) {
+    page-break-after: always;
+  }
+}

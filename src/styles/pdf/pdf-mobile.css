@@ -1,0 +1,88 @@
+
+/* ====================================
+ * MOBILE CAROUSEL & SWIPE STYLING
+ * ==================================== */
+@media print, screen {
+  /* Mobile responsive adjustments */
+  @media screen and (max-width: 767px) {
+    .pdf-container {
+      width: 100%;
+      padding: 0.5rem;
+    }
+    
+    .pdf-chart-container {
+      height: 300px !important;
+    }
+    
+    .pdf-dimension-card {
+      margin-bottom: 1rem !important;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .pdf-dimension-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem !important;
+    }
+    
+    .pdf-container h2 {
+      font-size: 1.5rem !important;
+    }
+    
+    .pdf-container h3 {
+      font-size: 1.25rem !important;
+    }
+    
+    .pdf-container p {
+      font-size: 0.875rem !important;
+    }
+    
+    /* Carousel item sizing for mobile */
+    .embla__slide {
+      min-height: 70vh;
+      padding-bottom: 2rem;
+    }
+    
+    /* Carousel pagination for mobile */
+    .carousel-pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 1rem;
+    }
+    
+    .carousel-pagination-dot {
+      width: 8px;
+      height: 8px;
+      margin: 0 4px;
+      border-radius: 50%;
+      background-color: #d1d5db;
+      transition: background-color 0.2s;
+    }
+    
+    .carousel-pagination-dot.active {
+      background-color: #6366f1;
+    }
+    
+    /* Swipe indicator */
+    .swipe-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #9ca3af;
+      font-size: 0.75rem;
+      margin-top: 0.5rem;
+    }
+    
+    .swipe-indicator svg {
+      animation: swipe-hint 1.5s ease-in-out infinite;
+      margin: 0 0.25rem;
+    }
+    
+    @keyframes swipe-hint {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(8px); }
+    }
+  }
+}

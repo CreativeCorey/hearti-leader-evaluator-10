@@ -1,0 +1,31 @@
+
+/* ====================================
+ * LAYOUT OVERRIDES FOR PDF
+ * ==================================== */
+@media print, screen {
+  /* Override any flex layout issues for PDF */
+  @media print {
+    .pdf-container .flex {
+      display: block;
+    }
+    
+    .pdf-container .flex-col,
+    .pdf-container .flex-row {
+      display: block;
+    }
+    
+    .pdf-container .lg\:flex-row {
+      display: flex !important;
+      flex-direction: row !important;
+    }
+    
+    .pdf-container .gap-8 > * {
+      margin-bottom: 0.3in;
+    }
+    
+    .pdf-container .lg\:flex-row > * {
+      width: 48%;
+      margin-right: 2%;
+    }
+  }
+}

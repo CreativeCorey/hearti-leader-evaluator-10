@@ -1,0 +1,35 @@
+
+/* ====================================
+ * TYPOGRAPHY STYLES
+ * ==================================== */
+@media print, screen {
+  /* Typography defaults for PDF */
+  .pdf-container h2 {
+    font-size: 20pt !important;
+  }
+  
+  .pdf-container h3 {
+    font-size: 16pt !important;
+  }
+  
+  .pdf-container h4 {
+    font-size: 14pt !important;
+  }
+  
+  .pdf-container p {
+    margin-bottom: 0.15in;
+    font-size: 12pt !important;
+    line-height: 1.4 !important;
+  }
+  
+  .pdf-container .prose {
+    max-width: none;
+  }
+  
+  .pdf-container h2, 
+  .pdf-container h3, 
+  .pdf-container h4 {
+    page-break-after: avoid;
+    margin-top: 0.2in;
+  }
+}

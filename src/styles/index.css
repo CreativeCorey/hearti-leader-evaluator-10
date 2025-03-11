@@ -5,4 +5,12 @@
 @import './dimension-styles.css';
 @import './responsive-styles.css';
 @import './utilities.css';
-@import './pdf-report.css';
+@import './pdf/pdf-base.css';
+@import './pdf/pdf-typography.css';
+@import './pdf/pdf-header.css';
+@import './pdf/pdf-charts.css';
+@import './pdf/pdf-dimension-cards.css';
+@import './pdf/pdf-layout.css';
+@import './pdf/pdf-page-breaks.css';
+@import './pdf/pdf-print.css';
+@import './pdf/pdf-mobile.css';

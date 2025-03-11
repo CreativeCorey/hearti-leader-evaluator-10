@@ -1,0 +1,94 @@
+
+/* ====================================
+ * CHARTS & VISUALIZATION STYLES
+ * ==================================== */
+@media print, screen {
+  .pdf-chart-container {
+    page-break-inside: avoid;
+    height: 4.5in !important;
+    margin: 0.25in 0;
+  }
+  
+  .pdf-charts-grid {
+    display: flex;
+    flex-direction: column !important;
+    margin-bottom: 0.5in;
+    page-break-inside: avoid;
+  }
+  
+  @media screen and (min-width: 768px) {
+    .pdf-charts-grid {
+      flex-direction: row !important;
+      justify-content: space-between;
+    }
+  }
+  
+  @media print {
+    .pdf-charts-grid {
+      flex-direction: row !important;
+      justify-content: space-between;
+      page-break-after: always;
+    }
+  }
+  
+  .pdf-chart-column {
+    width: 100%;
+    padding: 0.3in !important;
+    margin-bottom: 0.3in;
+  }
+  
+  @media screen and (min-width: 768px), print {
+    .pdf-chart-column {
+      width: 48%;
+      margin-bottom: 0;
+    }
+  }
+  
+  /* Chart-specific styles */
+  .pdf-container .recharts-wrapper,
+  .pdf-container .recharts-surface {
+    overflow: visible;
+  }
+  
+  .pdf-container .recharts-polar-angle-axis-tick text {
+    font-size: 12pt !important;
+    font-weight: bold;
+  }
+  
+  .pdf-container .recharts-polar-radius-axis-tick text {
+    font-size: 10pt !important;
+  }
+  
+  .pdf-container .recharts-wrapper {
+    page-break-inside: avoid;
+  }
+
+  /* Spider chart specific styling */
+  .pdf-container .recharts-polar-grid-concentric-circle {
+    stroke: #ddd;
+    stroke-width: 1px;
+  }
+  
+  .pdf-container .recharts-polar-grid-angle {
+    stroke: #ddd;
+    stroke-width: 1px;
+  }
+  
+  .pdf-container .recharts-polar-angle-axis-line {
+    stroke: #ddd;
+    stroke-width: 1px;
+  }
+  
+  .pdf-container .recharts-radar-polygon {
+    stroke-linejoin: round;
+  }
+  
+  .pdf-container .recharts-radar-curve {
+    stroke-linecap: round;
+  }
+  
+  .pdf-container .recharts-dot {
+    stroke-width: 1px;
+    stroke: white;
+  }
+}
