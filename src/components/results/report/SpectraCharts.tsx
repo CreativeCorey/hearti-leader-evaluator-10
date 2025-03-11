@@ -67,10 +67,10 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment, assessments =
         
         <div className={`bg-gradient-to-br from-white to-gray-50 p-5 rounded-lg shadow-sm pdf-chart-column relative overflow-hidden ${isMobile ? 'mt-4' : ''}`}>
           <div className="absolute inset-0 opacity-5 bg-pattern"></div>
-          <div className="text-center font-medium text-indigo-600 mb-3">The World HEARTI:Leader Benchmark</div>
+          <div className="text-center font-medium text-indigo-600 mb-3">HEARTI Index Benchmark</div>
           <RadarSpectraChart
             data={benchmarkData}
-            title="The World HEARTI:Leader Benchmark"
+            title="HEARTI Index Benchmark"
             chartColor={comparisonColors.average}
             className="mb-2 relative z-10"
           />

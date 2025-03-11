@@ -47,14 +47,12 @@ const ComparisonAnalysis: React.FC<ComparisonAnalysisProps> = ({
                 <div className="flex flex-col mb-3">
                   <h4 className="text-lg font-semibold capitalize">{dimension}</h4>
                   <div className="flex items-center space-x-3 mt-2">
-                    <div className="rounded-full px-3 py-1 text-white text-sm flex items-center justify-center" 
-                         style={{ backgroundColor: "#D946EF" }}>
-                      <span className="font-semibold">You: {userScore.toFixed(1)}</span>
+                    <div className="text-sm font-semibold" style={{ color: "#D946EF" }}>
+                      You: {userScore.toFixed(1)}
                     </div>
                     <span className="text-gray-400">|</span>
-                    <div className="rounded-full px-3 py-1 text-white text-sm flex items-center justify-center" 
-                         style={{ backgroundColor: getComparisonColor() }}>
-                      <span className="font-semibold">{getComparisonLabel()}: {comparisonScore.toFixed(1)}</span>
+                    <div className="text-sm font-semibold" style={{ color: getComparisonColor() }}>
+                      {getComparisonLabel()}: {comparisonScore.toFixed(1)}
                     </div>
                   </div>
                 </div>

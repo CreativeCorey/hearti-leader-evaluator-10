@@ -57,8 +57,8 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ assessments }) => {
 
   // Calculate chart height based on mobile view and data points
   const chartHeight = isMobile 
-    ? progressData.length > 3 ? 250 : 200 
-    : 300;
+    ? progressData.length > 3 ? 300 : 280 
+    : 350;
 
   return (
     <Card>
@@ -67,16 +67,20 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ assessments }) => {
         <CardDescription className={isMobile ? 'text-xs' : ''}>Track your leadership development journey</CardDescription>
       </CardHeader>
       <CardContent className={isMobile ? 'p-2' : ''}>
-        <div className={`h-[${chartHeight}px] w-full`} style={{ height: chartHeight }}>
+        <div className={`w-full`} style={{ height: chartHeight }}>
           {progressData.length > 1 ? (
             <ResponsiveContainer width="100%" height="100%">
               <LineChart
                 data={progressData}
-                margin={{ top: 5, right: 20, left: 0, bottom: isMobile ? 25 : 5 }}
+                margin={{ top: 10, right: 20, left: 5, bottom: isMobile ? 30 : 10 }}
               >
                 <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
                 <XAxis dataKey="date" />
-                <YAxis domain={[0, 5]} />
+                <YAxis 
+                  domain={[0, 5]} 
+                  ticks={[0, 1, 2, 3, 4, 5]} 
+                  padding={{ top: 20 }}
+                />
                 <Tooltip 
                   formatter={(value) => [`${value}/5`]}
                   labelFormatter={(label) => {
@@ -86,7 +90,7 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ assessments }) => {
                 />
                 <Legend 
                   wrapperStyle={isMobile ? { 
-                    bottom: -20, 
+                    bottom: -25, 
                     fontSize: '10px',
                     width: '100%', 
                     margin: '0 auto',

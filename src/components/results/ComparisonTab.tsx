@@ -36,7 +36,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
   // Determine chart colors and labels
   const userColor = "#D946EF"; // Pink for user data
   const getComparisonColor = () => "#8b5cf6"; // Purple for average
-  const getComparisonLabel = () => "The World";
+  const getComparisonLabel = () => "HEARTI Index";
 
   // Create comparison data for the separate charts view
   const getComparisonData = () => {
