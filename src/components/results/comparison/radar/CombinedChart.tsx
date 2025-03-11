@@ -8,7 +8,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 interface CombinedChartProps {
   combinedChartData: any[];
-  compareMode: 'none' | 'average' | 'men' | 'women';
+  compareMode: 'none' | 'average';
   userColor: string;
   getComparisonColor: () => string;
   getComparisonLabel: () => string;
@@ -27,6 +27,20 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
   
   // Using pink color for user data instead of gold
   const userPinkColor = "#D946EF";
+  
+  // Handle the case where no data should be shown (no comparison mode)
+  const hasNoData = compareMode === 'none' && combinedChartData.every(item => !item["Comparison"]);
+  
+  if (hasNoData) {
+    return (
+      <div className="bg-gray-50 p-3 sm:p-4 rounded-lg h-[280px] sm:h-[350px] w-full flex flex-col items-center justify-center">
+        <div className="text-center text-gray-500">
+          <p className="mb-2">Select a comparison option to view data</p>
+          <p className="text-sm">Use the comparison controls above to visualize your HEARTI data</p>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="bg-gray-50 p-3 sm:p-4 rounded-lg h-[280px] sm:h-[350px] w-full">
@@ -83,8 +97,18 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
             wrapperStyle={{ 
               bottom: isMobile ? -10 : -5, 
               fontSize: isMobile ? '9px' : '10px',
-              width: '90% !important'
-            }} 
+              width: '100% !important',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: isMobile ? 'column' : 'row',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+            layout={isMobile ? "vertical" : "horizontal"}
+            verticalAlign="bottom"
+            align="center"
           />
         </BaseRadarChart>
       </div>

@@ -65,6 +65,22 @@
     z-index: 10;
   }
   
+  /* Fix for legend items that can wrap to avoid overflow */
+  .recharts-default-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+  }
+  
+  .recharts-legend-item {
+    display: flex !important;
+    align-items: center !important;
+    margin: 0 4px !important;
+    white-space: nowrap;
+  }
+  
   @media (max-width: 640px) {
     /* Make radar chart container taller on mobile to avoid legend overlapping */
     .radar-chart-container {
@@ -88,22 +104,19 @@
     .recharts-legend-wrapper {
       font-size: 10px;
       bottom: -15px !important;
-      max-width: 95% !important;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      margin-top: 8px;
     }
     
-    /* Fix legend item spacing */
+    /* Stack legend items on mobile */
     .recharts-default-legend {
+      flex-direction: column;
       padding: 0 !important;
       margin: 0 !important;
-      display: flex;
-      justify-content: center;
+      align-items: center;
     }
     
     .recharts-legend-item {
-      margin: 0 4px !important;
+      margin: 2px 0 !important;
     }
     
     /* Fix for radar charts */

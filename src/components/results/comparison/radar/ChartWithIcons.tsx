@@ -75,7 +75,10 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
             position: 'absolute', 
             bottom: -5, 
             fontSize: '10px',
-            width: '90% !important'
+            width: '90% !important',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            textAlign: 'center'
           }} 
         />
       </BaseRadarChart>

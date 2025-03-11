@@ -6,7 +6,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 interface SeparateChartsProps {
   chartData: any[];
   getComparisonData: () => any[] | null;
-  compareMode: 'none' | 'average' | 'men' | 'women';
+  compareMode: 'none' | 'average';
   userColor: string;
   getComparisonLabel: () => string;
   getComparisonColor: () => string;
@@ -26,8 +26,27 @@ const SeparateCharts: React.FC<SeparateChartsProps> = ({
   // Convert comparison data to array if needed
   const comparisonData = compareMode !== 'none' ? getComparisonData() : null;
   
+  // If no comparison mode is selected, only show the user chart
+  if (compareMode === 'none') {
+    return (
+      <div className="flex flex-col items-center justify-center">
+        <div className="bg-slate-50 p-3 rounded-lg h-[260px] sm:h-[280px] w-full">
+          <p className="text-center font-medium text-fuchsia-600 mb-1">Your HEARTI Spectra</p>
+          <div className="relative h-[calc(100%-30px)]">
+            <ChartWithIcons 
+              data={chartData} 
+              chartColor={userColor}
+              chartTitle="Your HEARTI Spectra"
+              showIcons={true}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className={`grid grid-cols-1 ${isMobile ? 'gap-8' : 'md:grid-cols-2 gap-4'}`}>
       <div className="bg-slate-50 p-3 rounded-lg h-[260px] sm:h-[280px]">
         <p className="text-center font-medium text-fuchsia-600 mb-1">Your HEARTI Spectra</p>
         <div className="relative h-[calc(100%-30px)]">

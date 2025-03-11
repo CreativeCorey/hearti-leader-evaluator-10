@@ -10,12 +10,12 @@ const Header: React.FC = () => {
 
   return (
     <header className="w-full py-4 px-4 flex justify-between items-center border-b backdrop-blur-sm bg-white/95 fixed top-0 z-10">
-      <div className="w-1/4 flex items-center">
+      <div className="flex items-center">
         <Button
           variant="outline"
           size="sm"
           onClick={toggleAnonymousMode}
-          className="flex items-center gap-1 text-xs"
+          className="flex items-center gap-1 text-xs truncate max-w-[120px] sm:max-w-none"
         >
           {anonymousMode ? (
             <>
@@ -31,7 +31,7 @@ const Header: React.FC = () => {
         </Button>
       </div>
       
-      <div className="w-2/4 flex justify-center items-center">
+      <div className="flex justify-center items-center">
         <Link to="/" className="flex items-center justify-center">
           <img 
             src="/lovable-uploads/f5c0e163-fd58-4828-bce7-5e62049ef409.png" 
@@ -41,19 +41,19 @@ const Header: React.FC = () => {
         </Link>
       </div>
       
-      <div className="w-1/4 flex items-center justify-end">
+      <div className="flex items-center justify-end">
         {user && !anonymousMode ? (
           <Button
             variant="ghost"
             size="sm"
             onClick={signOut}
-            className="flex items-center gap-1 text-xs truncate"
+            className="flex items-center gap-1 text-xs truncate max-w-[100px] sm:max-w-none"
           >
             <LogOut size={16} />
             <span className="hidden md:inline">Sign Out</span>
           </Button>
         ) : !user && !anonymousMode ? (
-          <Button asChild size="sm" className="text-xs whitespace-nowrap">
+          <Button asChild size="sm" className="text-xs whitespace-nowrap max-w-[100px] sm:max-w-none">
             <Link to="/auth">Sign In</Link>
           </Button>
         ) : null}

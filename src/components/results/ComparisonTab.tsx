@@ -25,19 +25,27 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
   
   // Define a function to format data for the combined chart
   const formatDataForCombinedChart = (userScores: any, comparisonScores: any) => {
-    if (!comparisonScores) return [{ subject: "", A: 0 }];
-    
-    return Object.keys(userScores).map(key => ({
+    // Create basic chart data with user scores
+    const baseData = Object.keys(userScores).map(key => ({
       subject: key.charAt(0).toUpperCase() + key.slice(1),
       "Your Score": userScores[key],
-      "Comparison": comparisonScores[key]
     }));
+    
+    // If we have comparison data and comparison mode is enabled, add it
+    if (comparisonScores && compareMode !== 'none') {
+      return baseData.map(item => ({
+        ...item,
+        "Comparison": comparisonScores[item.subject.toLowerCase()]
+      }));
+    }
+    
+    return baseData;
   };
   
   // Use the function to create combined chart data
   const combinedChartData = formatDataForCombinedChart(
     assessment.dimensionScores, 
-    compareMode === 'none' ? null : getComparisonData()
+    compareMode === 'none' ? null : aggregateData.averageScores
   );
   
   // Determine chart colors and labels
@@ -90,14 +98,16 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
           </div>
         </div>
         
-        <ComparisonAnalysis 
-          assessment={assessment} 
-          compareMode={compareMode}
-          sortedDimensions={[]}
-          getComparisonLabel={getComparisonLabel}
-          getComparisonColor={getComparisonColor}
-          aggregateData={aggregateData}
-        />
+        {compareMode !== 'none' && (
+          <ComparisonAnalysis 
+            assessment={assessment} 
+            compareMode={compareMode}
+            sortedDimensions={[]}
+            getComparisonLabel={getComparisonLabel}
+            getComparisonColor={getComparisonColor}
+            aggregateData={aggregateData}
+          />
+        )}
       </CardContent>
     </Card>
   );
