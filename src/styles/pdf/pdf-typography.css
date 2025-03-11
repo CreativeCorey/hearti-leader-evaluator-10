@@ -26,10 +26,18 @@
     max-width: none;
   }
   
+  /* Prevent headers splitting across pages */
   .pdf-container h2, 
   .pdf-container h3, 
   .pdf-container h4 {
     page-break-after: avoid;
     margin-top: 0.2in;
+  }
+
+  /* Ensure consistent text size */
+  .pdf-container p, 
+  .pdf-container li {
+    font-size: 12pt !important;
+    line-height: 1.5 !important;
   }
 }

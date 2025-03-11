@@ -3,12 +3,14 @@
  * CHARTS & VISUALIZATION STYLES
  * ==================================== */
 @media print, screen {
+  /* Chart container styles */
   .pdf-chart-container {
     page-break-inside: avoid;
     height: 4.5in !important;
     margin: 0.25in 0;
   }
   
+  /* Charts grid layout */
   .pdf-charts-grid {
     display: flex;
     flex-direction: column !important;
@@ -31,6 +33,7 @@
     }
   }
   
+  /* Chart column styles */
   .pdf-chart-column {
     width: 100%;
     padding: 0.3in !important;
@@ -44,12 +47,14 @@
     }
   }
   
-  /* Chart-specific styles */
+  /* ReCharts overrides */
   .pdf-container .recharts-wrapper,
   .pdf-container .recharts-surface {
     overflow: visible;
+    page-break-inside: avoid !important;
   }
   
+  /* Radar/Polar chart text styling */
   .pdf-container .recharts-polar-angle-axis-tick text {
     font-size: 12pt !important;
     font-weight: bold;
@@ -58,13 +63,10 @@
   .pdf-container .recharts-polar-radius-axis-tick text {
     font-size: 10pt !important;
   }
-  
-  .pdf-container .recharts-wrapper {
-    page-break-inside: avoid;
-  }
 
-  /* Spider chart specific styling */
-  .pdf-container .recharts-polar-grid-concentric-circle {
+  /* Spider/Radar chart specific styling */
+  .pdf-container .recharts-polar-grid-concentric-circle,
+  .pdf-container .recharts-polar-grid-concentric-polygon {
     stroke: #ddd;
     stroke-width: 1px;
   }
@@ -79,6 +81,7 @@
     stroke-width: 1px;
   }
   
+  /* Radar polygon and curve styling */
   .pdf-container .recharts-radar-polygon {
     stroke-linejoin: round;
   }
@@ -90,5 +93,11 @@
   .pdf-container .recharts-dot {
     stroke-width: 1px;
     stroke: white;
+  }
+
+  /* Fix for radar charts in PDF */
+  .pdf-container .recharts-polar-angle-axis-tick-value {
+    font-size: 11pt !important;
+    font-weight: bold !important;
   }
 }

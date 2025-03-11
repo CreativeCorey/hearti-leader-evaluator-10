@@ -6,7 +6,7 @@
   /* Override any flex layout issues for PDF */
   @media print {
     .pdf-container .flex {
-      display: block;
+      display: block !important;
     }
     
     .pdf-container .flex-col,
@@ -26,6 +26,14 @@
     .pdf-container .lg\:flex-row > * {
       width: 48%;
       margin-right: 2%;
+    }
+  }
+
+  /* Ensure charts are properly positioned */
+  @media print {
+    .pdf-container .recharts-wrapper {
+      overflow: visible !important;
+      margin: 0 auto;
     }
   }
 }

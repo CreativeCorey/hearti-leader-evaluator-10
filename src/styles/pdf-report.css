@@ -2,16 +2,29 @@
 /* 
  * PDF Report Stylesheet
  * 
- * This is now a collection of imports for more maintainable CSS files.
+ * This is a collection of imports for more maintainable CSS files.
  * Each component has been moved to its own file in the pdf/ directory.
+ * 
+ * Structure:
+ * 1. Base & core (container, typography, variables)
+ * 2. Components (headers, charts, dimension cards)
+ * 3. Layout & responsive
+ * 4. Print-specific styles
  */
 
+/* Core styles */
 @import './pdf/pdf-base.css';
 @import './pdf/pdf-typography.css';
+
+/* Component styles */
 @import './pdf/pdf-header.css';
 @import './pdf/pdf-charts.css';
 @import './pdf/pdf-dimension-cards.css';
+
+/* Layout and responsive */
 @import './pdf/pdf-layout.css';
 @import './pdf/pdf-page-breaks.css';
+
+/* Print utilities */
 @import './pdf/pdf-print.css';
 @import './pdf/pdf-mobile.css';

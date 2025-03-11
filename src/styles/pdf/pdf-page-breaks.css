@@ -3,12 +3,31 @@
  * PAGE BREAK RULES
  * ==================================== */
 @media print, screen {
-  /* Add rules to create page breaks after specific components */
+  /* Section-level page breaks */
   .pdf-container .pdf-section-title + .pdf-charts-grid {
     page-break-after: always;
   }
   
+  /* Component-level page breaks */
   .pdf-container .pdf-dimension-card:nth-child(even) {
     page-break-after: always;
+  }
+  
+  /* Prevent breaking inside key elements */
+  .pdf-container .pdf-header,
+  .pdf-container .pdf-footer,
+  .pdf-container .pdf-chart-container,
+  .pdf-container .pdf-dimension-card {
+    page-break-inside: avoid !important;
+  }
+  
+  /* Ensure header doesn't cause a break after it */
+  .pdf-container .pdf-header {
+    page-break-after: avoid;
+  }
+  
+  /* Ensure footer has content before it */
+  .pdf-container .pdf-footer {
+    page-break-before: avoid;
   }
 }
