@@ -29,7 +29,7 @@ const ChartSection: React.FC<ChartSectionProps> = ({
         />
       </div>
       
-      <div className={`${isMobile && chartView === 'all' ? 'h-[450px]' : ''} relative`}>
+      <div className="h-[250px] sm:h-[280px] relative">
         <DimensionChart 
           dimensionScores={dimensionScores}
           activeDimension={activeDimension}

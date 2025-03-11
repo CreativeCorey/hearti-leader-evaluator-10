@@ -21,7 +21,7 @@ const SpectraSection: React.FC<SpectraSectionProps> = ({ assessment }) => {
         </div>
       </CardHeader>
       <CardContent className="px-2 pt-0 pb-6">
-        <div className="h-[260px] sm:h-[280px] w-full mx-auto max-w-[380px]">
+        <div className="h-[250px] sm:h-[280px] w-full mx-auto max-w-[380px]">
           <DimensionChart 
             dimensionScores={assessment.dimensionScores}
             activeDimension="humility"

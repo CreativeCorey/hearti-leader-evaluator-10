@@ -59,7 +59,7 @@ const SeparateCharts: React.FC<SeparateChartsProps> = ({
         </div>
       </div>
       
-      {compareMode !== 'none' && comparisonData && (
+      {compareMode === 'average' && comparisonData && (
         <div className="bg-slate-50 p-3 rounded-lg h-[260px] sm:h-[280px]">
           <p className="text-center font-medium mb-1" style={{ color: getComparisonColor() }}>
             HEARTI Spectra - {getComparisonLabel()}

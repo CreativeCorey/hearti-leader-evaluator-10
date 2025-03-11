@@ -15,32 +15,32 @@ const DimensionIcons: React.FC<DimensionIconsProps> = ({ iconSize }) => {
   return (
     <div className="absolute inset-0 pointer-events-none">
       {/* Top (Humility) */}
-      <div className="absolute top-[3%] left-[50%] transform -translate-x-1/2">
+      <div className="absolute top-[2%] left-[50%] transform -translate-x-1/2">
         <Gauge size={iconSize} style={{ color: dimensionColors.humility }} />
       </div>
       
       {/* Top Right (Empathy) */}
-      <div className="absolute top-[20%] right-[10%] transform">
+      <div className="absolute top-[18%] right-[8%] transform">
         <HeartHandshake size={iconSize} style={{ color: dimensionColors.empathy }} />
       </div>
       
       {/* Bottom Right (Accountability) */}
-      <div className="absolute bottom-[20%] right-[10%] transform">
+      <div className="absolute bottom-[18%] right-[8%] transform">
         <ChartNoAxesCombined size={iconSize} style={{ color: dimensionColors.accountability }} />
       </div>
       
       {/* Bottom (Resiliency) */}
-      <div className="absolute bottom-[3%] left-[50%] transform -translate-x-1/2">
+      <div className="absolute bottom-[2%] left-[50%] transform -translate-x-1/2">
         <TreePalm size={iconSize} style={{ color: dimensionColors.resiliency }} />
       </div>
       
       {/* Bottom Left (Transparency) */}
-      <div className="absolute bottom-[20%] left-[10%] transform">
+      <div className="absolute bottom-[18%] left-[8%] transform">
         <Blend size={iconSize} style={{ color: dimensionColors.transparency }} />
       </div>
       
       {/* Top Left (Inclusivity) */}
-      <div className="absolute top-[20%] left-[10%] transform">
+      <div className="absolute top-[18%] left-[8%] transform">
         <Users size={iconSize} style={{ color: dimensionColors.inclusivity }} />
       </div>
     </div>

@@ -29,9 +29,7 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
   const userPinkColor = "#D946EF";
   
   // Handle the case where no data should be shown (no comparison mode)
-  const hasNoData = compareMode === 'none' && combinedChartData.every(item => !item["Comparison"]);
-  
-  if (hasNoData) {
+  if (compareMode === 'none') {
     return (
       <div className="bg-gray-50 p-3 sm:p-4 rounded-lg h-[280px] sm:h-[350px] w-full flex flex-col items-center justify-center">
         <div className="text-center text-gray-500">
@@ -61,7 +59,7 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
           }}
         >
           {/* Render comparison data first so user data appears on top */}
-          {compareMode !== 'none' && (
+          {compareMode === 'average' && (
             <Radar
               name={`${getComparisonLabel()} HEARTI`}
               dataKey="Comparison"
@@ -95,18 +93,19 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
           <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
           <Legend 
             wrapperStyle={{ 
-              bottom: isMobile ? -10 : -5, 
+              bottom: isMobile ? -14 : -5, 
               fontSize: isMobile ? '9px' : '10px',
-              width: '100% !important',
+              width: '100%',
               left: '50%',
               transform: 'translateX(-50%)',
               textAlign: 'center',
               display: 'flex',
-              flexDirection: isMobile ? 'column' : 'row',
+              flexDirection: 'column',
               justifyContent: 'center',
-              alignItems: 'center'
+              alignItems: 'center',
+              marginTop: '10px'
             }}
-            layout={isMobile ? "vertical" : "horizontal"}
+            layout="vertical"
             verticalAlign="bottom"
             align="center"
           />

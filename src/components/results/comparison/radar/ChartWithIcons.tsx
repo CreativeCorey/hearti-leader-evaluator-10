@@ -47,7 +47,7 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
         data={data} 
         config={{
           ...config,
-          outerRadius: isMobile ? "58%" : "65%"
+          outerRadius: isMobile ? "55%" : "62%"
         }}
         polarRadiusProps={polarRadiusProps}
         polarAngleProps={{
@@ -73,9 +73,9 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
         <Legend 
           wrapperStyle={{ 
             position: 'absolute', 
-            bottom: -5, 
+            bottom: -8, 
             fontSize: '10px',
-            width: '90% !important',
+            width: 'auto',
             left: '50%',
             transform: 'translateX(-50%)',
             textAlign: 'center'

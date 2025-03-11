@@ -15,13 +15,15 @@ const ShareSection: React.FC<ShareSectionProps> = ({ assessment }) => {
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="flex justify-between items-center">
-          <span>HEARTI:Leader Assessment Results</span>
-          <ShareButton 
-            assessment={assessment} 
-            variant="default"
-            size={isMobile ? "sm" : "default"}
-          />
+        <CardTitle className="flex justify-between items-center gap-2 flex-wrap">
+          <span className="text-base sm:text-lg">HEARTI:Leader Quotient Results</span>
+          <div className="flex-shrink-0">
+            <ShareButton 
+              assessment={assessment} 
+              variant="default"
+              size={isMobile ? "sm" : "default"}
+            />
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent>

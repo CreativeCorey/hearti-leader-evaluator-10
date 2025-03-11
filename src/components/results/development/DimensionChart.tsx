@@ -38,10 +38,15 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
     "Your Complete HEARTI Spectra" : 
     `Focus on ${activeDimension.charAt(0).toUpperCase() + activeDimension.slice(1)}`;
 
+  // Adjust the chart container height based on view type
+  const chartContainerHeight = showAllDimensions ? 
+    isMobile ? "h-[190px]" : "h-[220px]" : 
+    "h-[210px] sm:h-[240px]";
+
   return (
     <div className="bg-slate-50 p-2 rounded-lg h-full relative">
       <p className="text-center font-medium text-lg text-indigo-600 mb-1">{chartTitle}</p>
-      <div className={`radar-chart-container h-[210px] sm:h-[240px] relative`}>
+      <div className={`radar-chart-container ${chartContainerHeight} relative`}>
         <DimensionIcons iconSize={iconSize} />
         
         <BaseRadarChart 

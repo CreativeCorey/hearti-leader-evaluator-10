@@ -9,6 +9,7 @@ import ComparisonAnalysis from './comparison/ComparisonAnalysis';
 import ViewTypeToggle from './comparison/ViewTypeToggle';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { aggregateData } from './comparison/aggregateData';
+import ProgressChart from './comparison/ProgressChart';
 
 interface ComparisonTabProps {
   assessment: HEARTIAssessment;
@@ -69,6 +70,9 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
     return compareMode === 'average' ? "#8b5cf6" : "#9ca3af";  // Purple for average, Gray otherwise
   }
 
+  // Check if we have multiple assessments to show progress
+  const hasMultipleAssessments = assessments && assessments.length > 1;
+
   return (
     <Card>
       <CardHeader>
@@ -107,6 +111,21 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
             getComparisonColor={getComparisonColor}
             aggregateData={aggregateData}
           />
+        )}
+        
+        {/* Progress Chart showing dimension scores over time */}
+        {hasMultipleAssessments && (
+          <Card className="mt-6">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg">Dimension Progress Over Time</CardTitle>
+              <CardDescription>
+                Track how your HEARTI scores have evolved
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ProgressChart assessments={assessments} />
+            </CardContent>
+          </Card>
         )}
       </CardContent>
     </Card>
