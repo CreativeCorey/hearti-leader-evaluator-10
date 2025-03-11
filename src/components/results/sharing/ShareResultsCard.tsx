@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { HEARTIAssessment, HEARTIDimension } from '@/types';
 import { Card, CardContent } from '@/components/ui/card';
@@ -49,7 +50,7 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
               alt="HEARTI Leader" 
               className="h-8 mr-2"
             />
-            <h3 className="text-xl font-bold text-gray-800">HEARTI:Leader Spectra</h3>
+            <h3 className="text-xl font-bold text-gray-800">My HEARTI:Leader Spectra</h3>
           </div>
           <p className="text-sm text-gray-600">Overall Score: {assessment.overallScore}/5</p>
         </div>

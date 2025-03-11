@@ -2,9 +2,9 @@
 @tailwind components;
 
 @layer components {
-  /* HEARTI dimension colors - updated with new vibrant colors */
+  /* HEARTI dimension colors - updated with swapped colors for humility and inclusivity */
   .dimension-humility {
-    color: #5B0F58;
+    color: #EE2D67;
   }
   
   .dimension-empathy {
@@ -24,6 +24,6 @@
   }
   
   .dimension-inclusivity {
-    color: #EE2D67;
+    color: #5B0F58;
   }
 }
