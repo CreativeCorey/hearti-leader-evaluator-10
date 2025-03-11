@@ -18,18 +18,18 @@ const ScoreCard: React.FC<ScoreCardProps> = ({ assessment, formattedDate }) => {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="space-y-2">
+          <div className="space-y-2 text-center">
             <p className="text-muted-foreground">Overall Score</p>
-            <div className="flex items-baseline">
+            <div className="flex items-baseline justify-center">
               <span className="text-4xl font-bold">{assessment.overallScore}</span>
               <span className="text-muted-foreground ml-1">/5</span>
             </div>
             <p className="text-sm">Your HEARTI:Leader Quotient indicates your overall proficiency in the skills needed for 21st century leadership.</p>
           </div>
           
-          <div className="space-y-2">
+          <div className="space-y-2 text-center">
             <p className="text-muted-foreground">Top Strength</p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 justify-center">
               {Object.entries(assessment.dimensionScores)
                 .sort(([, a], [, b]) => b - a)
                 .slice(0, 1)
@@ -43,9 +43,9 @@ const ScoreCard: React.FC<ScoreCardProps> = ({ assessment, formattedDate }) => {
             <p className="text-sm">This is your highest-scoring HEARTI dimension.</p>
           </div>
           
-          <div className="space-y-2">
+          <div className="space-y-2 text-center">
             <p className="text-muted-foreground">Development Area</p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 justify-center">
               {Object.entries(assessment.dimensionScores)
                 .sort(([, a], [, b]) => a - b)
                 .slice(0, 1)

@@ -125,6 +125,12 @@
     background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
   }
   
+  /* Progress chart specific */
+  .progress-chart-container {
+    height: 400px !important;
+    margin-bottom: 10px;
+  }
+  
   @media (max-width: 640px) {
     /* Make radar chart container taller on mobile to avoid legend overlapping */
     .radar-chart-container {
@@ -147,8 +153,6 @@
     /* Fix legend display on mobile */
     .recharts-legend-wrapper {
       font-size: 10px;
-      bottom: -10px !important;
-      margin-top: 10px;
       padding: 2px 6px !important;
     }
     
@@ -213,11 +217,9 @@
       margin-bottom: 60px !important;
     }
     
-    /* Fix for mobile progress chart legend */
-    .recharts-legend-wrapper.legend-bottom-center,
-    .recharts-legend-wrapper.legend-bottom-left,
-    .recharts-legend-wrapper.legend-bottom-right {
-      bottom: -20px !important;
+    /* Progress chart specific for mobile */
+    .progress-chart-container {
+      height: 320px !important;
     }
   }
 }

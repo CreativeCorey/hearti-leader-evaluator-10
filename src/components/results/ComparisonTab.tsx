@@ -95,8 +95,11 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
         </CardContent>
       </Card>
       
+      {/* Placed the ProgressChart outside of the Card as requested */}
       {hasMultipleAssessments && (
-        <ProgressChart assessments={assessments} />
+        <div className="mt-8 mb-4">
+          <ProgressChart assessments={assessments} />
+        </div>
       )}
     </div>
   );

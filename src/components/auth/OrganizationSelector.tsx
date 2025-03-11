@@ -22,7 +22,7 @@ interface OrganizationSelectorProps {
 const OrganizationSelector: React.FC<OrganizationSelectorProps> = ({ value, onChange }) => {
   const [organizations, setOrganizations] = useState<Organization[]>([
     { id: 'prismwork', name: 'PrismWork' },
-    { id: 'prismwork-beta', name: 'PrismWork Beta Test Group' },
+    { id: 'prismwork-beta', name: 'HEARTI Beta Test Group' },
     { id: 'utd-capstone', name: 'UTD Capstone' },
     { id: 'none', name: 'No Organization' }
   ]);

@@ -57,12 +57,12 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ assessments }) => {
 
   // Calculate chart height based on mobile view and data points
   const chartHeight = isMobile 
-    ? progressData.length > 3 ? 300 : 280 
-    : 350;
+    ? progressData.length > 3 ? 320 : 300 
+    : 400;
 
   return (
     <Card>
-      <CardHeader className={`${isMobile ? 'pb-1 pt-3' : 'pb-2'}`}>
+      <CardHeader className={`${isMobile ? 'pb-1 pt-3' : 'pb-2'} text-center`}>
         <CardTitle className={isMobile ? 'text-lg' : ''}>HEARTI Progress Over Time</CardTitle>
         <CardDescription className={isMobile ? 'text-xs' : ''}>Track your leadership development journey</CardDescription>
       </CardHeader>
@@ -72,7 +72,7 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ assessments }) => {
             <ResponsiveContainer width="100%" height="100%">
               <LineChart
                 data={progressData}
-                margin={{ top: 10, right: 20, left: 5, bottom: isMobile ? 30 : 10 }}
+                margin={{ top: 20, right: 20, left: 5, bottom: 5 }}
               >
                 <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
                 <XAxis dataKey="date" />
@@ -89,13 +89,15 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ assessments }) => {
                   }}
                 />
                 <Legend 
-                  wrapperStyle={isMobile ? { 
-                    bottom: -25, 
-                    fontSize: '10px',
+                  verticalAlign="bottom"
+                  height={36}
+                  wrapperStyle={{
+                    paddingTop: '10px',
+                    fontSize: isMobile ? '10px' : '12px',
                     width: '100%', 
                     margin: '0 auto',
                     textAlign: 'center'
-                  } : {}}
+                  }}
                 />
                 <Line 
                   type="monotone" 

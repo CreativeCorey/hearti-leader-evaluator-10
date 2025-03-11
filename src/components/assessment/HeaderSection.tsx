@@ -20,7 +20,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
 }) => {
   return (
     <div className="flex flex-col md:flex-row md:items-start justify-between gap-2 sm:gap-6 mb-6 sm:mb-8 w-full pt-4">
-      <div className="w-full text-center md:text-left">
+      <div className="w-full text-center">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">HEARTI™ Leadership Assessment</h1>
         <p className="text-sm text-muted-foreground mt-2">
           Measure your growth in Humility, Empathy, Accountability, Resiliency, Transparency, and Inclusivity
