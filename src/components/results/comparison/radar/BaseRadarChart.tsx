@@ -8,6 +8,26 @@ interface BaseRadarChartProps {
   data: any[];
   children: React.ReactNode;
   config: RadarChartConfig;
+  polarRadiusProps?: {
+    angle: number;
+    domain: number[];
+    tick: {
+      fill: string;
+      fontSize: number;
+      opacity: number;
+    };
+    stroke: string;
+  };
+  polarAngleProps?: {
+    tick: {
+      fill: string;
+      fontSize: number;
+      fontWeight: number;
+      opacity: number;
+    };
+    tickLine: boolean;
+    stroke: string;
+  };
   className?: string;
 }
 
@@ -15,9 +35,38 @@ const BaseRadarChart: React.FC<BaseRadarChartProps> = ({
   data, 
   children,
   config,
+  polarRadiusProps,
+  polarAngleProps,
   className = ""
 }) => {
   const isMobile = useIsMobile();
+  
+  // Default props if not provided
+  const defaultPolarRadiusProps = {
+    angle: 30,
+    domain: [0, 5],
+    tick: {
+      fill: '#9ca3af',
+      fontSize: 9,
+      opacity: 0.8
+    },
+    stroke: '#e5e7eb'
+  };
+
+  const defaultPolarAngleProps = {
+    tick: isMobile ? false : { 
+      fill: '#6b7280', 
+      fontSize: 11,
+      fontWeight: 400,
+      opacity: 0.85
+    },
+    tickLine: false,
+    stroke: '#d1d5db'
+  };
+
+  // Use provided props or defaults
+  const radiusProps = polarRadiusProps || defaultPolarRadiusProps;
+  const angleProps = polarAngleProps || defaultPolarAngleProps;
   
   return (
     <ResponsiveContainer width="100%" height="100%" className={className}>
@@ -28,7 +77,7 @@ const BaseRadarChart: React.FC<BaseRadarChartProps> = ({
         width={500}
         height={500}
         data={data}
-        margin={{ top: 10, right: 10, bottom: 10, left: 10 }} 
+        margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
       >
         <PolarGrid 
           gridType={config.gridType} 
@@ -38,23 +87,16 @@ const BaseRadarChart: React.FC<BaseRadarChartProps> = ({
         />
         <PolarAngleAxis 
           dataKey="name" 
-          tick={isMobile ? false : { 
-            fill: '#6b7280', 
-            fontSize: 12 
-          }} 
+          tick={angleProps.tick}
           axisLineType={config.axisLineType}
-          tickLine={false}
-          stroke="#d1d5db"
+          tickLine={angleProps.tickLine}
+          stroke={angleProps.stroke}
         />
         <PolarRadiusAxis 
-          angle={30} 
-          domain={[0, 5]} 
-          tick={{ 
-            fill: '#9ca3af',
-            fontSize: isMobile ? 9 : 10,
-            opacity: 0.8
-          }} 
-          stroke="#e5e7eb"
+          angle={radiusProps.angle}
+          domain={radiusProps.domain}
+          tick={radiusProps.tick}
+          stroke={radiusProps.stroke}
         />
         {children}
       </RadarChart>

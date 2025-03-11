@@ -46,9 +46,9 @@
   
   /* Better font styling for chart labels - IMPROVED */
   .recharts-polar-angle-axis-tick text {
-    font-size: 10px !important;
+    font-size: 11px !important;
     fill: #64748b !important;
-    font-weight: 500 !important;
+    font-weight: 400 !important;
     opacity: 0.85 !important;
   }
   

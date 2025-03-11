@@ -2,6 +2,7 @@
 import React from 'react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import { ChartData } from '@/types';
+import { useRadarChartConfig } from '@/hooks/use-radar-chart-config';
 
 interface RadarSpectraChartProps {
   data: ChartData;
@@ -16,52 +17,46 @@ const RadarSpectraChart: React.FC<RadarSpectraChartProps> = ({
   chartColor, 
   className = "" 
 }) => {
+  const { config, polarRadiusProps, polarAngleProps } = useRadarChartConfig();
+  
   return (
-    <div className={`flex flex-col space-y-4 ${className}`}>
-      <h4 className="text-md font-medium text-center text-gray-700">{title}</h4>
-      <div className="pdf-chart-container radar-base h-[300px]">
+    <div className={`flex flex-col space-y-2 ${className}`}>
+      <h4 className="text-md font-medium text-center text-gray-700 mb-2">{title}</h4>
+      <div className="pdf-chart-container radar-base h-[280px]">
         <ResponsiveContainer width="100%" height="100%">
           <RadarChart 
             cx="50%" 
             cy="50%" 
-            outerRadius="80%" 
+            outerRadius={config.outerRadius}
             data={data}
-            margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
+            margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
           >
             <PolarGrid 
-              gridType="polygon" 
+              gridType={config.gridType}
               stroke="#d1d5db" 
               strokeDasharray="3 3"
               strokeOpacity={0.7}
             />
             <PolarAngleAxis 
               dataKey="name" 
-              tick={{ 
-                fill: '#6b7280', 
-                fontSize: 10,
-                fontWeight: 500
-              }} 
-              axisLineType="polygon"
-              tickLine={false}
-              stroke="#d1d5db"
+              tick={polarAngleProps.tick}
+              axisLineType={config.axisLineType}
+              tickLine={polarAngleProps.tickLine}
+              stroke={polarAngleProps.stroke}
             />
             <PolarRadiusAxis 
-              angle={30} 
-              domain={[0, 5]} 
-              tick={{ 
-                fill: '#9ca3af',
-                fontSize: 9,
-                opacity: 0.8
-              }} 
-              stroke="#e5e7eb"
+              angle={polarRadiusProps.angle}
+              domain={polarRadiusProps.domain}
+              tick={polarRadiusProps.tick}
+              stroke={polarRadiusProps.stroke}
             />
             <Radar
               name="Score"
               dataKey="value"
               stroke={chartColor}
               fill={chartColor}
-              fillOpacity={0.6}
-              dot={{ fill: chartColor, r: 3 }}
+              fillOpacity={config.fillOpacity}
+              dot={{ fill: chartColor, r: config.dotSize }}
               isAnimationActive={false}
             />
           </RadarChart>

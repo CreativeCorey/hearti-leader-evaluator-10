@@ -1,130 +1,120 @@
 
 import React, { useState } from 'react';
 import { HEARTIAssessment } from '@/types';
-import { formatDataForRadarChart } from '@/utils/calculations';
-import {
-  ComparisonControls,
-  ViewTypeToggle,
-  RadarChartDisplay,
-  ComparisonAnalysis,
-  aggregateData,
-  userColor,
-  comparisonColors,
-  spiderConfig
-} from './comparison';
-import { getSortedDimensions } from './comparison/DimensionSorter';
-import ProgressChart from './comparison/ProgressChart';
+import { formatDataForRadarChart, formatDataForCombinedChart } from '@/utils/calculations';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import DimensionSorter, { getSortedDimensions } from './comparison/DimensionSorter';
+import RadarChartDisplay from './comparison/RadarChartDisplay';
+import ComparisonControls from './comparison/ComparisonControls';
+import ComparisonAnalysis from './comparison/ComparisonAnalysis';
+import { ViewTypeToggle } from './comparison/ViewTypeToggle';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { aggregateData } from './comparison/aggregateData';
 
 interface ComparisonTabProps {
   assessment: HEARTIAssessment;
-  assessments?: HEARTIAssessment[];
+  assessments: HEARTIAssessment[];
 }
 
-const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments = [] }) => {
-  const [compareMode, setCompareMode] = useState<'none' | 'average' | 'men' | 'women'>('none');
+const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }) => {
   const [chartView, setChartView] = useState<'combined' | 'separate'>('combined');
+  const [compareMode, setCompareMode] = useState<'none' | 'average' | 'men' | 'women'>('average');
+  const isMobile = useIsMobile();
   
-  const chartData = formatDataForRadarChart(assessment.dimensionScores);
+  // Get sorted dimensions using the utility function
   const sortedDimensions = getSortedDimensions(assessment);
-
-  const getComparisonData = () => {
-    if (compareMode === 'none') {
-      return null;
-    }
-    
-    let comparisonScores;
-    
-    if (compareMode === 'average') {
-      comparisonScores = aggregateData.averageScores;
-    } else if (compareMode === 'men') {
-      comparisonScores = aggregateData.demographics.gender.men;
-    } else if (compareMode === 'women') {
-      comparisonScores = aggregateData.demographics.gender.women;
-    }
-    
-    if (comparisonScores) {
-      return formatDataForRadarChart(comparisonScores);
-    }
-    
-    return null;
-  };
   
-  const combinedChartData = chartData.map((item, index) => {
-    const comparisonData = getComparisonData();
-    if (comparisonData) {
-      return {
-        ...item,
-        comparisonValue: comparisonData[index].value
-      };
-    }
-    return item;
-  });
+  // Format the chart data
+  const chartData = formatDataForRadarChart(assessment.dimensionScores);
+  const combinedChartData = formatDataForCombinedChart(
+    assessment.dimensionScores, 
+    compareMode === 'none' ? null : getComparisonData()
+  );
+  
+  // Determine chart colors and labels
+  const userColor = "#fbbf24"; // Gold
 
-  const getComparisonLabel = () => {
+  // Helper function to get the appropriate comparison data
+  function getComparisonData() {
     switch (compareMode) {
-      case 'average': return 'Average';
-      case 'men': return 'Men';
-      case 'women': return 'Women';
-      default: return '';
+      case 'average':
+        return aggregateData.averageScores;
+      case 'men':
+        return aggregateData.menScores;
+      case 'women':
+        return aggregateData.womenScores;
+      default:
+        return null;
     }
-  };
-
-  const getComparisonColor = () => {
+  }
+  
+  // Helper function to get the appropriate comparison label
+  function getComparisonLabel() {
     switch (compareMode) {
-      case 'average': return comparisonColors.average;
-      case 'men': return comparisonColors.men;
-      case 'women': return comparisonColors.women;
-      default: return "#000000";
+      case 'average':
+        return 'Global Average';
+      case 'men':
+        return 'Men Average';
+      case 'women':
+        return 'Women Average';
+      default:
+        return '';
     }
-  };
+  }
+  
+  // Helper function to get the appropriate comparison color
+  function getComparisonColor() {
+    switch (compareMode) {
+      case 'average':
+        return "#8b5cf6";  // Purple
+      case 'men':
+        return "#3b82f6";  // Blue
+      case 'women':
+        return "#ec4899";  // Pink
+      default:
+        return "#9ca3af";  // Gray
+    }
+  }
 
   return (
-    <div>
-      <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h3 className="text-lg font-medium mb-2">HEARTI:Leader Data Visualization</h3>
-          <p className="text-sm text-muted-foreground">See how your scores compare to others</p>
+    <Card>
+      <CardHeader>
+        <CardTitle>HEARTI Comparison</CardTitle>
+        <CardDescription>
+          Compare your results with global benchmarks
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <DimensionSorter assessment={assessment} />
+        
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+          <ViewTypeToggle chartView={chartView} setChartView={setChartView} />
+          <ComparisonControls compareMode={compareMode} setCompareMode={setCompareMode} />
         </div>
         
-        <ComparisonControls 
-          compareMode={compareMode}
-          setCompareMode={setCompareMode}
-        />
-      </div>
-      
-      <div className="flex-1">
-        <ViewTypeToggle 
-          chartView={chartView}
-          setChartView={setChartView}
-        />
-      
-        <RadarChartDisplay
-          chartView={chartView}
-          chartData={chartData}
-          combinedChartData={combinedChartData}
-          getComparisonData={getComparisonData}
-          compareMode={compareMode}
-          getComparisonLabel={getComparisonLabel}
-          getComparisonColor={getComparisonColor}
-          userColor={userColor}
-          spiderConfig={spiderConfig}
-        />
+        <div className="bg-slate-50 p-4 rounded-lg">
+          <div className={`h-[${isMobile ? '380px' : '450px'}] w-full`}>
+            <RadarChartDisplay 
+              chartView={chartView}
+              chartData={chartData}
+              combinedChartData={combinedChartData}
+              getComparisonData={getComparisonData}
+              compareMode={compareMode}
+              getComparisonLabel={getComparisonLabel}
+              getComparisonColor={getComparisonColor}
+              userColor={userColor}
+            />
+          </div>
+        </div>
         
-        {compareMode !== 'none' && (
-          <ComparisonAnalysis
-            sortedDimensions={sortedDimensions}
-            assessment={assessment}
-            compareMode={compareMode}
-            getComparisonLabel={getComparisonLabel}
-            getComparisonColor={getComparisonColor}
-            aggregateData={aggregateData}
-          />
-        )}
-        
-        {/* HEARTI Progress over time chart */}
-        <ProgressChart assessment={assessment} assessments={assessments} />
-      </div>
-    </div>
+        <ComparisonAnalysis 
+          assessment={assessment} 
+          compareMode={compareMode}
+          comparisonData={getComparisonData()} 
+          sortedDimensions={sortedDimensions}
+        />
+      </CardContent>
+    </Card>
   );
 };
 

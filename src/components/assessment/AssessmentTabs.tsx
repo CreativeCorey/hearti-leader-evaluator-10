@@ -1,5 +1,5 @@
 
-import React, { memo, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HEARTIAssessment } from '@/types';
 import AssessmentForm from '@/components/AssessmentForm';
@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Loader2 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useToast } from '@/hooks/use-toast';
 
 interface AssessmentTabsProps {
   activeTab: 'take' | 'results';
@@ -31,6 +32,13 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
   viewTransitioning = false
 }) => {
   const isMobile = useIsMobile();
+  const { toast } = useToast();
+  const [forcedRender, setForcedRender] = useState(0);
+
+  // Fix for tab switching - force component to re-render when tab changes
+  useEffect(() => {
+    setForcedRender(prev => prev + 1);
+  }, [activeTab]);
 
   // Handle tab change when orientation changes
   useEffect(() => {
@@ -48,10 +56,27 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
     onComplete(assessment);
     // Automatically switch to results tab after completion
     setActiveTab('results');
+    toast({
+      title: "Assessment Completed",
+      description: "Your assessment has been submitted successfully.",
+    });
+  };
+
+  // Fix for tab switching issue
+  const handleTabChange = (value: string) => {
+    if (value === 'take' || value === 'results') {
+      setActiveTab(value);
+      console.log("Tab changed to:", value);
+    }
   };
 
   return (
-    <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'take' | 'results')} className="w-full">
+    <Tabs 
+      key={`tabs-${forcedRender}`} 
+      value={activeTab} 
+      onValueChange={handleTabChange} 
+      className="w-full"
+    >
       <div className={`w-full overflow-hidden mb-4 ${viewTransitioning ? 'opacity-75 transition-opacity' : ''}`}>
         <TabsList className="w-full grid grid-cols-2 gap-1">
           <TabsTrigger value="take" className="px-4 py-2">Take Assessment</TabsTrigger>

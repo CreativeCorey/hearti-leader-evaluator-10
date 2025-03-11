@@ -26,7 +26,7 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
   isAnimationActive = true,
   className = ""
 }) => {
-  const { config, iconSize } = useRadarChartConfig(isAnimationActive);
+  const { config, iconSize, polarRadiusProps, polarAngleProps } = useRadarChartConfig(isAnimationActive);
   
   // Use pink color for user charts (title containing "Your")
   const isUserChart = chartTitle.toLowerCase().includes("your");
@@ -36,7 +36,12 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
     <div className={`relative radar-chart-container flex items-center justify-center ${className}`}>
       {showIcons && <DimensionIcons iconSize={iconSize} />}
       
-      <BaseRadarChart data={data} config={config}>
+      <BaseRadarChart 
+        data={data} 
+        config={config}
+        polarRadiusProps={polarRadiusProps}
+        polarAngleProps={polarAngleProps}
+      >
         <Radar
           name={chartTitle}
           dataKey="value"

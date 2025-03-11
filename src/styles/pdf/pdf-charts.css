@@ -63,8 +63,8 @@
   /* Radar/Polar chart text styling - IMPROVED STYLING */
   .pdf-container .recharts-polar-angle-axis-tick text,
   .recharts-polar-angle-axis-tick text {
-    font-size: 10pt !important;
-    font-weight: 500 !important;
+    font-size: 11px !important;
+    font-weight: 400 !important;
     fill: #64748b !important;
     opacity: 0.85 !important;
   }
@@ -111,8 +111,8 @@
 
   /* Fix for radar charts in PDF */
   .pdf-container .recharts-polar-angle-axis-tick-value {
-    font-size: 10pt !important;
-    font-weight: 500 !important;
+    font-size: 11px !important;
+    font-weight: 400 !important;
     fill: #64748b !important;
   }
   

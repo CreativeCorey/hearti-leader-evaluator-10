@@ -58,7 +58,7 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment, assessments =
             chartColor={userPinkColor}
             className="mb-2"
           />
-          <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute inset-0 pointer-events-none" style={{ paddingTop: "40px" }}>
             <DimensionIcons iconSize={iconSize} />
           </div>
         </div>
@@ -70,7 +70,7 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment, assessments =
             chartColor={comparisonColors.average}
             className="mb-2"
           />
-          <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute inset-0 pointer-events-none" style={{ paddingTop: "40px" }}>
             <DimensionIcons iconSize={iconSize} />
           </div>
         </div>

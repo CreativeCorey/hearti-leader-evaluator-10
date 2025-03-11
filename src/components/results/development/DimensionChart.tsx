@@ -19,7 +19,7 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
   activeDimension,
   showAllDimensions = false 
 }) => {
-  const { config, iconSize } = useRadarChartConfig();
+  const { config, iconSize, polarRadiusProps, polarAngleProps } = useRadarChartConfig();
   const isMobile = useIsMobile();
   
   // Create chart data for all dimensions or just the active one
@@ -44,7 +44,12 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
       <div className={`radar-chart-container ${isMobile && showAllDimensions ? 'mobile-development-view' : ''}`}>
         <DimensionIcons iconSize={iconSize} />
         
-        <BaseRadarChart data={singleDimensionData} config={config}>
+        <BaseRadarChart 
+          data={singleDimensionData} 
+          config={config}
+          polarRadiusProps={polarRadiusProps}
+          polarAngleProps={polarAngleProps}
+        >
           <Radar
             name={showAllDimensions ? "Your HEARTI Spectra" : activeDimension}
             dataKey="value"
