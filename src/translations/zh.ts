@@ -27,6 +27,24 @@ export const zh = {
     subtitle: "衡量您在Humility、Empathy、Accountability、Resiliency、Transparency和Inclusivity方面的成长",
     cloudStorage: "云存储",
     localStorage: "本地存储",
+    instructions: "请回答以下问题以评估您的领导能力",
+    questions: {},
+    reload: "重新加载",
+    completed: "评估完成",
+    submitSuccess: "您的评估已成功提交",
+    of: "共",
+    selected: "已选择",
+    questionCount: "问题 {{current}}/{{total}}",
+    takeAssessment: "参加评估",
+    viewResults: "查看结果",
+    latestResults: "最新结果",
+    scoreLabels: {
+      "1": "非常不同意",
+      "2": "不同意",
+      "3": "中立",
+      "4": "同意",
+      "5": "非常同意"
+    }
   },
   tabs: {
     summary: "摘要",
