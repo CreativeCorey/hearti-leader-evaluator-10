@@ -3,8 +3,8 @@ import React from 'react';
 import { HEARTIAssessment, HEARTIDimension } from '@/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
-import { formatDataForRadarChart, getFeedback } from '@/utils/calculations';
-import { Crown, Share2 } from 'lucide-react';
+import { formatDataForRadarChart } from '@/utils/calculations';
+import { Share2, Crown } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Gauge, HeartHandshake, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
 import { dimensionColors } from '../development/DimensionIcons';
@@ -76,7 +76,7 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
               </Button>
             )}
           </div>
-          <p className="text-sm text-gray-600">{t('results.comparison.average')}: {assessment.overallScore}/5</p>
+          <p className="text-sm text-gray-600">{assessment.overallScore}/5</p>
         </div>
         
         <div className="h-[250px] w-full relative">
@@ -167,11 +167,8 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
             <div className="mt-4 bg-green-50 p-3 rounded-md border border-green-100">
               <p className="font-medium flex items-center text-green-800">
                 <Crown size={16} className="mr-2" />
-                {t('results.comparison.average')}: {getTranslatedDimensionName(topStrength)} ({topStrengthScore}/5)
-                {getDimensionIcon(topStrength)}
-              </p>
-              <p className="text-green-700 mt-1 text-sm">
-                {getFeedback(topStrengthScore, topStrength)}
+                {getTranslatedDimensionName(topStrength)} {getDimensionIcon(topStrength)}
+                <span className="ml-auto">{topStrengthScore}/5</span>
               </p>
             </div>
             
