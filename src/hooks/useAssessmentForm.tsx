@@ -48,6 +48,18 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
     }
   };
 
+  // Log states for debugging
+  useEffect(() => {
+    console.log("Assessment Form State:", {
+      loading: initializing || userLoading || shuffledQuestions.length === 0,
+      userLoading,
+      shuffledQuestionsLength: shuffledQuestions.length,
+      currentQuestion: currentQuestion?.id,
+      assessmentComplete,
+      processingPayment
+    });
+  }, [initializing, userLoading, shuffledQuestions.length, currentQuestion, assessmentComplete, processingPayment]);
+
   return {
     loading: initializing || userLoading || shuffledQuestions.length === 0,
     currentQuestion,

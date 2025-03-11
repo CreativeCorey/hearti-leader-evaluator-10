@@ -35,6 +35,12 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
   const { toast } = useToast();
   const [forcedRender, setForcedRender] = useState(0);
 
+  // Log the active tab for debugging
+  useEffect(() => {
+    console.log("AssessmentTabs active tab:", activeTab);
+    console.log("User assessments count:", userAssessments.length);
+  }, [activeTab, userAssessments.length]);
+
   // Fix for tab switching - force component to re-render when tab changes
   useEffect(() => {
     setForcedRender(prev => prev + 1);
@@ -64,6 +70,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
 
   // Fix for tab switching issue
   const handleTabChange = (value: string) => {
+    console.log("Tab change requested to:", value);
     if (value === 'take' || value === 'results') {
       setActiveTab(value);
       console.log("Tab changed to:", value);

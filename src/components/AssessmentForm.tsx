@@ -4,7 +4,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { HEARTIAssessment } from '@/types';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Loader2, CreditCard } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import DemographicForm from './DemographicForm';
 import QuestionDisplay from './assessment/QuestionDisplay';
 import DebugTools from './assessment/DebugTools';
@@ -52,21 +52,6 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
         <Loader2 className="h-8 w-8 animate-spin text-red-500" />
         <p className="text-red-500">Loading assessment questions...</p>
         <Button onClick={() => window.location.reload()} className="mt-4">Reload Page</Button>
-      </div>
-    );
-  }
-
-  // Payment processing state
-  if (processingPayment) {
-    return (
-      <div className="flex flex-col items-center justify-center p-8 space-y-6 bg-white rounded-lg shadow-md">
-        <CreditCard className="h-12 w-12 text-primary animate-pulse" />
-        <h2 className="text-2xl font-bold text-center">Processing Payment</h2>
-        <p className="text-center text-muted-foreground">
-          Please wait while we redirect you to complete your payment.
-          Your assessment results will be unlocked once payment is complete.
-        </p>
-        <Loader2 className="h-8 w-8 animate-spin text-primary mt-4" />
       </div>
     );
   }

@@ -1,13 +1,13 @@
 
 import React, { useState } from 'react';
 import { HEARTIAssessment } from '@/types';
-import { formatDataForRadarChart, formatDataForCombinedChart } from '@/utils/calculations';
+import { formatDataForRadarChart } from '@/utils/calculations';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import DimensionSorter, { getSortedDimensions } from './comparison/DimensionSorter';
 import RadarChartDisplay from './comparison/RadarChartDisplay';
 import ComparisonControls from './comparison/ComparisonControls';
 import ComparisonAnalysis from './comparison/ComparisonAnalysis';
-import { ViewTypeToggle } from './comparison/ViewTypeToggle';
+import ViewTypeToggle from './comparison/ViewTypeToggle';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { aggregateData } from './comparison/aggregateData';
 
@@ -26,6 +26,18 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
   
   // Format the chart data
   const chartData = formatDataForRadarChart(assessment.dimensionScores);
+  
+  // Combine chart data for comparison
+  const formatDataForCombinedChart = (userScores: any, comparisonScores: any) => {
+    if (!comparisonScores) return [{ subject: "", A: 0 }];
+    
+    return Object.keys(userScores).map(key => ({
+      subject: key.charAt(0).toUpperCase() + key.slice(1),
+      "Your Score": userScores[key],
+      "Comparison": comparisonScores[key]
+    }));
+  };
+  
   const combinedChartData = formatDataForCombinedChart(
     assessment.dimensionScores, 
     compareMode === 'none' ? null : getComparisonData()
@@ -40,9 +52,9 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
       case 'average':
         return aggregateData.averageScores;
       case 'men':
-        return aggregateData.menScores;
+        return aggregateData.demographics.gender.men;
       case 'women':
-        return aggregateData.womenScores;
+        return aggregateData.demographics.gender.women;
       default:
         return null;
     }
@@ -110,7 +122,6 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
         <ComparisonAnalysis 
           assessment={assessment} 
           compareMode={compareMode}
-          comparisonData={getComparisonData()} 
           sortedDimensions={sortedDimensions}
         />
       </CardContent>

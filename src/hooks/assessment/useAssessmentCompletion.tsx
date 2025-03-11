@@ -11,7 +11,6 @@ import {
 import { calculateDimensionScores, calculateOverallScore } from '@/utils/calculations';
 import { saveAssessment } from '@/utils/localStorage';
 import { questions } from '@/constants/assessmentQuestions';
-import { useAssessmentPayment } from '@/hooks/useAssessmentPayment';
 
 export const useAssessmentCompletion = (
   answers: HEARTIAnswer[],
@@ -21,8 +20,7 @@ export const useAssessmentCompletion = (
   const { toast } = useToast();
   const [assessmentComplete, setAssessmentComplete] = useState(false);
   const [tempAssessment, setTempAssessment] = useState<HEARTIAssessment | null>(null);
-  
-  const { processingPayment, redirectToStripePayment } = useAssessmentPayment(onComplete);
+  const [processingPayment, setProcessingPayment] = useState(false);
 
   const completeAssessmentQuestions = () => {
     if (!currentUser) {
@@ -69,12 +67,14 @@ export const useAssessmentCompletion = (
     };
     
     try {
-      // Save temporarily, but redirect to payment before showing results
+      // Save assessment and complete
       await saveAssessment(finalAssessment);
+      onComplete(finalAssessment);
       
-      // Redirect to Stripe payment flow instead of completing directly
-      redirectToStripePayment(finalAssessment);
-      
+      toast({
+        title: "Assessment Complete",
+        description: "Your assessment has been saved successfully.",
+      });
     } catch (error) {
       console.error("Failed to save assessment:", error);
       toast({
@@ -89,12 +89,14 @@ export const useAssessmentCompletion = (
     if (!tempAssessment) return;
     
     try {
-      // Save temporarily, but redirect to payment before showing results
+      // Save assessment and complete without demographics
       await saveAssessment(tempAssessment);
+      onComplete(tempAssessment);
       
-      // Redirect to Stripe payment flow instead of completing directly
-      redirectToStripePayment(tempAssessment);
-      
+      toast({
+        title: "Assessment Complete",
+        description: "Your assessment has been saved successfully.",
+      });
     } catch (error) {
       console.error("Failed to save assessment:", error);
       toast({
