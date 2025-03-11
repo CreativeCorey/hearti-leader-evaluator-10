@@ -4,6 +4,8 @@ import { HEARTIAssessment } from '@/types';
 import { formatDataForRadarChart } from '@/utils/calculations';
 import { useIsMobile } from '@/hooks/use-mobile';
 import RadarSpectraChart from './RadarSpectraChart';
+import DimensionIcons from '../comparison/radar/DimensionIcons';
+import { useRadarChartConfig } from '@/hooks/use-radar-chart-config';
 
 interface SpectraChartsProps {
   assessment: HEARTIAssessment;
@@ -23,6 +25,7 @@ const aggregateData = {
 
 const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment, assessments = [] }) => {
   const isMobile = useIsMobile();
+  const { iconSize } = useRadarChartConfig();
   
   // Ensure we have valid dimension scores before proceeding
   const hasValidDimensionScores = assessment && 
@@ -48,22 +51,28 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment, assessments =
       <h3 className="text-xl font-medium mb-5 pdf-section-title text-gray-700">Your HEARTI:Leader Spectra</h3>
       
       <div className={`${isMobile ? 'flex flex-col space-y-8' : 'lg:grid lg:grid-cols-2'} gap-6 pdf-charts-grid`}>
-        <div className={`bg-gray-50 p-4 rounded-lg shadow-sm pdf-chart-column`}>
+        <div className={`bg-gray-50 p-4 rounded-lg shadow-sm pdf-chart-column relative`}>
           <RadarSpectraChart
             data={chartData}
             title="Your HEARTI Spectra"
             chartColor={userPinkColor}
             className="mb-2"
           />
+          <div className="absolute inset-0 pointer-events-none">
+            <DimensionIcons iconSize={iconSize} />
+          </div>
         </div>
         
-        <div className={`bg-gray-50 p-4 rounded-lg shadow-sm pdf-chart-column ${isMobile ? 'mt-4' : ''}`}>
+        <div className={`bg-gray-50 p-4 rounded-lg shadow-sm pdf-chart-column relative ${isMobile ? 'mt-4' : ''}`}>
           <RadarSpectraChart
             data={benchmarkData}
             title="Global HEARTI:Leader Benchmark"
             chartColor={comparisonColors.average}
             className="mb-2"
           />
+          <div className="absolute inset-0 pointer-events-none">
+            <DimensionIcons iconSize={iconSize} />
+          </div>
         </div>
       </div>
       

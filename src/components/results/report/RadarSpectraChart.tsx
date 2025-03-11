@@ -32,7 +32,6 @@ const RadarSpectraChart: React.FC<RadarSpectraChartProps> = ({
               gridType="polygon" 
               stroke="#d1d5db" 
               strokeDasharray="3 3"
-              // Remove the invalid polarGridStrokeOpacity property
               strokeOpacity={0.7}
             />
             <PolarAngleAxis 

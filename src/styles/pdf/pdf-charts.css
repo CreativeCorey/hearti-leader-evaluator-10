@@ -43,6 +43,7 @@
     background-color: #f8fafc;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: relative;
   }
   
   @media screen and (min-width: 768px), print {
@@ -59,37 +60,42 @@
     page-break-inside: avoid !important;
   }
   
-  /* Radar/Polar chart text styling */
-  .pdf-container .recharts-polar-angle-axis-tick text {
-    font-size: 12pt !important;
-    font-weight: bold;
+  /* Radar/Polar chart text styling - IMPROVED STYLING */
+  .pdf-container .recharts-polar-angle-axis-tick text,
+  .recharts-polar-angle-axis-tick text {
+    font-size: 10pt !important;
+    font-weight: 500 !important;
+    fill: #64748b !important;
+    opacity: 0.85 !important;
   }
   
   .pdf-container .recharts-polar-radius-axis-tick text {
-    font-size: 10pt !important;
+    font-size: 8pt !important;
+    fill: #94a3b8 !important;
   }
 
   /* Spider/Radar chart specific styling */
   .pdf-container .recharts-polar-grid-concentric-circle,
   .pdf-container .recharts-polar-grid-concentric-polygon {
-    stroke: #ddd;
+    stroke: #e2e8f0;
     stroke-width: 1px;
   }
   
   .pdf-container .recharts-polar-grid-angle {
-    stroke: #ddd;
+    stroke: #e2e8f0;
     stroke-width: 1px;
+    stroke-opacity: 0.7;
   }
   
   .pdf-container .recharts-polar-angle-axis-line {
-    stroke: #ddd;
+    stroke: #e2e8f0;
     stroke-width: 1px;
   }
   
   /* Radar polygon and curve styling */
   .pdf-container .recharts-radar-polygon {
     stroke-linejoin: round;
-    fill-opacity: 0.7 !important;
+    fill-opacity: 0.6 !important;
   }
   
   .pdf-container .recharts-radar-curve {
@@ -100,13 +106,14 @@
   .pdf-container .recharts-dot {
     stroke-width: 1px;
     stroke: white;
-    r: 4px !important;
+    r: 3px !important;
   }
 
   /* Fix for radar charts in PDF */
   .pdf-container .recharts-polar-angle-axis-tick-value {
-    font-size: 11pt !important;
-    font-weight: bold !important;
+    font-size: 10pt !important;
+    font-weight: 500 !important;
+    fill: #64748b !important;
   }
   
   /* Fix to maintain aspect ratio of radar charts */

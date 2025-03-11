@@ -27,6 +27,6 @@ export function useRadarChartConfig(isAnimated = true): {
       activeDotSize: isMobile ? 5 : 6,
       outerRadius: isMobile ? "65%" : "75%",
     },
-    iconSize: isMobile ? 14 : 16
+    iconSize: isMobile ? 14 : 18 // Increased icon size for better visibility
   };
 }

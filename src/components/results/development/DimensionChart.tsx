@@ -32,7 +32,6 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
   });
   
   // Use the dimension's color for both focused and complete view
-  // This ensures the color consistency between views
   const dimensionColor = dimensionColors[activeDimension] || "#6366f1";
   
   const chartTitle = showAllDimensions ? 
