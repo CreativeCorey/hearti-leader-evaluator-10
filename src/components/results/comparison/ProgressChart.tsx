@@ -7,12 +7,25 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { dimensionColors } from '../development/DimensionIcons';
 
 interface ProgressChartProps {
-  assessment: HEARTIAssessment;
   assessments: HEARTIAssessment[];
 }
 
-const ProgressChart: React.FC<ProgressChartProps> = ({ assessment, assessments }) => {
+const ProgressChart: React.FC<ProgressChartProps> = ({ assessments }) => {
   const isMobile = useIsMobile();
+
+  // Only proceed if we have assessments
+  if (!assessments || assessments.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-[250px]">
+        <p className="text-muted-foreground">No assessment data available.</p>
+      </div>
+    );
+  }
+
+  // Get the most recent assessment for dimension colors
+  const latestAssessment = [...assessments].sort((a, b) => 
+    new Date(b.date).getTime() - new Date(a.date).getTime()
+  )[0];
 
   // Format data for progress chart
   const formatShortDate = (dateString: string) => {
@@ -67,7 +80,7 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ assessment, assessments }
                   strokeWidth={2} 
                   activeDot={{ r: 6 }} 
                 />
-                {Object.keys(assessment.dimensionScores).map((dimension) => (
+                {latestAssessment && Object.keys(latestAssessment.dimensionScores).map((dimension) => (
                   <Line
                     key={dimension}
                     type="monotone"

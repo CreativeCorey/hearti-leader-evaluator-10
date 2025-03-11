@@ -3,7 +3,9 @@ import React, { useState, useRef } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HEARTIAssessment } from '@/types';
 import ResultsTabContent from './ResultsTabContent';
-import { exportToPDF } from './export'; // Updated import path
+import { exportToPDF } from './export';
+import { useLanguage } from '@/contexts/language/LanguageContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ResultsDisplayProps {
   assessment: HEARTIAssessment;
@@ -19,6 +21,8 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   const [activeTab, setActiveTab] = useState('overview');
   const [exportingPdf, setExportingPdf] = useState(false);
   const reportRef = useRef<HTMLDivElement>(null);
+  const { t } = useLanguage();
+  const isMobile = useIsMobile();
   
   // Get top development area (lowest scoring dimension)
   const dimensionScores = assessment.dimensionScores;
@@ -48,22 +52,22 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
     >
       <TabsList className="w-full grid grid-cols-2 md:grid-cols-6 gap-1 p-1 h-auto flex-wrap">
         <TabsTrigger value="overview" className="text-xs md:text-sm whitespace-nowrap">
-          Summary
+          {t('tabs.summary')}
         </TabsTrigger>
         <TabsTrigger value="dimensions" className="text-xs md:text-sm whitespace-nowrap">
-          Dimensions
+          {t('tabs.dimensions')}
         </TabsTrigger>
         <TabsTrigger value="comparison" className="text-xs md:text-sm whitespace-nowrap">
-          Data Viz
+          {t('tabs.dataViz')}
         </TabsTrigger>
         <TabsTrigger value="report" className="text-xs md:text-sm whitespace-nowrap">
-          Report
+          {t('tabs.report')}
         </TabsTrigger>
         <TabsTrigger value="development" className="text-xs md:text-sm whitespace-nowrap">
-          Develop Skills
+          {t('tabs.developSkills')}
         </TabsTrigger>
         <TabsTrigger value="habits" className="text-xs md:text-sm whitespace-nowrap">
-          Build Habits
+          {t('tabs.buildHabits')}
         </TabsTrigger>
       </TabsList>
       

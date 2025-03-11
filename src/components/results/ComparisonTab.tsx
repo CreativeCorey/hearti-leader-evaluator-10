@@ -115,17 +115,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
         
         {/* Progress Chart showing dimension scores over time */}
         {hasMultipleAssessments && (
-          <Card className="mt-6">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Dimension Progress Over Time</CardTitle>
-              <CardDescription>
-                Track how your HEARTI scores have evolved
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ProgressChart assessments={assessments} />
-            </CardContent>
-          </Card>
+          <ProgressChart assessments={assessments} />
         )}
       </CardContent>
     </Card>
