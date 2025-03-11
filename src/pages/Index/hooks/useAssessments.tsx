@@ -8,9 +8,12 @@ export const useAssessments = () => {
   const { toast } = useToast();
   const [userAssessments, setUserAssessments] = useState<HEARTIAssessment[]>([]);
   const [latestAssessment, setLatestAssessment] = useState<HEARTIAssessment | null>(null);
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   
   const loadAssessments = async () => {
     try {
+      setStatus('loading');
+      
       // Fetch user assessments
       const assessments = await getCurrentUserAssessments();
       
@@ -26,8 +29,11 @@ export const useAssessments = () => {
         setUserAssessments([]);
         setLatestAssessment(null);
       }
+      
+      setStatus('success');
     } catch (error) {
       console.error('Error loading assessments:', error);
+      setStatus('error');
       toast({
         title: "Error",
         description: "Failed to load assessment data",
@@ -46,6 +52,7 @@ export const useAssessments = () => {
     userAssessments,
     latestAssessment,
     loadAssessments,
-    handleAssessmentComplete
+    handleAssessmentComplete,
+    status
   };
 };

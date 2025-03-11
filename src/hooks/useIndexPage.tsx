@@ -23,22 +23,22 @@ export const useIndexPage = (props?: UseIndexPageProps) => {
   
   // Get assessments
   const {
-    assessments: userAssessments,
+    userAssessments,
     latestAssessment,
     loadAssessments,
-    status: assessmentStatus,
-    handleAssessmentComplete
+    handleAssessmentComplete,
+    status: assessmentStatus // Make sure we use the right property name
   } = useAssessments();
   
   // Use the Google integration hook
   const {
-    connection: googleConnection,
     testingSheets,
-    testGoogleSheets,
-    sendLatestToSheets,
     configuringWorkloadIdentity,
     handleGoogleSignIn,
-    handleConfigureWorkloadIdentity
+    handleConfigureWorkloadIdentity,
+    testGoogleSheets,
+    sendLatestToSheets,
+    googleConnection // Add this property
   } = useGoogleIntegration();
   
   // Use the Supabase sync hook
@@ -50,7 +50,7 @@ export const useIndexPage = (props?: UseIndexPageProps) => {
     handleConfirmSync,
     handleCancelSync,
     handleSyncDialogClose
-  } = useSupabaseSync();
+  } = useSupabaseSync(loadAssessments); // Pass required parameter
   
   // Get user profile
   const profile = getUserProfile();

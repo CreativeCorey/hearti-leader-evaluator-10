@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { setUseSupabase, syncLocalDataToSupabase, getOrCreateAnonymousId } from '@/utils/localStorage';
 
 export const useSupabaseSync = (
-  loadAssessments: () => Promise<void>, 
+  loadAssessments: () => Promise<void>,
   initialSupabaseEnabled: boolean = true
 ) => {
   const { toast } = useToast();

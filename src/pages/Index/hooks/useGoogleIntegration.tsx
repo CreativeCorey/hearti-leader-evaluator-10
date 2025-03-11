@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from "@/hooks/use-toast";
 import { signInWithGoogle, testGoogleSheetsConnection, setupWorkloadIdentity } from '@/utils/googleAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,6 +9,35 @@ export const useGoogleIntegration = () => {
   const { toast } = useToast();
   const [testingSheets, setTestingSheets] = useState(false);
   const [configuringWorkloadIdentity, setConfiguringWorkloadIdentity] = useState(false);
+  const [googleConnection, setGoogleConnection] = useState<{connected: boolean, email?: string}>({
+    connected: false
+  });
+  
+  // Check Google connection status on mount
+  useEffect(() => {
+    const checkGoogleConnection = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Error checking Google connection:', error);
+          return;
+        }
+        
+        if (data?.session?.provider_token) {
+          const userInfo = data.session.user;
+          setGoogleConnection({
+            connected: true,
+            email: userInfo.email
+          });
+        }
+      } catch (err) {
+        console.error('Error in checkGoogleConnection:', err);
+      }
+    };
+    
+    checkGoogleConnection();
+  }, []);
   
   const handleGoogleSignIn = async () => {
     try {
@@ -158,6 +187,7 @@ export const useGoogleIntegration = () => {
   };
   
   return {
+    googleConnection,
     testingSheets,
     configuringWorkloadIdentity,
     handleGoogleSignIn,
