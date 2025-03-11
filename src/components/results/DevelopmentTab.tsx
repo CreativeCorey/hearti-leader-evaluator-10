@@ -5,8 +5,6 @@ import { activityData } from '@/data/heartActivities';
 import { addActivityToHabitTracker } from '@/services/habitTrackerService';
 import { useToast } from '@/hooks/use-toast';
 import { getOrCreateAnonymousId } from '@/utils/localStorage';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { format } from 'date-fns';
 import DimensionTabs from './development/DimensionTabs';
 import DimensionChart from './development/DimensionChart';
 import InfoBanner from './development/InfoBanner';
@@ -44,25 +42,6 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension, assessm
     inclusivity: 0
   };
   
-  const getDimensionProgressData = () => {
-    // Filter assessments for the currently selected dimension and sort by date
-    if (!assessments || assessments.length === 0) {
-      return [];
-    }
-    
-    // Sort assessments by date (oldest first)
-    const sortedAssessments = [...assessments].sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-    );
-    
-    // Map to data points for the chart
-    return sortedAssessments.map(assessment => ({
-      date: assessment.date,
-      score: assessment.dimensionScores[activeDimension],
-      formattedDate: format(new Date(assessment.date), 'MMM d, yy')
-    }));
-  };
-  
   const handleSelectActivity = (activityId: string) => {
     if (selectedActivities.includes(activityId)) {
       setSelectedActivities(prev => prev.filter(id => id !== activityId));
@@ -88,16 +67,6 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension, assessm
       title: "Added to Habit Tracker",
       description: `This activity has been added to your ${selectedFrequency} habits. Go to the Habits tab to track your progress.`,
     });
-  };
-  
-  const progressData = getDimensionProgressData();
-  const dimensionColors = {
-    humility: '#EE2D67',      // Pink
-    empathy: '#3953A4',       // Deep Blue (swapped with transparency)
-    accountability: '#00A249', // Vibrant Green
-    resiliency: '#FFCC33',    // Golden Yellow
-    transparency: '#18B7D9',  // Cyan (swapped with empathy)
-    inclusivity: '#5B0F58'    // Deep Purple
   };
   
   const toggleActivities = () => {
@@ -147,50 +116,7 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension, assessm
         </p>
       </div>
       
-      {progressData.length > 1 ? (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Your {activeDimension.charAt(0).toUpperCase() + activeDimension.slice(1)} Progress</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[250px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  data={progressData}
-                  margin={{ top: 10, right: 30, left: 0, bottom: 10 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="formattedDate" />
-                  <YAxis domain={[0, 5]} />
-                  <Tooltip
-                    formatter={(value) => [`${value}/5`, 'Score']}
-                    labelFormatter={(label) => `Date: ${label}`}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="score"
-                    name={activeDimension.charAt(0).toUpperCase() + activeDimension.slice(1)}
-                    stroke={dimensionColors[activeDimension]}
-                    activeDot={{ r: 8 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-            <p className="text-sm text-muted-foreground mt-2">
-              This chart shows your progress in the {activeDimension} dimension over time.
-            </p>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>Your {activeDimension.charAt(0).toUpperCase() + activeDimension.slice(1)} Progress</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">Complete more assessments to track your progress over time.</p>
-          </CardContent>
-        </Card>
-      )}
+      {/* Remove historical progress chart from this tab since it should only appear in Report section */}
       
       <Button 
         variant="outline" 

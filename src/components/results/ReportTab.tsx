@@ -10,6 +10,7 @@ import ReportActionButtons from './report/ReportActionButtons';
 
 interface ReportTabProps {
   assessment: HEARTIAssessment;
+  assessments?: HEARTIAssessment[]; // Added assessments property
   reportRef: React.RefObject<HTMLDivElement>;
   onExportPDF: () => Promise<void>;
   exportingPdf: boolean;
@@ -17,6 +18,7 @@ interface ReportTabProps {
 
 const ReportTab: React.FC<ReportTabProps> = ({ 
   assessment,
+  assessments = [], // Added default value
   reportRef, 
   onExportPDF,
   exportingPdf

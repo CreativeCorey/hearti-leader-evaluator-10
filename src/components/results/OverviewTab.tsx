@@ -11,11 +11,13 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 interface OverviewTabProps {
   assessment: HEARTIAssessment;
+  assessments?: HEARTIAssessment[]; // Added assessments property
   onSelectAssessment?: (assessment: HEARTIAssessment) => void;
 }
 
 const OverviewTab: React.FC<OverviewTabProps> = ({ 
   assessment, 
+  assessments = [], // Added default value
   onSelectAssessment 
 }) => {
   const isMobile = useIsMobile();
