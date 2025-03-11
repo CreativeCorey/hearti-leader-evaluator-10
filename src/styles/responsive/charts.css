@@ -8,7 +8,7 @@
     position: relative;
     aspect-ratio: 1/1;
     max-height: 280px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     padding-bottom: 10px;
   }
   
@@ -68,15 +68,15 @@
   @media (max-width: 640px) {
     /* Make radar chart container taller on mobile to avoid legend overlapping */
     .radar-chart-container {
-      height: 220px;
-      max-height: 220px;
-      margin-bottom: 35px;
+      height: 210px;
+      max-height: 210px;
+      margin-bottom: 25px;
     }
     
     /* Fix for development view on mobile */
     .mobile-development-view {
-      height: 250px !important;
-      margin-bottom: 40px !important;
+      height: 240px !important;
+      margin-bottom: 30px !important;
     }
     
     /* Fix for charts in layout */
@@ -86,10 +86,24 @@
     
     /* Fix legend display on mobile */
     .recharts-legend-wrapper {
-      font-size: 9px;
+      font-size: 10px;
       bottom: -15px !important;
-      max-width: 90% !important;
+      max-width: 95% !important;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    /* Fix legend item spacing */
+    .recharts-default-legend {
+      padding: 0 !important;
+      margin: 0 !important;
+      display: flex;
+      justify-content: center;
+    }
+    
+    .recharts-legend-item {
+      margin: 0 4px !important;
     }
     
     /* Fix for radar charts */

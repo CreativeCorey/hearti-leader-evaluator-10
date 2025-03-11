@@ -37,7 +37,7 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
           data={combinedChartData} 
           config={{
             ...config,
-            outerRadius: isMobile ? "50%" : "65%"
+            outerRadius: isMobile ? "58%" : "65%"
           }}
           hideDimensionLabels={true}
           polarAngleProps={{
@@ -49,7 +49,7 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
           {/* Render comparison data first so user data appears on top */}
           {compareMode !== 'none' && (
             <Radar
-              name={`HEARTI Spectra - ${getComparisonLabel()}`}
+              name={`${getComparisonLabel()} HEARTI`}
               dataKey="Comparison"
               stroke={getComparisonColor()}
               fill={getComparisonColor()}
@@ -65,7 +65,7 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
           
           {/* Render user data with pink color and ensure it's on top by being last */}
           <Radar
-            name="Your HEARTI Spectra"
+            name="Your HEARTI"
             dataKey="Your Score"
             stroke={userPinkColor}
             fill={userPinkColor}
@@ -79,7 +79,13 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
           />
           
           <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
-          <Legend wrapperStyle={{ bottom: isMobile ? -5 : -10, fontSize: isMobile ? '9px' : '10px' }} />
+          <Legend 
+            wrapperStyle={{ 
+              bottom: isMobile ? -10 : -5, 
+              fontSize: isMobile ? '9px' : '10px',
+              width: '90% !important'
+            }} 
+          />
         </BaseRadarChart>
       </div>
     </div>

@@ -34,6 +34,11 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
   const isUserChart = chartTitle.toLowerCase().includes("your");
   const finalChartColor = isUserChart ? USER_CHART_COLOR : chartColor;
   
+  // Simplify the title for legend to save space
+  const legendTitle = isUserChart ? "Your HEARTI" : 
+    chartTitle.includes("Global") ? "Global HEARTI" : 
+    chartTitle.replace("HEARTI Spectra - ", "");
+  
   return (
     <div className={`relative radar-chart-container flex items-center justify-center ${className}`}>
       {showIcons && <DimensionIcons iconSize={iconSize} />}
@@ -42,7 +47,7 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
         data={data} 
         config={{
           ...config,
-          outerRadius: isMobile ? "50%" : "65%"
+          outerRadius: isMobile ? "58%" : "65%"
         }}
         polarRadiusProps={polarRadiusProps}
         polarAngleProps={{
@@ -52,7 +57,7 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
         hideDimensionLabels={true}
       >
         <Radar
-          name={chartTitle}
+          name={legendTitle}
           dataKey="value"
           stroke={finalChartColor}
           fill={finalChartColor}
@@ -65,7 +70,14 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
           animationDuration={isAnimationActive ? 1000 : 0}
         />
         <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
-        <Legend wrapperStyle={{ position: 'absolute', bottom: -10, fontSize: '10px' }} />
+        <Legend 
+          wrapperStyle={{ 
+            position: 'absolute', 
+            bottom: -5, 
+            fontSize: '10px',
+            width: '90% !important'
+          }} 
+        />
       </BaseRadarChart>
     </div>
   );

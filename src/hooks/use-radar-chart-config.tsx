@@ -45,9 +45,9 @@ export function useRadarChartConfig(isAnimated = true): {
       fillOpacity: 0.5,
       dotSize: isMobile ? 3 : 4,
       activeDotSize: isMobile ? 5 : 6,
-      outerRadius: isMobile ? "65%" : "70%", // Reduced from 75% to 70% for better icon spacing
+      outerRadius: isMobile ? "58%" : "65%", // Reduced for better icon spacing
     },
-    iconSize: isMobile ? 14 : 20, // Increased icon size for better visibility
+    iconSize: isMobile ? 16 : 20, // Increased icon size for better visibility
     polarRadiusProps: {
       angle: 30,
       domain: [0, 5],

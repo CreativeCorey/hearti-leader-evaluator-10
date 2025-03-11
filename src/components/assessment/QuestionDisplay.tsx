@@ -23,27 +23,27 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
     <div className={`bg-muted/30 p-4 sm:p-6 rounded-lg transition-opacity duration-150 w-full max-w-screen-sm mx-auto ${transition ? 'opacity-0' : 'opacity-100'}`}>
       <h3 className="text-xl font-medium mb-6 sm:mb-8 text-center">{question.text}</h3>
       
-      <div className="mt-6 sm:mt-8 space-y-6 sm:space-y-8">
-        <div className="px-1 sm:px-4">
+      <div className="mt-6 sm:mt-8 space-y-4 sm:space-y-6">
+        <div className="px-0 sm:px-4">
           <Slider
             value={[currentScore]}
             min={1}
             max={5}
             step={1}
             onValueChange={value => onAnswerChange(value[0])}
-            className="mb-8 sm:mb-10"
+            className="mb-6 sm:mb-8"
           />
           
-          <div className="flex justify-between text-sm text-muted-foreground pt-4">
+          <div className="flex justify-between text-sm text-muted-foreground pt-2">
             {scoreLabels.map(({ value, label }) => (
               <button
                 key={value}
-                className={`text-center text-xs sm:text-sm px-2 sm:px-3 py-3 rounded-lg touch-manipulation hover:bg-primary/5 transition-colors ${
+                className={`text-center text-xs sm:text-sm px-1 sm:px-3 py-2 rounded-lg touch-manipulation hover:bg-primary/5 transition-colors ${
                   currentScore === value ? 'text-primary font-medium bg-primary/10' : ''
                 }`}
                 onClick={() => onAnswerChange(value)}
                 aria-label={`Select ${label}`}
-                style={{ minWidth: isMobile ? '60px' : 'auto' }}
+                style={{ minWidth: isMobile ? '50px' : 'auto' }}
               >
                 {isMobile ? value : label}
               </button>
@@ -51,7 +51,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
           </div>
         </div>
         
-        <div className="text-center mt-8 sm:mt-10">
+        <div className="text-center mt-4 sm:mt-6">
           <div className="inline-block px-4 py-2 bg-primary/10 rounded-lg">
             <span className="font-medium">Selected:</span> {getScoreLabel(currentScore)}
           </div>

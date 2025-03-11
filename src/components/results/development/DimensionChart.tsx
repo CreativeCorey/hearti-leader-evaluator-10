@@ -41,14 +41,14 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
   return (
     <div className="bg-slate-50 p-2 rounded-lg h-full relative">
       <p className="text-center font-medium text-lg text-indigo-600 mb-1">{chartTitle}</p>
-      <div className={`radar-chart-container h-[200px] sm:h-[240px] relative`}>
+      <div className={`radar-chart-container h-[210px] sm:h-[240px] relative`}>
         <DimensionIcons iconSize={iconSize} />
         
         <BaseRadarChart 
           data={singleDimensionData} 
           config={{
             ...config,
-            outerRadius: isMobile ? "50%" : "65%"
+            outerRadius: isMobile ? "58%" : "65%"
           }}
           polarRadiusProps={polarRadiusProps}
           polarAngleProps={{
@@ -71,7 +71,11 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
             animationDuration={1000}
           />
           <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
-          <Legend wrapperStyle={isMobile ? { bottom: -15, fontSize: "10px" } : { bottom: -10 }} />
+          <Legend wrapperStyle={{
+            bottom: isMobile ? -5 : -10, 
+            fontSize: isMobile ? "10px" : "11px",
+            padding: "0 2px"
+          }} />
         </BaseRadarChart>
       </div>
     </div>

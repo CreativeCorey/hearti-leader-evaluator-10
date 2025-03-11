@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { HEARTIAssessment } from '../types';
 
 interface UseTabManagementProps {
@@ -8,6 +8,7 @@ interface UseTabManagementProps {
 }
 
 export const useTabManagement = ({ userAssessments, loading }: UseTabManagementProps) => {
+  // Default to "take" tab to ensure assessment can be accessed
   const [activeTab, setActiveTab] = useState<'take' | 'results'>('take');
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   
@@ -22,8 +23,14 @@ export const useTabManagement = ({ userAssessments, loading }: UseTabManagementP
     }
   }, [userAssessments, loading, initialLoadComplete]);
 
+  // This ensures that if a user explicitly clicks "Take Assessment", we respect that choice
+  const setActiveTabWithPreference = (tab: 'take' | 'results') => {
+    console.log(`User selected tab: ${tab}`);
+    setActiveTab(tab);
+  };
+
   return {
     activeTab,
-    setActiveTab
+    setActiveTab: setActiveTabWithPreference
   };
 };
