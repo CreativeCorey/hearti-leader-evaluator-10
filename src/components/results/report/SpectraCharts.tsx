@@ -96,11 +96,11 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment, assessments =
         </div>
       )}
       
-      {/* Assessment Progress Chart */}
-      {progressData.length > 1 && (
-        <Card className="p-4 mt-6">
-          <h3 className="text-lg font-medium mb-3 text-center">HEARTI Progress Over Time</h3>
-          <div className={`${isMobile ? 'h-[300px]' : 'h-[250px]'} w-full`}>
+      {/* Assessment Progress Chart - Always display */}
+      <Card className="p-4 mt-6">
+        <h3 className="text-lg font-medium mb-3 text-center">HEARTI Progress Over Time</h3>
+        <div className={`${isMobile ? 'h-[300px]' : 'h-[250px]'} w-full`}>
+          {progressData.length > 1 ? (
             <ResponsiveContainer width="100%" height="100%">
               <LineChart
                 data={progressData}
@@ -139,9 +139,13 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment, assessments =
                 ))}
               </LineChart>
             </ResponsiveContainer>
-          </div>
-        </Card>
-      )}
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <p className="text-muted-foreground">Complete more assessments to see your progress over time.</p>
+            </div>
+          )}
+        </div>
+      </Card>
       
       <p className="text-sm text-muted-foreground mt-3">
         The HEARTI:Leader Quotient report provides you with information about your strengths and areas that you can develop further. 

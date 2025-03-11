@@ -31,7 +31,7 @@ const Header: React.FC = () => {
         </Button>
       </div>
       
-      <div className="w-2/4 flex justify-center">
+      <div className="w-2/4 flex justify-center items-center">
         <Link to="/" className="flex items-center justify-center">
           <img 
             src="/lovable-uploads/f5c0e163-fd58-4828-bce7-5e62049ef409.png" 

@@ -62,12 +62,12 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
     return colors[dimension] || "#000000";
   };
 
-  // Sample dimension scores from the assessment
-  const dimensionScores = assessment.dimensionScores;
-
   return (
     <div className="space-y-6">
-      {/* HEARTI:Leader Score Card - Moved to top */}
+      {/* Moved ShareResultsCard to the top */}
+      <ShareResultsCard assessment={assessment} />
+      
+      {/* HEARTI:Leader Score Card */}
       <Card>
         <CardHeader className="pb-2">
           <CardTitle>Your HEARTI:Leader Quotient</CardTitle>
@@ -119,7 +119,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
         </CardContent>
       </Card>
 
-      {/* HEARTI Spectra Chart - Now second in order */}
+      {/* HEARTI Spectra Chart */}
       <Card>
         <CardHeader className="pb-2">
           <div className="flex justify-between items-center">
@@ -145,15 +145,15 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
         </CardContent>
       </Card>
       
-      {/* Assessment Progress Chart - Added */}
-      {progressData.length > 1 && (
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle>HEARTI Progress Over Time</CardTitle>
-            <CardDescription>Track your leadership development journey</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className={`${isMobile ? 'h-[300px]' : 'h-[250px]'} w-full`}>
+      {/* Assessment Progress Chart - Always display */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle>HEARTI Progress Over Time</CardTitle>
+          <CardDescription>Track your leadership development journey</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className={`${isMobile ? 'h-[300px]' : 'h-[250px]'} w-full`}>
+            {progressData.length > 1 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   data={progressData}
@@ -192,13 +192,14 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
                   ))}
                 </LineChart>
               </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-      
-      {/* Sharing Card */}
-      <ShareResultsCard assessment={assessment} />
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-muted-foreground">Complete more assessments to see your progress over time.</p>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
