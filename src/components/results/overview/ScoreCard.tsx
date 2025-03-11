@@ -20,7 +20,9 @@ const ScoreCard: React.FC<ScoreCardProps> = ({ assessment, formattedDate }) => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2 text-center flex flex-col items-center">
             <p className="text-muted-foreground">Overall Score</p>
-            <div className="flex items-baseline justify-center">
+            <div className="flex items-baseline justify-center relative">
+              {/* Oval background for the score */}
+              <div className="absolute w-16 h-14 bg-fuchsia-100 rounded-full -z-10 transform -translate-x-1/2 left-1/2 top-1/2 -translate-y-1/2"></div>
               <span className="text-4xl font-bold">{assessment.overallScore}</span>
               <span className="text-muted-foreground ml-1">/5</span>
             </div>
