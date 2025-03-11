@@ -17,7 +17,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div className="min-h-screen flex flex-col">
       {/* Only show Header if not on index page */}
       {!isIndexPage && <Header />}
-      <main className={`flex-1 w-full ${isMobile ? 'px-3 pt-24 pb-8' : 'px-4 pt-28 pb-12'} ${isIndexPage ? 'pt-4' : ''}`}>
+      <main className={`flex-1 w-full ${isMobile ? 'px-3 pt-28 pb-8' : 'px-4 pt-32 pb-12'} ${isIndexPage ? 'pt-4' : ''}`}>
         <div className={`mx-auto ${isMobile ? 'w-full max-w-[96%]' : 'max-w-[95%] md:max-w-6xl'}`}>
           {children}
         </div>

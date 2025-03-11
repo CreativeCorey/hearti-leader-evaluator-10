@@ -32,20 +32,7 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
         <DimensionIcons iconSize={iconSize} />
         
         <BaseRadarChart data={combinedChartData} config={config}>
-          <Radar
-            name="Your HEARTI Spectra"
-            dataKey="value"
-            stroke={userGoldColor}
-            fill={userGoldColor}
-            fillOpacity={config.fillOpacity}
-            strokeWidth={config.strokeWidth}
-            dot={{ r: config.dotSize }}
-            activeDot={{ r: config.activeDotSize }}
-            isAnimationActive={true}
-            animationBegin={100}
-            animationDuration={1000}
-          />
-          
+          {/* Render comparison data first so user data appears on top */}
           {compareMode !== 'none' && (
             <Radar
               name={`HEARTI Spectra - ${getComparisonLabel()}`}
@@ -61,6 +48,21 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
               animationDuration={1000}
             />
           )}
+          
+          {/* Render user data last so it appears on top */}
+          <Radar
+            name="Your HEARTI Spectra"
+            dataKey="value"
+            stroke={userGoldColor}
+            fill={userGoldColor}
+            fillOpacity={config.fillOpacity}
+            strokeWidth={config.strokeWidth}
+            dot={{ r: config.dotSize }}
+            activeDot={{ r: config.activeDotSize }}
+            isAnimationActive={true}
+            animationBegin={100}
+            animationDuration={1000}
+          />
           
           <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
           <Legend />

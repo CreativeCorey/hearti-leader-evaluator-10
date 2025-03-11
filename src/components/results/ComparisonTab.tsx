@@ -81,7 +81,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment }) => {
     <div>
       <div className="mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h3 className="text-lg font-medium mb-2">HEARTI:Leader Spectra Comparison</h3>
+          <h3 className="text-lg font-medium mb-2">HEARTI:Leader Data Visualization</h3>
           <p className="text-sm text-muted-foreground">See how your scores compare to others</p>
         </div>
         

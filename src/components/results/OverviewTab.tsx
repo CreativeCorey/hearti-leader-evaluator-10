@@ -7,16 +7,17 @@ import ShareResultsCard from './sharing/ShareResultsCard';
 import DimensionChart from './development/DimensionChart';
 import ShareButton from './sharing/ShareButton';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 interface OverviewTabProps {
   assessment: HEARTIAssessment;
-  assessments?: HEARTIAssessment[]; // Added assessments property
+  assessments?: HEARTIAssessment[]; 
   onSelectAssessment?: (assessment: HEARTIAssessment) => void;
 }
 
 const OverviewTab: React.FC<OverviewTabProps> = ({ 
   assessment, 
-  assessments = [], // Added default value
+  assessments = [], 
   onSelectAssessment 
 }) => {
   const isMobile = useIsMobile();
@@ -33,38 +34,40 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
+  // Format data for progress chart
+  const formatShortDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return `${date.getMonth() + 1}/${date.getDate()}`;
+  };
+
+  const progressData = [...assessments]
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .map(item => ({
+      date: formatShortDate(item.date),
+      fullDate: new Date(item.date).toLocaleDateString(),
+      score: item.overallScore,
+      ...item.dimensionScores
+    }));
+
+  // Get dimension colors
+  const getDimensionColor = (dimension: string) => {
+    const colors: Record<string, string> = {
+      humility: "#8b5cf6",
+      empathy: "#ec4899",
+      accountability: "#ef4444",
+      resiliency: "#f59e0b",
+      transparency: "#10b981",
+      inclusivity: "#3b82f6"
+    };
+    return colors[dimension] || "#000000";
+  };
+
   // Sample dimension scores from the assessment
   const dimensionScores = assessment.dimensionScores;
 
   return (
     <div className="space-y-6">
-      {/* HEARTI Spectra Chart - Fixed height and overflow handling */}
-      <Card>
-        <CardHeader className="pb-2">
-          <div className="flex justify-between items-center">
-            <div>
-              <CardTitle className="text-xl md:text-2xl">HEARTI Spectra</CardTitle>
-              <CardDescription className="text-sm">Your leadership dimension scores</CardDescription>
-            </div>
-            <ShareButton 
-              assessment={assessment} 
-              variant="outline"
-              size={isMobile ? "sm" : "default"}
-            />
-          </div>
-        </CardHeader>
-        <CardContent className="px-2 pt-0 pb-8">
-          <div className="h-[320px] w-full mx-auto max-w-[450px]">
-            <DimensionChart 
-              dimensionScores={dimensionScores}
-              activeDimension="humility"
-              showAllDimensions={true}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* HEARTI:Leader Score Card */}
+      {/* HEARTI:Leader Score Card - Moved to top */}
       <Card>
         <CardHeader className="pb-2">
           <CardTitle>Your HEARTI:Leader Quotient</CardTitle>
@@ -115,8 +118,86 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
           </div>
         </CardContent>
       </Card>
+
+      {/* HEARTI Spectra Chart - Now second in order */}
+      <Card>
+        <CardHeader className="pb-2">
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle className="text-xl md:text-2xl">HEARTI Spectra</CardTitle>
+              <CardDescription className="text-sm">Your leadership dimension scores</CardDescription>
+            </div>
+            <ShareButton 
+              assessment={assessment} 
+              variant="outline"
+              size={isMobile ? "sm" : "default"}
+            />
+          </div>
+        </CardHeader>
+        <CardContent className="px-2 pt-0 pb-8">
+          <div className="h-[320px] w-full mx-auto max-w-[450px]">
+            <DimensionChart 
+              dimensionScores={dimensionScores}
+              activeDimension="humility"
+              showAllDimensions={true}
+            />
+          </div>
+        </CardContent>
+      </Card>
       
-      {/* Only display ShareResultsCard, remove demographics section */}
+      {/* Assessment Progress Chart - Added */}
+      {progressData.length > 1 && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle>HEARTI Progress Over Time</CardTitle>
+            <CardDescription>Track your leadership development journey</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className={`${isMobile ? 'h-[300px]' : 'h-[250px]'} w-full`}>
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={progressData}
+                  margin={{ top: 5, right: 30, left: 0, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
+                  <XAxis dataKey="date" />
+                  <YAxis domain={[0, 5]} />
+                  <Tooltip 
+                    formatter={(value) => [`${value}/5`]}
+                    labelFormatter={(label) => {
+                      const item = progressData.find(d => d.date === label);
+                      return item?.fullDate || label;
+                    }}
+                  />
+                  <Legend />
+                  <Line 
+                    type="monotone" 
+                    dataKey="score" 
+                    name="Overall Score" 
+                    stroke="#000" 
+                    strokeWidth={2} 
+                    activeDot={{ r: 6 }} 
+                  />
+                  {Object.keys(assessment.dimensionScores).map((dimension) => (
+                    <Line
+                      key={dimension}
+                      type="monotone"
+                      dataKey={dimension}
+                      name={dimension.charAt(0).toUpperCase() + dimension.slice(1)}
+                      stroke={getDimensionColor(dimension)}
+                      strokeWidth={1.5}
+                      dot={{ r: 3 }}
+                      activeDot={{ r: 5 }}
+                    />
+                  ))}
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
+      {/* Sharing Card */}
       <ShareResultsCard assessment={assessment} />
     </div>
   );

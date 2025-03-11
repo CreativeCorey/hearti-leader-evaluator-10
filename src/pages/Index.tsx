@@ -51,35 +51,37 @@ const Index = () => {
       <div className="w-full mx-auto">
         <Header />
         
-        <HeaderSection 
-          profile={profile} 
-          isSupabaseEnabled={isSupabaseEnabled}
-          handleToggleSupabase={handleToggleSupabase}
-          googleConnection={googleConnection}
-          isMobile={isMobile}
-        />
-        
-        <AssessmentTabs 
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          userAssessments={userAssessments}
-          latestAssessment={latestAssessment}
-          onComplete={handleAssessmentComplete}
-          testingSheets={testingSheets}
-          sendLatestToSheets={() => {
-            if (latestAssessment) {
-              return sendLatestToSheets(latestAssessment);
-            }
-            return Promise.resolve();
-          }}
-          viewTransitioning={viewTransitioning}
-        />
-        
-        {/* Google Sheets integration tools */}
-        <GoogleIntegrationTools 
-          testGoogleSheets={testGoogleSheets}
-          testingSheets={testingSheets}
-        />
+        <div className="pt-20 md:pt-24">
+          <HeaderSection 
+            profile={profile} 
+            isSupabaseEnabled={isSupabaseEnabled}
+            handleToggleSupabase={handleToggleSupabase}
+            googleConnection={googleConnection}
+            isMobile={isMobile}
+          />
+          
+          <AssessmentTabs 
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            userAssessments={userAssessments}
+            latestAssessment={latestAssessment}
+            onComplete={handleAssessmentComplete}
+            testingSheets={testingSheets}
+            sendLatestToSheets={() => {
+              if (latestAssessment) {
+                return sendLatestToSheets(latestAssessment);
+              }
+              return Promise.resolve();
+            }}
+            viewTransitioning={viewTransitioning}
+          />
+          
+          {/* Google Sheets integration tools */}
+          <GoogleIntegrationTools 
+            testGoogleSheets={testGoogleSheets}
+            testingSheets={testingSheets}
+          />
+        </div>
       </div>
     </div>
   );

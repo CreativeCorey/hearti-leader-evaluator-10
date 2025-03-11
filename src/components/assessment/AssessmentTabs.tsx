@@ -43,6 +43,13 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
     return () => window.removeEventListener('orientationchange', handleResize);
   }, []);
 
+  // Handle form completion
+  const handleAssessmentComplete = (assessment: HEARTIAssessment) => {
+    onComplete(assessment);
+    // Automatically switch to results tab after completion
+    setActiveTab('results');
+  };
+
   return (
     <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'take' | 'results')} className="w-full">
       <div className={`w-full overflow-hidden mb-4 ${viewTransitioning ? 'opacity-75 transition-opacity' : ''}`}>
@@ -53,7 +60,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
       </div>
       
       <TabsContent value="take" className="mt-0">
-        <AssessmentForm onComplete={onComplete} />
+        <AssessmentForm onComplete={handleAssessmentComplete} />
       </TabsContent>
       
       <TabsContent value="results" className="mt-0">
@@ -83,6 +90,6 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
       </TabsContent>
     </Tabs>
   );
-});
+};
 
 export default AssessmentTabs;

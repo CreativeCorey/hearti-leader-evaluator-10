@@ -29,11 +29,13 @@ const ChartSection: React.FC<ChartSectionProps> = ({
         />
       </div>
       
-      <DimensionChart 
-        dimensionScores={dimensionScores}
-        activeDimension={activeDimension}
-        showAllDimensions={chartView === 'all'}
-      />
+      <div className={`${isMobile && chartView === 'all' ? 'h-[450px]' : ''} relative`}>
+        <DimensionChart 
+          dimensionScores={dimensionScores}
+          activeDimension={activeDimension}
+          showAllDimensions={chartView === 'all'}
+        />
+      </div>
     </div>
   );
 };

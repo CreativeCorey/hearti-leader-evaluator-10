@@ -54,7 +54,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
           Dimensions
         </TabsTrigger>
         <TabsTrigger value="comparison" className="text-xs md:text-sm whitespace-nowrap">
-          Benchmarks
+          Data Viz
         </TabsTrigger>
         <TabsTrigger value="report" className="text-xs md:text-sm whitespace-nowrap">
           Report
