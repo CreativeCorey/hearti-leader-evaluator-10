@@ -3,7 +3,6 @@ import React from 'react';
 import { HEARTIAssessment } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
-import LinkedInBadge from '../sharing/LinkedInBadge';
 import ShareButton from '../sharing/ShareButton';
 
 interface ReportActionButtonsProps {
@@ -24,11 +23,6 @@ const ReportActionButtons: React.FC<ReportActionButtonsProps> = ({
       <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
         <h2 className="text-2xl font-semibold">HEARTI:Leader Report</h2>
         <div className="flex gap-2">
-          <ShareButton 
-            assessment={assessment} 
-            variant="outline"
-            size={isMobile ? "sm" : "default"}
-          />
           <Button 
             onClick={onExportPDF} 
             disabled={exportingPdf}
@@ -42,7 +36,11 @@ const ReportActionButtons: React.FC<ReportActionButtonsProps> = ({
       
       {/* Action buttons in a full-width container before the card */}
       <div className="flex flex-wrap gap-3 justify-center sm:justify-end mb-4">
-        <LinkedInBadge assessment={assessment} />
+        <ShareButton 
+          assessment={assessment} 
+          variant="outline"
+          size={isMobile ? "sm" : "default"}
+        />
       </div>
     </>
   );
