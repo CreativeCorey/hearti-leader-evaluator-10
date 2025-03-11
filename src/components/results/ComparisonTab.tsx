@@ -123,6 +123,9 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
           assessment={assessment} 
           compareMode={compareMode}
           sortedDimensions={sortedDimensions}
+          getComparisonLabel={getComparisonLabel}
+          getComparisonColor={getComparisonColor}
+          aggregateData={aggregateData}
         />
       </CardContent>
     </Card>

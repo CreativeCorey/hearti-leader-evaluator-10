@@ -67,7 +67,7 @@ export const useAssessmentCompletion = (
     };
     
     try {
-      // Save assessment and complete
+      // Save assessment and complete - no payment processing
       await saveAssessment(finalAssessment);
       onComplete(finalAssessment);
       
@@ -89,7 +89,7 @@ export const useAssessmentCompletion = (
     if (!tempAssessment) return;
     
     try {
-      // Save assessment and complete without demographics
+      // Save assessment and complete without demographics - no payment processing
       await saveAssessment(tempAssessment);
       onComplete(tempAssessment);
       
