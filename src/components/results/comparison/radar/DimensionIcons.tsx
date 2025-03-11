@@ -14,33 +14,33 @@ const DimensionIcons: React.FC<DimensionIconsProps> = ({ iconSize }) => {
   // Improved positioning to avoid overlapping with chart labels
   return (
     <div className="absolute inset-0 pointer-events-none">
-      {/* Top (Humility) - Moved up */}
-      <div className="absolute top-[8%] left-[50%] transform -translate-x-1/2">
+      {/* Top (Humility) - Moved up and slightly adjusted */}
+      <div className="absolute top-[6%] left-[50%] transform -translate-x-1/2">
         <Gauge size={iconSize} style={{ color: dimensionColors.humility }} />
       </div>
       
-      {/* Top Right (Empathy) - Moved further right */}
-      <div className="absolute top-[25%] right-[10%] transform">
+      {/* Top Right (Empathy) - Moved further right and up */}
+      <div className="absolute top-[22%] right-[8%] transform">
         <HeartHandshake size={iconSize} style={{ color: dimensionColors.empathy }} />
       </div>
       
-      {/* Bottom Right (Accountability) - Moved further right */}
-      <div className="absolute bottom-[25%] right-[10%] transform">
+      {/* Bottom Right (Accountability) - Moved further right and down */}
+      <div className="absolute bottom-[22%] right-[8%] transform">
         <ChartNoAxesCombined size={iconSize} style={{ color: dimensionColors.accountability }} />
       </div>
       
-      {/* Bottom (Resiliency) - Moved down */}
-      <div className="absolute bottom-[8%] left-[50%] transform -translate-x-1/2">
+      {/* Bottom (Resiliency) - Moved down and slightly adjusted */}
+      <div className="absolute bottom-[6%] left-[50%] transform -translate-x-1/2">
         <TreePalm size={iconSize} style={{ color: dimensionColors.resiliency }} />
       </div>
       
-      {/* Bottom Left (Transparency) - Moved further left */}
-      <div className="absolute bottom-[25%] left-[10%] transform">
+      {/* Bottom Left (Transparency) - Moved further left and down */}
+      <div className="absolute bottom-[22%] left-[8%] transform">
         <Blend size={iconSize} style={{ color: dimensionColors.transparency }} />
       </div>
       
-      {/* Top Left (Inclusivity) - Moved further left */}
-      <div className="absolute top-[25%] left-[10%] transform">
+      {/* Top Left (Inclusivity) - Moved further left and up */}
+      <div className="absolute top-[22%] left-[8%] transform">
         <Users size={iconSize} style={{ color: dimensionColors.inclusivity }} />
       </div>
     </div>

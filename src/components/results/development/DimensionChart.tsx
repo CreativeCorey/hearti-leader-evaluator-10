@@ -31,8 +31,9 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
     return { ...item, value: showAllDimensions ? item.value : 0 };
   });
   
-  // Use pink color for user's radar chart when showing all dimensions (instead of gold)
-  const userColor = showAllDimensions ? "#D946EF" : (dimensionColors[activeDimension] || "#6366f1");
+  // Use the dimension's color for both focused and complete view
+  // This ensures the color consistency between views
+  const dimensionColor = dimensionColors[activeDimension] || "#6366f1";
   
   const chartTitle = showAllDimensions ? 
     "Your Complete HEARTI Spectra" : 
@@ -48,8 +49,8 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
           <Radar
             name={showAllDimensions ? "Your HEARTI Spectra" : activeDimension}
             dataKey="value"
-            stroke={userColor}
-            fill={userColor}
+            stroke={dimensionColor}
+            fill={dimensionColor}
             fillOpacity={config.fillOpacity}
             strokeWidth={config.strokeWidth}
             dot={{ r: config.dotSize }}

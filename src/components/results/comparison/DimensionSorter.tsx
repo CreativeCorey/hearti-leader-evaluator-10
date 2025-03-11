@@ -6,10 +6,10 @@ interface DimensionSorterProps {
   assessment: HEARTIAssessment;
 }
 
+// This component renders a hidden div and exports a utility function
+// The component is needed to maintain compatibility with existing code
 const DimensionSorter: React.FC<DimensionSorterProps> = ({ assessment }) => {
-  const sortedDimensions = Object.entries(assessment.dimensionScores)
-    .sort(([, a], [, b]) => b - a)
-    .map(([dimension]) => dimension as HEARTIDimension);
+  const sortedDimensions = getSortedDimensions(assessment);
     
   return (
     <div className="hidden">

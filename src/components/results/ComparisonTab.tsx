@@ -12,7 +12,7 @@ import {
   comparisonColors,
   spiderConfig
 } from './comparison';
-import DimensionSorter from './comparison/DimensionSorter';
+import { getSortedDimensions } from './comparison/DimensionSorter';
 import ProgressChart from './comparison/ProgressChart';
 
 interface ComparisonTabProps {
@@ -25,7 +25,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments =
   const [chartView, setChartView] = useState<'combined' | 'separate'>('combined');
   
   const chartData = formatDataForRadarChart(assessment.dimensionScores);
-  const { sortedDimensions } = DimensionSorter({ assessment });
+  const sortedDimensions = getSortedDimensions(assessment);
 
   const getComparisonData = () => {
     if (compareMode === 'none') {
