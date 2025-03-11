@@ -49,7 +49,7 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
             />
           )}
           
-          {/* Render user data last so it appears on top */}
+          {/* Render user data with gold color and ensure it's on top by being last */}
           <Radar
             name="Your HEARTI Spectra"
             dataKey="value"
@@ -60,8 +60,9 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
             dot={{ r: config.dotSize }}
             activeDot={{ r: config.activeDotSize }}
             isAnimationActive={true}
-            animationBegin={100}
+            animationBegin={0}
             animationDuration={1000}
+            zIndex={10} 
           />
           
           <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />

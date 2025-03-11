@@ -90,6 +90,6 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
       </TabsContent>
     </Tabs>
   );
-};
+});
 
 export default AssessmentTabs;

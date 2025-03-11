@@ -10,16 +10,7 @@ const Header: React.FC = () => {
 
   return (
     <header className="w-full py-4 px-4 flex justify-between items-center border-b backdrop-blur-sm bg-white/95 fixed top-0 z-10">
-      <div className="flex items-center">
-        <Link to="/" className="flex items-center">
-          <img 
-            src="/lovable-uploads/f5c0e163-fd58-4828-bce7-5e62049ef409.png" 
-            alt="HEARTI™ Leader Quotient Logo" 
-            className="h-8 md:h-10"
-          />
-        </Link>
-      </div>
-      <div className="flex items-center gap-2">
+      <div className="w-1/3 flex items-center">
         <Button
           variant="outline"
           size="sm"
@@ -38,7 +29,19 @@ const Header: React.FC = () => {
             </>
           )}
         </Button>
-        
+      </div>
+      
+      <div className="w-1/3 flex justify-center">
+        <Link to="/" className="flex items-center justify-center">
+          <img 
+            src="/lovable-uploads/f5c0e163-fd58-4828-bce7-5e62049ef409.png" 
+            alt="HEARTI™ Leader Quotient Logo" 
+            className="h-8 md:h-10"
+          />
+        </Link>
+      </div>
+      
+      <div className="w-1/3 flex items-center justify-end">
         {user && !anonymousMode ? (
           <Button
             variant="ghost"
