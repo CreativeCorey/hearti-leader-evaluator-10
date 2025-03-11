@@ -11,18 +11,20 @@ interface ChartWithIconsProps {
   showIcons?: boolean;
   spiderConfig?: any;  // Kept for backward compatibility
   isAnimationActive?: boolean;
+  className?: string;
 }
 
 const ChartWithIcons: React.FC<ChartWithIconsProps> = ({ 
   data, 
   chartColor, 
   showIcons = true,
-  isAnimationActive = true
+  isAnimationActive = true,
+  className = ""
 }) => {
   const { config, iconSize } = useRadarChartConfig(isAnimationActive);
   
   return (
-    <div className="relative h-full w-full flex items-center justify-center">
+    <div className={`relative h-full w-full flex items-center justify-center ${className}`}>
       {showIcons && <DimensionIcons iconSize={iconSize} />}
       
       <BaseRadarChart data={data} config={config}>

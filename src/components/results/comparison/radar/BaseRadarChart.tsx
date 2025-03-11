@@ -8,24 +8,31 @@ interface BaseRadarChartProps {
   data: any[];
   children: React.ReactNode;
   config: RadarChartConfig;
+  className?: string;
 }
 
 const BaseRadarChart: React.FC<BaseRadarChartProps> = ({ 
   data, 
   children,
-  config
+  config,
+  className = ""
 }) => {
   const isMobile = useIsMobile();
   
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    <ResponsiveContainer width="100%" height="100%" className={className}>
       <RadarChart 
         cx="50%" 
         cy="50%" 
         outerRadius={config.outerRadius} 
         data={data}
       >
-        <PolarGrid gridType={config.gridType} />
+        <PolarGrid 
+          gridType={config.gridType} 
+          stroke="#d1d5db" 
+          strokeDasharray="3 3" 
+          strokeOpacity={0.7} 
+        />
         <PolarAngleAxis 
           dataKey="name" 
           tick={isMobile ? false : { 
@@ -34,15 +41,17 @@ const BaseRadarChart: React.FC<BaseRadarChartProps> = ({
           }} 
           axisLineType={config.axisLineType}
           tickLine={false}
+          stroke="#d1d5db"
         />
         <PolarRadiusAxis 
           angle={30} 
           domain={[0, 5]} 
           tick={{ 
-            fill: '#C8C8C9',
+            fill: '#9ca3af',
             fontSize: isMobile ? 8 : 10,
-            opacity: 0.7
+            opacity: 0.8
           }} 
+          stroke="#e5e7eb"
         />
         {children}
       </RadarChart>

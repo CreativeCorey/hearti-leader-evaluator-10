@@ -46,6 +46,11 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
         {/* Logo and Header */}
         <div className="text-center mb-2">
           <div className="flex justify-center items-center mb-1">
+            <img 
+              src="/lovable-uploads/f52625fd-8dcf-4e6f-8753-456776fcdaf9.png" 
+              alt="HEARTI Leader" 
+              className="h-8 mr-2"
+            />
             <h3 className="text-xl font-bold text-gray-800">HEARTI:Leader Spectra</h3>
           </div>
           <p className="text-sm text-gray-600">Overall Score: {assessment.overallScore}/5</p>
