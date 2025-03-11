@@ -3,6 +3,7 @@ import React from 'react';
 import { Slider } from '@/components/ui/slider';
 import { HEARTIQuestion } from '@/types';
 import { getScoreLabel, scoreLabels } from '@/utils/assessmentUtils';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface QuestionDisplayProps {
   question: HEARTIQuestion;
@@ -19,10 +20,15 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   isMobile,
   transition
 }) => {
+  const { t } = useLanguage();
+  
+  // Get the translated question text
+  const translatedQuestionText = t(`assessment.questions.${question.id}`);
+  
   return (
     <div className={`bg-muted/30 p-4 sm:p-6 rounded-lg transition-opacity duration-150 w-full max-w-screen-sm mx-auto ${transition ? 'opacity-0' : 'opacity-100'}`}>
       <div className="question-container min-h-[100px] flex items-center justify-center mb-4">
-        <h3 className="text-lg sm:text-xl font-medium text-center">{question.text}</h3>
+        <h3 className="text-lg sm:text-xl font-medium text-center">{translatedQuestionText}</h3>
       </div>
       
       <div className="space-y-4">
@@ -48,7 +54,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
                 aria-label={`Select ${label}`}
                 style={{ width: '20%', textAlign: 'center' }}
               >
-                {isMobile ? value : label}
+                {isMobile ? value : t(`assessment.scoreLabels.${value}`)}
               </button>
             ))}
           </div>
@@ -56,7 +62,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
         
         <div className="text-center mt-3">
           <div className="inline-block px-3 py-1.5 bg-primary/10 rounded-lg">
-            <span className="font-medium">Selected:</span> {getScoreLabel(currentScore)}
+            <span className="font-medium">{t('assessment.selected')}:</span> {t(`assessment.scoreLabels.${currentScore}`)}
           </div>
         </div>
       </div>

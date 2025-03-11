@@ -9,6 +9,7 @@ import DemographicForm from './DemographicForm';
 import QuestionDisplay from './assessment/QuestionDisplay';
 import DebugTools from './assessment/DebugTools';
 import { useAssessmentForm } from '@/hooks/useAssessmentForm';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface AssessmentFormProps {
   onComplete: (assessment: HEARTIAssessment) => void;
@@ -17,6 +18,7 @@ interface AssessmentFormProps {
 const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
   const isMobile = useIsMobile();
   const DEBUG = import.meta.env.DEV;
+  const { t } = useLanguage();
   
   const {
     loading,
@@ -40,7 +42,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     return (
       <div className="flex flex-col items-center justify-center p-6 space-y-4">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p>Loading assessment questions...</p>
+        <p>{t('common.loading')}</p>
       </div>
     );
   }
@@ -50,8 +52,8 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     return (
       <div className="flex flex-col items-center justify-center p-6 space-y-4">
         <Loader2 className="h-8 w-8 animate-spin text-red-500" />
-        <p className="text-red-500">Loading assessment questions...</p>
-        <Button onClick={() => window.location.reload()} className="mt-4">Reload Page</Button>
+        <p className="text-red-500">{t('common.loading')}</p>
+        <Button onClick={() => window.location.reload()} className="mt-4">{t('assessment.reload')}</Button>
       </div>
     );
   }
@@ -79,17 +81,17 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
           />
         </div>
         <CardTitle className="text-xl sm:text-2xl">
-          HEARTI Leadership Assessment
+          {t('assessment.title')}
         </CardTitle>
         <CardDescription>
-          Answer each question based on how frequently you exhibit the described behavior
+          {t('assessment.instructions')}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4 py-4">
           <div className="text-center mb-2">
             <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium">
-              Question {currentQuestionIndex + 1} of {totalQuestions}
+              {t('assessment.questionCount', { current: currentQuestionIndex + 1, total: totalQuestions })}
             </span>
           </div>
           
@@ -112,11 +114,11 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
           className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
           size={isMobile ? "sm" : "default"}
         >
-          <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" /> Previous
+          <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" /> {t('common.previous')}
         </Button>
         
         <div className="text-xs sm:text-sm text-muted-foreground font-medium">
-          {currentQuestionIndex + 1} of {totalQuestions}
+          {currentQuestionIndex + 1} {t('assessment.of')} {totalQuestions}
         </div>
         
         <Button 
@@ -124,7 +126,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
           className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
           size={isMobile ? "sm" : "default"}
         >
-          {currentQuestionIndex === totalQuestions - 1 ? 'Complete' : 'Next'} 
+          {currentQuestionIndex === totalQuestions - 1 ? t('common.complete') : t('common.next')} 
           {currentQuestionIndex !== totalQuestions - 1 && <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />}
         </Button>
       </CardFooter>

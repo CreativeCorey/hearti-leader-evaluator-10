@@ -6,6 +6,7 @@ import AssessmentForm from '@/components/AssessmentForm';
 import ResultsDisplay from '@/components/ResultsDisplay';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface AssessmentTabsProps {
   activeTab: 'take' | 'results';
@@ -28,6 +29,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
 }) => {
   const isMobile = useIsMobile();
   const { toast } = useToast();
+  const { t } = useLanguage();
   const [forcedRender, setForcedRender] = useState(0);
   const [tabWasManuallySelected, setTabWasManuallySelected] = useState(false);
 
@@ -67,8 +69,8 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
     // Automatically switch to results tab after completion
     setActiveTab('results');
     toast({
-      title: "Assessment Completed",
-      description: "Your assessment has been submitted successfully.",
+      title: t("assessment.completed"),
+      description: t("assessment.submitSuccess"),
     });
   };
 
@@ -91,8 +93,8 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
     >
       <div className={`w-full overflow-hidden mb-4 ${viewTransitioning ? 'opacity-75 transition-opacity' : ''}`}>
         <TabsList className="w-full grid grid-cols-2 gap-1">
-          <TabsTrigger value="take" className="px-4 py-2">Take Assessment</TabsTrigger>
-          <TabsTrigger value="results" className="px-4 py-2" disabled={userAssessments.length === 0}>View Results</TabsTrigger>
+          <TabsTrigger value="take" className="px-4 py-2">{t('assessment.takeAssessment')}</TabsTrigger>
+          <TabsTrigger value="results" className="px-4 py-2" disabled={userAssessments.length === 0}>{t('assessment.viewResults')}</TabsTrigger>
         </TabsList>
       </div>
       
@@ -104,7 +106,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
         <div className="space-y-4 sm:space-y-8">
           {latestAssessment && (
             <div>
-              <h2 className="text-xl font-bold mb-4 text-orange">Latest Assessment Results</h2>
+              <h2 className="text-xl font-bold mb-4 text-orange">{t('assessment.latestResults')}</h2>
               <ResultsDisplay 
                 assessment={latestAssessment} 
                 assessments={userAssessments}

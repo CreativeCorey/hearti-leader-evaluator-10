@@ -2,6 +2,7 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { UserProfile } from '@/types';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface HeaderSectionProps {
   profile: UserProfile | null;
@@ -18,12 +19,14 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
   googleConnection,
   isMobile
 }) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 sm:gap-6 mb-6 sm:mb-8 w-full pt-4">
       <div className="w-full text-center mx-auto max-w-3xl">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">HEARTI™ Leadership Assessment</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{t('assessment.title')}</h1>
         <p className="text-sm text-muted-foreground mt-2 mx-auto max-w-2xl">
-          Measure your growth in Humility, Empathy, Accountability, Resiliency, Transparency, and Inclusivity
+          {t('assessment.subtitle')}
         </p>
       </div>
       
