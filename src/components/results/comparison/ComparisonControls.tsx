@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ChartScatter } from 'lucide-react';
 
-type CompareMode = 'none' | 'average' | 'men' | 'women';
+type CompareMode = 'none' | 'average';
 
 interface ComparisonControlsProps {
   compareMode: CompareMode;
@@ -27,22 +27,6 @@ const ComparisonControls: React.FC<ComparisonControlsProps> = ({ compareMode, se
         className="bg-purple-600 hover:bg-purple-700"
       >
         <ChartScatter size={16} className="mr-1" /> Average
-      </Button>
-      <Button 
-        size="sm" 
-        variant={compareMode === 'men' ? "default" : "outline"}
-        onClick={() => setCompareMode('men')}
-        className="bg-pink-600 hover:bg-pink-700"
-      >
-        Men
-      </Button>
-      <Button 
-        size="sm" 
-        variant={compareMode === 'women' ? "default" : "outline"}
-        onClick={() => setCompareMode('women')}
-        className="bg-orange-500 hover:bg-orange-600"
-      >
-        Women
       </Button>
     </div>
   );

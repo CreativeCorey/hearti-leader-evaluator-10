@@ -17,7 +17,7 @@ interface ComparisonTabProps {
 
 const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }) => {
   const [chartView, setChartView] = useState<'combined' | 'separate'>('combined');
-  const [compareMode, setCompareMode] = useState<'none' | 'average' | 'men' | 'women'>('average');
+  const [compareMode, setCompareMode] = useState<'none' | 'average'>('average');
   const isMobile = useIsMobile();
   
   // Format the chart data
@@ -45,56 +45,20 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
 
   // Helper function to get the appropriate comparison data
   function getComparisonData(): any[] {
-    let data = null;
-    
-    switch (compareMode) {
-      case 'average':
-        data = aggregateData.averageScores;
-        break;
-      case 'men':
-        data = aggregateData.demographics.gender.men;
-        break;
-      case 'women':
-        data = aggregateData.demographics.gender.women;
-        break;
-      default:
-        data = null;
+    if (compareMode === 'average') {
+      return formatDataForRadarChart(aggregateData.averageScores);
     }
-    
-    // Convert object to array format if it exists
-    if (data) {
-      return formatDataForRadarChart(data);
-    }
-    
     return [];
   }
   
   // Helper function to get the appropriate comparison label
   function getComparisonLabel() {
-    switch (compareMode) {
-      case 'average':
-        return 'Global Average';
-      case 'men':
-        return 'Men Average';
-      case 'women':
-        return 'Women Average';
-      default:
-        return '';
-    }
+    return compareMode === 'average' ? 'Global Average' : '';
   }
   
   // Helper function to get the appropriate comparison color
   function getComparisonColor() {
-    switch (compareMode) {
-      case 'average':
-        return "#8b5cf6";  // Purple
-      case 'men':
-        return "#3b82f6";  // Blue
-      case 'women':
-        return "#ec4899";  // Pink
-      default:
-        return "#9ca3af";  // Gray
-    }
+    return compareMode === 'average' ? "#8b5cf6" : "#9ca3af";  // Purple for average, Gray otherwise
   }
 
   return (

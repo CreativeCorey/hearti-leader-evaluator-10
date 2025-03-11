@@ -34,6 +34,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             step={1}
             onValueChange={value => onAnswerChange(value[0])}
             className="mb-4"
+            aria-label="Select answer value"
           />
           
           <div className="flex justify-between text-sm text-muted-foreground pt-1">
@@ -45,7 +46,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
                 }`}
                 onClick={() => onAnswerChange(value)}
                 aria-label={`Select ${label}`}
-                style={{ minWidth: isMobile ? '40px' : 'auto' }}
+                style={{ width: '20%', textAlign: 'center' }}
               >
                 {isMobile ? value : label}
               </button>

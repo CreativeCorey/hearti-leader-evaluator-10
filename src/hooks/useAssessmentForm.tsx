@@ -6,6 +6,9 @@ import { useAssessmentCompletion } from './assessment/useAssessmentCompletion';
 import { useState, useEffect } from 'react';
 import { useToast } from './use-toast';
 
+// LocalStorage key for saving assessment progress
+const ASSESSMENT_PROGRESS_KEY = 'assessment_progress';
+
 export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => void) => {
   const [initializing, setInitializing] = useState(true);
   const { toast } = useToast();
@@ -16,13 +19,15 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
     currentQuestionIndex,
     totalQuestions,
     answers,
+    setAnswers,
     getCurrentAnswer,
     handleAnswerChange,
     handleNext,
     handlePrevious,
     progressPercentage,
     transition,
-    shuffledQuestions
+    shuffledQuestions,
+    setCurrentQuestionIndex
   } = useAssessmentQuestions();
 
   // Get current user information
@@ -35,24 +40,59 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
     handleDemographicsComplete,
     handleSkipDemographics
   } = useAssessmentCompletion(answers, currentUser, onComplete);
-
-  // Check if initialization is complete
+  
+  // Load saved progress from localStorage when component initializes
   useEffect(() => {
-    if (!userLoading && shuffledQuestions.length > 0) {
-      console.log("Assessment initialized successfully:", {
-        userLoading,
-        shuffledQuestionsLength: shuffledQuestions.length,
-        userObject: currentUser
-      });
+    if (!userLoading && shuffledQuestions.length > 0 && !assessmentComplete) {
+      try {
+        const savedProgress = localStorage.getItem(ASSESSMENT_PROGRESS_KEY);
+        if (savedProgress) {
+          const { questionIndex, savedAnswers } = JSON.parse(savedProgress);
+          
+          // Validate saved data before using it
+          if (
+            Number.isInteger(questionIndex) && 
+            questionIndex >= 0 && 
+            questionIndex < shuffledQuestions.length &&
+            Array.isArray(savedAnswers)
+          ) {
+            console.log("Restoring assessment progress:", { questionIndex, answersCount: savedAnswers.length });
+            setCurrentQuestionIndex(questionIndex);
+            setAnswers(savedAnswers);
+          }
+        }
+      } catch (error) {
+        console.error("Error loading saved assessment progress:", error);
+      }
+      
       setInitializing(false);
-    } else {
-      console.log("Assessment still initializing:", {
-        userLoading,
-        shuffledQuestionsLength: shuffledQuestions.length,
-        currentUser
-      });
+    } else if (!userLoading && shuffledQuestions.length > 0) {
+      setInitializing(false);
     }
-  }, [userLoading, shuffledQuestions.length, currentUser]);
+  }, [userLoading, shuffledQuestions.length, setCurrentQuestionIndex, setAnswers, assessmentComplete]);
+
+  // Save progress whenever answers or current question changes
+  useEffect(() => {
+    if (answers.length > 0 && !assessmentComplete) {
+      try {
+        localStorage.setItem(ASSESSMENT_PROGRESS_KEY, JSON.stringify({
+          questionIndex: currentQuestionIndex,
+          savedAnswers: answers
+        }));
+        console.log("Saved assessment progress:", { currentQuestionIndex, answersCount: answers.length });
+      } catch (error) {
+        console.error("Error saving assessment progress:", error);
+      }
+    }
+  }, [answers, currentQuestionIndex, assessmentComplete]);
+
+  // Clear saved progress when assessment is completed
+  useEffect(() => {
+    if (assessmentComplete) {
+      localStorage.removeItem(ASSESSMENT_PROGRESS_KEY);
+      console.log("Cleared saved assessment progress due to completion");
+    }
+  }, [assessmentComplete]);
 
   // Function to handle finishing the last question
   const handleNextWithCompletion = () => {

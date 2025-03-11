@@ -116,9 +116,10 @@ export const useAssessmentQuestions = () => {
   return {
     currentQuestion,
     currentQuestionIndex,
+    setCurrentQuestionIndex, // Expose this function to allow restoring saved state
     totalQuestions,
     answers,
-    setAnswers,
+    setAnswers, // Expose this function to allow restoring saved state
     getCurrentAnswer,
     handleAnswerChange,
     handleNext,
