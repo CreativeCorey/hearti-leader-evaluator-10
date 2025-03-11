@@ -21,9 +21,11 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
 }) => {
   return (
     <div className={`bg-muted/30 p-4 sm:p-6 rounded-lg transition-opacity duration-150 w-full max-w-screen-sm mx-auto ${transition ? 'opacity-0' : 'opacity-100'}`}>
-      <h3 className="text-xl font-medium mb-6 sm:mb-8 text-center">{question.text}</h3>
+      <div className="question-container min-h-[100px] flex items-center justify-center mb-4">
+        <h3 className="text-lg sm:text-xl font-medium text-center">{question.text}</h3>
+      </div>
       
-      <div className="mt-4 sm:mt-6 space-y-4">
+      <div className="space-y-4">
         <div className="px-2 sm:px-6">
           <Slider
             value={[currentScore]}
@@ -31,7 +33,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             max={5}
             step={1}
             onValueChange={value => onAnswerChange(value[0])}
-            className="mb-4 sm:mb-6"
+            className="mb-4"
           />
           
           <div className="flex justify-between text-sm text-muted-foreground pt-1">
@@ -51,7 +53,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
           </div>
         </div>
         
-        <div className="text-center mt-3 sm:mt-4">
+        <div className="text-center mt-3">
           <div className="inline-block px-3 py-1.5 bg-primary/10 rounded-lg">
             <span className="font-medium">Selected:</span> {getScoreLabel(currentScore)}
           </div>

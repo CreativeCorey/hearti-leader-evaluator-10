@@ -86,23 +86,25 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-6 py-4">
-          <div className="text-center mb-4">
+        <div className="space-y-4 py-4">
+          <div className="text-center mb-2">
             <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium">
               Question {currentQuestionIndex + 1} of {totalQuestions}
             </span>
           </div>
           
-          <QuestionDisplay
-            question={currentQuestion}
-            currentScore={currentScore}
-            onAnswerChange={handleAnswerChange}
-            isMobile={isMobile}
-            transition={transition}
-          />
+          <div className="question-display-wrapper min-h-[280px] flex items-center">
+            <QuestionDisplay
+              question={currentQuestion}
+              currentScore={currentScore}
+              onAnswerChange={handleAnswerChange}
+              isMobile={isMobile}
+              transition={transition}
+            />
+          </div>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between border-t p-4 sm:p-6">
+      <CardFooter className="flex justify-between border-t p-4 sm:p-6 sticky bottom-0 bg-white">
         <Button 
           variant="outline" 
           onClick={handlePrevious}

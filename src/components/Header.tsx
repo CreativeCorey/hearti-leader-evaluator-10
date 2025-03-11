@@ -47,13 +47,13 @@ const Header: React.FC = () => {
             variant="ghost"
             size="sm"
             onClick={signOut}
-            className="flex items-center gap-2 text-xs"
+            className="flex items-center gap-1 text-xs truncate"
           >
             <LogOut size={16} />
             <span className="hidden md:inline">Sign Out</span>
           </Button>
         ) : !user && !anonymousMode ? (
-          <Button asChild size="sm" className="text-xs">
+          <Button asChild size="sm" className="text-xs whitespace-nowrap">
             <Link to="/auth">Sign In</Link>
           </Button>
         ) : null}
