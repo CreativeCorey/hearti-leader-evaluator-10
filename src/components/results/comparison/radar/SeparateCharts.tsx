@@ -45,6 +45,7 @@ const SeparateCharts: React.FC<SeparateChartsProps> = ({
     );
   }
   
+  // For mobile in separate mode with comparison, stack the charts vertically
   return (
     <div className="w-full space-y-6">
       <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg h-[260px] sm:h-[280px] shadow-sm w-full">

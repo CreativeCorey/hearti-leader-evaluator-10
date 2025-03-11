@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { HEARTIAssessment, HEARTIDimension } from '@/types';
 import { Card, CardContent } from '@/components/ui/card';
@@ -36,21 +37,21 @@ const DimensionCard: React.FC<DimensionCardProps> = ({
 
   return (
     <Card className={`mb-8 overflow-hidden pdf-dimension-card ${isMobile ? 'h-full' : ''}`}>
-      <div className={`p-4 text-white pdf-dimension-header ${bgColorClass} ${dimensionHeaderClass}`}>
-        <h3 className="text-xl font-bold uppercase pdf-dimension-title flex items-center gap-2">
-          <DimensionIcon size={24} className="text-white" />
-          {dimension}
-        </h3>
-        <div className="flex items-center mt-1">
-          <Badge className="text-sm py-0.5 px-2 bg-white text-gray-800 pdf-dimension-score">
+      <div className={`py-4 px-5 text-white pdf-dimension-header ${bgColorClass} ${dimensionHeaderClass}`}>
+        <div className="flex items-center justify-between">
+          <h3 className="text-xl font-bold uppercase pdf-dimension-title flex items-center gap-2">
+            <DimensionIcon size={24} className="text-white" />
+            {dimension}
+          </h3>
+          <Badge className="text-sm py-1 px-3 bg-white text-gray-800 pdf-dimension-score">
             Score: {score}/5
           </Badge>
-          <span className="ml-2 text-sm">
-            {status === 'strength' ? '(Strength)' : 
-             status === 'vulnerability' ? '(Vulnerability)' : 
-             '(Competent)'}
-          </span>
         </div>
+        <span className="text-sm text-white/90 mt-1 inline-block">
+          {status === 'strength' ? '(Strength)' : 
+            status === 'vulnerability' ? '(Vulnerability)' : 
+            '(Competent)'}
+        </span>
       </div>
       
       <CardContent className={`p-6 pdf-dimension-content ${isMobile ? 'overflow-y-auto max-h-[calc(70vh-100px)]' : ''}`}>

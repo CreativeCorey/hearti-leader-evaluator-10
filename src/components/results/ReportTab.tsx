@@ -31,13 +31,15 @@ const ReportTab: React.FC<ReportTabProps> = ({
   
   return (
     <div className="space-y-4 sm:space-y-6 w-full">
-      {showExportButton && isMobile && (
-        <ReportActionButtons 
-          assessment={assessment}
-          onExportPDF={onExportPDF}
-          exportingPdf={exportingPdf}
-          isMobile={isMobile}
-        />
+      {showExportButton && (
+        <div className="flex justify-end">
+          <ReportActionButtons 
+            assessment={assessment}
+            onExportPDF={onExportPDF}
+            exportingPdf={exportingPdf}
+            isMobile={isMobile}
+          />
+        </div>
       )}
       
       {/* Mobile pagination indicator */}
