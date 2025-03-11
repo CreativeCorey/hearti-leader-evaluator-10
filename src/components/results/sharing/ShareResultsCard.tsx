@@ -165,11 +165,23 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
         {showDetails && (
           <>
             <div className="mt-4 bg-green-50 p-3 rounded-md border border-green-100">
-              <p className="font-medium flex items-center text-green-800">
-                <Crown size={16} className="mr-2" />
-                <span className="font-semibold mr-1">{t('results.development.focused')}:</span> {getTranslatedDimensionName(topStrength)} {getDimensionIcon(topStrength)}
-                <span className="ml-auto">{topStrengthScore}/5</span>
-              </p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Crown size={16} className="mr-2" />
+                  <span className="font-semibold mr-1">Top Skill:</span>
+                </div>
+                <div>
+                  {getDimensionIcon(topStrength)}
+                </div>
+              </div>
+              <div className="mt-1">
+                <p className="font-medium text-green-800">
+                  {getTranslatedDimensionName(topStrength)}
+                </p>
+                <p className="text-green-700 font-semibold">
+                  {topStrengthScore}/5
+                </p>
+              </div>
             </div>
             
             <div className="mt-3 text-center border-t pt-2">
