@@ -80,6 +80,7 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
         </div>
         
         <div className="h-[250px] w-full relative">
+          {/* Position the dimension icons around the chart */}
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-[10%] left-[50%] transform -translate-x-1/2">
               <Gauge size={iconSize} style={{ color: dimensionColors.humility }} />
@@ -107,7 +108,12 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
           </div>
           
           <ResponsiveContainer width="100%" height="100%">
-            <RadarChart outerRadius={isMobile ? "60%" : "70%"} data={chartData}>
+            <RadarChart 
+              outerRadius={isMobile ? "60%" : "70%"} 
+              data={chartData}
+              cx="50%"
+              cy="50%"
+            >
               <PolarGrid gridType="polygon" />
               <PolarAngleAxis 
                 dataKey="name" 
@@ -136,29 +142,32 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
             </RadarChart>
           </ResponsiveContainer>
           
-          {/* Fixed centered hexagon with initial */}
-          <div className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 z-10 flex items-center justify-center">
+          {/* Improved centered hexagon with initial */}
+          <div 
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10"
+            style={{ width: '48px', height: '48px' }}
+          >
             <svg 
               width="48" 
               height="48" 
               viewBox="0 0 48 48" 
               preserveAspectRatio="xMidYMid meet"
-              className="absolute"
             >
               <polygon 
-                points="24,4 44,14 44,34 24,44 4,34 4,14"
+                points="24,4 41.6,14 41.6,34 24,44 6.4,34 6.4,14"
                 fill="white" 
                 stroke={dimensionColors[topStrength]} 
                 strokeWidth="2"
               />
             </svg>
-            {/* Centered initial inside hexagon */}
-            <span 
-              className="relative z-20 text-2xl font-bold"
-              style={{ color: dimensionColors[topStrength] }}
-            >
-              {topDimensionInitial}
-            </span>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span 
+                className="text-2xl font-bold"
+                style={{ color: dimensionColors[topStrength] }}
+              >
+                {topDimensionInitial}
+              </span>
+            </div>
           </div>
         </div>
         
