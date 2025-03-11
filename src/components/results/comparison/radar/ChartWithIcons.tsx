@@ -42,7 +42,7 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
           animationDuration={isAnimationActive ? 1000 : 0}
         />
         <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
-        <Legend />
+        <Legend wrapperStyle={{ position: 'absolute', bottom: -15, fontSize: '10px' }} />
       </BaseRadarChart>
     </div>
   );

@@ -64,8 +64,18 @@
     stroke-opacity: 0.3;
   }
   
+  /* Fix for legend positioning */
   .recharts-legend-wrapper {
     bottom: 0 !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: auto !important;
+    text-align: center !important;
+  }
+  
+  /* Fix for radar chart spacing */
+  .recharts-radar {
+    transform: translateY(-10px);
   }
   
   @media (max-width: 640px) {
@@ -94,6 +104,7 @@
     .recharts-legend-wrapper {
       font-size: 10px;
       bottom: -5px !important;
+      max-width: 90% !important;
     }
   }
   

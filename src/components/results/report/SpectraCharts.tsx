@@ -31,10 +31,10 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
   };
 
   return (
-    <div className="my-8 pdf-section">
-      <h3 className="text-2xl font-medium mb-4 pdf-section-title">Your HEARTI:Leader Spectra</h3>
+    <div className="my-6 pdf-section">
+      <h3 className="text-2xl font-medium mb-3 pdf-section-title">Your HEARTI:Leader Spectra</h3>
       <div className={`flex flex-col ${isMobile ? '' : 'lg:flex-row'} gap-4 pdf-charts-grid`}>
-        <div className={`flex-1 bg-slate-50 p-4 rounded-lg pdf-chart-column ${isMobile ? 'mb-6' : ''}`}>
+        <div className={`flex-1 bg-slate-50 p-4 rounded-lg pdf-chart-column ${isMobile ? 'mb-4' : ''}`}>
           <RadarSpectraChart
             data={chartData}
             title="Your HEARTI Spectra"
@@ -54,7 +54,7 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
       </div>
       
       {isMobile && (
-        <div className="flex-1 bg-slate-50 p-4 rounded-lg pdf-chart-column mt-4">
+        <div className="flex-1 bg-slate-50 p-4 rounded-lg pdf-chart-column mt-3">
           <RadarSpectraChart
             data={benchmarkData}
             title="Global HEARTI:Leader Benchmark"
@@ -63,7 +63,7 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
         </div>
       )}
       
-      <p className="text-sm text-muted-foreground mt-4">
+      <p className="text-sm text-muted-foreground mt-3">
         The HEARTI:Leader Quotient report provides you with information about your strengths and areas that you can develop further. 
         {isMobile ? 'The visualizations above show your HEARTI competencies and the global benchmark for comparison.' : 
         'On the left side is your HEARTI:Leader Spectra - a visualization of your HEARTI competencies based on your responses. On the right is the global benchmark for visual comparison.'} 

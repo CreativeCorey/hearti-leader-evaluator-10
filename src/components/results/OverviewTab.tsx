@@ -40,7 +40,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* HEARTI Spectra Chart - Fixed height and padding to prevent overflow */}
+      {/* HEARTI Spectra Chart - Fixed height and overflow handling */}
       <Card>
         <CardHeader className="pb-2">
           <div className="flex justify-between items-center">
@@ -55,8 +55,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
             />
           </div>
         </CardHeader>
-        <CardContent className="px-0 pt-0 pb-6">
-          <div className="h-[300px] w-full px-2 mx-auto max-w-[450px]">
+        <CardContent className="px-2 pt-0 pb-3">
+          <div className="h-[280px] w-full mx-auto max-w-[450px]">
             <DimensionChart 
               dimensionScores={dimensionScores}
               activeDimension="humility"

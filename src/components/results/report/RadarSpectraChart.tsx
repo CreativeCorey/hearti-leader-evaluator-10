@@ -22,8 +22,8 @@ const RadarSpectraChart: React.FC<RadarSpectraChartProps> = ({
   
   return (
     <div className={`relative ${className}`}>
-      <p className="text-center font-medium text-lg text-indigo-600 mb-2">{title}</p>
-      <div className="h-[320px] pdf-chart-container relative">
+      <p className="text-center font-medium text-lg text-indigo-600 mb-1">{title}</p>
+      <div className="h-[300px] pdf-chart-container relative">
         <DimensionIcons iconSize={iconSize} />
         
         <BaseRadarChart data={data} config={config}>
@@ -39,7 +39,7 @@ const RadarSpectraChart: React.FC<RadarSpectraChartProps> = ({
             isAnimationActive={false}
           />
           <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
-          <Legend />
+          <Legend wrapperStyle={{ position: 'absolute', bottom: -15, fontSize: '10px' }} />
         </BaseRadarChart>
       </div>
     </div>

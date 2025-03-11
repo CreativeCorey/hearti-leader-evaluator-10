@@ -46,17 +46,17 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
   return (
     <Card className="w-full shadow-lg overflow-hidden bg-white">
       <CardContent className="p-4">
-        <div className="text-center mb-2">
-          <div className="flex justify-center items-center mb-1">
+        <div className="text-center mb-4">
+          <div className="flex justify-center items-center mb-2">
             <img 
               src="/lovable-uploads/4d98c01d-a453-45c9-913f-72d63347fd2a.png" 
               alt="HEARTI Leader" 
-              className="h-8 mr-2"
+              className="h-8"
             />
-            <h3 className="text-xl font-bold text-gray-800">
-              {isMobile ? "My Spectra" : "My HEARTI:Leader Spectra"}
-            </h3>
           </div>
+          <h3 className="text-xl font-bold text-gray-800">
+            {isMobile ? "My Spectra" : "My HEARTI:Leader Spectra"}
+          </h3>
           <p className="text-sm text-gray-600">Overall Score: {assessment.overallScore}/5</p>
         </div>
         
@@ -86,29 +86,22 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
               <Users size={iconSize} style={{ color: dimensionColors.inclusivity }} />
             </div>
             
-            {/* Improved hexagon shape for top dimension initial */}
+            {/* Properly proportioned hexagon shape for top dimension initial */}
             <div className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 z-10">
-              <div 
-                className="relative flex items-center justify-center"
-                style={{
-                  width: '56px',
-                  height: '48px',
-                  position: 'relative'
-                }}
-              >
-                {/* Hexagon shape using SVG for better proportion control */}
+              <div className="relative flex items-center justify-center">
+                {/* Hexagon shape using SVG with correct proportions */}
                 <svg 
-                  width="56" 
-                  height="48" 
-                  viewBox="0 0 56 48" 
+                  width="64" 
+                  height="58" 
+                  viewBox="0 0 64 58" 
                   style={{ 
                     position: 'absolute',
-                    top: 0,
-                    left: 0
+                    top: -29,
+                    left: -32
                   }}
                 >
                   <polygon 
-                    points="28,0 56,14 56,34 28,48 0,34 0,14" 
+                    points="32,0 60,16 60,42 32,58 4,42 4,16" 
                     fill="white"
                     stroke={dimensionColors[topStrength]}
                     strokeWidth="2"
