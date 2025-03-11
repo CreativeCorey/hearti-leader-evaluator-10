@@ -40,6 +40,9 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
     }
   };
 
+  // Get the initial letter of the top dimension
+  const topDimensionInitial = topStrength.charAt(0).toUpperCase();
+
   return (
     <Card className="w-full shadow-lg overflow-hidden bg-white">
       <CardContent className="p-4">
@@ -79,6 +82,21 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
             
             <div className="absolute top-[25%] left-[15%] transform">
               <Users size={iconSize} style={{ color: dimensionColors.inclusivity }} />
+            </div>
+            
+            {/* Top dimension initial in center of chart */}
+            <div className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 z-10">
+              <div 
+                className="flex items-center justify-center w-12 h-12 rounded-full bg-white/90 shadow-md border-2"
+                style={{ borderColor: dimensionColors[topStrength] }}
+              >
+                <span 
+                  className="text-2xl font-bold" 
+                  style={{ color: dimensionColors[topStrength] }}
+                >
+                  {topDimensionInitial}
+                </span>
+              </div>
             </div>
           </div>
           
