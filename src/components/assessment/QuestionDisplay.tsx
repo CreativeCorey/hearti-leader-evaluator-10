@@ -20,7 +20,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   isMobile,
   transition
 }) => {
-  const { t } = useLanguage();
+  const { t, currentLanguage } = useLanguage();
   
   // Get the translated question text
   const translatedQuestionText = t(`assessment.questions.${question.id}`);

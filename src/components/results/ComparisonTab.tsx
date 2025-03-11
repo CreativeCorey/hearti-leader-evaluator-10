@@ -10,6 +10,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { aggregateData } from './comparison/aggregateData';
 import ProgressChart from './comparison/ProgressChart';
 import { formatDataForRadarChart } from '@/utils/calculations';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface ComparisonTabProps {
   assessment: HEARTIAssessment;
@@ -20,6 +21,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
   const [chartView, setChartView] = useState<'combined' | 'separate'>('combined');
   const [compareMode, setCompareMode] = useState<'none' | 'average'>('average');
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
 
   // Format the chart data
   const chartData = formatDataForRadarChart(assessment.dimensionScores);
@@ -36,7 +38,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
   // Determine chart colors and labels
   const userColor = "#D946EF"; // Pink for user data
   const getComparisonColor = () => "#8b5cf6"; // Purple for average
-  const getComparisonLabel = () => "HEARTI Index";
+  const getComparisonLabel = () => t('results.comparison.average');
 
   // Create comparison data for the separate charts view
   const getComparisonData = () => {
@@ -52,13 +54,16 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
   // Convert string keys to HEARTIDimension for type safety
   const sortedDimensions = Object.keys(assessment.dimensionScores).map(key => key as HEARTIDimension);
 
+  // Calculate additional spacing for the comparison analysis when in separate view
+  const comparisonAnalysisSpacing = chartView === 'separate' ? 'mt-[520px] sm:mt-[500px] md:mt-16' : 'mt-6';
+
   return (
     <div className="space-y-8">
       <Card>
         <CardHeader>
-          <CardTitle>HEARTI Comparison</CardTitle>
+          <CardTitle>{t('results.comparison.title')}</CardTitle>
           <CardDescription>
-            Compare your results with global benchmarks
+            {t('results.comparison.subtitle')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -83,14 +88,16 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
           </div>
           
           {compareMode !== 'none' && (
-            <ComparisonAnalysis 
-              assessment={assessment} 
-              compareMode={compareMode}
-              sortedDimensions={sortedDimensions}
-              getComparisonLabel={getComparisonLabel}
-              getComparisonColor={getComparisonColor}
-              aggregateData={aggregateData}
-            />
+            <div className={comparisonAnalysisSpacing}>
+              <ComparisonAnalysis 
+                assessment={assessment} 
+                compareMode={compareMode}
+                sortedDimensions={sortedDimensions}
+                getComparisonLabel={getComparisonLabel}
+                getComparisonColor={getComparisonColor}
+                aggregateData={aggregateData}
+              />
+            </div>
           )}
         </CardContent>
       </Card>

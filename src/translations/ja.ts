@@ -154,12 +154,12 @@ export const ja = {
       complete: "完全",
     },
     dimensions: {
-      humility: "Humility",
-      empathy: "Empathy",
-      accountability: "Accountability",
-      resiliency: "Resiliency",
-      transparency: "Transparency",
-      inclusivity: "Inclusivity",
+      humility: "謙虚さ",
+      empathy: "共感力",
+      accountability: "責任感",
+      resiliency: "回復力",
+      transparency: "透明性",
+      inclusivity: "包括性",
     },
     habits: {
       title: "あなたの習慣",
