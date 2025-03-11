@@ -1,0 +1,17 @@
+
+@tailwind components;
+
+@layer components {
+  /* Orientation change specific styles */
+  @media screen and (orientation: portrait) {
+    .orientation-sensitive {
+      transition: all 0.3s ease;
+    }
+  }
+  
+  @media screen and (orientation: landscape) {
+    .orientation-sensitive {
+      transition: all 0.3s ease;
+    }
+  }
+}

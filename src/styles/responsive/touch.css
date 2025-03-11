@@ -1,0 +1,31 @@
+
+@tailwind components;
+
+@layer components {
+  @media (max-width: 640px) {
+    /* Make touch targets larger on mobile */
+    button, .btn, [role="button"] {
+      min-height: 48px;
+    }
+    
+    input[type="radio"],
+    input[type="checkbox"] {
+      min-width: 28px;
+      min-height: 28px;
+    }
+    
+    /* Improved slider touch area */
+    [data-orientation="horizontal"].slider {
+      min-height: 44px;
+    }
+    
+    [data-orientation="horizontal"].slider [data-orientation="horizontal"].slider-track {
+      height: 16px;
+    }
+    
+    [data-orientation="horizontal"].slider [data-orientation="horizontal"].slider-thumb {
+      width: 36px;
+      height: 36px;
+    }
+  }
+}

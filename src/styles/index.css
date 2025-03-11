@@ -3,7 +3,7 @@
 @import './core-components.css';
 @import './chart-styles.css';
 @import './dimension-styles.css';
-@import './responsive-styles.css';
+@import './responsive/index.css';
 @import './utilities.css';
 @import './pdf/pdf-base.css';
 @import './pdf/pdf-typography.css';

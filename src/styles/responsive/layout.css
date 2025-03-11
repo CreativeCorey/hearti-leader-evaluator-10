@@ -1,0 +1,45 @@
+
+@tailwind components;
+
+@layer components {
+  /* Improved share button styling on mobile */
+  .share-button-mobile {
+    min-width: 0;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  
+  @media (max-width: 640px) {
+    /* Make main content wider on mobile */
+    .content-container {
+      width: 96% !important;
+      max-width: 96% !important;
+      padding-left: 2% !important;
+      padding-right: 2% !important;
+    }
+    
+    /* Fix header positioning on mobile */
+    .mobile-header {
+      padding-top: 24px;
+    }
+    
+    .logo-title-container {
+      padding-top: 60px;
+    }
+    
+    /* Fix for modal content on mobile */
+    .popover-content {
+      width: calc(100vw - 16px) !important;
+      max-width: 100vw !important;
+    }
+    
+    /* Center hexagon fix */
+    .center-hexagon {
+      transform: translate(-50%, -50%) !important;
+    }
+    
+    .hexagon-initial {
+      font-size: 24px !important;
+    }
+  }
+}

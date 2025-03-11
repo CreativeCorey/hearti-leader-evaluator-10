@@ -1,0 +1,85 @@
+
+@tailwind components;
+
+@layer components {
+  /* Mobile-optimized chart components */
+  .radar-chart-container {
+    transition: height 0.3s ease, opacity 0.2s ease;
+    position: relative;
+  }
+  
+  /* Responsive chart styling */
+  .recharts-wrapper {
+    margin: 0 auto;
+  }
+  
+  .recharts-polar-grid-angle line,
+  .recharts-polar-grid-concentric path {
+    stroke-opacity: 0.3;
+  }
+  
+  /* Fix for legend positioning */
+  .recharts-legend-wrapper {
+    bottom: 0 !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: auto !important;
+    text-align: center !important;
+    height: auto !important;
+    padding-bottom: 10px;
+    position: absolute;
+  }
+  
+  /* Fix for radar chart spacing */
+  .recharts-radar {
+    transform: translateY(-10px);
+  }
+  
+  @media (max-width: 640px) {
+    /* Make radar chart container taller on mobile to avoid legend overlapping */
+    .radar-chart-container {
+      height: 340px;
+      margin-bottom: 25px;
+    }
+    
+    /* Fix for development view on mobile */
+    .mobile-development-view {
+      height: 400px !important;
+      margin-bottom: 40px !important;
+    }
+    
+    /* Fix for complete view chart on mobile */
+    .mobile-complete-view .recharts-legend-wrapper {
+      bottom: -35px !important;
+    }
+    
+    .mobile-chart-container {
+      margin-bottom: 30px;
+    }
+    
+    .radar-chart-legend {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .radar-chart-legend-item {
+      margin: 0.25rem 0;
+    }
+    
+    /* Fix legend display on mobile */
+    .recharts-legend-wrapper {
+      font-size: 10px;
+      bottom: -15px !important;
+      max-width: 90% !important;
+    }
+    
+    /* Fix for radar charts */
+    .recharts-dot {
+      r: 6px !important;
+    }
+    
+    .recharts-active-dot {
+      r: 9px !important;
+    }
+  }
+}

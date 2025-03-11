@@ -1,0 +1,26 @@
+
+@tailwind components;
+
+@layer components {
+  /* HEARTI Spectra title with improved styling */
+  .hearti-spectra-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #4338ca;
+    text-align: center;
+    margin-bottom: 1rem;
+    letter-spacing: 0.025em;
+    position: relative;
+    padding-bottom: 0.5rem;
+  }
+  
+  .hearti-spectra-title:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 30%;
+    right: 30%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #4338ca, transparent);
+  }
+}
