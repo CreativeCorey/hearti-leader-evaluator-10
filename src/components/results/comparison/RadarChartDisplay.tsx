@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { CombinedChart, SeparateCharts } from './radar';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface RadarChartDisplayProps {
   chartView: 'combined' | 'separate';
@@ -31,27 +32,43 @@ const RadarChartDisplay: React.FC<RadarChartDisplayProps> = ({
   getComparisonColor,
   userColor
 }) => {
+  const isMobile = useIsMobile();
+  
+  // Enhanced container styles
+  const containerClasses = `
+    radar-chart-container 
+    ${isMobile ? 'p-2' : 'p-4'} 
+    bg-gradient-to-br from-white to-slate-50
+    shadow-sm rounded-lg
+    transition-all duration-300
+    hover:shadow-md
+  `;
+  
   if (chartView === 'combined') {
     return (
-      <CombinedChart
-        combinedChartData={combinedChartData}
-        compareMode={compareMode}
-        userColor={userColor}
-        getComparisonColor={getComparisonColor}
-        getComparisonLabel={getComparisonLabel}
-      />
+      <div className={containerClasses}>
+        <CombinedChart
+          combinedChartData={combinedChartData}
+          compareMode={compareMode}
+          userColor={userColor}
+          getComparisonColor={getComparisonColor}
+          getComparisonLabel={getComparisonLabel}
+        />
+      </div>
     );
   }
   
   return (
-    <SeparateCharts
-      chartData={chartData}
-      getComparisonData={getComparisonData}
-      compareMode={compareMode}
-      userColor={userColor}
-      getComparisonLabel={getComparisonLabel}
-      getComparisonColor={getComparisonColor}
-    />
+    <div className={containerClasses}>
+      <SeparateCharts
+        chartData={chartData}
+        getComparisonData={getComparisonData}
+        compareMode={compareMode}
+        userColor={userColor}
+        getComparisonLabel={getComparisonLabel}
+        getComparisonColor={getComparisonColor}
+      />
+    </div>
   );
 };
 

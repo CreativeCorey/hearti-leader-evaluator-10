@@ -1,82 +1,77 @@
 
 import React from 'react';
-import { Badge } from '@/components/ui/badge';
-import { HEARTIDimension } from '@/types';
+import { HEARTIAssessment, HEARTIDimension } from '@/types';
+import { Card } from '@/components/ui/card';
+import { dimensionColors } from '../development/DimensionIcons';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ComparisonAnalysisProps {
+  assessment: HEARTIAssessment;
+  compareMode: 'none' | 'average';
   sortedDimensions: HEARTIDimension[];
-  assessment: any;
-  compareMode: 'none' | 'average' | 'men' | 'women';
   getComparisonLabel: () => string;
   getComparisonColor: () => string;
-  aggregateData: {
-    averageScores: Record<HEARTIDimension, number>;
-    demographics: {
-      gender: {
-        men: Record<HEARTIDimension, number>;
-        women: Record<HEARTIDimension, number>;
-      };
-    };
-  };
+  aggregateData: any;
 }
 
 const ComparisonAnalysis: React.FC<ComparisonAnalysisProps> = ({
-  sortedDimensions,
   assessment,
   compareMode,
+  sortedDimensions,
   getComparisonLabel,
   getComparisonColor,
   aggregateData
 }) => {
-  
-  const getBadgeVariant = (score: number) => {
-    if (score >= 4.5) return "default";
-    if (score >= 3.5) return "secondary";
-    if (score >= 2.5) return "outline";
-    return "destructive";
-  };
-  
+  const isMobile = useIsMobile();
+
+  // Skip rendering if no comparison is selected
+  if (compareMode === 'none') return null;
+
   return (
-    <div className="mt-6">
-      <h4 className="text-md font-medium mb-2">Comparison Analysis</h4>
+    <div className="space-y-4">
+      <h3 className="text-lg font-medium mb-2 text-center">Comparison Analysis</h3>
+      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {sortedDimensions.map((dimension) => {
+        {sortedDimensions.map((dimension: HEARTIDimension) => {
           const userScore = assessment.dimensionScores[dimension];
-          let comparisonScore = 0;
-          
-          if (compareMode === 'average') {
-            comparisonScore = aggregateData.averageScores[dimension];
-          } else if (compareMode === 'men') {
-            comparisonScore = aggregateData.demographics.gender.men[dimension];
-          } else if (compareMode === 'women') {
-            comparisonScore = aggregateData.demographics.gender.women[dimension];
-          }
-          
+          const comparisonScore = aggregateData.averageScores[dimension];
           const difference = userScore - comparisonScore;
-          const differenceText = difference > 0 
-            ? `${difference.toFixed(1)} higher than` 
-            : difference < 0 
-              ? `${Math.abs(difference).toFixed(1)} lower than` 
-              : 'same as';
-              
+          const isHigher = difference > 0;
+          
+          // Get dimension-specific color
+          const dimensionColor = dimensionColors[dimension];
+          
           return (
-            <div key={dimension} className="p-3 bg-white rounded-md border">
-              <div className="flex justify-between items-center mb-1">
-                <span className="font-medium">{dimension.charAt(0).toUpperCase() + dimension.slice(1)}</span>
-                <div className="flex gap-2 items-center">
-                  <Badge variant={getBadgeVariant(userScore)}>
-                    You: {userScore}
-                  </Badge>
-                  <span className="text-gray-500">|</span>
-                  <Badge variant="outline" style={{ color: getComparisonColor(), borderColor: getComparisonColor() }}>
-                    {getComparisonLabel()}: {comparisonScore}
-                  </Badge>
+            <Card key={dimension} className="overflow-hidden border-t-4" style={{ borderTopColor: dimensionColor }}>
+              <div className="p-4">
+                <div className="flex justify-between items-center mb-3">
+                  <h4 className="text-lg font-semibold capitalize">{dimension}</h4>
+                  <div className="flex items-center space-x-4">
+                    <div className="rounded-full px-3 py-1 text-white text-sm flex items-center justify-center" 
+                         style={{ backgroundColor: "#D946EF" }}>
+                      <span className="font-semibold">You: {userScore.toFixed(1)}</span>
+                    </div>
+                    <span className="text-gray-400">|</span>
+                    <div className="rounded-full px-3 py-1 text-white text-sm flex items-center justify-center" 
+                         style={{ backgroundColor: getComparisonColor() }}>
+                      <span className="font-semibold">{getComparisonLabel()}: {comparisonScore.toFixed(1)}</span>
+                    </div>
+                  </div>
                 </div>
+                
+                <div className="relative h-2 bg-gray-200 rounded-full mb-3">
+                  <div className="absolute top-0 left-0 h-2 rounded-full bg-gradient-to-r from-purple-500 to-fuchsia-500" 
+                       style={{ width: `${(userScore / 5) * 100}%` }}></div>
+                  <div className="absolute top-0 h-2 w-1 bg-purple-600 rounded-full" 
+                       style={{ left: `${(comparisonScore / 5) * 100}%` }}></div>
+                </div>
+                
+                <p className="text-gray-600 text-sm">
+                  Your score is {Math.abs(difference).toFixed(1)} {isHigher ? 'higher' : 'lower'} than 
+                  the {getComparisonLabel().toLowerCase()} score.
+                </p>
               </div>
-              <p className="text-sm text-gray-600">
-                Your score is {differenceText} the {getComparisonLabel().toLowerCase()} score.
-              </p>
-            </div>
+            </Card>
           );
         })}
       </div>

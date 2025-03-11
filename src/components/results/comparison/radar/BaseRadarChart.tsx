@@ -74,7 +74,7 @@ const BaseRadarChart: React.FC<BaseRadarChartProps> = ({
         width={500}
         height={500}
         data={data}
-        margin={{ top: 15, right: 15, bottom: 15, left: 15 }}
+        margin={{ top: 15, right: 15, bottom: 20, left: 15 }}
       >
         <PolarGrid 
           gridType={config.gridType} 
@@ -88,12 +88,15 @@ const BaseRadarChart: React.FC<BaseRadarChartProps> = ({
           axisLineType={config.axisLineType}
           tickLine={angleProps.tickLine}
           stroke={angleProps.stroke}
+          strokeWidth={0.5}
         />
         <PolarRadiusAxis 
           angle={radiusProps.angle}
           domain={radiusProps.domain}
           tick={radiusProps.tick}
           stroke={radiusProps.stroke}
+          axisLine={false}
+          tickLine={false}
         />
         {children}
       </RadarChart>

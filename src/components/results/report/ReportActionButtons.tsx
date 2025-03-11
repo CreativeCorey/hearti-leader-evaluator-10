@@ -2,8 +2,8 @@
 import React from 'react';
 import { HEARTIAssessment } from '@/types';
 import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react';
-import ShareButton from '../sharing/ShareButton';
+import { Download, Share2 } from 'lucide-react';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface ReportActionButtonsProps {
   assessment: HEARTIAssessment;
@@ -12,37 +12,27 @@ interface ReportActionButtonsProps {
   isMobile: boolean;
 }
 
-const ReportActionButtons: React.FC<ReportActionButtonsProps> = ({
+const ReportActionButtons: React.FC<ReportActionButtonsProps> = ({ 
   assessment,
   onExportPDF,
   exportingPdf,
   isMobile
 }) => {
+  const { t } = useLanguage();
+  
   return (
-    <>
-      <div className="flex flex-wrap gap-3 justify-between items-center mb-4">
-        <h2 className="text-2xl font-semibold">HEARTI:Leader Report</h2>
-        
-        {/* Action buttons group - always side-by-side */}
-        <div className="flex gap-2">
-          <Button 
-            onClick={onExportPDF} 
-            disabled={exportingPdf}
-            className="flex items-center gap-2"
-            size={isMobile ? "sm" : "default"}
-          >
-            <Download size={16} />
-            {exportingPdf ? (isMobile ? "Generating..." : "Generating PDF...") : (isMobile ? "Export" : "Export PDF")}
-          </Button>
-          
-          <ShareButton 
-            assessment={assessment} 
-            variant="outline"
-            size={isMobile ? "sm" : "default"}
-          />
-        </div>
-      </div>
-    </>
+    <div className={`flex ${isMobile ? 'flex-wrap space-y-2' : 'flex-row space-x-3'} justify-end mb-4`}>
+      <Button
+        size={isMobile ? "sm" : "default"}
+        variant="outline"
+        className={`pdf-export-button ${isMobile ? 'w-full sm:w-auto text-xs py-1.5' : ''}`}
+        onClick={onExportPDF}
+        disabled={exportingPdf}
+      >
+        <Download size={isMobile ? 14 : 16} className="mr-1.5" />
+        {exportingPdf ? t('results.report.exporting') : t('results.report.export')}
+      </Button>
+    </div>
   );
 };
 

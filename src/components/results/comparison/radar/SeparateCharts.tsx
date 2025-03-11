@@ -30,9 +30,9 @@ const SeparateCharts: React.FC<SeparateChartsProps> = ({
   if (compareMode === 'none') {
     return (
       <div className="flex flex-col items-center justify-center">
-        <div className="bg-slate-50 p-3 rounded-lg h-[260px] sm:h-[280px] w-full">
-          <p className="text-center font-medium text-fuchsia-600 mb-1">Your HEARTI Spectra</p>
-          <div className="relative h-[calc(100%-30px)]">
+        <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg h-[260px] sm:h-[280px] w-full shadow-sm">
+          <p className="text-center font-medium text-fuchsia-600 mb-3">Your HEARTI Spectra</p>
+          <div className="relative h-[calc(100%-35px)]">
             <ChartWithIcons 
               data={chartData} 
               chartColor={userColor}
@@ -46,10 +46,10 @@ const SeparateCharts: React.FC<SeparateChartsProps> = ({
   }
   
   return (
-    <div className={`grid grid-cols-1 ${isMobile ? 'gap-8' : 'md:grid-cols-2 gap-4'}`}>
-      <div className="bg-slate-50 p-3 rounded-lg h-[260px] sm:h-[280px]">
-        <p className="text-center font-medium text-fuchsia-600 mb-1">Your HEARTI Spectra</p>
-        <div className="relative h-[calc(100%-30px)]">
+    <div className={`grid grid-cols-1 ${isMobile ? 'gap-8' : 'md:grid-cols-2 gap-6'}`}>
+      <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg h-[260px] sm:h-[280px] shadow-sm">
+        <p className="text-center font-medium text-fuchsia-600 mb-3">Your HEARTI Spectra</p>
+        <div className="relative h-[calc(100%-35px)]">
           <ChartWithIcons 
             data={chartData} 
             chartColor={userColor}
@@ -60,11 +60,11 @@ const SeparateCharts: React.FC<SeparateChartsProps> = ({
       </div>
       
       {compareMode === 'average' && comparisonData && (
-        <div className="bg-slate-50 p-3 rounded-lg h-[260px] sm:h-[280px]">
-          <p className="text-center font-medium mb-1" style={{ color: getComparisonColor() }}>
+        <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg h-[260px] sm:h-[280px] shadow-sm">
+          <p className="text-center font-medium mb-3" style={{ color: getComparisonColor() }}>
             HEARTI Spectra - {getComparisonLabel()}
           </p>
-          <div className="relative h-[calc(100%-30px)]">
+          <div className="relative h-[calc(100%-35px)]">
             <ChartWithIcons 
               data={comparisonData} 
               chartColor={getComparisonColor()} 

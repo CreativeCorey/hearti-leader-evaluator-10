@@ -23,16 +23,23 @@ const RadarSpectraChart: React.FC<RadarSpectraChartProps> = ({
   
   return (
     <div className={`flex flex-col space-y-2 ${className}`}>
-      <h4 className="text-md font-medium text-center text-gray-700 mb-2">{title}</h4>
-      <div className="pdf-chart-container radar-base h-[240px] sm:h-[260px]">
+      <h4 className="text-md font-medium text-center text-gray-700 mb-4">{title}</h4>
+      <div className="pdf-chart-container radar-base h-[280px] sm:h-[300px] relative">
         <ResponsiveContainer width="100%" height="100%">
           <RadarChart 
             cx="50%" 
             cy="50%" 
-            outerRadius={isMobile ? "50%" : config.outerRadius}
+            outerRadius={isMobile ? "55%" : "60%"}
             data={data}
-            margin={{ top: 20, right: 15, bottom: 20, left: 15 }}
+            margin={{ top: 20, right: 20, bottom: 25, left: 20 }}
           >
+            <defs>
+              <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
+            
             <PolarGrid 
               gridType={config.gridType}
               stroke="#d1d5db" 
@@ -51,15 +58,18 @@ const RadarSpectraChart: React.FC<RadarSpectraChartProps> = ({
               domain={polarRadiusProps.domain}
               tick={polarRadiusProps.tick}
               stroke={polarRadiusProps.stroke}
+              axisLine={false}
             />
             <Radar
               name="Score"
               dataKey="value"
               stroke={chartColor}
               fill={chartColor}
-              fillOpacity={config.fillOpacity}
-              dot={{ fill: chartColor, r: config.dotSize }}
-              isAnimationActive={false}
+              fillOpacity={0.6}
+              dot={{ fill: chartColor, r: 4, stroke: "white", strokeWidth: 1 }}
+              isAnimationActive={true}
+              animationDuration={1200}
+              filter="url(#glow)"
             />
           </RadarChart>
         </ResponsiveContainer>
