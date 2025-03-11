@@ -47,19 +47,24 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ assessments }) => {
     return dimensionColors[dimension as HEARTIDimension] || "#000000";
   };
 
+  // Calculate chart height based on mobile view and data points
+  const chartHeight = isMobile 
+    ? progressData.length > 3 ? 250 : 200 
+    : 250;
+
   return (
-    <Card className="mt-8">
-      <CardHeader className="pb-2">
-        <CardTitle>HEARTI Progress Over Time</CardTitle>
-        <CardDescription>Track your leadership development journey</CardDescription>
+    <Card className="mt-8 mb-8">
+      <CardHeader className={`${isMobile ? 'pb-1 pt-3' : 'pb-2'}`}>
+        <CardTitle className={isMobile ? 'text-lg' : ''}>HEARTI Progress Over Time</CardTitle>
+        <CardDescription className={isMobile ? 'text-xs' : ''}>Track your leadership development journey</CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className={`${isMobile ? 'h-[300px]' : 'h-[250px]'} w-full`}>
+      <CardContent className={isMobile ? 'p-2' : ''}>
+        <div className={`h-[${chartHeight}px] w-full`} style={{ height: chartHeight }}>
           {progressData.length > 1 ? (
             <ResponsiveContainer width="100%" height="100%">
               <LineChart
                 data={progressData}
-                margin={{ top: 5, right: 30, left: 0, bottom: 5 }}
+                margin={{ top: 5, right: 20, left: 0, bottom: isMobile ? 25 : 5 }}
               >
                 <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
                 <XAxis dataKey="date" />
@@ -71,7 +76,15 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ assessments }) => {
                     return item?.fullDate || label;
                   }}
                 />
-                <Legend />
+                <Legend 
+                  wrapperStyle={isMobile ? { 
+                    bottom: -20, 
+                    fontSize: '10px',
+                    width: '100%', 
+                    margin: '0 auto',
+                    textAlign: 'center'
+                  } : {}}
+                />
                 <Line 
                   type="monotone" 
                   dataKey="score" 

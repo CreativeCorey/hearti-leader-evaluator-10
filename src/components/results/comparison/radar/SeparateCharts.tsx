@@ -29,7 +29,7 @@ const SeparateCharts: React.FC<SeparateChartsProps> = ({
   // If no comparison mode is selected, only show the user chart
   if (compareMode === 'none') {
     return (
-      <div className="flex flex-col items-center justify-center">
+      <div className="flex flex-col items-center justify-center w-full">
         <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg h-[260px] sm:h-[280px] w-full shadow-sm">
           <p className="text-center font-medium text-fuchsia-600 mb-3">Your HEARTI Spectra</p>
           <div className="relative h-[calc(100%-35px)]">
@@ -46,8 +46,8 @@ const SeparateCharts: React.FC<SeparateChartsProps> = ({
   }
   
   return (
-    <div className={`grid grid-cols-1 ${isMobile ? 'gap-8' : 'md:grid-cols-2 gap-6'}`}>
-      <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg h-[260px] sm:h-[280px] shadow-sm">
+    <div className="w-full space-y-6">
+      <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg h-[260px] sm:h-[280px] shadow-sm w-full">
         <p className="text-center font-medium text-fuchsia-600 mb-3">Your HEARTI Spectra</p>
         <div className="relative h-[calc(100%-35px)]">
           <ChartWithIcons 
@@ -60,7 +60,7 @@ const SeparateCharts: React.FC<SeparateChartsProps> = ({
       </div>
       
       {compareMode === 'average' && comparisonData && (
-        <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg h-[260px] sm:h-[280px] shadow-sm">
+        <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg h-[260px] sm:h-[280px] shadow-sm w-full">
           <p className="text-center font-medium mb-3" style={{ color: getComparisonColor() }}>
             HEARTI Spectra - {getComparisonLabel()}
           </p>

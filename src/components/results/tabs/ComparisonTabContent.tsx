@@ -17,7 +17,7 @@ const ComparisonTabContent: React.FC<ComparisonTabContentProps> = ({
   const isMobile = useIsMobile();
   
   return (
-    <>
+    <div className={isMobile ? 'pb-16' : ''}>
       {!isMobile && (
         <TabHeader
           title="HEARTI:Leader Data Visualization"
@@ -28,7 +28,7 @@ const ComparisonTabContent: React.FC<ComparisonTabContentProps> = ({
       <div className={`space-y-4 ${isMobile ? 'p-2' : 'p-4'}`}>
         <ComparisonTab assessment={assessment} assessments={assessments} />
       </div>
-    </>
+    </div>
   );
 };
 

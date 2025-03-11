@@ -42,6 +42,7 @@ const RadarChartDisplay: React.FC<RadarChartDisplayProps> = ({
     shadow-sm rounded-lg
     transition-all duration-300
     hover:shadow-md
+    w-full
   `;
   
   if (chartView === 'combined') {
@@ -59,7 +60,7 @@ const RadarChartDisplay: React.FC<RadarChartDisplayProps> = ({
   }
   
   return (
-    <div className={containerClasses}>
+    <div className={`${isMobile ? 'p-0' : 'p-2'} w-full`}>
       <SeparateCharts
         chartData={chartData}
         getComparisonData={getComparisonData}

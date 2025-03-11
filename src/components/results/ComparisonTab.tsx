@@ -50,7 +50,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
   const hasMultipleAssessments = assessments && assessments.length > 1;
 
   // Convert string keys to HEARTIDimension for type safety
-  const sortedDimensions = Object.keys(assessment.dimensionScores) as HEARTIDimension[];
+  const sortedDimensions = Object.keys(assessment.dimensionScores).map(key => key as HEARTIDimension);
 
   return (
     <Card>

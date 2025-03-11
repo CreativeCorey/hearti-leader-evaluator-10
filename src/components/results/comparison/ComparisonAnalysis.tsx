@@ -44,9 +44,9 @@ const ComparisonAnalysis: React.FC<ComparisonAnalysisProps> = ({
           return (
             <Card key={dimension} className="overflow-hidden border-t-4" style={{ borderTopColor: dimensionColor }}>
               <div className="p-4">
-                <div className="flex justify-between items-center mb-3">
+                <div className="flex flex-col mb-3">
                   <h4 className="text-lg font-semibold capitalize">{dimension}</h4>
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-3 mt-2">
                     <div className="rounded-full px-3 py-1 text-white text-sm flex items-center justify-center" 
                          style={{ backgroundColor: "#D946EF" }}>
                       <span className="font-semibold">You: {userScore.toFixed(1)}</span>
