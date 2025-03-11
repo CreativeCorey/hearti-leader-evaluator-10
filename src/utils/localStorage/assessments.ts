@@ -5,7 +5,6 @@ import { ensureUserProfileExists } from '../supabase/profiles';
 import { ASSESSMENTS_KEY } from './constants';
 import { getOrCreateAnonymousId } from './user';
 import { getUseSupabase } from './settings';
-import { useAuth } from '@/hooks/use-auth';
 
 // Assessment Management
 export const saveAssessment = async (assessment: HEARTIAssessment): Promise<boolean> => {
@@ -26,11 +25,14 @@ export const saveAssessment = async (assessment: HEARTIAssessment): Promise<bool
       existingAssessments.push(assessment);
     }
     
+    console.log('Saving assessment to localStorage:', assessment.id);
+    
     // Save to localStorage
     localStorage.setItem(ASSESSMENTS_KEY, JSON.stringify(existingAssessments));
     
     // If using Supabase, also save there
     if (getUseSupabase()) {
+      console.log('Saving assessment to Supabase:', assessment.id);
       // Ensure user profile exists first
       await ensureUserProfileExists(assessment.userId);
       
@@ -60,15 +62,41 @@ export const getLocalAssessments = async (): Promise<HEARTIAssessment[]> => {
 export const getCurrentUserAssessments = async (): Promise<HEARTIAssessment[]> => {
   try {
     const userId = getOrCreateAnonymousId();
+    console.log('Getting assessments for user:', userId);
     
-    // If using Supabase, get from there
+    // First try to get from localStorage
+    const allAssessments = await getLocalAssessments();
+    const localUserAssessments = allAssessments.filter(assessment => assessment.userId === userId);
+    
+    console.log('Found local assessments:', localUserAssessments.length);
+    
+    // If using Supabase, try to get from there as well
     if (getUseSupabase()) {
-      return await getUserAssessmentsFromSupabase(userId);
+      try {
+        const supabaseAssessments = await getUserAssessmentsFromSupabase(userId);
+        console.log('Found Supabase assessments:', supabaseAssessments.length);
+        
+        // Merge assessments from both sources, prioritizing Supabase
+        const mergedAssessments = [...localUserAssessments];
+        
+        for (const supabaseAssessment of supabaseAssessments) {
+          const existingIndex = mergedAssessments.findIndex(a => a.id === supabaseAssessment.id);
+          if (existingIndex >= 0) {
+            mergedAssessments[existingIndex] = supabaseAssessment;
+          } else {
+            mergedAssessments.push(supabaseAssessment);
+          }
+        }
+        
+        return mergedAssessments;
+      } catch (error) {
+        console.error('Failed to get Supabase assessments:', error);
+        // Fall back to local assessments
+        return localUserAssessments;
+      }
     }
     
-    // Otherwise, get from localStorage and filter by user ID
-    const allAssessments = await getLocalAssessments();
-    return allAssessments.filter(assessment => assessment.userId === userId);
+    return localUserAssessments;
   } catch (error) {
     console.error('Failed to get current user assessments:', error);
     return [];

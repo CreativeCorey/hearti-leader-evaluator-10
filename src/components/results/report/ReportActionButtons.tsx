@@ -4,7 +4,6 @@ import { HEARTIAssessment } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
 import LinkedInBadge from '../sharing/LinkedInBadge';
-import ShareButton from '../sharing/ShareButton';
 
 interface ReportActionButtonsProps {
   assessment: HEARTIAssessment;
@@ -38,11 +37,6 @@ const ReportActionButtons: React.FC<ReportActionButtonsProps> = ({
       {/* Action buttons in a full-width container before the card */}
       <div className="flex flex-wrap gap-3 justify-center sm:justify-end mb-4">
         <LinkedInBadge assessment={assessment} />
-        <ShareButton 
-          assessment={assessment} 
-          variant="outline"
-          size={isMobile ? "sm" : "default"}
-        />
       </div>
     </>
   );

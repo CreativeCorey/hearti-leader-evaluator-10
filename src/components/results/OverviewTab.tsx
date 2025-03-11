@@ -7,6 +7,8 @@ import ShareResultsCard from './sharing/ShareResultsCard';
 import DemographicsSection from './DemographicsSection';
 import HistoricalResults from '../HistoricalResults';
 import DimensionChart from './development/DimensionChart';
+import ShareButton from './sharing/ShareButton';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface OverviewTabProps {
   assessment: HEARTIAssessment;
@@ -19,6 +21,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   assessments = [], 
   onSelectAssessment 
 }) => {
+  const isMobile = useIsMobile();
+  
   // Format date from ISO string
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
@@ -39,8 +43,17 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
       {/* HEARTI Spectra Chart - Fixed height and padding to prevent overflow */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle>HEARTI Spectra</CardTitle>
-          <CardDescription>Your leadership dimension scores</CardDescription>
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle>HEARTI Spectra</CardTitle>
+              <CardDescription>Your leadership dimension scores</CardDescription>
+            </div>
+            <ShareButton 
+              assessment={assessment} 
+              variant="outline"
+              size={isMobile ? "sm" : "default"}
+            />
+          </div>
         </CardHeader>
         <CardContent className="px-0 pt-0 pb-6">
           <div className="h-[300px] w-full px-2 mx-auto max-w-[450px]">

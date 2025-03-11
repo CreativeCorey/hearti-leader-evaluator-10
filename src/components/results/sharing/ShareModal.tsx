@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { HEARTIAssessment, HEARTIDimension } from '@/types';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
@@ -90,11 +91,15 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
       // Platform-specific share logic
       switch (platform) {
         case 'linkedin':
-          window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareableLink)}&summary=${encodeURIComponent(captionText)}`, '_blank');
+          // Open LinkedIn sharing dialog in a new window
+          const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareableLink)}`;
+          window.open(linkedInUrl, '_blank', 'width=600,height=600');
           break;
           
         case 'twitter':
-          window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(captionText)}&url=${encodeURIComponent(shareableLink)}`, '_blank');
+          // Open Twitter sharing dialog in a new window
+          const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(captionText)}&url=${encodeURIComponent(shareableLink)}`;
+          window.open(twitterUrl, '_blank', 'width=600,height=600');
           break;
           
         case 'bluesky':
@@ -104,7 +109,9 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
           blueSkyLink.href = imageUrl;
           blueSkyLink.click();
           
-          showSuccessToast("Share to Bluesky", "Image downloaded. Copy your caption and upload the image to Bluesky.");
+          // Also copy the caption to clipboard for easy pasting
+          await navigator.clipboard.writeText(captionText);
+          showSuccessToast("Share to Bluesky", "Image downloaded and caption copied. Paste in Bluesky.");
           break;
           
         case 'slack':
@@ -114,7 +121,9 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
           slackLink.href = imageUrl;
           slackLink.click();
           
-          showSuccessToast("Share to Slack", "Image downloaded. Upload to Slack and paste your caption.");
+          // Copy caption to clipboard
+          await navigator.clipboard.writeText(captionText);
+          showSuccessToast("Share to Slack", "Image downloaded and caption copied. Upload to Slack.");
           break;
           
         case 'teams':
@@ -124,22 +133,29 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
           teamsLink.href = imageUrl;
           teamsLink.click();
           
-          showSuccessToast("Share to Microsoft Teams", "Image downloaded. Upload to Teams and paste your caption.");
+          // Copy caption to clipboard
+          await navigator.clipboard.writeText(captionText);
+          showSuccessToast("Share to Microsoft Teams", "Image downloaded and caption copied. Upload to Teams.");
           break;
           
         case 'email':
-          window.location.href = `mailto:?subject=My HEARTI:Leader Results&body=${encodeURIComponent(captionText + '\n\n' + shareableLink)}`;
+          // Open default email client with pre-filled content
+          const emailSubject = "My HEARTI:Leader Results";
+          const emailBody = `${captionText}\n\n${shareableLink}`;
+          window.location.href = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
           break;
           
         case 'whatsapp':
-          window.open(`https://wa.me/?text=${encodeURIComponent(captionText + '\n\n' + shareableLink)}`, '_blank');
+          // Open WhatsApp web with pre-filled content
+          const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(captionText + '\n\n' + shareableLink)}`;
+          window.open(whatsappUrl, '_blank', 'width=600,height=600');
           break;
           
         case 'instagram':
         case 'threads':
         case 'fanbase':
         default:
-          // For platforms that don't have direct sharing APIs
+          // For platforms that don't have direct sharing APIs, download the image
           const link = document.createElement('a');
           link.download = `HEARTI-Leader-Results-${new Date().toISOString().split('T')[0]}.png`;
           link.href = imageUrl;
@@ -148,7 +164,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
           // After downloading, copy the caption to clipboard
           await navigator.clipboard.writeText(captionText);
           
-          showSuccessToast("Share to " + platform.charAt(0).toUpperCase() + platform.slice(1), "Image downloaded and caption copied to clipboard. You can now upload it manually.");
+          showSuccessToast(`Share to ${platform.charAt(0).toUpperCase() + platform.slice(1)}`, "Image downloaded and caption copied to clipboard for sharing.");
           break;
       }
       

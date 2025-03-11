@@ -96,6 +96,7 @@ export const useIndexPage = () => {
     if (initialized) return; // Prevent multiple initializations
     
     try {
+      console.log("Initializing app...");
       // Enable Supabase by default for Google Sheets integration
       const supabaseEnabled = true;
       setUseSupabase(supabaseEnabled);
@@ -131,11 +132,11 @@ export const useIndexPage = () => {
 
   // Auto-switch to results tab if user has assessments
   useEffect(() => {
-    if (userAssessments.length > 0 && activeTab === 'take') {
-      setActiveTab('results');
+    if (!loading && userAssessments.length > 0 && activeTab === 'take') {
       console.log("Auto-switching to results tab due to existing assessment data");
+      setActiveTab('results');
     }
-  }, [userAssessments, activeTab]);
+  }, [userAssessments, activeTab, loading]);
 
   // Show error toast only when assessment status changes to error
   useEffect(() => {
