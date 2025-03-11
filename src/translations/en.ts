@@ -13,6 +13,7 @@ export const en = {
     back: "Back",
     complete: "Complete",
     copyright: "© PrismWork, Inc. All rights reserved.",
+    share: "Share"
   },
   header: {
     signIn: "Sign In",
@@ -58,7 +59,7 @@ export const en = {
     development: {
       title: "Development Activities",
       subtitle: "Personalized activities to grow your leadership skills",
-      focused: "Focused",
+      focused: "Focus on",
       complete: "Complete",
     },
     dimensions: {

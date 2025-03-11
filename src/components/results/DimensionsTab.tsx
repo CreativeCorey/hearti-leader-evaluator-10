@@ -5,12 +5,14 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getDimensionDescription, getFeedback } from '@/utils/calculations';
 import { dimensionIcons, dimensionColors } from './development/DimensionIcons';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface DimensionsTabProps {
   assessment: HEARTIAssessment;
 }
 
 const DimensionsTab: React.FC<DimensionsTabProps> = ({ assessment }) => {
+  const { t } = useLanguage();
   const sortedDimensions = Object.entries(assessment.dimensionScores)
     .sort(([, a], [, b]) => b - a)
     .map(([dimension]) => dimension as HEARTIDimension);
@@ -26,12 +28,14 @@ const DimensionsTab: React.FC<DimensionsTabProps> = ({ assessment }) => {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {sortedDimensions.map((dimension) => {
         const DimensionIcon = dimensionIcons[dimension];
+        const translatedDimension = t(`results.dimensions.${dimension}`);
+        
         return (
           <Card key={dimension} className="shadow-sm">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center gap-2">
                 <DimensionIcon size={20} style={{ color: dimensionColors[dimension] }} />
-                {dimension.charAt(0).toUpperCase() + dimension.slice(1)}
+                {translatedDimension}
               </CardTitle>
               <Badge variant={getBadgeVariant(assessment.dimensionScores[dimension])}>
                 {assessment.dimensionScores[dimension]}/5

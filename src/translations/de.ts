@@ -37,7 +37,7 @@ export const de = {
   },
   results: {
     spectra: {
-      title: "HEARTI-Spektrum",
+      title: "HEARTI Spectra",
       subtitle: "Ihre Führungsdimensionswerte",
     },
     lq: {

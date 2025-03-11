@@ -7,6 +7,7 @@ import { Radar, Tooltip, Legend } from 'recharts';
 import { useRadarChartConfig } from '@/hooks/use-radar-chart-config';
 import { dimensionColors } from './DimensionIcons';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface DimensionChartProps {
   dimensionScores: Record<HEARTIDimension, number>;
@@ -21,6 +22,7 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
 }) => {
   const { config, iconSize, polarRadiusProps, polarAngleProps } = useRadarChartConfig();
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   
   // Create chart data for all dimensions or just the active one
   const allData = formatDataForRadarChart(dimensionScores);
@@ -34,9 +36,11 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
   // Use the dimension's color for both focused and complete view
   const dimensionColor = dimensionColors[activeDimension] || "#6366f1";
   
+  const translatedDimension = t(`results.dimensions.${activeDimension}`);
+  
   const chartTitle = showAllDimensions ? 
     "Your Complete HEARTI Spectra" : 
-    `Focus on ${activeDimension.charAt(0).toUpperCase() + activeDimension.slice(1)}`;
+    `${t('results.development.focused')} ${translatedDimension}`;
 
   // Adjust the chart container height based on view type
   const chartContainerHeight = showAllDimensions ? 
@@ -63,7 +67,7 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
           hideDimensionLabels={true}
         >
           <Radar
-            name={showAllDimensions ? "Your HEARTI Spectra" : activeDimension}
+            name={showAllDimensions ? t('results.spectra.title') : translatedDimension}
             dataKey="value"
             stroke={dimensionColor}
             fill={dimensionColor}
@@ -75,7 +79,7 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
             animationBegin={200}
             animationDuration={1000}
           />
-          <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
+          <Tooltip formatter={(value) => [`${value}/5`, t('results.comparison.average')]} />
           <Legend wrapperStyle={{
             bottom: isMobile ? -5 : -10, 
             fontSize: isMobile ? "10px" : "11px",

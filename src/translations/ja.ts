@@ -37,7 +37,7 @@ export const ja = {
   },
   results: {
     spectra: {
-      title: "HEARTIスペクトル",
+      title: "HEARTI Spectra",
       subtitle: "あなたのリーダーシップ次元スコア",
     },
     lq: {

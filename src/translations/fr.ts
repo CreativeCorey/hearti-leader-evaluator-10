@@ -37,7 +37,7 @@ export const fr = {
   },
   results: {
     spectra: {
-      title: "Spectre HEARTI",
+      title: "HEARTI Spectra",
       subtitle: "Vos scores de dimension de leadership",
     },
     lq: {

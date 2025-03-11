@@ -37,7 +37,7 @@ export const ar = {
   },
   results: {
     spectra: {
-      title: "طيف HEARTI",
+      title: "HEARTI Spectra",
       subtitle: "درجات أبعاد القيادة الخاصة بك",
     },
     lq: {

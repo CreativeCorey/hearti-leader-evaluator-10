@@ -9,6 +9,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Gauge, HeartHandshake, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
 import { dimensionColors } from '../development/DimensionIcons';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface ShareResultsCardProps {
   assessment: HEARTIAssessment;
@@ -19,6 +20,7 @@ interface ShareResultsCardProps {
 const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDetails = true, onShare }) => {
   const isMobile = useIsMobile();
   const chartData = formatDataForRadarChart(assessment.dimensionScores);
+  const { t } = useLanguage();
   
   const sortedDimensions = Object.entries(assessment.dimensionScores)
     .sort(([, a], [, b]) => b - a)
@@ -46,6 +48,11 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
 
   // Get the initial letter of the top dimension
   const topDimensionInitial = topStrength.charAt(0).toUpperCase();
+  
+  // Get translated dimension name
+  const getTranslatedDimensionName = (dimension: HEARTIDimension) => {
+    return t(`results.dimensions.${dimension}`);
+  };
 
   return (
     <Card className="w-full shadow-lg overflow-hidden bg-white">
@@ -65,11 +72,11 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
             {onShare && (
               <Button variant="outline" size="sm" onClick={onShare}>
                 <Share2 size={15} className="mr-1" />
-                Share
+                {t('common.share')}
               </Button>
             )}
           </div>
-          <p className="text-sm text-gray-600">Overall Score: {assessment.overallScore}/5</p>
+          <p className="text-sm text-gray-600">{t('results.comparison.average')}: {assessment.overallScore}/5</p>
         </div>
         
         <div className="h-[250px] w-full relative">
@@ -160,7 +167,7 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
             <div className="mt-4 bg-green-50 p-3 rounded-md border border-green-100">
               <p className="font-medium flex items-center text-green-800">
                 <Crown size={16} className="mr-2" />
-                Top Strength: {topStrength.charAt(0).toUpperCase() + topStrength.slice(1)} ({topStrengthScore}/5)
+                {t('results.comparison.average')}: {getTranslatedDimensionName(topStrength)} ({topStrengthScore}/5)
                 {getDimensionIcon(topStrength)}
               </p>
               <p className="text-green-700 mt-1 text-sm">

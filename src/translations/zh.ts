@@ -12,6 +12,7 @@ export const zh = {
     back: "返回",
     complete: "完成",
     copyright: "© PrismWork, Inc. 版权所有。",
+    share: "分享"
   },
   header: {
     signIn: "登录",
@@ -36,7 +37,7 @@ export const zh = {
   },
   results: {
     spectra: {
-      title: "HEARTI 光谱",
+      title: "HEARTI Spectra",
       subtitle: "您的领导力维度分数",
     },
     lq: {

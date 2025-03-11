@@ -8,31 +8,12 @@ import { useLanguage } from '@/contexts/language/LanguageContext';
 import LanguageSelector from './LanguageSelector';
 
 const Header: React.FC = () => {
-  const { user, signOut, anonymousMode, toggleAnonymousMode } = useAuth();
+  const { user, signOut, anonymousMode } = useAuth();
   const { t } = useLanguage();
 
   return (
     <header className="w-full py-4 px-4 flex justify-between items-center border-b backdrop-blur-sm bg-white/95 fixed top-0 z-10">
       <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={toggleAnonymousMode}
-          className="flex items-center gap-1 text-xs truncate h-8 px-2"
-        >
-          {anonymousMode ? (
-            <>
-              <UserCheck size={16} className="text-green-500" />
-              <span className="hidden md:inline">{t('header.anonymous')}</span>
-            </>
-          ) : (
-            <>
-              <UserX size={16} />
-              <span className="hidden md:inline">{t('header.enableAnonymous')}</span>
-            </>
-          )}
-        </Button>
-        
         <LanguageSelector />
       </div>
       
