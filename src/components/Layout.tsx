@@ -1,6 +1,6 @@
-
 import React from 'react';
 import Header from './Header';
+import { usePageTracking } from '@/hooks/useAnalytics';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useLocation } from 'react-router-dom';
 import { useLanguage } from '@/contexts/language/LanguageContext';
@@ -10,6 +10,8 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+  usePageTracking();
+
   const isMobile = useIsMobile();
   const location = useLocation();
   const isIndexPage = location.pathname === '/' || location.pathname === '/index';
