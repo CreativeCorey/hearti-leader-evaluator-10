@@ -28,7 +28,6 @@ export const zh = {
     cloudStorage: "云存储",
     localStorage: "本地存储",
     instructions: "请回答以下问题以评估您的领导能力",
-    questions: {},
     reload: "重新加载",
     completed: "评估完成",
     submitSuccess: "您的评估已成功提交",
