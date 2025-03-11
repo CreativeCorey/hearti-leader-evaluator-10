@@ -4,9 +4,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HEARTIAssessment } from '@/types';
 import AssessmentForm from '@/components/AssessmentForm';
 import ResultsDisplay from '@/components/ResultsDisplay';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Loader2 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
 
@@ -27,8 +24,6 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
   userAssessments,
   latestAssessment,
   onComplete,
-  testingSheets,
-  sendLatestToSheets,
   viewTransitioning = false
 }) => {
   const isMobile = useIsMobile();
@@ -114,18 +109,6 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
                 assessment={latestAssessment} 
                 assessments={userAssessments}
               />
-              
-              <div className="mt-4 sm:mt-6 flex gap-2 sm:gap-3">
-                <Button 
-                  onClick={sendLatestToSheets}
-                  disabled={testingSheets}
-                  variant="outline"
-                  className="flex items-center gap-1.5 sm:gap-2 border-green text-green hover:bg-green/10 text-xs sm:text-sm py-1.5 sm:py-2 h-auto"
-                >
-                  {testingSheets && <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin" />}
-                  Send to Google Sheets
-                </Button>
-              </div>
             </div>
           )}
         </div>
