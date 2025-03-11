@@ -23,7 +23,7 @@ const BaseRadarChart: React.FC<BaseRadarChartProps> = ({
     <ResponsiveContainer width="100%" height="100%" className={className}>
       <RadarChart 
         cx="50%" 
-        cy="43%" 
+        cy="45%" 
         outerRadius={config.outerRadius} 
         width={500}
         height={500}
@@ -38,10 +38,7 @@ const BaseRadarChart: React.FC<BaseRadarChartProps> = ({
         />
         <PolarAngleAxis 
           dataKey="name" 
-          tick={isMobile ? { 
-            fill: '#6b7280', 
-            fontSize: 10 
-          } : { 
+          tick={isMobile ? false : { 
             fill: '#6b7280', 
             fontSize: 12 
           }} 

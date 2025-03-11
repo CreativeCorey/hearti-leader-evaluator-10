@@ -4,17 +4,19 @@ import { HEARTIAssessment, HEARTIDimension } from '@/types';
 import { Card, CardContent } from '@/components/ui/card';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import { formatDataForRadarChart, getFeedback } from '@/utils/calculations';
-import { Crown } from 'lucide-react';
+import { Crown, Share2 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Gauge, HeartHandshake, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
 import { dimensionColors } from '../development/DimensionIcons';
+import { Button } from '@/components/ui/button';
 
 interface ShareResultsCardProps {
   assessment: HEARTIAssessment;
   showDetails?: boolean;
+  onShare?: () => void;
 }
 
-const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDetails = true }) => {
+const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDetails = true, onShare }) => {
   const isMobile = useIsMobile();
   const chartData = formatDataForRadarChart(assessment.dimensionScores);
   
@@ -54,9 +56,17 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
               className="h-8"
             />
           </div>
-          <h3 className="text-xl font-bold text-gray-800">
-            {isMobile ? "My Spectra" : "My HEARTI:Leader Spectra"}
-          </h3>
+          <div className="flex justify-between items-center">
+            <h3 className="text-xl font-bold text-gray-800">
+              {isMobile ? "My Spectra" : "My HEARTI:Leader Spectra"}
+            </h3>
+            {onShare && (
+              <Button variant="outline" size="sm" onClick={onShare}>
+                <Share2 size={15} className="mr-1" />
+                Share
+              </Button>
+            )}
+          </div>
           <p className="text-sm text-gray-600">Overall Score: {assessment.overallScore}/5</p>
         </div>
         
@@ -84,32 +94,6 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
             
             <div className="absolute top-[25%] left-[15%] transform">
               <Users size={iconSize} style={{ color: dimensionColors.inclusivity }} />
-            </div>
-            
-            {/* Fixed hexagon with centered initial */}
-            <div className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 z-10 flex items-center justify-center">
-              {/* SVG hexagon with proper aspect ratio */}
-              <svg 
-                width="48" 
-                height="48" 
-                viewBox="0 0 48 48" 
-                className="absolute"
-                preserveAspectRatio="xMidYMid meet"
-              >
-                <polygon 
-                  points="24,4 44,14 44,34 24,44 4,34 4,14"
-                  fill="white" 
-                  stroke={dimensionColors[topStrength]} 
-                  strokeWidth="2"
-                />
-              </svg>
-              {/* Centered initial inside the hexagon */}
-              <span 
-                className="relative z-20 text-2xl font-bold"
-                style={{ color: dimensionColors[topStrength] }}
-              >
-                {topDimensionInitial}
-              </span>
             </div>
           </div>
           
@@ -142,6 +126,31 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
               />
             </RadarChart>
           </ResponsiveContainer>
+          
+          {/* Fixed centered hexagon with initial */}
+          <div className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 z-10 flex items-center justify-center">
+            <svg 
+              width="48" 
+              height="48" 
+              viewBox="0 0 48 48" 
+              preserveAspectRatio="xMidYMid meet"
+              className="absolute"
+            >
+              <polygon 
+                points="24,4 44,14 44,34 24,44 4,34 4,14"
+                fill="white" 
+                stroke={dimensionColors[topStrength]} 
+                strokeWidth="2"
+              />
+            </svg>
+            {/* Centered initial inside hexagon */}
+            <span 
+              className="relative z-20 text-2xl font-bold"
+              style={{ color: dimensionColors[topStrength] }}
+            >
+              {topDimensionInitial}
+            </span>
+          </div>
         </div>
         
         {showDetails && (

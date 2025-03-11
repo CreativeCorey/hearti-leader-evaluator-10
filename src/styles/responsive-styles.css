@@ -83,6 +83,14 @@
   
   /* Touch target improvements for mobile */
   @media (max-width: 640px) {
+    /* Make main content wider on mobile */
+    .content-container {
+      width: 96% !important;
+      max-width: 96% !important;
+      padding-left: 2% !important;
+      padding-right: 2% !important;
+    }
+    
     .results-tabs {
       grid-template-columns: repeat(3, 1fr);
     }
@@ -118,6 +126,20 @@
       min-height: 28px;
     }
     
+    /* Improved slider touch area */
+    [data-orientation="horizontal"].slider {
+      min-height: 44px;
+    }
+    
+    [data-orientation="horizontal"].slider [data-orientation="horizontal"].slider-track {
+      height: 16px;
+    }
+    
+    [data-orientation="horizontal"].slider [data-orientation="horizontal"].slider-thumb {
+      width: 36px;
+      height: 36px;
+    }
+    
     /* Fix legend display on mobile */
     .recharts-legend-wrapper {
       font-size: 10px;
@@ -133,11 +155,20 @@
     
     /* Additional improvements for touch targets */
     .recharts-dot {
-      r: 5px !important;
+      r: 6px !important;
     }
     
     .recharts-active-dot {
-      r: 8px !important;
+      r: 9px !important;
+    }
+    
+    /* Center hexagon fix */
+    .center-hexagon {
+      transform: translate(-50%, -50%) !important;
+    }
+    
+    .hexagon-initial {
+      font-size: 24px !important;
     }
   }
   

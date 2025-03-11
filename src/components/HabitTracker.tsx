@@ -25,7 +25,7 @@ const HabitTracker: React.FC<HabitTrackerProps> = ({ focusDimension }) => {
           Build consistent habits by practicing them 30 times
         </CardDescription>
       </CardHeader>
-      <CardContent className={`${isMobile ? 'p-2 sm:p-3' : 'p-6'} bg-gray-50`}>
+      <CardContent className={`${isMobile ? 'p-3 sm:p-4' : 'p-6'} bg-gray-50`}>
         <HabitTrackerCore focusDimension={focusDimension} />
       </CardContent>
       <CardFooter className="bg-white p-3 text-xs sm:text-sm text-muted-foreground border-t flex items-center">

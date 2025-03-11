@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { HEARTIAssessment } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,6 +8,7 @@ import DemographicsSection from './DemographicsSection';
 import HistoricalResults from '../HistoricalResults';
 import DimensionChart from './development/DimensionChart';
 import ShareButton from './sharing/ShareButton';
+import ShareModal from './sharing/ShareModal';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface OverviewTabProps {

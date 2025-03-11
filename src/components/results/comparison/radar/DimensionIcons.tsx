@@ -2,12 +2,15 @@
 import React from 'react';
 import { Gauge, HeartHandshake, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
 import { dimensionColors } from '../../development/DimensionIcons';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface DimensionIconsProps {
   iconSize: number;
 }
 
 const DimensionIcons: React.FC<DimensionIconsProps> = ({ iconSize }) => {
+  const isMobile = useIsMobile();
+  
   return (
     <div className="absolute inset-0 pointer-events-none">
       {/* Top (Humility) */}

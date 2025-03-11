@@ -2,13 +2,13 @@
 @tailwind components;
 
 @layer components {
-  /* HEARTI dimension colors - updated with swapped colors for humility and inclusivity */
+  /* HEARTI dimension colors - updated with swapped colors for empathy and transparency */
   .dimension-humility {
     color: #EE2D67;
   }
   
   .dimension-empathy {
-    color: #18B7D9;
+    color: #3953A4;
   }
   
   .dimension-accountability {
@@ -20,7 +20,7 @@
   }
   
   .dimension-transparency {
-    color: #3953A4;
+    color: #18B7D9;
   }
   
   .dimension-inclusivity {
