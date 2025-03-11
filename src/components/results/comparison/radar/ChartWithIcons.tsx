@@ -8,6 +8,7 @@ import DimensionIcons from './DimensionIcons';
 interface ChartWithIconsProps {
   data: any[];
   chartColor: string;
+  chartTitle?: string;
   showIcons?: boolean;
   spiderConfig?: any;  // Kept for backward compatibility
   isAnimationActive?: boolean;
@@ -17,6 +18,7 @@ interface ChartWithIconsProps {
 const ChartWithIcons: React.FC<ChartWithIconsProps> = ({ 
   data, 
   chartColor, 
+  chartTitle = "Your HEARTI Spectra",
   showIcons = true,
   isAnimationActive = true,
   className = ""
@@ -29,7 +31,7 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
       
       <BaseRadarChart data={data} config={config}>
         <Radar
-          name="Your HEARTI Spectra"
+          name={chartTitle}
           dataKey="value"
           stroke={chartColor}
           fill={chartColor}

@@ -28,18 +28,22 @@ const SeparateCharts: React.FC<SeparateChartsProps> = ({
           <ChartWithIcons 
             data={chartData} 
             chartColor={userColor}
+            chartTitle="Your HEARTI Spectra"
           />
         </div>
       </div>
       
       {compareMode !== 'none' && (
         <div className="bg-slate-50 p-4 rounded-lg h-[320px]">
-          <p className="text-center font-medium" style={{ color: getComparisonColor() }}>{getComparisonLabel()} Results</p>
+          <p className="text-center font-medium" style={{ color: getComparisonColor() }}>
+            HEARTI Spectra - {getComparisonLabel()}
+          </p>
           <div className="relative h-[calc(100%-30px)]">
             <ChartWithIcons 
               data={getComparisonData()} 
               chartColor={getComparisonColor()} 
               showIcons={true}
+              chartTitle={`HEARTI Spectra - ${getComparisonLabel()}`}
             />
           </div>
         </div>

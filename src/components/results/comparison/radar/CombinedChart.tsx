@@ -45,7 +45,7 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
           
           {compareMode !== 'none' && (
             <Radar
-              name={getComparisonLabel()}
+              name={`HEARTI Spectra - ${getComparisonLabel()}`}
               dataKey="comparisonValue"
               stroke={getComparisonColor()}
               fill={getComparisonColor()}

@@ -9,13 +9,13 @@ const Header: React.FC = () => {
   const { user, signOut, anonymousMode, toggleAnonymousMode } = useAuth();
 
   return (
-    <header className="w-full py-4 px-4 flex justify-between items-center border-b backdrop-blur-sm bg-white/50 fixed top-0 z-10">
+    <header className="w-full py-4 px-4 flex justify-between items-center border-b backdrop-blur-sm bg-white/95 fixed top-0 z-10">
       <div className="flex items-center">
         <Link to="/" className="flex items-center">
           <img 
             src="/lovable-uploads/f5c0e163-fd58-4828-bce7-5e62049ef409.png" 
             alt="HEARTI™ Leader Quotient Logo" 
-            className="h-10 md:h-12"
+            className="h-8 md:h-10"
           />
         </Link>
       </div>

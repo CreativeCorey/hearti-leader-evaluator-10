@@ -7,7 +7,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ReportTabContentProps {
   assessment: HEARTIAssessment;
-  assessments?: HEARTIAssessment[]; // Added assessments property
+  assessments: HEARTIAssessment[]; // Added assessments property
   reportRef: React.RefObject<HTMLDivElement>;
   onExportPDF: () => Promise<void>;
   exportingPdf: boolean;

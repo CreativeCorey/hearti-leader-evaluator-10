@@ -44,8 +44,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
         <CardHeader className="pb-2">
           <div className="flex justify-between items-center">
             <div>
-              <CardTitle>HEARTI Spectra</CardTitle>
-              <CardDescription>Your leadership dimension scores</CardDescription>
+              <CardTitle className="text-xl md:text-2xl">HEARTI Spectra</CardTitle>
+              <CardDescription className="text-sm">Your leadership dimension scores</CardDescription>
             </div>
             <ShareButton 
               assessment={assessment} 
