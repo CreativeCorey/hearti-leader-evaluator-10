@@ -5,8 +5,7 @@ import { formatDate } from './utils/dateFormatters';
 import { 
   ShareSection,
   SpectraSection,
-  ScoreCard,
-  ProgressChart
+  ScoreCard
 } from './overview';
 
 interface OverviewTabProps {
@@ -33,9 +32,6 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
       
       {/* HEARTI:Leader Score Card */}
       <ScoreCard assessment={assessment} formattedDate={formattedDate} />
-      
-      {/* Assessment Progress Chart */}
-      <ProgressChart assessment={assessment} assessments={assessments} />
     </div>
   );
 };

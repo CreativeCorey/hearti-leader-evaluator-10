@@ -4,6 +4,7 @@ import { HEARTIAssessment, HEARTIDimension } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { dimensionColors } from '../development/DimensionIcons';
 
 interface ProgressChartProps {
   assessment: HEARTIAssessment;
@@ -28,17 +29,9 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ assessment, assessments }
       ...item.dimensionScores
     }));
 
-  // Get dimension colors
+  // Get dimension colors from the centralized dimension colors
   const getDimensionColor = (dimension: string) => {
-    const colors: Record<string, string> = {
-      humility: "#8b5cf6",
-      empathy: "#ec4899",
-      accountability: "#ef4444",
-      resiliency: "#f59e0b",
-      transparency: "#10b981",
-      inclusivity: "#3b82f6"
-    };
-    return colors[dimension] || "#000000";
+    return dimensionColors[dimension as HEARTIDimension] || "#000000";
   };
   
   return (

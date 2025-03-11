@@ -15,6 +15,7 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { dimensionColors } from './development/DimensionIcons';
 
 interface ComparisonTabProps {
   assessment: HEARTIAssessment;
@@ -97,17 +98,9 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments =
       ...item.dimensionScores
     }));
 
-  // Get dimension colors
+  // Get dimension colors using the centralized dimensionColors
   const getDimensionColor = (dimension: string) => {
-    const colors: Record<string, string> = {
-      humility: "#8b5cf6",
-      empathy: "#ec4899",
-      accountability: "#ef4444",
-      resiliency: "#F97316", // Changed to orange
-      transparency: "#10b981",
-      inclusivity: "#3b82f6"
-    };
-    return colors[dimension] || "#000000";
+    return dimensionColors[dimension as HEARTIDimension] || "#000000";
   };
 
   return (
@@ -153,7 +146,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments =
           />
         )}
         
-        {/* HEARTI Progress over time chart - moved from report section */}
+        {/* HEARTI Progress over time chart */}
         <Card className="mt-8">
           <CardHeader className="pb-2">
             <CardTitle>HEARTI Progress Over Time</CardTitle>
