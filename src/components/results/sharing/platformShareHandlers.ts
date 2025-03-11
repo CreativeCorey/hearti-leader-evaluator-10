@@ -10,10 +10,40 @@ interface ShareOptions {
 
 /**
  * Handles sharing to LinkedIn
+ * 
+ * NOTE: LinkedIn doesn't allow direct pre-filling of image and text via URL parameters
+ * So we download the image and copy the text to clipboard for the user to paste manually
  */
-export const shareToLinkedIn = (shareableLink: string): void => {
-  const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareableLink)}`;
-  window.open(linkedInUrl, '_blank', 'width=600,height=600');
+export const shareToLinkedIn = async (
+  element: HTMLElement | null,
+  shareableLink: string,
+  captionText: string
+): Promise<void> => {
+  try {
+    // Generate and download the image
+    const imageUrl = await generateImageFromElement(element);
+    if (!imageUrl) throw new Error('Failed to generate image');
+    
+    const link = document.createElement('a');
+    link.download = `HEARTI-Leader-Results-${new Date().toISOString().split('T')[0]}.png`;
+    link.href = imageUrl;
+    link.click();
+    
+    // Copy caption to clipboard
+    await navigator.clipboard.writeText(captionText);
+    
+    // Open LinkedIn sharing dialog
+    const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareableLink)}`;
+    window.open(linkedInUrl, '_blank', 'width=600,height=600');
+    
+    showSuccessToast(
+      "Share to LinkedIn", 
+      "Image downloaded and caption copied to clipboard. Paste the caption in LinkedIn."
+    );
+  } catch (error) {
+    console.error('Failed to share to LinkedIn:', error);
+    showErrorToast("LinkedIn sharing failed", "Please try again later");
+  }
 };
 
 /**
@@ -80,7 +110,7 @@ export const shareToSocial = async (platform: string, options: ShareOptions): Pr
   try {
     switch (platform) {
       case 'linkedin':
-        shareToLinkedIn(shareableLink);
+        await shareToLinkedIn(element, shareableLink, captionText);
         break;
         
       case 'twitter':

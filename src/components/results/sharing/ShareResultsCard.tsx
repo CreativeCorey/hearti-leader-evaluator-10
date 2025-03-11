@@ -86,25 +86,40 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
               <Users size={iconSize} style={{ color: dimensionColors.inclusivity }} />
             </div>
             
-            {/* Top dimension initial using hexagon shape */}
+            {/* Improved hexagon shape for top dimension initial */}
             <div className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 z-10">
-              <div className="relative">
-                {/* Hexagon shape using CSS */}
-                <div 
-                  className="w-14 h-12 bg-white/90 shadow-md flex items-center justify-center"
-                  style={{
-                    clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
-                    border: `2px solid ${dimensionColors[topStrength]}`,
-                    backgroundColor: "white"
+              <div 
+                className="relative flex items-center justify-center"
+                style={{
+                  width: '56px',
+                  height: '48px',
+                  position: 'relative'
+                }}
+              >
+                {/* Hexagon shape using SVG for better proportion control */}
+                <svg 
+                  width="56" 
+                  height="48" 
+                  viewBox="0 0 56 48" 
+                  style={{ 
+                    position: 'absolute',
+                    top: 0,
+                    left: 0
                   }}
                 >
-                  <span 
-                    className="text-2xl font-bold" 
-                    style={{ color: dimensionColors[topStrength] }}
-                  >
-                    {topDimensionInitial}
-                  </span>
-                </div>
+                  <polygon 
+                    points="28,0 56,14 56,34 28,48 0,34 0,14" 
+                    fill="white"
+                    stroke={dimensionColors[topStrength]}
+                    strokeWidth="2"
+                  />
+                </svg>
+                <span 
+                  className="text-2xl font-bold z-10" 
+                  style={{ color: dimensionColors[topStrength] }}
+                >
+                  {topDimensionInitial}
+                </span>
               </div>
             </div>
           </div>
