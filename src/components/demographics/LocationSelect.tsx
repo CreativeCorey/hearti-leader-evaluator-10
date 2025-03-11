@@ -6,6 +6,7 @@ import { Command as CommandPrimitive } from 'cmdk';
 import { Check, ChevronsUpDown, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { locations, getGroupedLocations } from '@/constants/locationData';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface LocationSelectProps {
   value: string;
@@ -17,6 +18,7 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ value, onChange }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const { usLocations, otherLocations } = getGroupedLocations();
+  const isMobile = useIsMobile();
 
   // Focus input when popover opens
   useEffect(() => {
@@ -35,7 +37,7 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ value, onChange }) => {
       );
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 w-full">
       <h3 className="font-medium text-lg">Where are you located?</h3>
       <p className="text-sm text-muted-foreground">Please select your country or U.S. state</p>
       <Popover open={open} onOpenChange={setOpen}>
@@ -44,14 +46,14 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ value, onChange }) => {
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between md:max-w-md"
+            className="w-full justify-between"
           >
             {value || "Select location..."}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full md:max-w-md p-0" align="start">
-          <CommandPrimitive className="max-h-[400px] overflow-auto">
+        <PopoverContent className="w-full p-0" align="start" sideOffset={5} side={isMobile ? "bottom" : "right"} alignOffset={0}>
+          <CommandPrimitive className="max-h-[50vh] overflow-auto">
             <div className="flex items-center border-b px-3">
               <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
               <CommandPrimitive.Input
@@ -147,7 +149,7 @@ const LocationItem: React.FC<LocationItemProps> = ({
         key={location}
         value={location}
         onSelect={() => onSelect()}
-        className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground"
+        className="relative flex cursor-default select-none items-center rounded-sm px-2 py-3 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground"
       >
         <Check
           className={cn(
@@ -173,7 +175,7 @@ const LocationItem: React.FC<LocationItemProps> = ({
       key={location}
       value={location}
       onSelect={() => onSelect()}
-      className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground"
+      className="relative flex cursor-default select-none items-center rounded-sm px-2 py-3 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground"
     >
       <Check
         className={cn(

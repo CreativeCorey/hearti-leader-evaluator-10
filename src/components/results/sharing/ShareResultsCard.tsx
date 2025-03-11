@@ -86,29 +86,26 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
               <Users size={iconSize} style={{ color: dimensionColors.inclusivity }} />
             </div>
             
-            {/* Properly proportioned hexagon shape for top dimension initial */}
+            {/* Fixed hexagon with correct proportions and centered initial */}
             <div className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 z-10">
-              <div className="relative flex items-center justify-center">
-                {/* Hexagon shape using SVG with correct proportions */}
-                <svg 
-                  width="64" 
-                  height="58" 
-                  viewBox="0 0 64 58" 
-                  style={{ 
-                    position: 'absolute',
-                    top: -29,
-                    left: -32
-                  }}
-                >
-                  <polygon 
-                    points="32,0 60,16 60,42 32,58 4,42 4,16" 
-                    fill="white"
-                    stroke={dimensionColors[topStrength]}
-                    strokeWidth="2"
-                  />
-                </svg>
+              {/* SVG hexagon with correct width-to-height ratio */}
+              <svg 
+                width="60" 
+                height="52" 
+                viewBox="0 0 60 52" 
+                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+              >
+                <polygon 
+                  points="30,0 60,15 60,37 30,52 0,37 0,15"
+                  fill="white" 
+                  stroke={dimensionColors[topStrength]} 
+                  strokeWidth="2"
+                />
+              </svg>
+              {/* Centered initial inside hexagon */}
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10">
                 <span 
-                  className="text-2xl font-bold z-10" 
+                  className="text-2xl font-bold"
                   style={{ color: dimensionColors[topStrength] }}
                 >
                   {topDimensionInitial}
