@@ -22,7 +22,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
 }) => {
   const { t, currentLanguage } = useLanguage();
   
-  // Get the translated question text
+  // Get the translated question text, ensuring it's a string
   const translatedQuestionText = t(`assessment.questions.${question.id}`);
   
   return (

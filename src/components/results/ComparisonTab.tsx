@@ -55,7 +55,12 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
   const sortedDimensions = Object.keys(assessment.dimensionScores).map(key => key as HEARTIDimension);
 
   // Calculate additional spacing for the comparison analysis when in separate view
-  const comparisonAnalysisSpacing = chartView === 'separate' ? 'mt-[520px] sm:mt-[500px] md:mt-16' : 'mt-6';
+  // Adding more space for mobile in separate mode
+  const comparisonAnalysisSpacing = chartView === 'separate' 
+    ? isMobile 
+      ? 'mt-[600px] sm:mt-[580px] md:mt-20' 
+      : 'mt-[580px] sm:mt-[580px] md:mt-20'
+    : 'mt-6';
 
   return (
     <div className="space-y-8">
