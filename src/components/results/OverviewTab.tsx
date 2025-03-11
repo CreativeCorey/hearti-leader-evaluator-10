@@ -43,7 +43,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
           <CardDescription>Your leadership dimension scores</CardDescription>
         </CardHeader>
         <CardContent className="px-0 pt-0 pb-6">
-          <div className="h-[380px] w-full px-2 mx-auto max-w-[500px]">
+          <div className="h-[300px] w-full px-2 mx-auto max-w-[450px]">
             <DimensionChart 
               dimensionScores={dimensionScores}
               activeDimension="humility"
@@ -110,7 +110,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
         <DemographicsSection demographics={assessment.demographics} />
       </div>
 
-      {assessments.length > 1 && (
+      {assessments && assessments.length > 1 && (
         <HistoricalResults assessments={assessments} onSelect={onSelectAssessment} />
       )}
     </div>

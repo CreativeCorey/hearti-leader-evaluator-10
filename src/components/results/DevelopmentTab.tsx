@@ -130,11 +130,13 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
           </Tabs>
         </div>
         
-        <DimensionChart 
-          dimensionScores={dimensionScores}
-          activeDimension={activeDimension}
-          showAllDimensions={chartView === 'all'}
-        />
+        <div className="w-full h-[300px] mx-auto max-w-[500px]">
+          <DimensionChart 
+            dimensionScores={dimensionScores}
+            activeDimension={activeDimension}
+            showAllDimensions={chartView === 'all'}
+          />
+        </div>
         
         <p className="text-sm text-muted-foreground mt-2">
           {chartView === 'focused' 

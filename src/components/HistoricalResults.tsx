@@ -22,7 +22,7 @@ interface HistoricalResultsProps {
 
 const HistoricalResults: React.FC<HistoricalResultsProps> = ({ assessments, onSelect }) => {
   // If no assessments or only one, show a message
-  if (assessments.length <= 1) {
+  if (!assessments || assessments.length <= 1) {
     return (
       <Card className="appear-animate">
         <CardHeader>

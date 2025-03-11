@@ -37,7 +37,10 @@ const BaseRadarChart: React.FC<BaseRadarChartProps> = ({
         />
         <PolarAngleAxis 
           dataKey="name" 
-          tick={isMobile ? false : { 
+          tick={isMobile ? { 
+            fill: '#6b7280', 
+            fontSize: 10 
+          } : { 
             fill: '#6b7280', 
             fontSize: 12 
           }} 

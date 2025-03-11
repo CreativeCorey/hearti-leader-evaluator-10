@@ -1,9 +1,11 @@
+
 import { HEARTIAssessment } from '../../types';
 import { saveAssessmentToSupabase, getUserAssessmentsFromSupabase } from '../supabase/assessments';
 import { ensureUserProfileExists } from '../supabase/profiles';
 import { ASSESSMENTS_KEY } from './constants';
 import { getOrCreateAnonymousId } from './user';
 import { getUseSupabase } from './settings';
+import { useAuth } from '@/hooks/use-auth';
 
 // Assessment Management
 export const saveAssessment = async (assessment: HEARTIAssessment): Promise<boolean> => {
