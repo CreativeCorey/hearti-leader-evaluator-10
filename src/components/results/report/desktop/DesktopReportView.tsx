@@ -1,33 +1,42 @@
 
 import React from 'react';
 import { HEARTIAssessment } from '@/types';
-import { Separator } from '@/components/ui/separator';
-import { ReportHeader, SpectraCharts, DimensionCard, ReportFooter } from '../index';
+import ReportHeader from '../ReportHeader';
+import SpectraCharts from '../SpectraCharts';
+import DimensionCard from '../DimensionCard';
+import ReportFooter from '../ReportFooter';
 
 interface DesktopReportViewProps {
   assessment: HEARTIAssessment;
+  assessments?: HEARTIAssessment[];
 }
 
-const DesktopReportView: React.FC<DesktopReportViewProps> = ({ assessment }) => {
+const DesktopReportView: React.FC<DesktopReportViewProps> = ({ assessment, assessments = [] }) => {
   return (
-    <>
+    <div className="pdf-page">
       <ReportHeader assessment={assessment} />
-      <SpectraCharts assessment={assessment as any} />
-      <Separator className="my-8" />
-      <div className="pdf-section mb-8">
-        <h3 className="text-2xl font-medium mb-6 pdf-section-title">HEARTI:Leader Dimensions in Detail</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pdf-dimension-cards">
+      
+      <SpectraCharts assessment={assessment} assessments={assessments} />
+      
+      <div className="pdf-section">
+        <h3 className="text-2xl font-medium mb-4 pdf-section-title">HEARTI Dimension Analysis</h3>
+        <p className="text-sm mb-4">
+          Each dimension below shows your score, competency level, and guidance for your continued development.
+        </p>
+        
+        <div className="grid grid-cols-1 gap-4">
           {Object.entries(assessment.dimensionScores).map(([dimension, score]) => (
             <DimensionCard 
               key={dimension} 
-              dimension={dimension as any}
-              score={score as any} 
+              dimension={dimension as 'humility' | 'empathy' | 'accountability' | 'resiliency' | 'transparency' | 'inclusivity'}
+              score={score}
             />
           ))}
         </div>
       </div>
+      
       <ReportFooter />
-    </>
+    </div>
   );
 };
 

@@ -49,13 +49,14 @@ const ReportTab: React.FC<ReportTabProps> = ({
         <div className="pdf-container w-full" ref={reportRef}>
           {/* For desktop, render everything as before */}
           {!isMobile ? (
-            <DesktopReportView assessment={assessment} />
+            <DesktopReportView assessment={assessment} assessments={assessments} />
           ) : (
             /* For mobile, render a carousel */
             <ReportCarousel 
               assessment={assessment}
               currentPage={currentPage}
               setCurrentPage={setCurrentPage}
+              assessments={assessments}
             />
           )}
         </div>

@@ -1,81 +1,86 @@
 
 import React from 'react';
 import { HEARTIAssessment } from '@/types';
-import { 
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
-} from "@/components/ui/carousel";
-import { ReportHeader, SpectraCharts, DimensionCard, ReportFooter } from '../index';
+import ReportHeader from '../ReportHeader';
+import SpectraCharts from '../SpectraCharts';
+import DimensionCard from '../DimensionCard';
+import ReportFooter from '../ReportFooter';
 
 interface ReportCarouselProps {
   assessment: HEARTIAssessment;
   currentPage: number;
-  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  setCurrentPage: (page: number) => void;
+  assessments?: HEARTIAssessment[];
 }
 
 const ReportCarousel: React.FC<ReportCarouselProps> = ({ 
-  assessment,
+  assessment, 
   currentPage,
-  setCurrentPage
+  setCurrentPage,
+  assessments = []
 }) => {
-  const totalPages = Object.keys(assessment.dimensionScores).length + 2; // Header, Charts, Dimensions, Footer
-
-  return (
-    <Carousel 
-      className="w-full" 
-      currentPage={currentPage}
-      setActivePage={setCurrentPage}
-    >
-      <CarouselContent>
-        {/* Page 1: Report Header */}
-        <CarouselItem>
-          <div className="p-1">
-            <ReportHeader assessment={assessment} />
-          </div>
-        </CarouselItem>
-        
-        {/* Page 2: Spectra Charts */}
-        <CarouselItem>
-          <div className="p-1">
-            <h3 className="text-xl font-medium mb-4">HEARTI:Leader Spectra</h3>
-            <SpectraCharts assessment={assessment as any} />
-          </div>
-        </CarouselItem>
-        
-        {/* Pages 3-8: Dimension Cards (one per page) */}
-        {Object.entries(assessment.dimensionScores).map(([dimension, score], index) => (
-          <CarouselItem key={dimension}>
-            <div className="p-1">
-              <h3 className="text-xl font-medium mb-4">
-                {dimension.charAt(0).toUpperCase() + dimension.slice(1)}
-              </h3>
-              <DimensionCard 
-                dimension={dimension as any}
-                score={score as any} 
-              />
-            </div>
-          </CarouselItem>
-        ))}
-        
-        {/* Last Page: Report Footer */}
-        <CarouselItem>
-          <div className="p-1">
-            <ReportFooter />
-          </div>
-        </CarouselItem>
-      </CarouselContent>
+  // Extract dimensions to display
+  const dimensionEntries = Object.entries(assessment.dimensionScores);
+  
+  // Function to render the current page content
+  const renderPageContent = () => {
+    // Page 0: Header
+    if (currentPage === 0) {
+      return <ReportHeader assessment={assessment} />;
+    }
+    
+    // Page 1: Charts
+    if (currentPage === 1) {
+      return <SpectraCharts assessment={assessment} assessments={assessments} />;
+    }
+    
+    // Pages 2-7: Dimension cards (one per page)
+    if (currentPage >= 2 && currentPage < dimensionEntries.length + 2) {
+      const dimensionIndex = currentPage - 2;
+      const [dimension, score] = dimensionEntries[dimensionIndex];
       
-      <div className="mt-4 flex items-center justify-center gap-2">
-        <CarouselPrevious className="static translate-y-0 w-8 h-8" />
-        <span className="text-sm text-muted-foreground">
-          {currentPage + 1} / {totalPages}
-        </span>
-        <CarouselNext className="static translate-y-0 w-8 h-8" />
+      return (
+        <div className="pdf-section">
+          <h3 className="text-2xl font-medium mb-4 pdf-section-title">HEARTI Dimension Analysis</h3>
+          <DimensionCard 
+            dimension={dimension as 'humility' | 'empathy' | 'accountability' | 'resiliency' | 'transparency' | 'inclusivity'}
+            score={score}
+          />
+        </div>
+      );
+    }
+    
+    // Last page: Footer
+    return <ReportFooter />;
+  };
+  
+  // Handle page navigation
+  const goToPrevPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+  
+  const goToNextPage = () => {
+    if (currentPage < dimensionEntries.length + 2) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+  
+  return (
+    <div className="relative pdf-page">
+      {/* Page content */}
+      <div className="min-h-[70vh]">
+        {renderPageContent()}
       </div>
-    </Carousel>
+      
+      {/* Navigation buttons for swipe */}
+      <div className="absolute inset-0 flex" onClick={(e) => e.stopPropagation()}>
+        <div className="w-1/3 h-full" onClick={goToPrevPage} />
+        <div className="w-1/3 h-full" />
+        <div className="w-1/3 h-full" onClick={goToNextPage} />
+      </div>
+    </div>
   );
 };
 

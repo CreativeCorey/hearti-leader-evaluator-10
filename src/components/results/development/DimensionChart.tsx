@@ -6,6 +6,7 @@ import { BaseRadarChart, DimensionIcons } from '../comparison/radar';
 import { Radar, Tooltip, Legend } from 'recharts';
 import { useRadarChartConfig } from '@/hooks/use-radar-chart-config';
 import { dimensionColors } from './DimensionIcons';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface DimensionChartProps {
   dimensionScores: Record<HEARTIDimension, number>;
@@ -19,6 +20,7 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
   showAllDimensions = false 
 }) => {
   const { config, iconSize } = useRadarChartConfig();
+  const isMobile = useIsMobile();
   
   // Create chart data for all dimensions or just the active one
   const allData = formatDataForRadarChart(dimensionScores);
@@ -29,7 +31,8 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
     return { ...item, value: showAllDimensions ? item.value : 0 };
   });
   
-  const userColor = dimensionColors[activeDimension] || "#6366f1";
+  // Use gold color for user's radar chart when showing all dimensions
+  const userColor = showAllDimensions ? "#FFD700" : (dimensionColors[activeDimension] || "#6366f1");
   
   const chartTitle = showAllDimensions ? 
     "Your Complete HEARTI Spectra" : 
@@ -38,7 +41,7 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
   return (
     <div className="bg-slate-50 p-4 rounded-lg">
       <p className="text-center font-medium text-lg text-indigo-600 mb-2">{chartTitle}</p>
-      <div className="h-[300px] relative">
+      <div className={`${isMobile && showAllDimensions ? 'h-[400px]' : 'h-[300px]'} relative`}>
         <DimensionIcons iconSize={iconSize} />
         
         <BaseRadarChart data={singleDimensionData} config={config}>
@@ -56,7 +59,7 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
             animationDuration={1000}
           />
           <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
-          <Legend />
+          <Legend wrapperStyle={isMobile && showAllDimensions ? { bottom: -30 } : undefined} />
         </BaseRadarChart>
       </div>
     </div>

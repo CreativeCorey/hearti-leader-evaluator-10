@@ -4,7 +4,6 @@ import { HEARTIAssessment } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import ShareResultsCard from './sharing/ShareResultsCard';
-import DemographicsSection from './DemographicsSection';
 import DimensionChart from './development/DimensionChart';
 import ShareButton from './sharing/ShareButton';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -117,10 +116,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
         </CardContent>
       </Card>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <ShareResultsCard assessment={assessment} />
-        <DemographicsSection demographics={assessment.demographics} />
-      </div>
+      {/* Only display ShareResultsCard, remove demographics section */}
+      <ShareResultsCard assessment={assessment} />
     </div>
   );
 };

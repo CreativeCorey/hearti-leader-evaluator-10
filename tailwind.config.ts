@@ -80,6 +80,16 @@ export default {
           DEFAULT: 'hsl(var(--success))',
           foreground: 'hsl(var(--success-foreground))'
         },
+        // Gold color for user HEARTI spectra
+        gold: '#FFD700',
+        // Privacy-related colors for GDPR and CCPA compliance
+        privacy: {
+          safe: '#10B981',  // Green for secure/compliant elements
+          warning: '#F59E0B', // Amber for elements requiring attention
+          danger: '#EF4444',  // Red for non-compliant elements
+          info: '#3B82F6',    // Blue for information
+          neutral: '#6B7280'  // Gray for general privacy elements
+        }
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

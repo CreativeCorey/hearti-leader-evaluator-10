@@ -81,6 +81,28 @@
     transform: translateY(-10px);
   }
   
+  /* HEARTI Spectra title with improved styling */
+  .hearti-spectra-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #4338ca;
+    text-align: center;
+    margin-bottom: 1rem;
+    letter-spacing: 0.025em;
+    position: relative;
+    padding-bottom: 0.5rem;
+  }
+  
+  .hearti-spectra-title:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 30%;
+    right: 30%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #4338ca, transparent);
+  }
+  
   /* Touch target improvements for mobile */
   @media (max-width: 640px) {
     /* Make main content wider on mobile */
@@ -89,6 +111,15 @@
       max-width: 96% !important;
       padding-left: 2% !important;
       padding-right: 2% !important;
+    }
+    
+    /* Fix header positioning on mobile */
+    .mobile-header {
+      padding-top: 24px;
+    }
+    
+    .logo-title-container {
+      padding-top: 60px;
     }
     
     .results-tabs {
@@ -104,6 +135,21 @@
     .radar-chart-container {
       height: 340px;
       margin-bottom: 25px;
+    }
+    
+    /* Fix for development view on mobile */
+    .mobile-development-view {
+      height: 400px !important;
+      margin-bottom: 40px !important;
+    }
+    
+    /* Fix for complete view chart on mobile */
+    .mobile-complete-view .recharts-legend-wrapper {
+      bottom: -35px !important;
+    }
+    
+    .mobile-chart-container {
+      margin-bottom: 30px;
     }
     
     .radar-chart-legend {
