@@ -2,7 +2,6 @@
 import React from 'react';
 import { HEARTIAssessment } from '@/types';
 import ReportHeader from '../ReportHeader';
-import SpectraCharts from '../SpectraCharts';
 import DimensionCard from '../DimensionCard';
 import ReportFooter from '../ReportFooter';
 
@@ -29,14 +28,9 @@ const ReportCarousel: React.FC<ReportCarouselProps> = ({
       return <ReportHeader assessment={assessment} />;
     }
     
-    // Page 1: Charts
-    if (currentPage === 1) {
-      return <SpectraCharts assessment={assessment} assessments={assessments} />;
-    }
-    
-    // Pages 2-7: Dimension cards (one per page)
-    if (currentPage >= 2 && currentPage < dimensionEntries.length + 2) {
-      const dimensionIndex = currentPage - 2;
+    // Pages 1-6: Dimension cards (one per page)
+    if (currentPage >= 1 && currentPage < dimensionEntries.length + 1) {
+      const dimensionIndex = currentPage - 1;
       const [dimension, score] = dimensionEntries[dimensionIndex];
       
       return (
@@ -62,13 +56,13 @@ const ReportCarousel: React.FC<ReportCarouselProps> = ({
   };
   
   const goToNextPage = () => {
-    if (currentPage < dimensionEntries.length + 2) {
+    if (currentPage < dimensionEntries.length + 1) {
       setCurrentPage(currentPage + 1);
     }
   };
   
   // For PDF export, we need to render all pages but make only the current one visible
-  const totalPages = dimensionEntries.length + 3; // Header, Charts, Dimensions, Footer
+  const totalPages = dimensionEntries.length + 2; // Header, Dimensions, Footer
   
   return (
     <div className="relative pdf-page">
@@ -85,13 +79,12 @@ const ReportCarousel: React.FC<ReportCarouselProps> = ({
           return (
             <div key={`pdf-page-${index}`} className="pdf-page" style={{ display: 'none' }}>
               {index === 0 ? <ReportHeader assessment={assessment} /> :
-               index === 1 ? <SpectraCharts assessment={assessment} assessments={assessments} /> :
-               index < dimensionEntries.length + 2 ? (
+               index < dimensionEntries.length + 1 ? (
                  <div className="pdf-section">
                    <h3 className="text-2xl font-medium mb-4 pdf-section-title">HEARTI Dimension Analysis</h3>
                    <DimensionCard 
-                     dimension={dimensionEntries[index - 2][0] as 'humility' | 'empathy' | 'accountability' | 'resiliency' | 'transparency' | 'inclusivity'}
-                     score={dimensionEntries[index - 2][1]}
+                     dimension={dimensionEntries[index - 1][0] as 'humility' | 'empathy' | 'accountability' | 'resiliency' | 'transparency' | 'inclusivity'}
+                     score={dimensionEntries[index - 1][1]}
                    />
                  </div>
                ) : <ReportFooter />}

@@ -6,7 +6,6 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import ReportCarousel from './report/carousel/ReportCarousel';
 import DesktopReportView from './report/desktop/DesktopReportView';
 import MobilePagination from './report/mobile/MobilePagination';
-import ReportActionButtons from './report/ReportActionButtons';
 
 interface ReportTabProps {
   assessment: HEARTIAssessment;
@@ -27,21 +26,10 @@ const ReportTab: React.FC<ReportTabProps> = ({
 }) => {
   const isMobile = useIsMobile();
   const [currentPage, setCurrentPage] = useState(0);
-  const totalPages = Object.keys(assessment.dimensionScores).length + 2; // Header, Charts, 6 Dimensions, Footer
+  const totalPages = Object.keys(assessment.dimensionScores).length + 1; // Header, 6 Dimensions, Footer
   
   return (
     <div className="space-y-4 sm:space-y-6 w-full">
-      {showExportButton && (
-        <div className="flex justify-end">
-          <ReportActionButtons 
-            assessment={assessment}
-            onExportPDF={onExportPDF}
-            exportingPdf={exportingPdf}
-            isMobile={isMobile}
-          />
-        </div>
-      )}
-      
       {/* Mobile pagination indicator */}
       {isMobile && (
         <MobilePagination 

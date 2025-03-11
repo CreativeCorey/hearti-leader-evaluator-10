@@ -2,7 +2,6 @@
 import React from 'react';
 import { HEARTIAssessment } from '@/types';
 import ReportHeader from '../ReportHeader';
-import SpectraCharts from '../SpectraCharts';
 import DimensionCard from '../DimensionCard';
 import ReportFooter from '../ReportFooter';
 
@@ -15,8 +14,6 @@ const DesktopReportView: React.FC<DesktopReportViewProps> = ({ assessment, asses
   return (
     <div className="pdf-page">
       <ReportHeader assessment={assessment} />
-      
-      <SpectraCharts assessment={assessment} assessments={assessments} />
       
       <div className="pdf-section">
         <h3 className="text-2xl font-medium mb-4 pdf-section-title">HEARTI Dimension Analysis</h3>

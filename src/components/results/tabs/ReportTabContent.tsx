@@ -26,11 +26,9 @@ const ReportTabContent: React.FC<ReportTabContentProps> = ({
     <>
       {!isMobile && (
         <TabHeader
-          title="HEARTI:Leader Quotient Report"
-          description="Measuring Leadership Competencies Designed for the New World of Work"
-          showExportButton
-          onExportPDF={onExportPDF}
-          exportingPdf={exportingPdf}
+          title="HEARTI:Leader Guide"
+          description="Insights and recommendations to help you develop your leadership skills"
+          showExportButton={false}
         />
       )}
       
@@ -41,7 +39,7 @@ const ReportTabContent: React.FC<ReportTabContentProps> = ({
           reportRef={reportRef}
           onExportPDF={onExportPDF}
           exportingPdf={exportingPdf}
-          showExportButton={isMobile} // Only show the button on mobile in ReportTab
+          showExportButton={false}
         />
       </div>
     </>

@@ -68,7 +68,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
           {getDataVizTabName()}
         </TabsTrigger>
         <TabsTrigger value="report" className="text-xs md:text-sm whitespace-nowrap">
-          {t('tabs.report')}
+          {t('tabs.guide')}
         </TabsTrigger>
         <TabsTrigger value="development" className="text-xs md:text-sm whitespace-nowrap">
           {t('tabs.developSkills')}

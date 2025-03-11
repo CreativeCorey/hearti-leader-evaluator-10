@@ -1,9 +1,11 @@
-
 import React from 'react';
 import { HEARTIAssessment } from '@/types';
 import { Button } from '@/components/ui/button';
-import { Download, Share2 } from 'lucide-react';
+import { Download } from 'lucide-react';
 import { useLanguage } from '@/contexts/language/LanguageContext';
+
+// This component is no longer used in the application
+// Keeping it simple for potential future use
 
 interface ReportActionButtonsProps {
   assessment: HEARTIAssessment;
@@ -22,16 +24,7 @@ const ReportActionButtons: React.FC<ReportActionButtonsProps> = ({
   
   return (
     <div className={`flex ${isMobile ? 'flex-wrap' : 'flex-row space-x-3'} justify-end mb-4`}>
-      <Button
-        size={isMobile ? "sm" : "default"}
-        variant="outline"
-        className={`pdf-export-button ${isMobile ? 'text-xs py-1.5 px-2 h-8' : ''}`}
-        onClick={onExportPDF}
-        disabled={exportingPdf}
-      >
-        <Download size={isMobile ? 14 : 16} className={isMobile ? "mr-1" : "mr-1.5"} />
-        {exportingPdf ? "Exporting..." : "Export PDF"}
-      </Button>
+      {/* Export button removed as per requirements */}
     </div>
   );
 };
