@@ -9,14 +9,18 @@ interface UseTabManagementProps {
 
 export const useTabManagement = ({ userAssessments, loading }: UseTabManagementProps) => {
   const [activeTab, setActiveTab] = useState<'take' | 'results'>('take');
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   
-  // Auto-switch to results tab if user has assessments
+  // Auto-switch to results tab if user has assessments, but only on initial load
   useEffect(() => {
-    if (!loading && userAssessments.length > 0 && activeTab === 'take') {
-      console.log("Auto-switching to results tab due to existing assessment data");
-      setActiveTab('results');
+    if (!loading && !initialLoadComplete) {
+      if (userAssessments.length > 0) {
+        console.log("Initial load - switching to results tab due to existing assessment data");
+        setActiveTab('results');
+      }
+      setInitialLoadComplete(true);
     }
-  }, [userAssessments, activeTab, loading]);
+  }, [userAssessments, loading, initialLoadComplete]);
 
   return {
     activeTab,

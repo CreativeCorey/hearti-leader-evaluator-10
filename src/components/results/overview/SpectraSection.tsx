@@ -20,7 +20,7 @@ const SpectraSection: React.FC<SpectraSectionProps> = ({ assessment }) => {
           <CardDescription className="text-sm">Your leadership dimension scores</CardDescription>
         </div>
       </CardHeader>
-      <CardContent className="px-2 pt-0 pb-6">
+      <CardContent className="px-2 pt-0 pb-8 sm:pb-6">
         <div className="h-[240px] sm:h-[280px] w-full mx-auto max-w-[380px]">
           <DimensionChart 
             dimensionScores={assessment.dimensionScores}

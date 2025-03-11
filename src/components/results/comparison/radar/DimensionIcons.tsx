@@ -11,36 +11,36 @@ interface DimensionIconsProps {
 const DimensionIcons: React.FC<DimensionIconsProps> = ({ iconSize }) => {
   const isMobile = useIsMobile();
   
-  // Optimized positioning that works better across screen sizes
+  // More optimized positioning that works better across screen sizes
   return (
     <div className="absolute inset-0 pointer-events-none">
       {/* Top (Humility) */}
-      <div className="absolute top-[2%] left-[50%] transform -translate-x-1/2">
+      <div className="absolute top-[4%] left-[50%] transform -translate-x-1/2">
         <Gauge size={iconSize} style={{ color: dimensionColors.humility }} />
       </div>
       
       {/* Top Right (Empathy) */}
-      <div className="absolute top-[22%] right-[10%] transform">
+      <div className="absolute top-[25%] right-[12%] transform">
         <HeartHandshake size={iconSize} style={{ color: dimensionColors.empathy }} />
       </div>
       
       {/* Bottom Right (Accountability) */}
-      <div className="absolute bottom-[22%] right-[10%] transform">
+      <div className="absolute bottom-[25%] right-[12%] transform">
         <ChartNoAxesCombined size={iconSize} style={{ color: dimensionColors.accountability }} />
       </div>
       
       {/* Bottom (Resiliency) */}
-      <div className="absolute bottom-[2%] left-[50%] transform -translate-x-1/2">
+      <div className="absolute bottom-[4%] left-[50%] transform -translate-x-1/2">
         <TreePalm size={iconSize} style={{ color: dimensionColors.resiliency }} />
       </div>
       
       {/* Bottom Left (Transparency) */}
-      <div className="absolute bottom-[22%] left-[10%] transform">
+      <div className="absolute bottom-[25%] left-[12%] transform">
         <Blend size={iconSize} style={{ color: dimensionColors.transparency }} />
       </div>
       
       {/* Top Left (Inclusivity) */}
-      <div className="absolute top-[22%] left-[10%] transform">
+      <div className="absolute top-[25%] left-[12%] transform">
         <Users size={iconSize} style={{ color: dimensionColors.inclusivity }} />
       </div>
     </div>

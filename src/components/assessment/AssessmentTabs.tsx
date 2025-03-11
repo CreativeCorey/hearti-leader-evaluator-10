@@ -34,6 +34,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
   const isMobile = useIsMobile();
   const { toast } = useToast();
   const [forcedRender, setForcedRender] = useState(0);
+  const [tabWasManuallySelected, setTabWasManuallySelected] = useState(false);
 
   // Log the active tab for debugging
   useEffect(() => {
@@ -57,6 +58,14 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
     return () => window.removeEventListener('orientationchange', handleResize);
   }, []);
 
+  // Auto-switch to results tab if user has assessments but only on initial load
+  useEffect(() => {
+    if (!tabWasManuallySelected && userAssessments.length > 0 && activeTab === 'take') {
+      console.log("Auto-switching to results tab due to existing assessment data");
+      setActiveTab('results');
+    }
+  }, [userAssessments, activeTab, setActiveTab, tabWasManuallySelected]);
+
   // Handle form completion
   const handleAssessmentComplete = (assessment: HEARTIAssessment) => {
     onComplete(assessment);
@@ -72,6 +81,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
   const handleTabChange = (value: string) => {
     console.log("Tab change requested to:", value);
     if (value === 'take' || value === 'results') {
+      setTabWasManuallySelected(true);
       setActiveTab(value);
       console.log("Tab changed to:", value);
     }

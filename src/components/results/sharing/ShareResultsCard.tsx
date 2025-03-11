@@ -26,7 +26,9 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
   
   const topStrength = sortedDimensions[0];
   const topStrengthScore = assessment.dimensionScores[topStrength];
-  const userColor = "#3953A4";
+  
+  // Use the top strength dimension color for the radar chart
+  const chartColor = dimensionColors[topStrength];
   
   const iconSize = isMobile ? 20 : 18;
   
@@ -118,8 +120,8 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
               <Radar
                 name="Your HEARTI Spectra"
                 dataKey="value"
-                stroke={userColor}
-                fill={userColor}
+                stroke={chartColor}
+                fill={chartColor}
                 fillOpacity={0.6}
                 dot={{ r: 5 }}
                 isAnimationActive={false}
