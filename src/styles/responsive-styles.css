@@ -103,6 +103,13 @@
     background: linear-gradient(90deg, transparent, #4338ca, transparent);
   }
   
+  /* Improved share button styling on mobile */
+  .share-button-mobile {
+    min-width: 0;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  
   /* Touch target improvements for mobile */
   @media (max-width: 640px) {
     /* Make main content wider on mobile */

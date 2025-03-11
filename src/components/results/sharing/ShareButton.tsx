@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Share2 } from 'lucide-react';
 import { HEARTIAssessment } from '@/types';
 import ShareModal from './ShareModal';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ShareButtonProps {
   assessment: HEARTIAssessment;
@@ -19,6 +20,7 @@ const ShareButton: React.FC<ShareButtonProps> = ({
   className
 }) => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const isMobile = useIsMobile();
   
   return (
     <>
@@ -28,8 +30,8 @@ const ShareButton: React.FC<ShareButtonProps> = ({
         onClick={() => setIsShareModalOpen(true)}
         className={className}
       >
-        <Share2 className="mr-2" size={16} />
-        Share Results
+        <Share2 className={isMobile ? "mr-1" : "mr-2"} size={16} />
+        {isMobile ? "Share" : "Share Results"}
       </Button>
       
       <ShareModal

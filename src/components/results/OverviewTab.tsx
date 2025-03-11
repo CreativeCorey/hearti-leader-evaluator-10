@@ -31,7 +31,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
       {/* HEARTI:Leader Score Card */}
       <ScoreCard assessment={assessment} formattedDate={formattedDate} />
       
-      {/* HEARTI Spectra Chart - moved below score card */}
+      {/* HEARTI Spectra Chart */}
       <SpectraSection assessment={assessment} />
       
       {/* Assessment Progress Chart */}

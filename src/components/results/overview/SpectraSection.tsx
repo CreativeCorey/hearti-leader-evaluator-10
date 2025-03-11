@@ -3,7 +3,6 @@ import React from 'react';
 import { HEARTIAssessment } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import DimensionChart from '../development/DimensionChart';
-import ShareButton from '../sharing/ShareButton';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface SpectraSectionProps {
@@ -16,16 +15,9 @@ const SpectraSection: React.FC<SpectraSectionProps> = ({ assessment }) => {
   return (
     <Card>
       <CardHeader className="pb-2">
-        <div className="flex justify-between items-center">
-          <div>
-            <CardTitle className="text-xl md:text-2xl">HEARTI Spectra</CardTitle>
-            <CardDescription className="text-sm">Your leadership dimension scores</CardDescription>
-          </div>
-          <ShareButton 
-            assessment={assessment} 
-            variant="outline"
-            size={isMobile ? "sm" : "default"}
-          />
+        <div>
+          <CardTitle className="text-xl md:text-2xl">HEARTI Spectra</CardTitle>
+          <CardDescription className="text-sm">Your leadership dimension scores</CardDescription>
         </div>
       </CardHeader>
       <CardContent className="px-2 pt-0 pb-8">
