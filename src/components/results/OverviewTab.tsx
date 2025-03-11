@@ -67,6 +67,32 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
       {/* Moved ShareResultsCard to the top */}
       <ShareResultsCard assessment={assessment} />
       
+      {/* HEARTI Spectra Chart - Moved above score card */}
+      <Card>
+        <CardHeader className="pb-2">
+          <div className="flex justify-between items-center">
+            <div>
+              <CardTitle className="text-xl md:text-2xl">HEARTI Spectra</CardTitle>
+              <CardDescription className="text-sm">Your leadership dimension scores</CardDescription>
+            </div>
+            <ShareButton 
+              assessment={assessment} 
+              variant="outline"
+              size={isMobile ? "sm" : "default"}
+            />
+          </div>
+        </CardHeader>
+        <CardContent className="px-2 pt-0 pb-8">
+          <div className="h-[320px] w-full mx-auto max-w-[450px]">
+            <DimensionChart 
+              dimensionScores={assessment.dimensionScores}
+              activeDimension="humility"
+              showAllDimensions={true}
+            />
+          </div>
+        </CardContent>
+      </Card>
+      
       {/* HEARTI:Leader Score Card */}
       <Card>
         <CardHeader className="pb-2">
@@ -115,32 +141,6 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
               </div>
               <p className="text-sm">This dimension has the most potential for growth.</p>
             </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* HEARTI Spectra Chart */}
-      <Card>
-        <CardHeader className="pb-2">
-          <div className="flex justify-between items-center">
-            <div>
-              <CardTitle className="text-xl md:text-2xl">HEARTI Spectra</CardTitle>
-              <CardDescription className="text-sm">Your leadership dimension scores</CardDescription>
-            </div>
-            <ShareButton 
-              assessment={assessment} 
-              variant="outline"
-              size={isMobile ? "sm" : "default"}
-            />
-          </div>
-        </CardHeader>
-        <CardContent className="px-2 pt-0 pb-8">
-          <div className="h-[320px] w-full mx-auto max-w-[450px]">
-            <DimensionChart 
-              dimensionScores={dimensionScores}
-              activeDimension="humility"
-              showAllDimensions={true}
-            />
           </div>
         </CardContent>
       </Card>
