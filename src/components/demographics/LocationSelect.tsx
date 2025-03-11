@@ -19,6 +19,7 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ value, onChange }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { usLocations, otherLocations } = getGroupedLocations();
   const isMobile = useIsMobile();
+  const [focusedIndex, setFocusedIndex] = useState<number>(-1);
 
   // Focus input when popover opens
   useEffect(() => {
@@ -26,6 +27,10 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ value, onChange }) => {
       setTimeout(() => {
         inputRef.current?.focus();
       }, 100);
+    } else {
+      // Reset search when closed
+      setSearchQuery('');
+      setFocusedIndex(-1);
     }
   }, [open]);
 
@@ -35,6 +40,26 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ value, onChange }) => {
     : locations.filter(loc => 
         loc.toLowerCase().includes(searchQuery.toLowerCase())
       );
+
+  // Handle keyboard events for accessibility
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && filteredLocations.length > 0 && focusedIndex >= 0) {
+      // Select the focused item when Enter is pressed
+      onChange(filteredLocations[focusedIndex]);
+      setOpen(false);
+      e.preventDefault();
+    } else if (e.key === 'ArrowDown') {
+      // Move focus down
+      setFocusedIndex(prev => 
+        prev < filteredLocations.length - 1 ? prev + 1 : prev
+      );
+      e.preventDefault();
+    } else if (e.key === 'ArrowUp') {
+      // Move focus up
+      setFocusedIndex(prev => prev > 0 ? prev - 1 : 0);
+      e.preventDefault();
+    }
+  };
 
   return (
     <div className="space-y-3 w-full">
@@ -60,7 +85,10 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ value, onChange }) => {
           alignOffset={0}
           style={{ width: isMobile ? "calc(100vw - 32px)" : "320px", maxWidth: "100%" }}
         >
-          <CommandPrimitive className={`${isMobile ? "max-h-[40vh]" : "max-h-[50vh]"} overflow-auto`}>
+          <CommandPrimitive 
+            className={`${isMobile ? "max-h-[40vh]" : "max-h-[50vh]"} overflow-auto`}
+            onKeyDown={handleKeyDown}
+          >
             <div className="flex items-center border-b px-3">
               <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
               <CommandPrimitive.Input
@@ -118,15 +146,17 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ value, onChange }) => {
                 </>
               )}
               
-              {searchQuery.trim() !== '' && filteredLocations.map((location) => (
+              {searchQuery.trim() !== '' && filteredLocations.map((location, index) => (
                 <LocationItem
                   key={location}
                   location={location}
                   selected={value === location}
+                  focused={index === focusedIndex}
                   onSelect={() => {
                     onChange(location);
                     setOpen(false);
                   }}
+                  onFocus={() => setFocusedIndex(index)}
                   searchQuery={searchQuery}
                   isMobile={isMobile}
                 />
@@ -142,7 +172,9 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ value, onChange }) => {
 interface LocationItemProps {
   location: string;
   selected: boolean;
+  focused?: boolean;
   onSelect: () => void;
+  onFocus?: () => void;
   searchQuery?: string;
   isMobile?: boolean;
 }
@@ -150,7 +182,9 @@ interface LocationItemProps {
 const LocationItem: React.FC<LocationItemProps> = ({ 
   location, 
   selected, 
+  focused,
   onSelect,
+  onFocus,
   searchQuery,
   isMobile
 }) => {
@@ -161,7 +195,12 @@ const LocationItem: React.FC<LocationItemProps> = ({
         key={location}
         value={location}
         onSelect={() => onSelect()}
-        className={`relative flex cursor-default select-none items-center rounded-sm px-3 py-3 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground ${isMobile ? 'text-base' : ''}`}
+        onFocus={onFocus}
+        data-focused={focused}
+        className={cn(
+          `relative flex cursor-default select-none items-center rounded-sm px-3 py-3 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground ${isMobile ? 'text-base' : ''}`,
+          focused && "bg-accent text-accent-foreground"
+        )}
       >
         <Check
           className={cn(
@@ -187,7 +226,12 @@ const LocationItem: React.FC<LocationItemProps> = ({
       key={location}
       value={location}
       onSelect={() => onSelect()}
-      className={`relative flex cursor-default select-none items-center rounded-sm px-3 py-3 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground ${isMobile ? 'text-base' : ''}`}
+      onFocus={onFocus}
+      data-focused={focused}
+      className={cn(
+        `relative flex cursor-default select-none items-center rounded-sm px-3 py-3 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground ${isMobile ? 'text-base' : ''}`,
+        focused && "bg-accent text-accent-foreground"
+      )}
     >
       <Check
         className={cn(
