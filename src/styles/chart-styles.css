@@ -28,12 +28,14 @@
   
   .radar-base .recharts-polar-grid-angle line,
   .radar-base .recharts-polar-grid-concentric circle {
-    stroke: rgba(0, 0, 0, 0.1);
+    stroke: rgba(0, 0, 0, 0.15);
+    stroke-width: 1px;
   }
 
   .radar-base .recharts-polar-angle-axis-tick text {
     font-size: 12px;
     fill: #333;
+    font-weight: 500;
   }
 
   .radar-base .recharts-legend-item-text {

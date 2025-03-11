@@ -23,7 +23,18 @@ const aggregateData = {
 
 const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
   const isMobile = useIsMobile();
-  const chartData = formatDataForRadarChart(assessment.dimensionScores);
+  
+  // Ensure we have valid dimension scores before proceeding
+  const hasValidDimensionScores = assessment && 
+    assessment.dimensionScores && 
+    Object.keys(assessment.dimensionScores).length > 0;
+  
+  // Use sample data if assessment data is missing
+  const userScores = hasValidDimensionScores ? 
+    assessment.dimensionScores : 
+    aggregateData.averageScores;
+  
+  const chartData = formatDataForRadarChart(userScores);
   const benchmarkData = formatDataForRadarChart(aggregateData.averageScores);
   
   // Using pink color for user's radar chart
@@ -34,10 +45,10 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
 
   return (
     <div className="my-6 pdf-section">
-      <h3 className="text-2xl font-medium mb-3 pdf-section-title">Your HEARTI:Leader Spectra</h3>
+      <h3 className="text-2xl font-medium mb-5 pdf-section-title">Your HEARTI:Leader Spectra</h3>
       
-      <div className={`${isMobile ? 'flex flex-col space-y-6' : 'lg:grid lg:grid-cols-2'} gap-4 pdf-charts-grid`}>
-        <div className={`bg-slate-50 p-4 rounded-lg shadow-sm pdf-chart-column`}>
+      <div className={`${isMobile ? 'flex flex-col space-y-8' : 'lg:grid lg:grid-cols-2'} gap-6 pdf-charts-grid`}>
+        <div className={`bg-slate-50 p-6 rounded-lg shadow-sm pdf-chart-column`}>
           <RadarSpectraChart
             data={chartData}
             title="Your HEARTI Spectra"
@@ -46,7 +57,7 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
           />
         </div>
         
-        <div className={`bg-slate-50 p-4 rounded-lg shadow-sm pdf-chart-column ${isMobile ? 'mt-4' : ''}`}>
+        <div className={`bg-slate-50 p-6 rounded-lg shadow-sm pdf-chart-column ${isMobile ? 'mt-4' : ''}`}>
           <RadarSpectraChart
             data={benchmarkData}
             title="Global HEARTI:Leader Benchmark"
@@ -56,7 +67,7 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment }) => {
         </div>
       </div>
       
-      <p className="text-sm text-muted-foreground mt-6">
+      <p className="text-sm text-muted-foreground mt-8 leading-relaxed">
         The HEARTI:Leader Quotient report provides you with information about your strengths and areas that you can develop further. 
         The charts show your HEARTI:Leader Spectra - a visualization of your HEARTI competencies based on your responses, and the global benchmark for visual comparison.
         This information is a reference point only. 

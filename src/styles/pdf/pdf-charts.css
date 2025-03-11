@@ -8,7 +8,7 @@
     page-break-inside: avoid;
     height: 350px !important;
     width: 100% !important;
-    margin: 0.25in 0;
+    margin: 0.25in auto;
     position: relative;
   }
   
@@ -40,6 +40,9 @@
     width: 100%;
     padding: 0.3in !important;
     margin-bottom: 0.3in;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
   
   @media screen and (min-width: 768px), print {
@@ -86,16 +89,18 @@
   /* Radar polygon and curve styling */
   .pdf-container .recharts-radar-polygon {
     stroke-linejoin: round;
-    fill-opacity: 0.6 !important;
+    fill-opacity: 0.7 !important;
   }
   
   .pdf-container .recharts-radar-curve {
     stroke-linecap: round;
+    stroke-width: 2px !important;
   }
   
   .pdf-container .recharts-dot {
     stroke-width: 1px;
     stroke: white;
+    r: 4px !important;
   }
 
   /* Fix for radar charts in PDF */

@@ -45,20 +45,33 @@ const RadarSpectraChart: React.FC<RadarSpectraChartProps> = ({
   
   return (
     <div className={`relative ${className}`}>
-      <p className="text-center font-medium text-lg text-indigo-600 mb-2">{title}</p>
-      <div className="h-[280px] pdf-chart-container relative">
-        <DimensionIcons iconSize={iconSize} />
+      <p className="text-center font-semibold text-lg mb-3">
+        {title}
+      </p>
+      <div className="h-full aspect-square max-w-[300px] mx-auto pdf-chart-container">
+        <DimensionIcons iconSize={isMobile ? Math.max(iconSize - 2, 14) : iconSize} />
         
-        <BaseRadarChart data={data} config={config}>
+        <BaseRadarChart 
+          data={data} 
+          config={{
+            ...config,
+            polarGridStrokeOpacity: 0.6,
+            polarAngleAxisTextSize: isMobile ? 11 : 12,
+            fillOpacity: 0.7,
+            dotSize: isMobile ? 3.5 : 4,
+            activeDotSize: isMobile ? 5 : 6,
+            strokeWidth: 2
+          }}
+        >
           <Radar
             name={title}
             dataKey="value"
             stroke={finalChartColor}
             fill={finalChartColor}
-            fillOpacity={config.fillOpacity}
-            strokeWidth={config.strokeWidth}
-            dot={{ r: isMobile ? 3 : config.dotSize }}
-            activeDot={{ r: isMobile ? 5 : config.activeDotSize }}
+            fillOpacity={0.7}
+            strokeWidth={2}
+            dot={{ r: isMobile ? 3.5 : 4, strokeWidth: 1, fill: "white" }}
+            activeDot={{ r: isMobile ? 5 : 6 }}
             isAnimationActive={false}
           />
           <Tooltip 
@@ -81,7 +94,8 @@ const RadarSpectraChart: React.FC<RadarSpectraChartProps> = ({
               fontSize: isMobile ? '9px' : '10px',
               width: '100%',
               left: 0,
-              textAlign: 'center'
+              textAlign: 'center',
+              color: finalChartColor
             }} 
           />
         </BaseRadarChart>
