@@ -22,11 +22,11 @@ export function useRadarChartConfig(isAnimated = true): {
       gridType: "polygon",
       axisLineType: "polygon",
       strokeWidth: 2,
-      fillOpacity: 0.6,
-      dotSize: isMobile ? 4 : 5,
-      activeDotSize: isMobile ? 7 : 8,
-      outerRadius: isMobile ? "65%" : "70%",
+      fillOpacity: 0.5,
+      dotSize: isMobile ? 3 : 4,
+      activeDotSize: isMobile ? 5 : 6,
+      outerRadius: isMobile ? "65%" : "75%",
     },
-    iconSize: isMobile ? 16 : 18
+    iconSize: isMobile ? 14 : 16
   };
 }

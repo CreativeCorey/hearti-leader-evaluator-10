@@ -17,7 +17,7 @@
   
   .recharts-polar-grid-angle line,
   .recharts-polar-grid-concentric path {
-    stroke-opacity: 0.5;
+    stroke-opacity: 0.4;
   }
   
   /* Fix for legend positioning */
@@ -42,6 +42,13 @@
     aspect-ratio: 1/1;
     height: auto !important;
     max-height: 300px;
+  }
+  
+  /* Better font styling for chart labels */
+  .recharts-polar-angle-axis-tick text {
+    font-size: 10px !important;
+    fill: #6b7280 !important;
+    opacity: 0.85 !important;
   }
   
   /* Fix dimensions icons positioning */
@@ -96,11 +103,11 @@
     
     /* Fix for radar charts */
     .recharts-dot {
-      r: 3.5px !important;
+      r: 3px !important;
     }
     
     .recharts-active-dot {
-      r: 5px !important;
+      r: 4.5px !important;
     }
     
     /* Mobile report charts fixes */

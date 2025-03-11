@@ -28,19 +28,20 @@
   
   .radar-base .recharts-polar-grid-angle line,
   .radar-base .recharts-polar-grid-concentric circle {
-    stroke: rgba(0, 0, 0, 0.15);
-    stroke-width: 1px;
+    stroke: rgba(0, 0, 0, 0.12);
+    stroke-width: 0.75px;
   }
 
   .radar-base .recharts-polar-angle-axis-tick text {
-    font-size: 12px;
-    fill: #333;
+    font-size: 10px;
+    fill: #6b7280;
     font-weight: 500;
+    opacity: 0.85;
   }
 
   .radar-base .recharts-legend-item-text {
-    font-size: 14px;
-    color: #333;
+    font-size: 13px;
+    color: #4b5563;
   }
   
   /* Safari-specific optimizations */
@@ -67,17 +68,18 @@
 
   .polar-chart .recharts-polar-grid-angle line,
   .polar-chart .recharts-polar-grid-concentric circle {
-    stroke: rgba(0, 0, 0, 0.1);
+    stroke: rgba(0, 0, 0, 0.08);
   }
 
   .polar-chart .recharts-polar-angle-axis-tick text {
-    font-size: 12px;
-    fill: #333;
+    font-size: 11px;
+    fill: #6b7280;
+    opacity: 0.85;
   }
 
   .polar-chart .recharts-legend-item-text {
-    font-size: 14px;
-    color: #333;
+    font-size: 13px;
+    color: #4b5563;
   }
 
   .polar-chart .recharts-radial-bar-background {
@@ -105,18 +107,18 @@
   }
 
   .polar-chart-title {
-    font-size: 1.5rem;
-    font-weight: bold;
+    font-size: 1.25rem;
+    font-weight: 500;
     text-align: center;
     margin-bottom: 1rem;
-    color: #333;
+    color: #4b5563;
   }
 
   .polar-chart-subtitle {
     font-size: 0.875rem;
     text-align: center;
     margin-bottom: 1.5rem;
-    color: #666;
+    color: #6b7280;
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
@@ -144,7 +146,7 @@
 
   .polar-chart-legend-label {
     font-size: 0.75rem;
-    color: #666;
+    color: #6b7280;
   }
   
   /* Responsive chart adjustments */

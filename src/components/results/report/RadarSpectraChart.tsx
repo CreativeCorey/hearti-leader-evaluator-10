@@ -18,7 +18,7 @@ const RadarSpectraChart: React.FC<RadarSpectraChartProps> = ({
 }) => {
   return (
     <div className={`flex flex-col space-y-4 ${className}`}>
-      <h4 className="text-md font-medium text-center">{title}</h4>
+      <h4 className="text-md font-medium text-center text-gray-700">{title}</h4>
       <div className="pdf-chart-container radar-base h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <RadarChart 
@@ -26,7 +26,7 @@ const RadarSpectraChart: React.FC<RadarSpectraChartProps> = ({
             cy="50%" 
             outerRadius="80%" 
             data={data}
-            margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
+            margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
           >
             <PolarGrid 
               gridType="polygon" 
@@ -38,8 +38,8 @@ const RadarSpectraChart: React.FC<RadarSpectraChartProps> = ({
               dataKey="name" 
               tick={{ 
                 fill: '#6b7280', 
-                fontSize: 12,
-                fontWeight: 'bold'
+                fontSize: 10,
+                fontWeight: 500
               }} 
               axisLineType="polygon"
               tickLine={false}
@@ -50,7 +50,7 @@ const RadarSpectraChart: React.FC<RadarSpectraChartProps> = ({
               domain={[0, 5]} 
               tick={{ 
                 fill: '#9ca3af',
-                fontSize: 10,
+                fontSize: 9,
                 opacity: 0.8
               }} 
               stroke="#e5e7eb"
@@ -61,7 +61,7 @@ const RadarSpectraChart: React.FC<RadarSpectraChartProps> = ({
               stroke={chartColor}
               fill={chartColor}
               fillOpacity={0.6}
-              dot={{ fill: chartColor, r: 4 }}
+              dot={{ fill: chartColor, r: 3 }}
               isAnimationActive={false}
             />
           </RadarChart>

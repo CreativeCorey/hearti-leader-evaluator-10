@@ -27,7 +27,7 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
   const userPinkColor = "#D946EF";
   
   return (
-    <div className="bg-slate-50 p-6 rounded-lg h-[450px] w-full">
+    <div className="bg-gray-50 p-6 rounded-lg h-[450px] w-full">
       <div className="relative h-full">
         <DimensionIcons iconSize={iconSize} />
         
