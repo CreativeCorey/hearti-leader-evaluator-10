@@ -72,7 +72,8 @@
     width: auto !important;
     text-align: center !important;
     height: auto !important;
-    padding-bottom: 5px;
+    padding-bottom: 10px;
+    position: absolute;
   }
   
   /* Fix for radar chart spacing */
@@ -93,7 +94,8 @@
     
     /* Make radar chart container taller on mobile to avoid legend overlapping */
     .radar-chart-container {
-      height: 280px;
+      height: 300px;
+      margin-bottom: 20px;
     }
     
     .radar-chart-legend {
@@ -119,8 +121,14 @@
     /* Fix legend display on mobile */
     .recharts-legend-wrapper {
       font-size: 10px;
-      bottom: -5px !important;
+      bottom: -10px !important;
       max-width: 90% !important;
+    }
+    
+    /* Fix for modal content on mobile */
+    .popover-content {
+      width: calc(100vw - 24px) !important;
+      max-width: 100vw !important;
     }
   }
   

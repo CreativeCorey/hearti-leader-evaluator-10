@@ -46,26 +46,33 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ value, onChange }) => {
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between"
+            className="w-full justify-between h-12 text-base"
           >
             {value || "Select location..."}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0" align="start" sideOffset={5} side={isMobile ? "bottom" : "right"} alignOffset={0}>
-          <CommandPrimitive className="max-h-[50vh] overflow-auto">
+        <PopoverContent 
+          className="w-full p-0" 
+          align="start" 
+          sideOffset={5} 
+          side={isMobile ? "bottom" : "right"} 
+          alignOffset={0}
+          style={{ width: isMobile ? "calc(100vw - 32px)" : "320px", maxWidth: "100%" }}
+        >
+          <CommandPrimitive className={`${isMobile ? "max-h-[40vh]" : "max-h-[50vh]"} overflow-auto`}>
             <div className="flex items-center border-b px-3">
               <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
               <CommandPrimitive.Input
                 ref={inputRef}
                 placeholder="Search location..."
-                className="h-10 w-full border-0 bg-transparent outline-none placeholder:text-muted-foreground flex-1"
+                className="h-12 w-full border-0 bg-transparent outline-none placeholder:text-muted-foreground flex-1 text-base"
                 value={searchQuery}
                 onValueChange={setSearchQuery}
               />
             </div>
-            <CommandPrimitive.List>
-              <CommandPrimitive.Empty>No location found.</CommandPrimitive.Empty>
+            <CommandPrimitive.List className="p-2">
+              <CommandPrimitive.Empty className="py-6 text-center">No location found.</CommandPrimitive.Empty>
               
               {searchQuery.trim() === '' && (
                 <>
@@ -79,6 +86,7 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ value, onChange }) => {
                           onChange(location);
                           setOpen(false);
                         }}
+                        isMobile={isMobile}
                       />
                     ))}
                     {usLocations.length > 5 && (
@@ -98,6 +106,7 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ value, onChange }) => {
                           onChange(location);
                           setOpen(false);
                         }}
+                        isMobile={isMobile}
                       />
                     ))}
                     {otherLocations.length > 5 && (
@@ -119,6 +128,7 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ value, onChange }) => {
                     setOpen(false);
                   }}
                   searchQuery={searchQuery}
+                  isMobile={isMobile}
                 />
               ))}
             </CommandPrimitive.List>
@@ -134,22 +144,24 @@ interface LocationItemProps {
   selected: boolean;
   onSelect: () => void;
   searchQuery?: string;
+  isMobile?: boolean;
 }
 
 const LocationItem: React.FC<LocationItemProps> = ({ 
   location, 
   selected, 
   onSelect,
-  searchQuery
+  searchQuery,
+  isMobile
 }) => {
-  // Highlight matching text if search query is provided
+  // Standard item without search highlighting
   if (!searchQuery) {
     return (
       <CommandPrimitive.Item
         key={location}
         value={location}
         onSelect={() => onSelect()}
-        className="relative flex cursor-default select-none items-center rounded-sm px-2 py-3 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground"
+        className={`relative flex cursor-default select-none items-center rounded-sm px-3 py-3 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground ${isMobile ? 'text-base' : ''}`}
       >
         <Check
           className={cn(
@@ -175,7 +187,7 @@ const LocationItem: React.FC<LocationItemProps> = ({
       key={location}
       value={location}
       onSelect={() => onSelect()}
-      className="relative flex cursor-default select-none items-center rounded-sm px-2 py-3 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground"
+      className={`relative flex cursor-default select-none items-center rounded-sm px-3 py-3 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground ${isMobile ? 'text-base' : ''}`}
     >
       <Check
         className={cn(

@@ -86,9 +86,9 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
               <Users size={iconSize} style={{ color: dimensionColors.inclusivity }} />
             </div>
             
-            {/* Fixed hexagon with correct proportions and centered initial */}
+            {/* Fixed hexagon with centered initial */}
             <div className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 z-10">
-              {/* SVG hexagon with correct width-to-height ratio */}
+              {/* SVG hexagon with proper proportions */}
               <svg 
                 width="60" 
                 height="52" 
@@ -102,8 +102,8 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
                   strokeWidth="2"
                 />
               </svg>
-              {/* Centered initial inside hexagon */}
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10">
+              {/* Properly centered initial inside the hexagon */}
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
                 <span 
                   className="text-2xl font-bold"
                   style={{ color: dimensionColors[topStrength] }}

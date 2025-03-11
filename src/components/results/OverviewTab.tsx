@@ -55,8 +55,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
             />
           </div>
         </CardHeader>
-        <CardContent className="px-2 pt-0 pb-6">
-          <div className="h-[300px] w-full mx-auto max-w-[450px]">
+        <CardContent className="px-2 pt-0 pb-8">
+          <div className="h-[320px] w-full mx-auto max-w-[450px]">
             <DimensionChart 
               dimensionScores={dimensionScores}
               activeDimension="humility"
