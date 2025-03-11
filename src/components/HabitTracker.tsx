@@ -16,21 +16,21 @@ const HabitTracker: React.FC<HabitTrackerProps> = ({ focusDimension }) => {
   return (
     <Card className="shadow-lg border-0 overflow-hidden">
       <CardHeader className="bg-gradient-to-r from-blue to-light-blue text-white">
-        <CardTitle className="text-2xl flex items-center gap-2">
+        <CardTitle className="text-xl sm:text-2xl flex items-center gap-2">
           <Hexagon className="text-white" size={24} />
           HEARTI™ Habit Tracker
         </CardTitle>
-        <CardDescription className="text-blue-100 flex items-center gap-2">
+        <CardDescription className="text-blue-100 flex items-center gap-2 text-sm sm:text-base">
           <Calendar className="text-blue-100" size={16} />
-          Build consistent habits by practicing them 30 times to form lasting behaviors
+          Build consistent habits by practicing them 30 times
         </CardDescription>
       </CardHeader>
-      <CardContent className={`${isMobile ? 'p-3' : 'p-6'} bg-gray-50`}>
+      <CardContent className={`${isMobile ? 'p-2 sm:p-3' : 'p-6'} bg-gray-50`}>
         <HabitTrackerCore focusDimension={focusDimension} />
       </CardContent>
-      <CardFooter className="bg-white p-4 text-sm text-muted-foreground border-t flex items-center">
+      <CardFooter className="bg-white p-3 text-xs sm:text-sm text-muted-foreground border-t flex items-center">
         <Target size={16} className="mr-2 text-blue-600" />
-        <p>Complete each habit 30 times to turn it into a lasting behavioral change.</p>
+        <p>Complete each habit 30 times to build lasting behavioral change.</p>
       </CardFooter>
     </Card>
   );

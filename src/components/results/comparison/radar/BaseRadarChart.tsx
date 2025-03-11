@@ -23,12 +23,12 @@ const BaseRadarChart: React.FC<BaseRadarChartProps> = ({
     <ResponsiveContainer width="100%" height="100%" className={className}>
       <RadarChart 
         cx="50%" 
-        cy="45%" 
+        cy="43%" 
         outerRadius={config.outerRadius} 
         width={500}
         height={500}
         data={data}
-        margin={{ top: 0, right: 0, bottom: 20, left: 0 }} 
+        margin={{ top: 0, right: 0, bottom: 25, left: 0 }} 
       >
         <PolarGrid 
           gridType={config.gridType} 
@@ -54,7 +54,7 @@ const BaseRadarChart: React.FC<BaseRadarChartProps> = ({
           domain={[0, 5]} 
           tick={{ 
             fill: '#9ca3af',
-            fontSize: isMobile ? 8 : 10,
+            fontSize: isMobile ? 9 : 10,
             opacity: 0.8
           }} 
           stroke="#e5e7eb"

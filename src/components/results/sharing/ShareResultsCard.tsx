@@ -87,30 +87,29 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
             </div>
             
             {/* Fixed hexagon with centered initial */}
-            <div className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 z-10">
-              {/* SVG hexagon with proper proportions */}
+            <div className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 z-10 flex items-center justify-center">
+              {/* SVG hexagon with proper aspect ratio */}
               <svg 
-                width="60" 
-                height="52" 
-                viewBox="0 0 60 52" 
-                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                width="48" 
+                height="48" 
+                viewBox="0 0 48 48" 
+                className="absolute"
+                preserveAspectRatio="xMidYMid meet"
               >
                 <polygon 
-                  points="30,0 60,15 60,37 30,52 0,37 0,15"
+                  points="24,4 44,14 44,34 24,44 4,34 4,14"
                   fill="white" 
                   stroke={dimensionColors[topStrength]} 
                   strokeWidth="2"
                 />
               </svg>
-              {/* Properly centered initial inside the hexagon */}
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
-                <span 
-                  className="text-2xl font-bold"
-                  style={{ color: dimensionColors[topStrength] }}
-                >
-                  {topDimensionInitial}
-                </span>
-              </div>
+              {/* Centered initial inside the hexagon */}
+              <span 
+                className="relative z-20 text-2xl font-bold"
+                style={{ color: dimensionColors[topStrength] }}
+              >
+                {topDimensionInitial}
+              </span>
             </div>
           </div>
           

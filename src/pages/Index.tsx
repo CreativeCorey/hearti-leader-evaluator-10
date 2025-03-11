@@ -47,7 +47,7 @@ const Index = () => {
 
   // Ready to render content now
   return (
-    <div className={`w-full mx-auto py-2 sm:py-6 ${viewTransitioning ? 'opacity-90 transition-opacity duration-150' : ''}`}>
+    <div className={`w-full mx-auto py-2 sm:py-4 ${viewTransitioning ? 'opacity-90 transition-opacity duration-150' : ''}`}>
       <div className="w-full mx-auto">
         <Header />
         
