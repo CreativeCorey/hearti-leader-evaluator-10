@@ -169,14 +169,14 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
                 <div className="flex items-center">
                   <Crown size={16} className="mr-2" />
                   <span className="font-medium text-green-800">
-                    <span className="font-semibold">Strength</span> {getTranslatedDimensionName(topStrength)}
+                    <span className="font-semibold">Strength:</span> {getTranslatedDimensionName(topStrength)}
                   </span>
                 </div>
                 <div>
                   {getDimensionIcon(topStrength)}
                 </div>
               </div>
-              <p className="text-green-700 font-semibold mt-1">
+              <p className="text-green-700 font-semibold mt-1 text-center">
                 {topStrengthScore}/5
               </p>
             </div>
