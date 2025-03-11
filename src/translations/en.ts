@@ -1,4 +1,3 @@
-
 export const en = {
   common: {
     loading: "Loading...",
@@ -38,11 +37,11 @@ export const en = {
     reload: "Reload Page",
     selected: "Selected",
     scoreLabels: {
-      "1": "Never",
+      "1": "Nearly Never",
       "2": "Rarely",
       "3": "Sometimes",
       "4": "Often",
-      "5": "Always"
+      "5": "Almost Always"
     },
     questions: {
       // Humility
