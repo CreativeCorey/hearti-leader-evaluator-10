@@ -15,17 +15,17 @@ const Header: React.FC = () => {
           variant="outline"
           size="sm"
           onClick={toggleAnonymousMode}
-          className="flex items-center gap-1"
+          className="flex items-center gap-1 text-xs"
         >
           {anonymousMode ? (
             <>
               <UserCheck size={16} className="text-green-500" />
-              <span className="hidden md:inline text-xs">Anonymous Mode</span>
+              <span className="hidden md:inline">Anonymous Mode</span>
             </>
           ) : (
             <>
               <UserX size={16} />
-              <span className="hidden md:inline text-xs">Enable Anonymous</span>
+              <span className="hidden md:inline">Enable Anonymous</span>
             </>
           )}
         </Button>
@@ -45,14 +45,15 @@ const Header: React.FC = () => {
         {user && !anonymousMode ? (
           <Button
             variant="ghost"
+            size="sm"
             onClick={signOut}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 text-xs"
           >
-            <LogOut size={18} />
+            <LogOut size={16} />
             <span className="hidden md:inline">Sign Out</span>
           </Button>
         ) : !user && !anonymousMode ? (
-          <Button asChild>
+          <Button asChild size="sm" className="text-xs">
             <Link to="/auth">Sign In</Link>
           </Button>
         ) : null}
