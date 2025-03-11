@@ -25,14 +25,14 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   
   return (
     <div className="space-y-6">
-      {/* Share Results Card at the top */}
+      {/* HEARTI Spectra Chart at the top */}
+      <SpectraSection assessment={assessment} />
+      
+      {/* Share Results Card */}
       <ShareSection assessment={assessment} />
       
       {/* HEARTI:Leader Score Card */}
       <ScoreCard assessment={assessment} formattedDate={formattedDate} />
-      
-      {/* HEARTI Spectra Chart */}
-      <SpectraSection assessment={assessment} />
       
       {/* Assessment Progress Chart */}
       <ProgressChart assessment={assessment} assessments={assessments} />

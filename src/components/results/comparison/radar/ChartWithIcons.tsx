@@ -15,6 +15,9 @@ interface ChartWithIconsProps {
   className?: string;
 }
 
+// Using pink color for user charts
+const USER_CHART_COLOR = "#D946EF";
+
 const ChartWithIcons: React.FC<ChartWithIconsProps> = ({ 
   data, 
   chartColor, 
@@ -25,6 +28,10 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
 }) => {
   const { config, iconSize } = useRadarChartConfig(isAnimationActive);
   
+  // Use pink color for user charts (title containing "Your")
+  const isUserChart = chartTitle.toLowerCase().includes("your");
+  const finalChartColor = isUserChart ? USER_CHART_COLOR : chartColor;
+  
   return (
     <div className={`relative h-full w-full flex items-center justify-center ${className}`}>
       {showIcons && <DimensionIcons iconSize={iconSize} />}
@@ -33,8 +40,8 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
         <Radar
           name={chartTitle}
           dataKey="value"
-          stroke={chartColor}
-          fill={chartColor}
+          stroke={finalChartColor}
+          fill={finalChartColor}
           fillOpacity={config.fillOpacity}
           strokeWidth={config.strokeWidth}
           dot={{ r: config.dotSize }}

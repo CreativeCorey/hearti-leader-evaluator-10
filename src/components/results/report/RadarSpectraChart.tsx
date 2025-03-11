@@ -12,13 +12,20 @@ interface RadarSpectraChartProps {
   className?: string;
 }
 
+// Use pink for user spectra
+const USER_SPECTRA_COLOR = "#D946EF";
+
 const RadarSpectraChart: React.FC<RadarSpectraChartProps> = ({ 
   data, 
   title, 
-  chartColor,
+  chartColor = USER_SPECTRA_COLOR, // Default to pink for user data
   className = ""
 }) => {
   const { config, iconSize } = useRadarChartConfig(false); // No animation for reports
+  
+  // Determine if this is the user's chart to apply pink color
+  const isUserChart = title.toLowerCase().includes("your") || title.toLowerCase().includes("you");
+  const finalChartColor = isUserChart ? USER_SPECTRA_COLOR : chartColor;
   
   return (
     <div className={`relative ${className}`}>
@@ -30,8 +37,8 @@ const RadarSpectraChart: React.FC<RadarSpectraChartProps> = ({
           <Radar
             name={title}
             dataKey="value"
-            stroke={chartColor}
-            fill={chartColor}
+            stroke={finalChartColor}
+            fill={finalChartColor}
             fillOpacity={config.fillOpacity}
             strokeWidth={config.strokeWidth}
             dot={{ r: config.dotSize }}

@@ -80,8 +80,11 @@ export default {
           DEFAULT: 'hsl(var(--success))',
           foreground: 'hsl(var(--success-foreground))'
         },
-        // Gold color for user HEARTI spectra
-        gold: '#FFD700',
+        // Updated colors for HEARTI spectra
+        spectra: {
+          user: '#D946EF',     // Pink for user spectra (instead of gold)
+          resiliency: '#F97316', // Orange for resiliency
+        },
         // Privacy-related colors for GDPR and CCPA compliance
         privacy: {
           safe: '#10B981',  // Green for secure/compliant elements

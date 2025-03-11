@@ -31,8 +31,8 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
     return { ...item, value: showAllDimensions ? item.value : 0 };
   });
   
-  // Use gold color for user's radar chart when showing all dimensions
-  const userColor = showAllDimensions ? "#FFD700" : (dimensionColors[activeDimension] || "#6366f1");
+  // Use pink color for user's radar chart when showing all dimensions (instead of gold)
+  const userColor = showAllDimensions ? "#D946EF" : (dimensionColors[activeDimension] || "#6366f1");
   
   const chartTitle = showAllDimensions ? 
     "Your Complete HEARTI Spectra" : 

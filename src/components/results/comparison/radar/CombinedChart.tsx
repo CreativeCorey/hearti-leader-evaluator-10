@@ -23,8 +23,8 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
 }) => {
   const { config, iconSize } = useRadarChartConfig();
   
-  // Using gold color for user data
-  const userGoldColor = "#FFD700";
+  // Using pink color for user data instead of gold
+  const userPinkColor = "#D946EF";
   
   return (
     <div className="bg-slate-50 p-6 rounded-lg h-[450px] w-full">
@@ -49,12 +49,12 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
             />
           )}
           
-          {/* Render user data with gold color and ensure it's on top by being last */}
+          {/* Render user data with pink color and ensure it's on top by being last */}
           <Radar
             name="Your HEARTI Spectra"
             dataKey="value"
-            stroke={userGoldColor}
-            fill={userGoldColor}
+            stroke={userPinkColor}
+            fill={userPinkColor}
             fillOpacity={config.fillOpacity}
             strokeWidth={config.strokeWidth}
             dot={{ r: config.dotSize }}

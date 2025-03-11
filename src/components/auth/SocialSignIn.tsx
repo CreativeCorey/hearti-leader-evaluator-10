@@ -38,7 +38,12 @@ const SocialSignIn: React.FC = () => {
   };
   
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 gap-4">
+      <p className="text-center text-sm text-muted-foreground">
+        Social sign-in options coming soon
+      </p>
+      {/* Google and Apple buttons hidden for now */}
+      {/* 
       <Button 
         variant="outline" 
         className="w-full" 
@@ -74,6 +79,7 @@ const SocialSignIn: React.FC = () => {
         <Apple className="mr-2 h-4 w-4" />
         Apple
       </Button>
+      */}
     </div>
   );
 };

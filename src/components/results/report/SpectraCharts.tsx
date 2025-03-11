@@ -33,7 +33,8 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment, assessments =
   const chartData = formatDataForRadarChart(assessment.dimensionScores);
   const benchmarkData = formatDataForRadarChart(aggregateData.averageScores);
   
-  const userGoldColor = "#FFD700";
+  // Using pink color for user's radar chart (instead of gold)
+  const userPinkColor = "#D946EF";
   const comparisonColors = {
     average: "#8b5cf6",
   };
@@ -54,7 +55,7 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment, assessments =
       humility: "#8b5cf6",
       empathy: "#ec4899",
       accountability: "#ef4444",
-      resiliency: "#f59e0b",
+      resiliency: "#F97316", // Changed to orange from #f59e0b
       transparency: "#10b981",
       inclusivity: "#3b82f6"
     };
@@ -71,7 +72,7 @@ const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment, assessments =
           <RadarSpectraChart
             data={chartData}
             title="Your HEARTI Spectra"
-            chartColor={userGoldColor}
+            chartColor={userPinkColor}
           />
         </div>
         

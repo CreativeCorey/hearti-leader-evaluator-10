@@ -2,7 +2,7 @@
 @tailwind components;
 
 @layer components {
-  /* HEARTI dimension colors - updated with swapped colors for empathy and transparency */
+  /* HEARTI dimension colors - updated with pink for user and orange for resiliency */
   .dimension-humility {
     color: #EE2D67;
   }
@@ -16,7 +16,7 @@
   }
   
   .dimension-resiliency {
-    color: #FFCC33;
+    color: #F97316; /* Changed to orange */
   }
   
   .dimension-transparency {
@@ -25,5 +25,10 @@
   
   .dimension-inclusivity {
     color: #5B0F58;
+  }
+  
+  /* User spectra color is now pink */
+  .user-spectra {
+    color: #D946EF;
   }
 }
