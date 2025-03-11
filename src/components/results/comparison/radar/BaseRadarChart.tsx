@@ -25,6 +25,8 @@ const BaseRadarChart: React.FC<BaseRadarChartProps> = ({
         cx="50%" 
         cy="50%" 
         outerRadius={config.outerRadius} 
+        width={500}
+        height={500}
         data={data}
       >
         <PolarGrid 

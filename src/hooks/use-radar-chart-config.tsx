@@ -23,10 +23,10 @@ export function useRadarChartConfig(isAnimated = true): {
       axisLineType: "polygon",
       strokeWidth: 2,
       fillOpacity: 0.6,
-      dotSize: 5,
-      activeDotSize: 8,
-      outerRadius: isMobile ? "60%" : "65%",
+      dotSize: isMobile ? 3 : 5,
+      activeDotSize: isMobile ? 6 : 8,
+      outerRadius: isMobile ? "55%" : "60%",
     },
-    iconSize: isMobile ? 20 : 18
+    iconSize: isMobile ? 18 : 18
   };
 }
