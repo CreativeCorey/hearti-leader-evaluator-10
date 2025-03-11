@@ -4,7 +4,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HEARTIAssessment } from '@/types';
 import AssessmentForm from '@/components/AssessmentForm';
 import ResultsDisplay from '@/components/ResultsDisplay';
-import HistoricalResults from '@/components/HistoricalResults';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Loader2 } from 'lucide-react';
@@ -62,7 +61,10 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
           {latestAssessment && (
             <div>
               <h2 className="text-xl font-bold mb-4 text-orange">Latest Assessment Results</h2>
-              <ResultsDisplay assessment={latestAssessment} />
+              <ResultsDisplay 
+                assessment={latestAssessment} 
+                assessments={userAssessments}
+              />
               
               <div className="mt-4 sm:mt-6 flex gap-2 sm:gap-3">
                 <Button 
@@ -75,17 +77,6 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
                   Send to Google Sheets
                 </Button>
               </div>
-            </div>
-          )}
-          
-          {userAssessments.length > 1 && (
-            <div>
-              <Separator className="my-4 sm:my-8" />
-              <h2 className="text-xl font-bold mb-4 text-blue">Assessment History</h2>
-              <HistoricalResults 
-                assessments={userAssessments} 
-                onSelect={(assessment) => {}} 
-              />
             </div>
           )}
         </div>

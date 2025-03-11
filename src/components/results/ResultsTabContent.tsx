@@ -35,7 +35,6 @@ const ResultsTabContent: React.FC<ResultsTabContentProps> = ({
       <TabsContent value="overview" className="space-y-6">
         <OverviewTabContent 
           assessment={assessment} 
-          assessments={assessments}
           onSelectAssessment={onSelectAssessment}
         />
       </TabsContent>
@@ -51,6 +50,7 @@ const ResultsTabContent: React.FC<ResultsTabContentProps> = ({
       <TabsContent value="report" className="space-y-6">
         <ReportTabContent 
           assessment={assessment}
+          assessments={assessments}
           reportRef={reportRef}
           onExportPDF={onExportPDF}
           exportingPdf={exportingPdf}
@@ -58,7 +58,10 @@ const ResultsTabContent: React.FC<ResultsTabContentProps> = ({
       </TabsContent>
       
       <TabsContent value="development" className="space-y-6">
-        <DevelopmentTabContent topDevelopmentArea={topDevelopmentArea} />
+        <DevelopmentTabContent 
+          topDevelopmentArea={topDevelopmentArea} 
+          assessments={assessments}
+        />
       </TabsContent>
       
       <TabsContent value="habits" className="space-y-6">

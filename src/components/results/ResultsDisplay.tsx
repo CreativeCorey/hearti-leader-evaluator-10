@@ -7,9 +7,15 @@ import { exportToPDF } from './export'; // Updated import path
 
 interface ResultsDisplayProps {
   assessment: HEARTIAssessment;
+  assessments?: HEARTIAssessment[];
+  onSelectAssessment?: (assessment: HEARTIAssessment) => void;
 }
 
-const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
+const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ 
+  assessment, 
+  assessments = [],
+  onSelectAssessment
+}) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [exportingPdf, setExportingPdf] = useState(false);
   const reportRef = useRef<HTMLDivElement>(null);
@@ -63,10 +69,12 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ assessment }) => {
       
       <ResultsTabContent 
         assessment={assessment}
+        assessments={assessments}
         reportRef={reportRef}
         onExportPDF={handleExportPDF}
         exportingPdf={exportingPdf}
         topDevelopmentArea={topDevelopmentArea}
+        onSelectAssessment={onSelectAssessment}
       />
     </Tabs>
   );

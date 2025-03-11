@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { HEARTIDimension } from '@/types';
+import { HEARTIDimension, HEARTIAssessment } from '@/types';
 import { activityData } from '@/data/heartActivities';
 import { addActivityToHabitTracker } from '@/services/habitTrackerService';
 import { useToast } from '@/hooks/use-toast';
@@ -18,9 +19,10 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface DevelopmentTabProps {
   focusDimension: HEARTIDimension;
+  assessments?: HEARTIAssessment[];
 }
 
-const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
+const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension, assessments = [] }) => {
   const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
   const [activeDimension, setActiveDimension] = useState<HEARTIDimension>(focusDimension);
   const [selectedFrequency, setSelectedFrequency] = useState<'daily' | 'weekly' | 'monthly'>('daily');
@@ -31,25 +33,33 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
   
   const activities = activityData.filter(activity => activity.dimension === activeDimension);
   
-  const dimensionScores = {
-    humility: 3.8,
-    empathy: 3.6,
-    accountability: 4.1,
-    resiliency: 3.7,
-    transparency: 3.9,
-    inclusivity: 3.5
+  // Get the most recent assessment's dimension scores
+  const latestAssessment = assessments.length > 0 ? assessments[0] : null;
+  const dimensionScores = latestAssessment ? latestAssessment.dimensionScores : {
+    humility: 0,
+    empathy: 0,
+    accountability: 0,
+    resiliency: 0,
+    transparency: 0,
+    inclusivity: 0
   };
   
   const getDimensionProgressData = () => {
-    return [
-      { date: '2023-10-15', score: 2.7 },
-      { date: '2023-11-20', score: 3.0 },
-      { date: '2023-12-25', score: 3.2 },
-      { date: '2024-01-30', score: 3.5 },
-      { date: '2024-03-05', score: dimensionScores[activeDimension] }
-    ].map(item => ({
-      ...item,
-      formattedDate: format(new Date(item.date), 'MMM d, yy')
+    // Filter assessments for the currently selected dimension and sort by date
+    if (!assessments || assessments.length === 0) {
+      return [];
+    }
+    
+    // Sort assessments by date (oldest first)
+    const sortedAssessments = [...assessments].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+    
+    // Map to data points for the chart
+    return sortedAssessments.map(assessment => ({
+      date: assessment.date,
+      score: assessment.dimensionScores[activeDimension],
+      formattedDate: format(new Date(assessment.date), 'MMM d, yy')
     }));
   };
   
@@ -82,12 +92,12 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
   
   const progressData = getDimensionProgressData();
   const dimensionColors = {
-    humility: '#5B0F58',
-    empathy: '#18B7D9',
-    accountability: '#00A249',
-    resiliency: '#FFCC33',
-    transparency: '#3953A4',
-    inclusivity: '#EE2D67'
+    humility: '#EE2D67',      // Pink
+    empathy: '#3953A4',       // Deep Blue (swapped with transparency)
+    accountability: '#00A249', // Vibrant Green
+    resiliency: '#FFCC33',    // Golden Yellow
+    transparency: '#18B7D9',  // Cyan (swapped with empathy)
+    inclusivity: '#5B0F58'    // Deep Purple
   };
   
   const toggleActivities = () => {
@@ -137,39 +147,50 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
         </p>
       </div>
       
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Your {activeDimension.charAt(0).toUpperCase() + activeDimension.slice(1)} Progress</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[250px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={progressData}
-                margin={{ top: 10, right: 30, left: 0, bottom: 10 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="formattedDate" />
-                <YAxis domain={[0, 5]} />
-                <Tooltip
-                  formatter={(value) => [`${value}/5`, 'Score']}
-                  labelFormatter={(label) => `Date: ${label}`}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="score"
-                  name={activeDimension.charAt(0).toUpperCase() + activeDimension.slice(1)}
-                  stroke={dimensionColors[activeDimension]}
-                  activeDot={{ r: 8 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-          <p className="text-sm text-muted-foreground mt-2">
-            This chart shows your progress in the {activeDimension} dimension over time.
-          </p>
-        </CardContent>
-      </Card>
+      {progressData.length > 1 ? (
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Your {activeDimension.charAt(0).toUpperCase() + activeDimension.slice(1)} Progress</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[250px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={progressData}
+                  margin={{ top: 10, right: 30, left: 0, bottom: 10 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="formattedDate" />
+                  <YAxis domain={[0, 5]} />
+                  <Tooltip
+                    formatter={(value) => [`${value}/5`, 'Score']}
+                    labelFormatter={(label) => `Date: ${label}`}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="score"
+                    name={activeDimension.charAt(0).toUpperCase() + activeDimension.slice(1)}
+                    stroke={dimensionColors[activeDimension]}
+                    activeDot={{ r: 8 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">
+              This chart shows your progress in the {activeDimension} dimension over time.
+            </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Your {activeDimension.charAt(0).toUpperCase() + activeDimension.slice(1)} Progress</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-muted-foreground">Complete more assessments to track your progress over time.</p>
+          </CardContent>
+        </Card>
+      )}
       
       <Button 
         variant="outline" 
