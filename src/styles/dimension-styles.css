@@ -11,12 +11,13 @@
     color: #F97316;
   }
   
+  /* Swapped colors for accountability and resiliency */
   .dimension-accountability {
-    color: #3953A4;
+    color: #00A249;
   }
   
   .dimension-resiliency {
-    color: #00A249;
+    color: #3953A4;
   }
   
   .dimension-transparency {

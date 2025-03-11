@@ -16,8 +16,9 @@ interface HabitProgressCircleProps {
 const dimensionProgressColors = {
   humility: { bg: '#EE2D67/20', progress: dimensionColors.humility },
   empathy: { bg: '#18B7D9/20', progress: dimensionColors.empathy },
+  // Swapped colors for accountability (now green) and resiliency (now blue)
   accountability: { bg: '#00A249/20', progress: dimensionColors.accountability },
-  resiliency: { bg: '#FFCC33/20', progress: dimensionColors.resiliency },
+  resiliency: { bg: '#3953A4/20', progress: dimensionColors.resiliency },
   transparency: { bg: '#3953A4/20', progress: dimensionColors.transparency },
   inclusivity: { bg: '#5B0F58/20', progress: dimensionColors.inclusivity }
 };

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { HEARTIAssessment } from '@/types';
+import { HEARTIAssessment, HEARTIDimension } from '@/types';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import RadarChartDisplay from './comparison/RadarChartDisplay';
 import ComparisonControls from './comparison/ComparisonControls';
@@ -38,8 +38,19 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
   const getComparisonColor = () => "#8b5cf6"; // Purple for average
   const getComparisonLabel = () => "Global Average";
 
+  // Create comparison data for the separate charts view
+  const getComparisonData = () => {
+    if (compareMode === 'average') {
+      return formatDataForRadarChart(aggregateData.averageScores);
+    }
+    return null;
+  };
+
   // Check if we have multiple assessments to show progress
   const hasMultipleAssessments = assessments && assessments.length > 1;
+
+  // Convert string keys to HEARTIDimension for type safety
+  const sortedDimensions = Object.keys(assessment.dimensionScores) as HEARTIDimension[];
 
   return (
     <Card>
@@ -65,6 +76,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
               getComparisonLabel={getComparisonLabel}
               getComparisonColor={getComparisonColor}
               userColor={userColor}
+              getComparisonData={getComparisonData}
             />
           </div>
         </div>
@@ -73,7 +85,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
           <ComparisonAnalysis 
             assessment={assessment} 
             compareMode={compareMode}
-            sortedDimensions={Object.keys(assessment.dimensionScores)}
+            sortedDimensions={sortedDimensions}
             getComparisonLabel={getComparisonLabel}
             getComparisonColor={getComparisonColor}
             aggregateData={aggregateData}
