@@ -1,4 +1,3 @@
-
 export const zh = {
   common: {
     loading: "加载中...",
@@ -83,7 +82,7 @@ export const zh = {
       daily: "每日",
       weekly: "每周",
       monthly: "每月",
-      noHabits: "未找到习惯。点击"添加习惯"创建一个。"
+      noHabits: "未找到习惯。点击\"添加习惯\"创建一个。"
     }
   }
 };
