@@ -129,6 +129,14 @@ export const useIndexPage = () => {
     initializeApp();
   }, [initializeApp]);
 
+  // Auto-switch to results tab if user has assessments
+  useEffect(() => {
+    if (userAssessments.length > 0 && activeTab === 'take') {
+      setActiveTab('results');
+      console.log("Auto-switching to results tab due to existing assessment data");
+    }
+  }, [userAssessments, activeTab]);
+
   // Show error toast only when assessment status changes to error
   useEffect(() => {
     if (assessmentStatus === 'error') {
