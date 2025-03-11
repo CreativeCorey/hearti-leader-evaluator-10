@@ -11,12 +11,12 @@ interface CompletedHabitBadgeProps {
   iconType?: 'award' | 'trophy' | 'star' | 'check';
 }
 
-// Updated colors based on our new color scheme
-const dimensionColors = {
+// Styling configurations for the badge based on dimensions
+const dimensionBadgeStyles = {
   humility: {
-    bg: 'bg-[#5B0F58]/10',
-    text: 'text-[#5B0F58]',
-    border: 'border-[#5B0F58]/20'
+    bg: 'bg-[#EE2D67]/10',
+    text: 'text-[#EE2D67]',
+    border: 'border-[#EE2D67]/20'
   },
   empathy: {
     bg: 'bg-[#18B7D9]/10',
@@ -39,9 +39,9 @@ const dimensionColors = {
     border: 'border-[#3953A4]/20'
   },
   inclusivity: {
-    bg: 'bg-[#EE2D67]/10',
-    text: 'text-[#EE2D67]',
-    border: 'border-[#EE2D67]/20'
+    bg: 'bg-[#5B0F58]/10',
+    text: 'text-[#5B0F58]',
+    border: 'border-[#5B0F58]/20'
   }
 };
 
@@ -70,7 +70,7 @@ const CompletedHabitBadge: React.FC<CompletedHabitBadgeProps> = ({
     check: Check
   }[iconType];
   
-  const colorSet = dimensionColors[dimension];
+  const colorSet = dimensionBadgeStyles[dimension];
   
   return (
     <Badge 
