@@ -3,8 +3,11 @@ import { HEARTIAssessment } from '@/types';
 import { useAssessmentQuestions } from './assessment/useAssessmentQuestions';
 import { useUserInitialization } from './assessment/useUserInitialization';
 import { useAssessmentCompletion } from './assessment/useAssessmentCompletion';
+import { useState, useEffect } from 'react';
 
 export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => void) => {
+  const [initializing, setInitializing] = useState(true);
+  
   const {
     currentQuestion,
     currentQuestionIndex,
@@ -19,7 +22,7 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
     shuffledQuestions
   } = useAssessmentQuestions();
 
-  const { currentUser, loading } = useUserInitialization();
+  const { currentUser, loading: userLoading } = useUserInitialization();
 
   const {
     assessmentComplete,
@@ -28,6 +31,13 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
     handleDemographicsComplete,
     handleSkipDemographics
   } = useAssessmentCompletion(answers, currentUser, onComplete);
+
+  // Check if initialization is complete
+  useEffect(() => {
+    if (!userLoading && shuffledQuestions.length > 0) {
+      setInitializing(false);
+    }
+  }, [userLoading, shuffledQuestions.length]);
 
   // Function to handle finishing the last question
   const handleNextWithCompletion = () => {
@@ -39,7 +49,7 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
   };
 
   return {
-    loading,
+    loading: initializing || userLoading || shuffledQuestions.length === 0,
     currentQuestion,
     currentQuestionIndex,
     totalQuestions,

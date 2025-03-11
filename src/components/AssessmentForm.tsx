@@ -49,8 +49,9 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
   if (!currentQuestion) {
     return (
       <div className="flex flex-col items-center justify-center p-6 space-y-4">
-        <p className="text-red-500">Error: Could not load questions.</p>
-        <Button onClick={() => window.location.reload()}>Reload Page</Button>
+        <Loader2 className="h-8 w-8 animate-spin text-red-500" />
+        <p className="text-red-500">Loading assessment questions...</p>
+        <Button onClick={() => window.location.reload()} className="mt-4">Reload Page</Button>
       </div>
     );
   }

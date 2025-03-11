@@ -14,11 +14,19 @@ export const useAssessmentQuestions = () => {
   
   const totalQuestions = questions.length;
   
+  // Initialize shuffled questions on first render
   useEffect(() => {
-    setShuffledQuestions(shuffleArray(questions));
-  }, []);
+    if (shuffledQuestions.length === 0) {
+      console.log("Initializing shuffled questions");
+      const shuffled = shuffleArray([...questions]);
+      setShuffledQuestions(shuffled);
+    }
+  }, [shuffledQuestions.length]);
   
-  const currentQuestion = shuffledQuestions[currentQuestionIndex];
+  // Check if current question is available
+  const currentQuestion = shuffledQuestions.length > 0 
+    ? shuffledQuestions[currentQuestionIndex] 
+    : null;
 
   const handleAnswerChange = (score: number) => {
     if (!currentQuestion) return;
@@ -43,7 +51,9 @@ export const useAssessmentQuestions = () => {
 
   const handleNext = () => {
     // Ensure current question is answered
-    if (!answers.some(a => a.questionId === currentQuestion?.id)) {
+    if (!currentQuestion) return;
+    
+    if (!answers.some(a => a.questionId === currentQuestion.id)) {
       toast({
         title: "Please answer the question",
         description: "Please select a value on the slider to continue.",
@@ -71,7 +81,9 @@ export const useAssessmentQuestions = () => {
     }
   };
 
-  const progressPercentage = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+  const progressPercentage = shuffledQuestions.length > 0 
+    ? ((currentQuestionIndex + 1) / totalQuestions) * 100 
+    : 0;
 
   return {
     currentQuestion,
