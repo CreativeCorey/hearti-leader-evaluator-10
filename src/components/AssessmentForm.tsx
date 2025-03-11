@@ -4,7 +4,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { HEARTIAssessment } from '@/types';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Loader2, CreditCard } from 'lucide-react';
 import DemographicForm from './DemographicForm';
 import QuestionDisplay from './assessment/QuestionDisplay';
 import DebugTools from './assessment/DebugTools';
@@ -30,10 +30,12 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     progressPercentage,
     transition,
     assessmentComplete,
+    processingPayment,
     handleDemographicsComplete,
     handleSkipDemographics
   } = useAssessmentForm(onComplete);
 
+  // Loading state while initializing form
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center p-6 space-y-4">
@@ -43,6 +45,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     );
   }
 
+  // Error state if no questions loaded
   if (!currentQuestion) {
     return (
       <div className="flex flex-col items-center justify-center p-6 space-y-4">
@@ -52,6 +55,22 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     );
   }
 
+  // Payment processing state
+  if (processingPayment) {
+    return (
+      <div className="flex flex-col items-center justify-center p-8 space-y-6 bg-white rounded-lg shadow-md">
+        <CreditCard className="h-12 w-12 text-primary animate-pulse" />
+        <h2 className="text-2xl font-bold text-center">Processing Payment</h2>
+        <p className="text-center text-muted-foreground">
+          Please wait while we redirect you to complete your payment.
+          Your assessment results will be unlocked once payment is complete.
+        </p>
+        <Loader2 className="h-8 w-8 animate-spin text-primary mt-4" />
+      </div>
+    );
+  }
+
+  // Demographics form after assessment completion
   if (assessmentComplete) {
     return (
       <DemographicForm 
@@ -61,6 +80,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     );
   }
 
+  // Main assessment form
   const currentScore = getCurrentAnswer();
 
   return (

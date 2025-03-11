@@ -23,6 +23,7 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
 
   const {
     assessmentComplete,
+    processingPayment,
     completeAssessmentQuestions,
     handleDemographicsComplete,
     handleSkipDemographics
@@ -49,6 +50,7 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
     progressPercentage,
     transition,
     assessmentComplete,
+    processingPayment,
     handleDemographicsComplete,
     handleSkipDemographics
   };

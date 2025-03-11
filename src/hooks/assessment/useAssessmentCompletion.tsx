@@ -11,6 +11,7 @@ import {
 import { calculateDimensionScores, calculateOverallScore } from '@/utils/calculations';
 import { saveAssessment } from '@/utils/localStorage';
 import { questions } from '@/constants/assessmentQuestions';
+import { useAssessmentPayment } from '@/hooks/useAssessmentPayment';
 
 export const useAssessmentCompletion = (
   answers: HEARTIAnswer[],
@@ -20,6 +21,8 @@ export const useAssessmentCompletion = (
   const { toast } = useToast();
   const [assessmentComplete, setAssessmentComplete] = useState(false);
   const [tempAssessment, setTempAssessment] = useState<HEARTIAssessment | null>(null);
+  
+  const { processingPayment, redirectToStripePayment } = useAssessmentPayment(onComplete);
 
   const completeAssessmentQuestions = () => {
     if (!currentUser) {
@@ -66,13 +69,12 @@ export const useAssessmentCompletion = (
     };
     
     try {
+      // Save temporarily, but redirect to payment before showing results
       await saveAssessment(finalAssessment);
-      onComplete(finalAssessment);
       
-      toast({
-        title: "Assessment completed!",
-        description: "Your HEARTI leadership assessment has been saved with demographics.",
-      });
+      // Redirect to Stripe payment flow instead of completing directly
+      redirectToStripePayment(finalAssessment);
+      
     } catch (error) {
       console.error("Failed to save assessment:", error);
       toast({
@@ -87,13 +89,12 @@ export const useAssessmentCompletion = (
     if (!tempAssessment) return;
     
     try {
+      // Save temporarily, but redirect to payment before showing results
       await saveAssessment(tempAssessment);
-      onComplete(tempAssessment);
       
-      toast({
-        title: "Assessment completed!",
-        description: "Your HEARTI leadership assessment has been saved.",
-      });
+      // Redirect to Stripe payment flow instead of completing directly
+      redirectToStripePayment(tempAssessment);
+      
     } catch (error) {
       console.error("Failed to save assessment:", error);
       toast({
@@ -106,6 +107,7 @@ export const useAssessmentCompletion = (
 
   return {
     assessmentComplete,
+    processingPayment,
     completeAssessmentQuestions,
     handleDemographicsComplete,
     handleSkipDemographics
