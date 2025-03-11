@@ -13,15 +13,15 @@ const SpectraSection: React.FC<SpectraSectionProps> = ({ assessment }) => {
   const isMobile = useIsMobile();
   
   return (
-    <Card>
+    <Card className="overflow-hidden">
       <CardHeader className="pb-2">
         <div>
           <CardTitle className="text-xl md:text-2xl">HEARTI Spectra</CardTitle>
           <CardDescription className="text-sm">Your leadership dimension scores</CardDescription>
         </div>
       </CardHeader>
-      <CardContent className="px-2 pt-0 pb-8">
-        <div className="h-[320px] w-full mx-auto max-w-[450px]">
+      <CardContent className="px-2 pt-0 pb-2">
+        <div className="h-[280px] sm:h-[300px] w-full mx-auto max-w-[400px]">
           <DimensionChart 
             dimensionScores={assessment.dimensionScores}
             activeDimension="humility"

@@ -26,7 +26,6 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
 
   const {
     assessmentComplete,
-    processingPayment,
     completeAssessmentQuestions,
     handleDemographicsComplete,
     handleSkipDemographics
@@ -42,8 +41,10 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
   // Function to handle finishing the last question
   const handleNextWithCompletion = () => {
     if (currentQuestionIndex === totalQuestions - 1) {
+      // We're at the last question, so complete the assessment
       completeAssessmentQuestions();
     } else {
+      // Not at the last question, just go to the next one
       handleNext();
     }
   };
@@ -54,11 +55,13 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
       loading: initializing || userLoading || shuffledQuestions.length === 0,
       userLoading,
       shuffledQuestionsLength: shuffledQuestions.length,
-      currentQuestion: currentQuestion?.id,
-      assessmentComplete,
-      processingPayment
+      currentQuestionId: currentQuestion?.id,
+      currentQuestionIndex,
+      totalQuestions,
+      answersCount: answers.length,
+      assessmentComplete
     });
-  }, [initializing, userLoading, shuffledQuestions.length, currentQuestion, assessmentComplete, processingPayment]);
+  }, [initializing, userLoading, shuffledQuestions.length, currentQuestion, currentQuestionIndex, totalQuestions, answers.length, assessmentComplete]);
 
   return {
     loading: initializing || userLoading || shuffledQuestions.length === 0,
@@ -72,7 +75,7 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
     progressPercentage,
     transition,
     assessmentComplete,
-    processingPayment,
+    processingPayment: false, // No payment processing
     handleDemographicsComplete,
     handleSkipDemographics
   };

@@ -27,7 +27,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
   // Format the chart data
   const chartData = formatDataForRadarChart(assessment.dimensionScores);
   
-  // Combine chart data for comparison
+  // Define a function to format data for the combined chart
   const formatDataForCombinedChart = (userScores: any, comparisonScores: any) => {
     if (!comparisonScores) return [{ subject: "", A: 0 }];
     
@@ -38,6 +38,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
     }));
   };
   
+  // Use the function to create combined chart data
   const combinedChartData = formatDataForCombinedChart(
     assessment.dimensionScores, 
     compareMode === 'none' ? null : getComparisonData()
@@ -46,18 +47,30 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
   // Determine chart colors and labels
   const userColor = "#fbbf24"; // Gold
 
-  // Helper function to get the appropriate comparison data
-  function getComparisonData() {
+  // Helper function to get the appropriate comparison data that returns an array format for the chart
+  function getComparisonData(): any[] {
+    let data = null;
+    
     switch (compareMode) {
       case 'average':
-        return aggregateData.averageScores;
+        data = aggregateData.averageScores;
+        break;
       case 'men':
-        return aggregateData.demographics.gender.men;
+        data = aggregateData.demographics.gender.men;
+        break;
       case 'women':
-        return aggregateData.demographics.gender.women;
+        data = aggregateData.demographics.gender.women;
+        break;
       default:
-        return null;
+        data = null;
     }
+    
+    // Convert object to array format if it exists
+    if (data) {
+      return formatDataForRadarChart(data);
+    }
+    
+    return [];
   }
   
   // Helper function to get the appropriate comparison label

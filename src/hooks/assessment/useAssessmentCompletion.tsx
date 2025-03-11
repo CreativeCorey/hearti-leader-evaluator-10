@@ -20,13 +20,22 @@ export const useAssessmentCompletion = (
   const { toast } = useToast();
   const [assessmentComplete, setAssessmentComplete] = useState(false);
   const [tempAssessment, setTempAssessment] = useState<HEARTIAssessment | null>(null);
-  const [processingPayment, setProcessingPayment] = useState(false);
 
   const completeAssessmentQuestions = () => {
     if (!currentUser) {
       toast({
         title: "Error",
         description: "User not initialized. Please refresh and try again.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Ensure we have answers for all questions
+    if (answers.length < questions.length) {
+      toast({
+        title: "Incomplete Assessment",
+        description: `Please answer all ${questions.length} questions to complete the assessment.`,
         variant: "destructive"
       });
       return;
@@ -55,6 +64,8 @@ export const useAssessmentCompletion = (
     
     setTempAssessment(assessment);
     setAssessmentComplete(true);
+    
+    console.log("Assessment completed successfully, displaying demographics form");
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -67,7 +78,7 @@ export const useAssessmentCompletion = (
     };
     
     try {
-      // Save assessment and complete - no payment processing
+      // Save assessment directly without any payment processing
       await saveAssessment(finalAssessment);
       onComplete(finalAssessment);
       
@@ -75,6 +86,8 @@ export const useAssessmentCompletion = (
         title: "Assessment Complete",
         description: "Your assessment has been saved successfully.",
       });
+      
+      console.log("Assessment with demographics saved successfully");
     } catch (error) {
       console.error("Failed to save assessment:", error);
       toast({
@@ -89,7 +102,7 @@ export const useAssessmentCompletion = (
     if (!tempAssessment) return;
     
     try {
-      // Save assessment and complete without demographics - no payment processing
+      // Save assessment directly without any payment processing
       await saveAssessment(tempAssessment);
       onComplete(tempAssessment);
       
@@ -97,6 +110,8 @@ export const useAssessmentCompletion = (
         title: "Assessment Complete",
         description: "Your assessment has been saved successfully.",
       });
+      
+      console.log("Assessment without demographics saved successfully");
     } catch (error) {
       console.error("Failed to save assessment:", error);
       toast({
@@ -109,7 +124,6 @@ export const useAssessmentCompletion = (
 
   return {
     assessmentComplete,
-    processingPayment,
     completeAssessmentQuestions,
     handleDemographicsComplete,
     handleSkipDemographics
