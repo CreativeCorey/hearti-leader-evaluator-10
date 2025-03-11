@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Gauge, HeartHandshake, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
+import { Gauge, HeartHandshake, Goal, TreePalm, Blend, Users } from 'lucide-react';
 import { dimensionColors } from '../../development/DimensionIcons';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -26,7 +26,7 @@ const DimensionIcons: React.FC<DimensionIconsProps> = ({ iconSize }) => {
       
       {/* Bottom Right (Accountability) */}
       <div className="absolute bottom-[18%] right-[8%] transform">
-        <ChartNoAxesCombined size={iconSize} style={{ color: dimensionColors.accountability }} />
+        <Goal size={iconSize} style={{ color: dimensionColors.accountability }} />
       </div>
       
       {/* Bottom (Resiliency) */}

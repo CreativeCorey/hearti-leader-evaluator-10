@@ -6,7 +6,7 @@ import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Responsi
 import { formatDataForRadarChart } from '@/utils/calculations';
 import { Share2, Crown } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Gauge, HeartHandshake, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
+import { Gauge, HeartHandshake, Goal, TreePalm, Blend, Users } from 'lucide-react';
 import { dimensionColors } from '../development/DimensionIcons';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/language/LanguageContext';
@@ -38,7 +38,7 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
     switch(dimension) {
       case 'humility': return <Gauge size={24} style={{ color: dimensionColors.humility }} />;
       case 'empathy': return <HeartHandshake size={24} style={{ color: dimensionColors.empathy }} />;
-      case 'accountability': return <ChartNoAxesCombined size={24} style={{ color: dimensionColors.accountability }} />;
+      case 'accountability': return <Goal size={24} style={{ color: dimensionColors.accountability }} />;
       case 'resiliency': return <TreePalm size={24} style={{ color: dimensionColors.resiliency }} />;
       case 'transparency': return <Blend size={24} style={{ color: dimensionColors.transparency }} />;
       case 'inclusivity': return <Users size={24} style={{ color: dimensionColors.inclusivity }} />;
@@ -91,7 +91,7 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
             </div>
             
             <div className="absolute bottom-[25%] right-[15%] transform">
-              <ChartNoAxesCombined size={iconSize} style={{ color: dimensionColors.accountability }} />
+              <Goal size={iconSize} style={{ color: dimensionColors.accountability }} />
             </div>
             
             <div className="absolute bottom-[10%] left-[50%] transform -translate-x-1/2">
