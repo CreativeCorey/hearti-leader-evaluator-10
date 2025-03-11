@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Toggle } from '@/components/ui/toggle';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { UserProfile } from '@/types';
@@ -31,21 +30,15 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({
       </div>
       
       <div className="flex flex-wrap items-center gap-2 mt-2 md:mt-0">
-        <Toggle
-          pressed={isSupabaseEnabled}
-          onPressedChange={handleToggleSupabase}
-          className="data-[state=on]:bg-blue-500 px-2 sm:px-4 text-xs sm:text-sm h-7 sm:h-auto"
-        >
-          {isMobile ? (isSupabaseEnabled ? 'Cloud' : 'Local') : (isSupabaseEnabled ? 'Cloud Storage' : 'Local Storage')}
-        </Toggle>
+        {/* Storage toggle and Cloud/Local indicators hidden as requested */}
         
         {profile && (
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="p-1 sm:p-2 text-xs">
-              {googleConnection.connected ? 
-                (isMobile ? googleConnection.email?.split('@')[0] : googleConnection.email) : 
-                (profile.email || 'Anonymous')}
-            </Badge>
+            {googleConnection.connected && (
+              <Badge variant="outline" className="p-1 sm:p-2 text-xs">
+                {isMobile ? googleConnection.email?.split('@')[0] : googleConnection.email}
+              </Badge>
+            )}
             
             <Link to="/auth">
               <Button 
