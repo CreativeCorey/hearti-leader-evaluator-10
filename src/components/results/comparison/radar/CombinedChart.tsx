@@ -62,7 +62,6 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
             isAnimationActive={true}
             animationBegin={0}
             animationDuration={1000}
-            zIndex={10} 
           />
           
           <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
