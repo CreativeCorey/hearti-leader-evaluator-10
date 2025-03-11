@@ -1,6 +1,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { HEARTIAssessment } from '../types';
+import { HEARTIAssessment, UserProfile } from '../types';
 import { useToast } from './use-toast';
 import { getUserProfile, setUseSupabase, getOrCreateAnonymousId } from '../utils/localStorage';
 import { useViewTransitions } from './useViewTransitions';
@@ -20,6 +20,7 @@ interface UseIndexPageProps {
 
 export const useIndexPage = (props?: UseIndexPageProps) => {
   const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   
   // Get assessments
   const {
@@ -27,7 +28,7 @@ export const useIndexPage = (props?: UseIndexPageProps) => {
     latestAssessment,
     loadAssessments,
     handleAssessmentComplete,
-    status: assessmentStatus // Make sure we use the right property name
+    status: assessmentStatus
   } = useAssessments();
   
   // Use the Google integration hook
@@ -38,7 +39,7 @@ export const useIndexPage = (props?: UseIndexPageProps) => {
     handleConfigureWorkloadIdentity,
     testGoogleSheets,
     sendLatestToSheets,
-    googleConnection // Add this property
+    googleConnection
   } = useGoogleIntegration();
   
   // Use the Supabase sync hook
@@ -50,10 +51,21 @@ export const useIndexPage = (props?: UseIndexPageProps) => {
     handleConfirmSync,
     handleCancelSync,
     handleSyncDialogClose
-  } = useSupabaseSync(loadAssessments); // Pass required parameter
+  } = useSupabaseSync(loadAssessments);
   
-  // Get user profile
-  const profile = getUserProfile();
+  // Load user profile on mount
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const userProfile = await getUserProfile();
+        setProfile(userProfile);
+      } catch (error) {
+        console.error('Error loading user profile:', error);
+      }
+    };
+    
+    loadProfile();
+  }, []);
   
   // Use the extracted hooks
   const { isMobile, viewTransitioning } = useViewTransitions();
