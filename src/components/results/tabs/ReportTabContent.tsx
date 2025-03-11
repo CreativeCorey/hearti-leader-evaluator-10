@@ -7,7 +7,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ReportTabContentProps {
   assessment: HEARTIAssessment;
-  assessments: HEARTIAssessment[]; // Added assessments property
+  assessments: HEARTIAssessment[]; 
   reportRef: React.RefObject<HTMLDivElement>;
   onExportPDF: () => Promise<void>;
   exportingPdf: boolean;
@@ -15,7 +15,7 @@ interface ReportTabContentProps {
 
 const ReportTabContent: React.FC<ReportTabContentProps> = ({
   assessment,
-  assessments = [], // Added default value
+  assessments = [], 
   reportRef,
   onExportPDF,
   exportingPdf
@@ -37,10 +37,11 @@ const ReportTabContent: React.FC<ReportTabContentProps> = ({
       <div className={`space-y-4 ${isMobile ? 'p-2' : 'p-4'}`}>
         <ReportTab 
           assessment={assessment}
-          assessments={assessments} // Pass assessments to ReportTab
+          assessments={assessments}
           reportRef={reportRef}
           onExportPDF={onExportPDF}
           exportingPdf={exportingPdf}
+          showExportButton={isMobile} // Only show the button on mobile in ReportTab
         />
       </div>
     </>

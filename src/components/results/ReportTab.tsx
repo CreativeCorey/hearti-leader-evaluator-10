@@ -10,18 +10,20 @@ import ReportActionButtons from './report/ReportActionButtons';
 
 interface ReportTabProps {
   assessment: HEARTIAssessment;
-  assessments?: HEARTIAssessment[]; // Added assessments property
+  assessments?: HEARTIAssessment[];
   reportRef: React.RefObject<HTMLDivElement>;
   onExportPDF: () => Promise<void>;
   exportingPdf: boolean;
+  showExportButton?: boolean;
 }
 
 const ReportTab: React.FC<ReportTabProps> = ({ 
   assessment,
-  assessments = [], // Added default value
+  assessments = [],
   reportRef, 
   onExportPDF,
-  exportingPdf
+  exportingPdf,
+  showExportButton = true
 }) => {
   const isMobile = useIsMobile();
   const [currentPage, setCurrentPage] = useState(0);
@@ -29,12 +31,14 @@ const ReportTab: React.FC<ReportTabProps> = ({
   
   return (
     <div className="space-y-4 sm:space-y-6 w-full">
-      <ReportActionButtons 
-        assessment={assessment}
-        onExportPDF={onExportPDF}
-        exportingPdf={exportingPdf}
-        isMobile={isMobile}
-      />
+      {showExportButton && (
+        <ReportActionButtons 
+          assessment={assessment}
+          onExportPDF={onExportPDF}
+          exportingPdf={exportingPdf}
+          isMobile={isMobile}
+        />
+      )}
       
       {/* Mobile pagination indicator */}
       {isMobile && (

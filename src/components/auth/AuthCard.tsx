@@ -12,14 +12,14 @@ const AuthCard = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
-  const [organization, setOrganization] = useState("");
+  const [organization, setOrganization] = useState("none");
   const [currentTab, setCurrentTab] = useState("signin");
 
   return (
     <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle className="text-2xl text-center">Welcome to HEARTI</CardTitle>
-        <CardDescription className="text-center">
+      <CardHeader className="text-center">
+        <CardTitle className="text-2xl">Welcome to HEARTI</CardTitle>
+        <CardDescription>
           Sign in to manage your assessments or create a new account.
         </CardDescription>
       </CardHeader>

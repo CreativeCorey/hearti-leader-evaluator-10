@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
+import OrganizationSelector from "./OrganizationSelector";
 
 interface SignUpFormProps {
   email: string;
@@ -67,16 +68,12 @@ const SignUpForm = ({
           onChange={(e) => setName(e.target.value)}
         />
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="signup-organization">Organization</Label>
-        <Input
-          id="signup-organization"
-          type="text"
-          placeholder="Company or Team Name"
-          value={organization}
-          onChange={(e) => setOrganization(e.target.value)}
-        />
-      </div>
+      
+      <OrganizationSelector
+        value={organization}
+        onChange={setOrganization}
+      />
+      
       <div className="space-y-2">
         <Label htmlFor="signup-email">Email</Label>
         <Input
@@ -88,6 +85,7 @@ const SignUpForm = ({
           required
         />
       </div>
+      
       <div className="space-y-2">
         <Label htmlFor="signup-password">Password</Label>
         <Input
@@ -98,6 +96,7 @@ const SignUpForm = ({
           required
         />
       </div>
+      
       <div className="space-y-2">
         <Label htmlFor="signup-confirm-password">Confirm Password</Label>
         <Input
@@ -111,6 +110,7 @@ const SignUpForm = ({
           <p className="text-sm text-red-600 mt-1">{passwordError}</p>
         )}
       </div>
+      
       <Button type="submit" className="w-full" disabled={isLoading}>
         {isLoading ? (
           <>
