@@ -23,7 +23,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   const { t, currentLanguage } = useLanguage();
   
   // Get the translated question text, ensuring it's a string
-  const translatedQuestionText = t(`assessment.questions.${question.id}`);
+  const translatedQuestionText = t(`assessment.questions.${question.id}`) || question.text;
   
   return (
     <div className={`bg-muted/30 p-4 sm:p-6 rounded-lg transition-opacity duration-150 w-full max-w-screen-sm mx-auto ${transition ? 'opacity-0' : 'opacity-100'}`}>
