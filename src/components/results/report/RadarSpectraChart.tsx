@@ -3,6 +3,7 @@ import React from 'react';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
 import { ChartData } from '@/types';
 import { useRadarChartConfig } from '@/hooks/use-radar-chart-config';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface RadarSpectraChartProps {
   data: ChartData;
@@ -18,11 +19,12 @@ const RadarSpectraChart: React.FC<RadarSpectraChartProps> = ({
   className = "" 
 }) => {
   const { config, polarRadiusProps, polarAngleProps } = useRadarChartConfig();
+  const isMobile = useIsMobile();
   
   return (
     <div className={`flex flex-col space-y-2 ${className}`}>
       <h4 className="text-md font-medium text-center text-gray-700 mb-2">{title}</h4>
-      <div className="pdf-chart-container radar-base h-[280px]">
+      <div className="pdf-chart-container radar-base h-[260px]">
         <ResponsiveContainer width="100%" height="100%">
           <RadarChart 
             cx="50%" 
@@ -39,7 +41,7 @@ const RadarSpectraChart: React.FC<RadarSpectraChartProps> = ({
             />
             <PolarAngleAxis 
               dataKey="name" 
-              tick={polarAngleProps.tick}
+              tick={isMobile ? false : polarAngleProps.tick}
               axisLineType={config.axisLineType}
               tickLine={polarAngleProps.tickLine}
               stroke={polarAngleProps.stroke}

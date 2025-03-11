@@ -3,7 +3,7 @@ import React from 'react';
 import { TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HEARTIDimension } from '@/types';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { dimensionIcons, dimensionLabels } from '../results/development/DimensionIcons';
+import { dimensionIcons, dimensionLabels, dimensionColors } from '../results/development/DimensionIcons';
 import { Search } from 'lucide-react';
 
 interface HabitTabsProps {
@@ -35,17 +35,27 @@ const HabitTabs: React.FC<HabitTabsProps> = ({
       <TabsList className="w-full grid grid-cols-3 gap-1">
         {Object.entries(dimensionIcons)
           .filter(([key]) => key !== 'all')
-          .map(([dimension, Icon]) => (
-            <TabsTrigger 
-              key={dimension}
-              value={dimension} 
-              className={`flex flex-col items-center justify-center gap-1 py-3 ${activeDimension === dimension ? 'bg-blue-100' : ''}`}
-              onClick={() => onDimensionChange(dimension as HEARTIDimension)}
-            >
-              <Icon size={isMobile ? 16 : 18} />
-              <span className={isMobile ? "text-xs" : "text-sm"}>{dimensionLabels[dimension as HEARTIDimension]}</span>
-            </TabsTrigger>
-          ))}
+          .map(([dimension, Icon]) => {
+            const dimName = dimension as HEARTIDimension;
+            const isActive = activeDimension === dimension;
+            const color = dimensionColors[dimName];
+            
+            return (
+              <TabsTrigger 
+                key={dimension}
+                value={dimension} 
+                className={`flex flex-col items-center justify-center gap-1 py-3`}
+                style={{ 
+                  color: isActive ? color : undefined,
+                  backgroundColor: isActive ? `${color}10` : undefined
+                }}
+                onClick={() => onDimensionChange(dimName)}
+              >
+                <Icon size={isMobile ? 16 : 18} style={{ color }} />
+                <span className={isMobile ? "text-xs" : "text-sm"}>{dimensionLabels[dimName]}</span>
+              </TabsTrigger>
+            );
+          })}
       </TabsList>
     </div>
   );

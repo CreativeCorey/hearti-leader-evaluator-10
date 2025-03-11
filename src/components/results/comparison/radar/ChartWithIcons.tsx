@@ -4,6 +4,7 @@ import { Radar, Tooltip, Legend } from 'recharts';
 import { useRadarChartConfig } from '@/hooks/use-radar-chart-config';
 import BaseRadarChart from './BaseRadarChart';
 import DimensionIcons from './DimensionIcons';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ChartWithIconsProps {
   data: any[];
@@ -27,6 +28,7 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
   className = ""
 }) => {
   const { config, iconSize, polarRadiusProps, polarAngleProps } = useRadarChartConfig(isAnimationActive);
+  const isMobile = useIsMobile();
   
   // Use pink color for user charts (title containing "Your")
   const isUserChart = chartTitle.toLowerCase().includes("your");
@@ -41,6 +43,7 @@ const ChartWithIcons: React.FC<ChartWithIconsProps> = ({
         config={config}
         polarRadiusProps={polarRadiusProps}
         polarAngleProps={polarAngleProps}
+        hideDimensionLabels={isMobile}
       >
         <Radar
           name={chartTitle}

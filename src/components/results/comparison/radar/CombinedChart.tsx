@@ -39,6 +39,7 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
             ...config,
             outerRadius: isMobile ? "60%" : "65%"
           }}
+          hideDimensionLabels={isMobile}
         >
           {/* Render comparison data first so user data appears on top */}
           {compareMode !== 'none' && (

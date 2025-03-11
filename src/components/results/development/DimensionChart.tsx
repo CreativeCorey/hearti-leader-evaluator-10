@@ -58,6 +58,7 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
               fontSize: isMobile ? 8 : 10
             }
           }}
+          hideDimensionLabels={isMobile}
         >
           <Radar
             name={showAllDimensions ? "Your HEARTI Spectra" : activeDimension}

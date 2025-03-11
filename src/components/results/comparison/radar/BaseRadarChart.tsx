@@ -29,6 +29,7 @@ interface BaseRadarChartProps {
     stroke: string;
   };
   className?: string;
+  hideDimensionLabels?: boolean;
 }
 
 const BaseRadarChart: React.FC<BaseRadarChartProps> = ({ 
@@ -37,7 +38,8 @@ const BaseRadarChart: React.FC<BaseRadarChartProps> = ({
   config,
   polarRadiusProps,
   polarAngleProps,
-  className = ""
+  className = "",
+  hideDimensionLabels = false
 }) => {
   const isMobile = useIsMobile();
   
@@ -92,17 +94,10 @@ const BaseRadarChart: React.FC<BaseRadarChartProps> = ({
         />
         <PolarAngleAxis 
           dataKey="name" 
-          tick={angleProps.tick}
+          tick={isMobile && hideDimensionLabels ? false : angleProps.tick}
           axisLineType={config.axisLineType}
           tickLine={angleProps.tickLine}
           stroke={angleProps.stroke}
-          tickFormatter={(value) => {
-            // Make sure "Transparency" is fully visible on mobile
-            if (isMobile && value.toLowerCase() === "transparency") {
-              return "Trans";
-            }
-            return value;
-          }}
         />
         <PolarRadiusAxis 
           angle={radiusProps.angle}

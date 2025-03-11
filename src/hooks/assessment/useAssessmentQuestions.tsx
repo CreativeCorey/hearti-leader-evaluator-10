@@ -18,8 +18,19 @@ export const useAssessmentQuestions = () => {
   useEffect(() => {
     if (shuffledQuestions.length === 0) {
       console.log("Initializing shuffled questions");
-      const shuffled = shuffleArray([...questions]);
-      setShuffledQuestions(shuffled);
+      try {
+        const questionsCopy = [...questions];
+        console.log(`Starting with ${questionsCopy.length} questions`);
+        
+        const shuffled = shuffleArray(questionsCopy);
+        console.log(`Shuffled ${shuffled.length} questions`);
+        
+        setShuffledQuestions(shuffled);
+      } catch (error) {
+        console.error("Error shuffling questions:", error);
+        // Fallback - use unshuffled questions
+        setShuffledQuestions([...questions]);
+      }
     }
   }, [shuffledQuestions.length]);
   
@@ -28,8 +39,17 @@ export const useAssessmentQuestions = () => {
     ? shuffledQuestions[currentQuestionIndex] 
     : null;
 
+  useEffect(() => {
+    console.log("Current question:", currentQuestion);
+  }, [currentQuestion]);
+
   const handleAnswerChange = (score: number) => {
-    if (!currentQuestion) return;
+    if (!currentQuestion) {
+      console.warn("Cannot change answer: No current question");
+      return;
+    }
+    
+    console.log(`Setting answer for question ${currentQuestion.id} to ${score}`);
     
     setAnswers(prev => {
       const existingAnswerIndex = prev.findIndex(a => a.questionId === currentQuestion.id);
@@ -43,7 +63,10 @@ export const useAssessmentQuestions = () => {
   };
 
   const getCurrentAnswer = (): number => {
-    if (!currentQuestion) return 3; // Default to middle value
+    if (!currentQuestion) {
+      console.warn("Cannot get current answer: No current question");
+      return 3; // Default to middle value
+    }
     
     const existingAnswer = answers.find(a => a.questionId === currentQuestion.id);
     return existingAnswer ? existingAnswer.score : 3;
@@ -51,7 +74,10 @@ export const useAssessmentQuestions = () => {
 
   const handleNext = () => {
     // Ensure current question is answered
-    if (!currentQuestion) return;
+    if (!currentQuestion) {
+      console.warn("Cannot navigate to next: No current question");
+      return;
+    }
     
     if (!answers.some(a => a.questionId === currentQuestion.id)) {
       toast({
@@ -63,6 +89,7 @@ export const useAssessmentQuestions = () => {
     }
 
     if (currentQuestionIndex < shuffledQuestions.length - 1) {
+      console.log(`Moving from question ${currentQuestionIndex} to ${currentQuestionIndex + 1}`);
       setTransition(true);
       setTimeout(() => {
         setCurrentQuestionIndex(prev => prev + 1);
@@ -73,6 +100,7 @@ export const useAssessmentQuestions = () => {
 
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
+      console.log(`Moving from question ${currentQuestionIndex} to ${currentQuestionIndex - 1}`);
       setTransition(true);
       setTimeout(() => {
         setCurrentQuestionIndex(prev => prev - 1);
