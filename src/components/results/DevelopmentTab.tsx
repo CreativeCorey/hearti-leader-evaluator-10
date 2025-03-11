@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { HEARTIDimension } from '@/types';
 import { activityData } from '@/data/heartActivities';
@@ -30,10 +29,8 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   
-  // Filter activities for the active dimension
   const activities = activityData.filter(activity => activity.dimension === activeDimension);
   
-  // Sample dimension scores (replace with actual data in production)
   const dimensionScores = {
     humility: 3.8,
     empathy: 3.6,
@@ -43,9 +40,7 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
     inclusivity: 3.5
   };
   
-  // Sample historical data for the selected dimension
   const getDimensionProgressData = () => {
-    // This would normally be fetched from a real data source
     return [
       { date: '2023-10-15', score: 2.7 },
       { date: '2023-11-20', score: 3.0 },
@@ -59,7 +54,6 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
   };
   
   const handleSelectActivity = (activityId: string) => {
-    // Toggle selection (max 3)
     if (selectedActivities.includes(activityId)) {
       setSelectedActivities(prev => prev.filter(id => id !== activityId));
     } else if (selectedActivities.length < 3) {
@@ -88,12 +82,12 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
   
   const progressData = getDimensionProgressData();
   const dimensionColors = {
-    humility: '#6366F1',
-    empathy: '#10B981',
-    accountability: '#F59E0B', 
-    resiliency: '#EC4899',
-    transparency: '#06B6D4',
-    inclusivity: '#8B5CF6'
+    humility: '#5B0F58',
+    empathy: '#18B7D9',
+    accountability: '#00A249',
+    resiliency: '#FFCC33',
+    transparency: '#3953A4',
+    inclusivity: '#EE2D67'
   };
   
   const toggleActivities = () => {
@@ -104,13 +98,11 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
     <div className="mb-4">
       <InfoBanner focusDimension={focusDimension} />
       
-      {/* HEARTI Navigation */}
       <DimensionTabs 
         activeDimension={activeDimension} 
         onDimensionChange={setActiveDimension}
       />
       
-      {/* Chart section */}
       <div className="mb-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-medium">HEARTI Spectra</h3>
@@ -145,7 +137,6 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
         </p>
       </div>
       
-      {/* Dimension Progress Chart */}
       <Card className="mb-6">
         <CardHeader>
           <CardTitle>Your {activeDimension.charAt(0).toUpperCase() + activeDimension.slice(1)} Progress</CardTitle>
@@ -180,7 +171,6 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension }) => {
         </CardContent>
       </Card>
       
-      {/* Toggle for Activities */}
       <Button 
         variant="outline" 
         onClick={toggleActivities}

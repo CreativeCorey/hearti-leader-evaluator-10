@@ -6,6 +6,7 @@ import { HEARTIDimension } from '@/types';
 import { Gauge, HeartHandshake, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { LucideIcon } from 'lucide-react';
+import { dimensionIcons, dimensionColors } from '../results/development/DimensionIcons';
 
 interface HabitItemHeaderProps {
   dimension: HEARTIDimension;
@@ -13,16 +14,6 @@ interface HabitItemHeaderProps {
   isHabitMastered: boolean;
   onDeleteHabit: () => void;
 }
-
-// Updated type definition to use LucideIcon
-const dimensionIcons: Record<string, LucideIcon> = {
-  humility: Gauge,
-  empathy: HeartHandshake,
-  accountability: ChartNoAxesCombined,
-  resiliency: TreePalm,
-  transparency: Blend,
-  inclusivity: Users
-};
 
 const frequencyColors = {
   daily: 'text-blue-600',
@@ -42,7 +33,7 @@ const HabitItemHeader: React.FC<HabitItemHeaderProps> = ({
   return (
     <div className="flex justify-between items-center">
       <div className="flex items-center gap-1">
-        <DimensionIcon size={isMobile ? 14 : 16} className="text-gray-500" />
+        <DimensionIcon size={isMobile ? 14 : 16} style={{ color: dimensionColors[dimension] }} />
         <span className={`text-xs ${frequencyColors[frequency]} uppercase font-medium`}>
           {frequency}
         </span>

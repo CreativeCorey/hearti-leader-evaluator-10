@@ -4,7 +4,7 @@ import { HEARTIAssessment, HEARTIDimension } from '@/types';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getDimensionDescription, getFeedback } from '@/utils/calculations';
-import { dimensionIcons } from './development/DimensionIcons';
+import { dimensionIcons, dimensionColors } from './development/DimensionIcons';
 
 interface DimensionsTabProps {
   assessment: HEARTIAssessment;
@@ -30,7 +30,7 @@ const DimensionsTab: React.FC<DimensionsTabProps> = ({ assessment }) => {
           <Card key={dimension} className="shadow-sm">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center gap-2">
-                <DimensionIcon size={20} className="text-blue-600" />
+                <DimensionIcon size={20} style={{ color: dimensionColors[dimension] }} />
                 {dimension.charAt(0).toUpperCase() + dimension.slice(1)}
               </CardTitle>
               <Badge variant={getBadgeVariant(assessment.dimensionScores[dimension])}>

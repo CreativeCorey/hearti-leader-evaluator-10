@@ -1,10 +1,9 @@
 
 import React from 'react';
 import { Calendar } from 'lucide-react';
-import { LucideIcon } from 'lucide-react';
-import { Gauge, HeartHandshake, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
 import { HEARTIDimension } from '@/types';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { dimensionIcons, dimensionColors } from '../results/development/DimensionIcons';
 
 interface HabitItemTitleProps {
   dimension: HEARTIDimension;
@@ -12,27 +11,18 @@ interface HabitItemTitleProps {
   streakCount: number;
 }
 
-const dimensionIcons: Record<string, LucideIcon> = {
-  humility: Gauge,
-  empathy: HeartHandshake,
-  accountability: ChartNoAxesCombined,
-  resiliency: TreePalm,
-  transparency: Blend,
-  inclusivity: Users
-};
-
 const HabitItemTitle: React.FC<HabitItemTitleProps> = ({
   dimension,
   description,
   streakCount
 }) => {
   const isMobile = useIsMobile();
-  const DimensionIcon = dimensionIcons[dimension] || Gauge;
+  const DimensionIcon = dimensionIcons[dimension];
   
   return (
     <>
       <h3 className={`${isMobile ? 'text-base' : 'text-lg'} font-bold mb-1 flex items-center gap-2`}>
-        <DimensionIcon size={isMobile ? 16 : 20} className="text-gray-500" />
+        <DimensionIcon size={isMobile ? 16 : 20} style={{ color: dimensionColors[dimension] }} />
         {description}
       </h3>
       

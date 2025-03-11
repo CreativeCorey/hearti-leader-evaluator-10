@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { HEARTIAssessment, HEARTIDimension } from '@/types';
 import { Card, CardContent } from '@/components/ui/card';
@@ -24,7 +23,7 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
   
   const topStrength = sortedDimensions[0];
   const topStrengthScore = assessment.dimensionScores[topStrength];
-  const userColor = "#6366f1";
+  const userColor = "#3953A4";
   
   const iconSize = isMobile ? 20 : 18;
   
@@ -43,7 +42,6 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
   return (
     <Card className="w-full shadow-lg overflow-hidden bg-white">
       <CardContent className="p-4">
-        {/* Logo and Header */}
         <div className="text-center mb-2">
           <div className="flex justify-center items-center mb-1">
             <img 
@@ -57,34 +55,27 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
         </div>
         
         <div className="h-[250px] w-full relative">
-          {/* Icon overlay */}
           <div className="absolute inset-0 pointer-events-none">
-            {/* Top (Humility) - Adjusted position */}
             <div className="absolute top-[10%] left-[50%] transform -translate-x-1/2">
               <Gauge size={iconSize} style={{ color: dimensionColors.humility }} />
             </div>
             
-            {/* Top Right (Empathy) */}
             <div className="absolute top-[25%] right-[15%] transform">
               <HeartHandshake size={iconSize} style={{ color: dimensionColors.empathy }} />
             </div>
             
-            {/* Bottom Right (Accountability) */}
             <div className="absolute bottom-[25%] right-[15%] transform">
               <ChartNoAxesCombined size={iconSize} style={{ color: dimensionColors.accountability }} />
             </div>
             
-            {/* Bottom (Resiliency) - Adjusted position */}
             <div className="absolute bottom-[10%] left-[50%] transform -translate-x-1/2">
               <TreePalm size={iconSize} style={{ color: dimensionColors.resiliency }} />
             </div>
             
-            {/* Bottom Left (Transparency) */}
             <div className="absolute bottom-[25%] left-[15%] transform">
               <Blend size={iconSize} style={{ color: dimensionColors.transparency }} />
             </div>
             
-            {/* Top Left (Inclusivity) */}
             <div className="absolute top-[25%] left-[15%] transform">
               <Users size={iconSize} style={{ color: dimensionColors.inclusivity }} />
             </div>
@@ -134,7 +125,6 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({ assessment, showDet
               </p>
             </div>
             
-            {/* App URL */}
             <div className="mt-3 text-center border-t pt-2">
               <p className="text-indigo-600 font-medium">takehearti.com</p>
             </div>

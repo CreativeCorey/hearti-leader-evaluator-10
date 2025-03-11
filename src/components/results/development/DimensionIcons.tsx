@@ -21,12 +21,12 @@ export const dimensionLabels: Record<HEARTIDimension, string> = {
   inclusivity: 'Inclusivity'
 };
 
-// Export standardized dimension colors
+// Updated dimension colors with more vibrant and distinctive hues
 export const dimensionColors: Record<HEARTIDimension, string> = {
-  humility: '#6366F1',    // Indigo
-  empathy: '#EC4899',     // Pink
-  accountability: '#F59E0B', // Amber
-  resiliency: '#10B981',  // Emerald
-  transparency: '#06B6D4', // Cyan
-  inclusivity: '#8B5CF6'  // Violet
+  humility: '#5B0F58',      // Deep Purple
+  empathy: '#18B7D9',       // Bright Cyan
+  accountability: '#00A249', // Vibrant Green
+  resiliency: '#FFCC33',    // Golden Yellow
+  transparency: '#3953A4',  // Royal Blue
+  inclusivity: '#EE2D67'    // Bright Pink
 };

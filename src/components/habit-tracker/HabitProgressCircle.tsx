@@ -1,7 +1,7 @@
-
 import React from 'react';
 import { Circle } from 'lucide-react';
 import { HEARTIDimension } from '@/types';
+import { dimensionColors } from '../results/development/DimensionIcons';
 
 interface HabitProgressCircleProps {
   percentage: number;
@@ -13,12 +13,12 @@ interface HabitProgressCircleProps {
 }
 
 const dimensionProgressColors = {
-  humility: { bg: '#E9D5FF', progress: '#9b87f5' },
-  empathy: { bg: '#DBEAFE', progress: '#3B82F6' },
-  accountability: { bg: '#DCFCE7', progress: '#22C55E' },
-  resiliency: { bg: '#FEF3C7', progress: '#F59E0B' },
-  transparency: { bg: '#E0E7FF', progress: '#6366F1' },
-  inclusivity: { bg: '#FCE7F3', progress: '#DB2777' }
+  humility: { bg: '#5B0F58/20', progress: dimensionColors.humility },
+  empathy: { bg: '#18B7D9/20', progress: dimensionColors.empathy },
+  accountability: { bg: '#00A249/20', progress: dimensionColors.accountability },
+  resiliency: { bg: '#FFCC33/20', progress: dimensionColors.resiliency },
+  transparency: { bg: '#3953A4/20', progress: dimensionColors.transparency },
+  inclusivity: { bg: '#EE2D67/20', progress: dimensionColors.inclusivity }
 };
 
 const HabitProgressCircle: React.FC<HabitProgressCircleProps> = ({
@@ -42,7 +42,6 @@ const HabitProgressCircle: React.FC<HabitProgressCircleProps> = ({
       style={{ width: size, height: size }}
     >
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="transform -rotate-90">
-        {/* Background circle */}
         <circle
           cx={center}
           cy={center}
@@ -52,7 +51,6 @@ const HabitProgressCircle: React.FC<HabitProgressCircleProps> = ({
           fill="none"
         />
         
-        {/* Progress circle */}
         <circle
           cx={center}
           cy={center}

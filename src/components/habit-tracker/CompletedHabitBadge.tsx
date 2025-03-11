@@ -3,6 +3,7 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Award, Trophy, Star, Check } from 'lucide-react';
 import { HEARTIDimension } from '@/types';
+import { dimensionColors } from '../results/development/DimensionIcons';
 
 interface CompletedHabitBadgeProps {
   dimension: HEARTIDimension;
@@ -10,7 +11,7 @@ interface CompletedHabitBadgeProps {
   iconType?: 'award' | 'trophy' | 'star' | 'check';
 }
 
-// Updated colors based on the provided image
+// Updated colors based on our new color scheme
 const dimensionColors = {
   humility: {
     bg: 'bg-[#5B0F58]/10',
