@@ -87,6 +87,32 @@
     margin-left: 4px !important;
   }
   
+  /* Interactive chart elements */
+  .chart-point {
+    cursor: pointer;
+    transition: r 0.2s ease;
+  }
+  
+  .chart-point:hover {
+    r: 6px;
+  }
+  
+  .chart-point-selected {
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+  }
+  
+  /* Chart containers with better spacing for comparison sections */
+  .comparison-chart-container {
+    margin-bottom: 2rem;
+    overflow: visible;
+    position: relative;
+  }
+  
+  /* Fix too-tight spacing in separate charts view */
+  .separate-charts-container {
+    margin-bottom: 4rem;
+  }
+  
   /* Chart tooltip enhancements */
   .recharts-tooltip-wrapper {
     z-index: 50 !important;
@@ -129,6 +155,15 @@
   .progress-chart-container {
     height: 400px !important;
     margin-bottom: 10px;
+  }
+  
+  /* Improved spacing specifically for separate chart mode */
+  .separate-charts-view .chart-card + .chart-card {
+    margin-top: 2.5rem !important;  
+  }
+  
+  .separate-charts-view .radar-chart-container {
+    margin-bottom: 1.5rem;
   }
   
   @media (max-width: 640px) {
@@ -190,26 +225,13 @@
       overflow: hidden;
     }
     
-    /* Mobile report card spacing */
-    .pdf-section + .pdf-section {
-      margin-top: 1.5rem !important;
+    /* Improved spacing for separate chart view on mobile */
+    .separate-charts-view {
+      margin-bottom: 3.5rem !important;
     }
     
-    /* Make sure spectra charts display properly on mobile */
-    .pdf-charts-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-    
-    .pdf-chart-column {
-      width: 100% !important;
-      margin-bottom: 1.5rem;
-      padding: 1rem !important;
-      border-radius: 0.5rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-      position: relative;
-      overflow: hidden;
+    .separate-charts-view .chart-card {
+      margin-bottom: 2rem !important;
     }
     
     /* Fix progress chart margin at bottom */

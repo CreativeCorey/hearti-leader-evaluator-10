@@ -27,7 +27,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           {children}
         </div>
       </main>
-      <footer className="py-2 px-4 text-center text-xs text-gray-500 border-t">
+      <footer className="py-2 px-4 text-center text-xs text-gray-500 border-t bg-white">
         {t('common.copyright')}
       </footer>
     </div>

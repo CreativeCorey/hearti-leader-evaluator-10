@@ -31,7 +31,7 @@ const SeparateCharts: React.FC<SeparateChartsProps> = ({
   // If no comparison mode is selected, only show the user chart
   if (compareMode === 'none') {
     return (
-      <div className="flex flex-col items-center justify-center w-full">
+      <div className="flex flex-col items-center justify-center w-full mb-8">
         <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg h-[260px] sm:h-[280px] w-full shadow-sm">
           <p className="text-center font-medium text-fuchsia-600 mb-3">{t('results.spectra.title')}</p>
           <div className="relative h-[calc(100%-35px)]">
@@ -47,9 +47,9 @@ const SeparateCharts: React.FC<SeparateChartsProps> = ({
     );
   }
   
-  // For separate mode with comparison, stack the charts vertically with more spacing for mobile
+  // For separate mode with comparison, stack the charts vertically with more spacing
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-8 mb-12">
       <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg h-[260px] sm:h-[280px] shadow-sm w-full">
         <p className="text-center font-medium text-fuchsia-600 mb-3">{t('results.spectra.title')}</p>
         <div className="relative h-[calc(100%-35px)]">
@@ -63,7 +63,7 @@ const SeparateCharts: React.FC<SeparateChartsProps> = ({
       </div>
       
       {compareMode === 'average' && comparisonData && (
-        <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg h-[260px] sm:h-[280px] shadow-sm w-full mt-4 mb-20">
+        <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg h-[260px] sm:h-[280px] shadow-sm w-full mt-6 mb-6">
           <p className="text-center font-medium mb-3" style={{ color: getComparisonColor() }}>
             {`${t('results.spectra.title')} - ${getComparisonLabel()}`}
           </p>

@@ -1,17 +1,21 @@
 
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { HEARTIAssessment, HEARTIDimension } from '@/types';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { dimensionColors } from '../development/DimensionIcons';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProgressChartProps {
   assessments: HEARTIAssessment[];
+  onSelectAssessment?: (assessment: HEARTIAssessment) => void;
 }
 
-const ProgressChart: React.FC<ProgressChartProps> = ({ assessments }) => {
+const ProgressChart: React.FC<ProgressChartProps> = ({ assessments, onSelectAssessment }) => {
   const isMobile = useIsMobile();
+  const { toast } = useToast();
+  const [selectedPointIndex, setSelectedPointIndex] = useState<number | null>(null);
 
   // Only proceed if we have assessments
   if (!assessments || assessments.length === 0) {
@@ -30,10 +34,10 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ assessments }) => {
     );
   }
 
-  // Get the most recent assessment for dimension colors
-  const latestAssessment = [...assessments].sort((a, b) => 
+  // Sort assessments by date (newest to oldest)
+  const sortedAssessments = [...assessments].sort((a, b) => 
     new Date(b.date).getTime() - new Date(a.date).getTime()
-  )[0];
+  );
 
   // Format data for progress chart
   const formatShortDate = (dateString: string) => {
@@ -43,11 +47,13 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ assessments }) => {
 
   const progressData = [...assessments]
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-    .map(item => ({
+    .map((item, index) => ({
       date: formatShortDate(item.date),
       fullDate: new Date(item.date).toLocaleDateString(),
       score: item.overallScore,
-      ...item.dimensionScores
+      ...item.dimensionScores,
+      originalAssessment: item, // Store the original assessment object
+      index // Store the index
     }));
 
   // Get dimension colors using the centralized dimensionColors
@@ -60,11 +66,30 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ assessments }) => {
     ? progressData.length > 3 ? 320 : 300 
     : 400;
 
+  // Handle click on a dot in the chart
+  const handleDotClick = useCallback((data: any, index: number) => {
+    // Extract the assessment data from the clicked dot
+    const assessment = data.originalAssessment;
+    
+    if (assessment && onSelectAssessment) {
+      setSelectedPointIndex(index);
+      onSelectAssessment(assessment);
+      
+      toast({
+        title: "Assessment selected",
+        description: `Showing data from ${new Date(assessment.date).toLocaleDateString()}`,
+        duration: 3000,
+      });
+    }
+  }, [onSelectAssessment, toast]);
+
   return (
     <Card>
       <CardHeader className={`${isMobile ? 'pb-1 pt-3' : 'pb-2'} text-center`}>
         <CardTitle className={isMobile ? 'text-lg' : ''}>HEARTI Progress Over Time</CardTitle>
-        <CardDescription className={isMobile ? 'text-xs' : ''}>Track your leadership development journey</CardDescription>
+        <CardDescription className={isMobile ? 'text-xs' : ''}>
+          Select a point on the chart to view that assessment's data
+        </CardDescription>
       </CardHeader>
       <CardContent className={isMobile ? 'p-2' : ''}>
         <div className={`w-full`} style={{ height: chartHeight }}>
@@ -73,6 +98,11 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ assessments }) => {
               <LineChart
                 data={progressData}
                 margin={{ top: 20, right: 20, left: 5, bottom: 5 }}
+                onClick={(e) => {
+                  if (e && e.activePayload && e.activePayload[0]) {
+                    handleDotClick(e.activePayload[0].payload, e.activePayload[0].payload.index);
+                  }
+                }}
               >
                 <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
                 <XAxis dataKey="date" />
@@ -106,8 +136,22 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ assessments }) => {
                   stroke="#000" 
                   strokeWidth={2} 
                   activeDot={{ r: 6 }} 
+                  dot={(props: any) => {
+                    const { cx, cy, index } = props;
+                    return (
+                      <circle 
+                        cx={cx} 
+                        cy={cy} 
+                        r={selectedPointIndex === index ? 6 : 4} 
+                        fill={selectedPointIndex === index ? "#D946EF" : "#000"} 
+                        stroke={selectedPointIndex === index ? "#fff" : "none"}
+                        strokeWidth={2}
+                        style={{ cursor: 'pointer' }}
+                      />
+                    );
+                  }}
                 />
-                {latestAssessment && Object.keys(latestAssessment.dimensionScores).map((dimension) => (
+                {sortedAssessments[0] && Object.keys(sortedAssessments[0].dimensionScores).map((dimension) => (
                   <Line
                     key={dimension}
                     type="monotone"
@@ -115,8 +159,20 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ assessments }) => {
                     name={dimension.charAt(0).toUpperCase() + dimension.slice(1)}
                     stroke={getDimensionColor(dimension)}
                     strokeWidth={1.5}
-                    dot={{ r: 3 }}
-                    activeDot={{ r: 5 }}
+                    dot={(props: any) => {
+                      const { cx, cy, index } = props;
+                      return (
+                        <circle 
+                          cx={cx} 
+                          cy={cy} 
+                          r={selectedPointIndex === index ? 5 : 3} 
+                          fill={getDimensionColor(dimension)}
+                          stroke={selectedPointIndex === index ? "#fff" : "none"}
+                          strokeWidth={1}
+                          style={{ cursor: 'pointer' }}
+                        />
+                      );
+                    }}
                   />
                 ))}
               </LineChart>
