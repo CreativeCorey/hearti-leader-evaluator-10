@@ -39,54 +39,18 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
   const translatedDimension = t(`results.dimensions.${activeDimension}`);
   
   const chartTitle = showAllDimensions ? 
-    "Your Complete HEARTI Spectra" : 
-    `${t('results.development.focused')} ${translatedDimension}`;
+    t('results.development.activities') : 
+    `${translatedDimension}`;
 
   // Adjust the chart container height based on view type
-  const chartContainerHeight = showAllDimensions ? 
-    isMobile ? "h-[190px]" : "h-[220px]" : 
-    "h-[210px] sm:h-[240px]";
+  const chartContainerHeight = "h-[180px] sm:h-[200px]";
 
   return (
-    <div className="bg-slate-50 p-2 rounded-lg h-full relative">
-      <p className="text-center font-medium text-lg text-indigo-600 mb-1">{chartTitle}</p>
-      <div className={`radar-chart-container ${chartContainerHeight} relative`}>
-        <DimensionIcons iconSize={iconSize} />
-        
-        <BaseRadarChart 
-          data={singleDimensionData} 
-          config={{
-            ...config,
-            outerRadius: isMobile ? "58%" : "65%"
-          }}
-          polarRadiusProps={polarRadiusProps}
-          polarAngleProps={{
-            ...polarAngleProps,
-            tick: false // Always hide dimension labels
-          }}
-          hideDimensionLabels={true}
-        >
-          <Radar
-            name={showAllDimensions ? t('results.spectra.title') : translatedDimension}
-            dataKey="value"
-            stroke={dimensionColor}
-            fill={dimensionColor}
-            fillOpacity={config.fillOpacity}
-            strokeWidth={config.strokeWidth}
-            dot={{ r: config.dotSize }}
-            activeDot={{ r: config.activeDotSize }}
-            isAnimationActive={true}
-            animationBegin={200}
-            animationDuration={1000}
-          />
-          <Tooltip formatter={(value) => [`${value}/5`, t('results.comparison.average')]} />
-          <Legend wrapperStyle={{
-            bottom: isMobile ? -5 : -10, 
-            fontSize: isMobile ? "10px" : "11px",
-            padding: "0 2px"
-          }} />
-        </BaseRadarChart>
-      </div>
+    <div className="rounded-lg h-full relative p-4 border">
+      <p className="text-center font-medium text-lg mb-1">{chartTitle}</p>
+      <p className="text-center text-sm text-muted-foreground mb-3">
+        {t('results.dimensions.score')}: {dimensionScores[activeDimension]}/5
+      </p>
     </div>
   );
 };

@@ -27,13 +27,13 @@ const Header: React.FC = () => {
         </Link>
       </div>
       
-      <div className="flex items-center justify-end w-1/4">
+      <div className="flex items-center justify-end w-1/4 pr-2">
         {user ? (
           <Button
             variant="ghost"
             size="sm"
             onClick={signOut}
-            className="flex items-center gap-1 text-xs h-7 px-2 ml-auto"
+            className="flex items-center gap-1 text-xs h-7 px-2 ml-auto mr-1"
           >
             <LogOut size={14} />
             <span className="hidden md:inline">{t('header.signOut')}</span>
@@ -42,7 +42,7 @@ const Header: React.FC = () => {
           <Button 
             asChild 
             size="sm" 
-            className="text-xs h-7 px-2 ml-auto"
+            className="text-xs h-7 px-2 ml-auto mr-1"
           >
             <Link to="/auth">{t('header.signIn')}</Link>
           </Button>

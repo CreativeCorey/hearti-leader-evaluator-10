@@ -8,11 +8,6 @@ interface ShareOptions {
   captionText: string;
 }
 
-// Add privacy disclaimer to shared content
-const addPrivacyDisclaimer = (text: string): string => {
-  return `${text}\n\n[This content complies with GDPR and CCPA privacy standards. Your data is protected and not shared with third parties without consent.]`;
-};
-
 /**
  * Handles sharing to LinkedIn
  * 
@@ -34,11 +29,11 @@ export const shareToLinkedIn = async (
     link.href = imageUrl;
     link.click();
     
-    // Copy caption with privacy disclaimer to clipboard
-    await navigator.clipboard.writeText(addPrivacyDisclaimer(captionText));
+    // Copy caption to clipboard
+    await navigator.clipboard.writeText(captionText);
     
     // Open LinkedIn sharing dialog
-    const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareableLink)}`;
+    const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=https://takehearti.com`;
     window.open(linkedInUrl, '_blank', 'width=600,height=600');
     
     showSuccessToast(
@@ -55,8 +50,7 @@ export const shareToLinkedIn = async (
  * Handles sharing to Twitter/X
  */
 export const shareToTwitter = (shareableLink: string, captionText: string): void => {
-  const privacyText = addPrivacyDisclaimer(captionText);
-  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(privacyText)}&url=${encodeURIComponent(shareableLink)}`;
+  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(captionText)}&url=https://takehearti.com`;
   window.open(twitterUrl, '_blank', 'width=600,height=600');
 };
 
@@ -64,8 +58,7 @@ export const shareToTwitter = (shareableLink: string, captionText: string): void
  * Handles sharing to WhatsApp
  */
 export const shareToWhatsApp = (shareableLink: string, captionText: string): void => {
-  const privacyText = addPrivacyDisclaimer(captionText);
-  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(privacyText + '\n\n' + shareableLink)}`;
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(captionText + '\n\ntakehearti.com')}`;
   window.open(whatsappUrl, '_blank', 'width=600,height=600');
 };
 
@@ -74,7 +67,7 @@ export const shareToWhatsApp = (shareableLink: string, captionText: string): voi
  */
 export const shareToEmail = (shareableLink: string, captionText: string): void => {
   const emailSubject = "My HEARTI:Leader Results";
-  const emailBody = `${addPrivacyDisclaimer(captionText)}\n\n${shareableLink}`;
+  const emailBody = `${captionText}\n\ntakehearti.com`;
   window.location.href = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
 };
 
@@ -95,8 +88,8 @@ export const shareWithImageDownload = async (
     link.href = imageUrl;
     link.click();
     
-    // Copy caption with privacy disclaimer to clipboard
-    await navigator.clipboard.writeText(addPrivacyDisclaimer(captionText));
+    // Copy caption to clipboard
+    await navigator.clipboard.writeText(captionText);
     
     showSuccessToast(
       `Share to ${platform.charAt(0).toUpperCase() + platform.slice(1)}`, 

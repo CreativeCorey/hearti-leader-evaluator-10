@@ -26,7 +26,7 @@ const ReportTabContent: React.FC<ReportTabContentProps> = ({
     <>
       {!isMobile && (
         <TabHeader
-          title="HEARTI:Leader Guide"
+          title="Guide"
           description="Insights and recommendations to help you develop your leadership skills"
           showExportButton={false}
         />
