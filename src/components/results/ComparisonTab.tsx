@@ -58,8 +58,8 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
   // Adding more space for mobile in separate mode
   const comparisonAnalysisSpacing = chartView === 'separate' 
     ? isMobile 
-      ? 'mt-[600px] sm:mt-[580px] md:mt-20' 
-      : 'mt-[580px] sm:mt-[580px] md:mt-20'
+      ? 'mt-[620px]' 
+      : 'mt-[600px] md:mt-20'
     : 'mt-6';
 
   return (
@@ -109,7 +109,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment, assessments }
       
       {/* Placed the ProgressChart outside of the Card as requested */}
       {hasMultipleAssessments && (
-        <div className="mt-8 mb-4">
+        <div className="mt-8 mb-16">
           <ProgressChart assessments={assessments} />
         </div>
       )}

@@ -20,11 +20,13 @@ const ScoreCard: React.FC<ScoreCardProps> = ({ assessment, formattedDate }) => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2 text-center flex flex-col items-center">
             <p className="text-muted-foreground">Overall Score</p>
-            <div className="flex items-center justify-center relative">
-              {/* Oval background for the score */}
-              <div className="absolute w-16 h-8 bg-orange-100 rounded-full -z-10"></div>
-              <span className="text-4xl font-bold">{assessment.overallScore}</span>
-              <span className="text-muted-foreground ml-1">/5</span>
+            <div className="flex items-center justify-center">
+              {/* Proper oval background for the score */}
+              <div className="relative flex items-center justify-center">
+                <div className="absolute w-24 h-12 bg-orange-100 rounded-full"></div>
+                <span className="text-4xl font-bold relative z-10">{assessment.overallScore}</span>
+                <span className="text-muted-foreground ml-1 relative z-10">/5</span>
+              </div>
             </div>
             <p className="text-sm text-center max-w-[220px]">Your HEARTI:Leader Quotient indicates your overall proficiency in the skills needed for 21st century leadership.</p>
           </div>
