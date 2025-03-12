@@ -1,4 +1,3 @@
-
 export const it = {
   common: {
     loading: "Caricamento...",
@@ -21,6 +20,36 @@ export const it = {
     anonymous: "Modalità anonima",
     enableAnonymous: "Abilita anonimo",
     account: "Account"
+  },
+  auth: {
+    welcome: "Benvenuto in HEARTI",
+    welcomeDescription: "Accedi per gestire le tue valutazioni o crea un nuovo account.",
+    orContinueWithEmail: "O continua con email",
+    signIn: "Accedi",
+    signUp: "Registrati",
+    email: "Email",
+    emailPlaceholder: "tua.email@esempio.com",
+    password: "Password",
+    confirmPassword: "Conferma Password",
+    fullName: "Nome Completo",
+    fullNamePlaceholder: "Mario Rossi",
+    organizationName: "Organizzazione",
+    createAccount: "Crea Account",
+    creatingAccount: "Creazione Account...",
+    passwordsDoNotMatch: "Le password non corrispondono",
+    passwordTooShort: "La password deve essere di almeno 8 caratteri",
+    enterEmailFirst: "Inserisci prima il tuo indirizzo email",
+    magicLinkSent: "Link magico inviato! Controlla la tua email",
+    magicLinkFailed: "Invio del link magico fallito. Riprova",
+    passwordResetSent: "Email di reimpostazione password inviata! Controlla la tua email",
+    passwordResetFailed: "Invio dell'email di reimpostazione fallito. Riprova",
+    forgotPassword: "Password Dimenticata?",
+    signInWithMagicLink: "Accedi con Link Magico",
+    marketingConsent: "Aggiungimi alla mailing list per aggiornamenti sui prodotti e informazioni di marketing. Le tue informazioni personali non saranno condivise.",
+    termsAgreement: "Continuando, accetti i",
+    termsOfService: "Termini di Servizio",
+    and: "e la",
+    privacyPolicy: "Politica sulla Privacy"
   },
   assessment: {
     title: "Valutazione della Leadership HEARTI™",

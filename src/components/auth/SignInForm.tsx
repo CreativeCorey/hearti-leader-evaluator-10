@@ -7,6 +7,7 @@ import PasswordForm from "./PasswordForm";
 import MagicLinkForm from "./MagicLinkForm";
 import ActionMessage from "./ActionMessage";
 import MarketingConsentCheckbox from "./MarketingConsentCheckbox";
+import { useLanguage } from "@/contexts/language/LanguageContext";
 
 interface SignInFormProps {
   email: string;
@@ -22,6 +23,7 @@ const SignInForm = ({ email, setEmail, password, setPassword }: SignInFormProps)
   const [sendingMagicLink, setSendingMagicLink] = useState(false);
   const [sendingResetEmail, setSendingResetEmail] = useState(false);
   const [actionMessage, setActionMessage] = useState<{text: string, type: "success" | "error"} | null>(null);
+  const { t } = useLanguage();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +39,7 @@ const SignInForm = ({ email, setEmail, password, setPassword }: SignInFormProps)
     e.preventDefault();
     if (!email) {
       setActionMessage({
-        text: "Please enter your email address first",
+        text: t('auth.enterEmailFirst'),
         type: "error"
       });
       return;
@@ -47,12 +49,12 @@ const SignInForm = ({ email, setEmail, password, setPassword }: SignInFormProps)
     try {
       await sendMagicLink(email);
       setActionMessage({
-        text: "Magic link sent! Please check your email",
+        text: t('auth.magicLinkSent'),
         type: "success"
       });
     } catch (error) {
       setActionMessage({
-        text: "Failed to send magic link. Please try again",
+        text: t('auth.magicLinkFailed'),
         type: "error"
       });
       console.error("Error sending magic link:", error);
@@ -65,7 +67,7 @@ const SignInForm = ({ email, setEmail, password, setPassword }: SignInFormProps)
     e.preventDefault();
     if (!email) {
       setActionMessage({
-        text: "Please enter your email address first",
+        text: t('auth.enterEmailFirst'),
         type: "error"
       });
       return;
@@ -75,12 +77,12 @@ const SignInForm = ({ email, setEmail, password, setPassword }: SignInFormProps)
     try {
       await sendPasswordResetEmail(email);
       setActionMessage({
-        text: "Password reset email sent! Please check your email",
+        text: t('auth.passwordResetSent'),
         type: "success"
       });
     } catch (error) {
       setActionMessage({
-        text: "Failed to send reset email. Please try again",
+        text: t('auth.passwordResetFailed'),
         type: "error"
       });
       console.error("Error sending password reset:", error);
@@ -104,11 +106,11 @@ const SignInForm = ({ email, setEmail, password, setPassword }: SignInFormProps)
   return (
     <form onSubmit={handleSignIn} className="space-y-4 mt-4">
       <div className="space-y-2">
-        <Label htmlFor="signin-email">Email</Label>
+        <Label htmlFor="signin-email">{t('auth.email')}</Label>
         <Input
           id="signin-email"
           type="email"
-          placeholder="your.email@example.com"
+          placeholder={t('auth.emailPlaceholder')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required

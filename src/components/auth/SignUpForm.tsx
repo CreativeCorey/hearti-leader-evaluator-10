@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import OrganizationSelector from "./OrganizationSelector";
+import { useLanguage } from "@/contexts/language/LanguageContext";
 
 interface SignUpFormProps {
   email: string;
@@ -34,6 +35,7 @@ const SignUpForm = ({
 }: SignUpFormProps) => {
   const { signUp, isLoading } = useAuth();
   const [passwordError, setPasswordError] = useState("");
+  const { t } = useLanguage();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,13 +45,13 @@ const SignUpForm = ({
     
     // Validate password match
     if (password !== confirmPassword) {
-      setPasswordError("Passwords do not match");
+      setPasswordError(t('auth.passwordsDoNotMatch'));
       return;
     }
     
     // Validate password strength
     if (password.length < 8) {
-      setPasswordError("Password must be at least 8 characters long");
+      setPasswordError(t('auth.passwordTooShort'));
       return;
     }
     
@@ -59,11 +61,11 @@ const SignUpForm = ({
   return (
     <form onSubmit={handleSignUp} className="space-y-4 mt-4">
       <div className="space-y-2">
-        <Label htmlFor="signup-name">Full Name</Label>
+        <Label htmlFor="signup-name">{t('auth.fullName')}</Label>
         <Input
           id="signup-name"
           type="text"
-          placeholder="John Doe"
+          placeholder={t('auth.fullNamePlaceholder')}
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
@@ -75,11 +77,11 @@ const SignUpForm = ({
       />
       
       <div className="space-y-2">
-        <Label htmlFor="signup-email">Email</Label>
+        <Label htmlFor="signup-email">{t('auth.email')}</Label>
         <Input
           id="signup-email"
           type="email"
-          placeholder="your.email@example.com"
+          placeholder={t('auth.emailPlaceholder')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
@@ -87,7 +89,7 @@ const SignUpForm = ({
       </div>
       
       <div className="space-y-2">
-        <Label htmlFor="signup-password">Password</Label>
+        <Label htmlFor="signup-password">{t('auth.password')}</Label>
         <Input
           id="signup-password"
           type="password"
@@ -98,7 +100,7 @@ const SignUpForm = ({
       </div>
       
       <div className="space-y-2">
-        <Label htmlFor="signup-confirm-password">Confirm Password</Label>
+        <Label htmlFor="signup-confirm-password">{t('auth.confirmPassword')}</Label>
         <Input
           id="signup-confirm-password"
           type="password"
@@ -115,10 +117,10 @@ const SignUpForm = ({
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Creating Account...
+            {t('auth.creatingAccount')}
           </>
         ) : (
-          "Create Account"
+          t('auth.createAccount')
         )}
       </Button>
     </form>

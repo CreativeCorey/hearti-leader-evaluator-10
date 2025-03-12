@@ -6,6 +6,7 @@ import SignInForm from "./SignInForm";
 import SignUpForm from "./SignUpForm";
 import AuthFooter from "./AuthFooter";
 import SocialSignIn from "./SocialSignIn";
+import { useLanguage } from "@/contexts/language/LanguageContext";
 
 const AuthCard = () => {
   const [email, setEmail] = useState("");
@@ -14,13 +15,14 @@ const AuthCard = () => {
   const [name, setName] = useState("");
   const [organization, setOrganization] = useState("none");
   const [currentTab, setCurrentTab] = useState("signin");
+  const { t } = useLanguage();
 
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Welcome to HEARTI</CardTitle>
+        <CardTitle className="text-2xl">{t('auth.welcome')}</CardTitle>
         <CardDescription>
-          Sign in to manage your assessments or create a new account.
+          {t('auth.welcomeDescription')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -32,15 +34,15 @@ const AuthCard = () => {
           </div>
           <div className="relative flex justify-center text-xs uppercase">
             <span className="bg-background px-2 text-muted-foreground">
-              Or continue with email
+              {t('auth.orContinueWithEmail')}
             </span>
           </div>
         </div>
         
         <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="signin">Sign In</TabsTrigger>
-            <TabsTrigger value="signup">Sign Up</TabsTrigger>
+            <TabsTrigger value="signin">{t('auth.signIn')}</TabsTrigger>
+            <TabsTrigger value="signup">{t('auth.signUp')}</TabsTrigger>
           </TabsList>
           
           <TabsContent value="signin">
