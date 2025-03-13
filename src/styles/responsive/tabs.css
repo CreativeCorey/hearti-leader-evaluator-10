@@ -18,18 +18,23 @@
   
   .results-tabs {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
     gap: 0.25rem;
     width: 100%;
     transition: transform 0.2s ease;
   }
   
   .results-tab {
-    white-space: nowrap;
+    white-space: normal;
     text-align: center;
     padding: 0.5rem;
     border-radius: 0.25rem;
     transition: all 0.2s ease;
+    hyphens: auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   /* Mobile tabs container for habits */
@@ -43,8 +48,10 @@
     }
     
     .results-tab {
-      font-size: 0.75rem;
-      padding: 0.25rem 0.5rem;
+      font-size: 0.7rem;
+      padding: 0.25rem 0.4rem;
+      line-height: 1.1;
+      min-height: 32px;
     }
   }
 }

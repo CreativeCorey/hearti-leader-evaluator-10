@@ -4,7 +4,7 @@ import { HEARTIAssessment } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useLanguage } from '@/contexts/language/LanguageContext';
-import { RadialBarChart, RadialBar, Legend, ResponsiveContainer, PolarAngleAxis, PolarRadiusAxis, Tooltip } from 'recharts';
+import { RadialBarChart, RadialBar, Legend, ResponsiveContainer, PolarAngleAxis, Tooltip } from 'recharts';
 import { dimensionColors } from '../development/DimensionIcons';
 
 interface SpectraSectionProps {
@@ -17,7 +17,7 @@ const SpectraSection: React.FC<SpectraSectionProps> = ({ assessment }) => {
   
   // Format data for the radial bar chart
   const chartData = Object.entries(assessment.dimensionScores).map(([dimension, score]) => ({
-    name: dimension.charAt(0).toUpperCase() + dimension.slice(1),
+    name: t(`dimensions.${dimension}`),
     value: score * 20, // Convert 0-5 scale to 0-100 scale for better visualization
     fill: dimensionColors[dimension as keyof typeof dimensionColors]
   })).sort((a, b) => b.value - a.value); // Sort by value descending for better layering
@@ -48,12 +48,6 @@ const SpectraSection: React.FC<SpectraSectionProps> = ({ assessment }) => {
                 domain={[0, 100]}
                 angleAxisId={0}
                 tick={false}
-              />
-              <PolarRadiusAxis
-                angle={0}
-                domain={[0, 100]}
-                tick={{ fill: '#9ca3af', fontSize: 10 }}
-                tickCount={5}
               />
               <RadialBar
                 background

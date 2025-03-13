@@ -1,8 +1,9 @@
 
 import React from 'react';
 import { HEARTIAssessment } from '@/types';
-import { RadialBarChart, RadialBar, Legend, ResponsiveContainer, PolarAngleAxis, Tooltip } from 'recharts';
+import { RadialBarChart, RadialBar, ResponsiveContainer, PolarAngleAxis, Tooltip } from 'recharts';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 import { Gauge, HeartHandshake, Goal, TreePalm, Blend, Users } from 'lucide-react';
 import { dimensionColors } from '@/components/results/development/DimensionIcons';
 import CenteredHexagon from './CenteredHexagon';
@@ -19,10 +20,11 @@ const RadarChartWithIcons: React.FC<RadarChartWithIconsProps> = ({
   chartColor 
 }) => {
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   
   // Format data for radial bar chart
   const chartData = Object.entries(assessment.dimensionScores).map(([dimension, score]) => ({
-    name: dimension.charAt(0).toUpperCase() + dimension.slice(1),
+    name: t(`dimensions.${dimension}`),
     value: score * 20, // Convert 0-5 scale to 0-100 scale for better visualization
     fill: dimensionColors[dimension as keyof typeof dimensionColors]
   })).sort((a, b) => b.value - a.value); // Sort by value descending for better layering
@@ -102,7 +104,7 @@ const RadarChartWithIcons: React.FC<RadarChartWithIconsProps> = ({
       </ResponsiveContainer>
       
       {/* Centered hexagon with initial */}
-      <CenteredHexagon topStrength={topStrength as any} />
+      <CenteredHexagon topStrength={topStrength} />
     </div>
   );
 };

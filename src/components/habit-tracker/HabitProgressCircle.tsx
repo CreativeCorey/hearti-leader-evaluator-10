@@ -2,6 +2,7 @@
 import React from 'react';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface HabitProgressCircleProps {
   progress: number;
@@ -18,6 +19,8 @@ const HabitProgressCircle: React.FC<HabitProgressCircleProps> = ({
   className = '',
   infoText
 }) => {
+  const { t } = useLanguage();
+  
   // Convert progress to percentage capped at 100%
   const percentage = Math.min(Math.round(progress), 100);
   
@@ -47,7 +50,7 @@ const HabitProgressCircle: React.FC<HabitProgressCircleProps> = ({
       {showLabel && (
         <div className="text-center">
           <p className="font-semibold text-lg">{percentage}%</p>
-          {infoText && <p className="text-xs text-muted-foreground">{infoText}</p>}
+          {infoText && <p className="text-xs text-muted-foreground">{t(infoText)}</p>}
         </div>
       )}
     </div>
