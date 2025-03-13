@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { HEARTIAssessment } from '@/types';
-import { RadialBarChart, RadialBar, Legend, ResponsiveContainer, PolarAngleAxis, Tooltip } from 'recharts';
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
+import { formatDataForRadarChart } from '@/utils/calculations';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Gauge, HeartHandshake, Goal, TreePalm, Blend, Users } from 'lucide-react';
 import { dimensionColors } from '@/components/results/development/DimensionIcons';
@@ -19,20 +20,13 @@ const RadarChartWithIcons: React.FC<RadarChartWithIconsProps> = ({
   chartColor 
 }) => {
   const isMobile = useIsMobile();
-  
-  // Format data for radial bar chart
-  const chartData = Object.entries(assessment.dimensionScores).map(([dimension, score]) => ({
-    name: dimension.charAt(0).toUpperCase() + dimension.slice(1),
-    value: score * 20, // Convert 0-5 scale to 0-100 scale for better visualization
-    fill: dimensionColors[dimension as keyof typeof dimensionColors]
-  })).sort((a, b) => b.value - a.value); // Sort by value descending for better layering
-  
+  const chartData = formatDataForRadarChart(assessment.dimensionScores);
   const iconSize = isMobile ? 20 : 18;
   
   return (
     <div className="h-[250px] w-full relative">
       {/* Position the dimension icons around the chart */}
-      <div className="absolute inset-0 pointer-events-none z-10">
+      <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-[10%] left-[50%] transform -translate-x-1/2">
           <Gauge size={iconSize} style={{ color: dimensionColors.humility }} />
         </div>
@@ -59,46 +53,38 @@ const RadarChartWithIcons: React.FC<RadarChartWithIconsProps> = ({
       </div>
       
       <ResponsiveContainer width="100%" height="100%">
-        <RadialBarChart 
-          cx="50%" 
-          cy="50%" 
-          innerRadius="20%" 
-          outerRadius="65%" 
-          barSize={15} 
+        <RadarChart 
+          outerRadius={isMobile ? "60%" : "70%"} 
           data={chartData}
-          startAngle={90}
-          endAngle={-270}
+          cx="50%"
+          cy="50%"
         >
-          <PolarAngleAxis
-            type="number"
-            domain={[0, 100]}
-            angleAxisId={0}
-            tick={false}
+          <PolarGrid gridType="polygon" />
+          <PolarAngleAxis 
+            dataKey="name" 
+            tick={false} 
+            axisLineType="polygon"
+            tickLine={false}
           />
-          <RadialBar
-            background
+          <PolarRadiusAxis 
+            angle={30} 
+            domain={[0, 5]} 
+            tick={{ 
+              fill: '#C8C8C9',
+              fontSize: isMobile ? 7 : 9,
+              opacity: 0.7
+            }} 
+          />
+          <Radar
+            name="Your HEARTI Spectra"
             dataKey="value"
-            cornerRadius={6}
-            label={{ 
-              position: 'insideStart', 
-              fill: '#fff', 
-              fontSize: 10,
-              fontWeight: 'bold',
-              formatter: (value: any) => `${(value / 20).toFixed(1)}`
-            }}
+            stroke={chartColor}
+            fill={chartColor}
+            fillOpacity={0.6}
+            dot={{ r: 5 }}
+            isAnimationActive={false}
           />
-          <Tooltip
-            formatter={(value) => [`${(value as number / 20).toFixed(1)}/5`, 'Score']}
-            contentStyle={{ 
-              backgroundColor: 'rgba(255, 255, 255, 0.95)', 
-              borderRadius: '6px', 
-              border: 'none', 
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-              fontSize: '12px',
-              padding: '8px 12px'
-            }}
-          />
-        </RadialBarChart>
+        </RadarChart>
       </ResponsiveContainer>
       
       {/* Centered hexagon with initial */}
