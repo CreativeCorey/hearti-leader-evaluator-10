@@ -5,6 +5,7 @@ import { HEARTIDimension } from '@/types';
 import { Habit, useHabits } from '@/hooks/useHabits';
 import { filterHabits } from '@/utils/habitUtils';
 import { toast } from '@/hooks/use-toast';
+import { completionGoals } from '@/components/habit-tracker/HabitTrackerContent';
 
 interface HabitTrackerContextType {
   habits: Habit[];
@@ -17,6 +18,7 @@ interface HabitTrackerContextType {
   toggleHabitCompletion: (habitId: string | undefined, date: Date) => void;
   deleteHabit: (habitId: string | undefined) => void;
   setActiveDimension: (dimension: HEARTIDimension | 'all') => void;
+  completionGoals: typeof completionGoals;
 }
 
 const HabitTrackerContext = createContext<HabitTrackerContextType | undefined>(undefined);
@@ -104,7 +106,8 @@ export const HabitTrackerProvider: React.FC<{
     handleAddHabit,
     toggleHabitCompletion: handleToggleHabit,
     deleteHabit: handleDeleteHabit,
-    setActiveDimension
+    setActiveDimension,
+    completionGoals
   };
 
   return (

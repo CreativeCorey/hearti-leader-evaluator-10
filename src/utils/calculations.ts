@@ -295,7 +295,7 @@ export function getDimensionReportContent(
       } else if (status === 'vulnerability') {
         content.statusContent = `<p class="mb-4">${userName}, an area of growth for you is Resiliency. Resilient leaders can persevere and respond with agility when faced with challenges, and they inspire others to continue towards a common purpose. They are strategic and can leapfrog competition through agile responses to challenges. They also understand that perseverance may not always be the answer—they know when to stop and are willing to pivot.</p>`;
       } else {
-        content.statusContent = `<p class="mb-4">Resilient leaders can persevere and respond with agility when faced with challenges, and they inspire others to continue towards a common purpose. They are strategic and can leapfrog competition through an agile response to challenges. They also understand that perseverance may not always be the answer—they know when to stop and are willing to pivot.</p>`;
+        content.statusContent = `<p class="mb-4">Resilient leaders can persevere and respond with agility when faced with challenges, and they inspire others to continue towards a common purpose. They are strategic and can leapfrog competition through agile responses to challenges. They also understand that perseverance may not always be the answer—they know when to stop and are willing to pivot.</p>`;
       }
       
       content.description = `
@@ -330,3 +330,28 @@ export function getDimensionReportContent(
   
   return content;
 }
+
+// Add the missing convertToComparisonFormat function
+export const convertToComparisonFormat = (
+  userScores: Record<string, number>,
+  comparisonScores: Record<string, number> | null
+) => {
+  const result = [];
+  
+  // Process each dimension
+  for (const dimension in userScores) {
+    const entry: any = {
+      dimension: dimension.charAt(0).toUpperCase() + dimension.slice(1),
+      user: userScores[dimension] || 0,
+    };
+    
+    // Add comparison data if available
+    if (comparisonScores) {
+      entry.comparison = comparisonScores[dimension] || 0;
+    }
+    
+    result.push(entry);
+  }
+  
+  return result;
+};

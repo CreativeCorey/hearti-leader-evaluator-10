@@ -15,6 +15,13 @@ import TodayHeader from './TodayHeader';
 import EmptyHabitState from './EmptyHabitState';
 import SavedHabitsView from './SavedHabitsView';
 
+// Define the completion goals based on frequency
+export const completionGoals = {
+  daily: 30,
+  weekly: 12,
+  monthly: 6
+};
+
 const HabitTrackerContent: React.FC = () => {
   const {
     loading,
@@ -107,6 +114,7 @@ const HabitTrackerContent: React.FC = () => {
             onToggleHabit={toggleHabitCompletion}
             onDeleteHabit={deleteHabit}
             calculateStreaks={calculateStreaks}
+            completionGoals={completionGoals}
           />
         )}
       </Tabs>

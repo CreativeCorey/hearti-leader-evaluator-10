@@ -1,49 +1,44 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Check, Plus, Minus } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { Sparkles, Medal } from 'lucide-react';
 
 interface HabitItemActionsProps {
-  isCompletedToday: boolean;
-  isHabitMastered: boolean;
-  onToggleHabit: () => void;
+  streak: number;
+  completedCount: number;
+  goal: number;
 }
 
-const HabitItemActions: React.FC<HabitItemActionsProps> = ({
-  isCompletedToday,
-  isHabitMastered,
-  onToggleHabit
+const HabitItemActions: React.FC<HabitItemActionsProps> = ({ 
+  streak, 
+  completedCount,
+  goal
 }) => {
-  const isMobile = useIsMobile();
+  // Calculate progress percentage
+  const progress = Math.min(Math.round((completedCount / goal) * 100), 100);
   
   return (
-    <div className={`${isMobile ? 'mt-3' : 'mt-4'}`}>
-      <Button 
-        className={`w-full ${isMobile ? 'py-1.5 px-3 text-sm h-auto' : ''} ${isHabitMastered ? 'bg-green-600 hover:bg-green-700' : 'bg-indigo-600 hover:bg-indigo-700'} text-white`}
-        onClick={onToggleHabit}
-      >
-        {isCompletedToday ? (
-          <>
-            <Check size={isMobile ? 14 : 16} className="mr-1.5" />
-            Completed Today
-          </>
-        ) : (
-          <>
-            {isMobile ? 'Mark Complete' : 'Complete'}
-          </>
+    <div className="flex items-center justify-between mt-2 pl-2 pr-1">
+      <div className="flex items-center space-x-1 text-xs text-gray-500">
+        {streak > 0 && (
+          <div className="flex items-center text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+            <Sparkles size={12} className="mr-1" />
+            <span className="font-medium">{streak} day streak</span>
+          </div>
         )}
-      </Button>
+      </div>
       
-      {!isCompletedToday && (
-        <Button 
-          variant="ghost" 
-          className={`w-full ${isMobile ? 'mt-1 text-xs py-1 h-auto' : 'mt-2'} text-indigo-600`}
-          onClick={onToggleHabit}
-        >
-          Skip today
-        </Button>
-      )}
+      <div className="flex items-center space-x-2">
+        {completedCount >= goal ? (
+          <div className="flex items-center text-green-600 bg-green-50 px-2 py-0.5 rounded-full text-xs">
+            <Medal size={12} className="mr-1" />
+            <span className="font-medium">Mastered!</span>
+          </div>
+        ) : completedCount > 0 ? (
+          <div className="text-xs text-gray-500 px-2">
+            {progress}% complete
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 };

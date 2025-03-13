@@ -1,75 +1,76 @@
 
 import React from 'react';
 import { Circle } from 'lucide-react';
-import { HEARTIDimension } from '@/types';
-import { dimensionColors } from '../results/development/DimensionIcons';
+import { completionGoals } from './HabitTrackerContent';
 
 interface HabitProgressCircleProps {
-  percentage: number;
-  dimension: HEARTIDimension;
-  size?: number;
-  onClick?: () => void;
-  completionCount?: number;
-  targetCount?: number;
+  completedCount: number;
+  frequency: 'daily' | 'weekly' | 'monthly';
 }
 
-const dimensionProgressColors = {
-  humility: { bg: '#EE2D67/20', progress: dimensionColors.humility },
-  empathy: { bg: '#18B7D9/20', progress: dimensionColors.empathy },
-  // Swapped colors for accountability (now green) and resiliency (now blue)
-  accountability: { bg: '#00A249/20', progress: dimensionColors.accountability },
-  resiliency: { bg: '#3953A4/20', progress: dimensionColors.resiliency },
-  transparency: { bg: '#3953A4/20', progress: dimensionColors.transparency },
-  inclusivity: { bg: '#5B0F58/20', progress: dimensionColors.inclusivity }
-};
-
 const HabitProgressCircle: React.FC<HabitProgressCircleProps> = ({
-  percentage,
-  dimension,
-  size = 100,
-  onClick,
-  completionCount = 0,
-  targetCount = 30
+  completedCount,
+  frequency
 }) => {
-  const strokeWidth = size * 0.08;
+  // Get the target based on frequency
+  const target = completionGoals[frequency];
+  
+  // Calculate percentage
+  const percentage = Math.min(Math.round((completedCount / target) * 100), 100);
+  
+  // Determine color based on progress
+  const getColor = () => {
+    if (percentage >= 100) return '#10B981'; // Green for complete
+    if (percentage >= 66) return '#6366F1';  // Purple for good progress
+    if (percentage >= 33) return '#F59E0B';  // Amber for some progress
+    return '#6B7280';                        // Gray for little progress
+  };
+  
+  const color = getColor();
+  const size = 36;
+  
+  // Calculate values for SVG
+  const strokeWidth = 3;
   const radius = (size - strokeWidth) / 2;
-  const circumference = radius * 2 * Math.PI;
-  const progress = (percentage / 100) * circumference;
-  const center = size / 2;
+  const circumference = 2 * Math.PI * radius;
+  const dash = (percentage / 100) * circumference;
   
   return (
-    <div 
-      className="relative cursor-pointer" 
-      onClick={onClick}
-      style={{ width: size, height: size }}
-    >
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="transform -rotate-90">
+    <div className="relative flex items-center justify-center" style={{ width: size, height: size }}>
+      {/* Background circle */}
+      <svg width={size} height={size} className="rotate-[-90deg]">
         <circle
-          cx={center}
-          cy={center}
+          cx={size / 2}
+          cy={size / 2}
           r={radius}
+          fill="transparent"
+          stroke="#E5E7EB"
           strokeWidth={strokeWidth}
-          stroke={dimensionProgressColors[dimension].bg}
-          fill="none"
         />
         
+        {/* Progress circle */}
         <circle
-          cx={center}
-          cy={center}
+          cx={size / 2}
+          cy={size / 2}
           r={radius}
+          fill="transparent"
+          stroke={color}
           strokeWidth={strokeWidth}
-          stroke={dimensionProgressColors[dimension].progress}
-          fill="none"
-          strokeLinecap="round"
           strokeDasharray={circumference}
-          strokeDashoffset={circumference - progress}
-          className="transition-all duration-500 ease-in-out"
+          strokeDashoffset={circumference - dash}
+          strokeLinecap="round"
         />
       </svg>
       
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-        <span className="text-2xl font-bold">{completionCount}</span>
-        <span className="text-xs text-gray-500">{`of ${targetCount}`}</span>
+      {/* Display completion status icon */}
+      <div className="absolute inset-0 flex items-center justify-center text-xs font-medium">
+        {percentage >= 100 ? (
+          <div className="text-green-500">✓</div>
+        ) : (
+          <span className="text-[10px]" style={{ color }}>
+            {completedCount}
+          </span>
+        )}
       </div>
     </div>
   );

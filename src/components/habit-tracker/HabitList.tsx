@@ -1,15 +1,19 @@
 
 import React from 'react';
 import { Habit } from '@/hooks/useHabits';
-import { useIsMobile } from '@/hooks/use-mobile';
 import HabitItem from './HabitItem';
 
 interface HabitListProps {
   habits: Habit[];
   weekDates: Date[];
-  onToggleHabit: (habitId: string | undefined, date: Date) => void;
-  onDeleteHabit: (habitId: string | undefined) => void;
+  onToggleHabit: (habitId: string, date: Date) => void;
+  onDeleteHabit: (habitId: string) => void;
   calculateStreaks: (habit: Habit) => number;
+  completionGoals?: {
+    daily: number;
+    weekly: number;
+    monthly: number;
+  };
 }
 
 const HabitList: React.FC<HabitListProps> = ({
@@ -17,33 +21,22 @@ const HabitList: React.FC<HabitListProps> = ({
   weekDates,
   onToggleHabit,
   onDeleteHabit,
-  calculateStreaks
+  calculateStreaks,
+  completionGoals
 }) => {
-  const isMobile = useIsMobile();
-  
-  if (habits.length === 0) {
-    return (
-      <div className="text-center py-12 bg-white rounded-xl shadow-sm">
-        <p className="text-muted-foreground">No habits found. Click "Add Habit" to create one.</p>
-      </div>
-    );
-  }
-
   return (
-    <div className={`grid ${isMobile ? 'gap-3' : 'gap-4'}`}>
-      {habits.map((habit) => {
-        const streakCount = calculateStreaks(habit);
-        
-        return (
-          <HabitItem
-            key={habit.id || `habit-${Math.random()}`} // Ensure unique key even if habit.id is undefined
-            habit={habit}
-            streakCount={streakCount}
-            onToggleHabit={onToggleHabit}
-            onDeleteHabit={onDeleteHabit}
-          />
-        );
-      })}
+    <div className="space-y-4 mt-4">
+      {habits.map((habit) => (
+        <HabitItem
+          key={habit.id}
+          habit={habit}
+          weekDates={weekDates}
+          onToggleCompletion={(date) => habit.id && onToggleHabit(habit.id, date)}
+          onDelete={() => habit.id && onDeleteHabit(habit.id)}
+          streak={calculateStreaks(habit)}
+          completionGoals={completionGoals}
+        />
+      ))}
     </div>
   );
 };

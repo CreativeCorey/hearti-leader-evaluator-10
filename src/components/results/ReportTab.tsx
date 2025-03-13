@@ -40,7 +40,7 @@ const ReportTab: React.FC<ReportTabProps> = ({
       )}
       
       <Card className="p-3 sm:p-6 w-full">
-        <div className="pdf-container w-full" ref={reportRef}>
+        <div className="pdf-container w-full text-left" ref={reportRef}>
           {/* For desktop, render everything as before */}
           {!isMobile ? (
             <DesktopReportView assessment={assessment} assessments={assessments} />

@@ -71,7 +71,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment: initialAssess
         <CardContent className={`pt-6 ${isMobile ? 'px-2' : ''}`}>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
             <div>
-              <h3 className="text-lg font-semibold mb-1">HEARTI Comparison</h3>
+              <h3 className="text-lg font-semibold mb-1">HEARTI:Leader Spectra</h3>
               <p className="text-sm text-muted-foreground">Compare your results with global benchmarks</p>
             </div>
             
@@ -111,10 +111,8 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment: initialAssess
           
           {compareMode !== 'none' && (
             <ComparisonAnalysis 
-              assessment={assessment} 
-              comparisonScores={
-                compareMode === 'average' ? aggregateData.averageScores : undefined
-              }
+              assessment={assessment}
+              averageScores={compareMode === 'average' ? aggregateData.averageScores : undefined} 
               comparisonLabel={getComparisonLabel()}
               comparisonColor={getComparisonColor()}
             />
@@ -122,7 +120,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment: initialAssess
         </CardContent>
       </Card>
       
-      {/* Only show progress chart if there are multiple assessments */}
+      {/* Ensure progress chart is always shown if there are multiple assessments */}
       {assessments && assessments.length > 0 && (
         <div className="mt-8 mb-8">
           <ProgressChart assessments={assessments} onSelectAssessment={handleSelectAssessment} />

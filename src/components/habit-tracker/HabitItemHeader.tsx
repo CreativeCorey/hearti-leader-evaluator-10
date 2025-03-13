@@ -1,52 +1,84 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Trash } from 'lucide-react';
-import { HEARTIDimension } from '@/types';
-import { Gauge, HeartHandshake, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { LucideIcon } from 'lucide-react';
-import { dimensionIcons, dimensionColors } from '../results/development/DimensionIcons';
+import { Habit } from '@/hooks/useHabits';
+import { dimensionColors } from '@/components/results/development/DimensionIcons';
+import HabitItemTitle from './HabitItemTitle';
+import CompletedHabitBadge from './CompletedHabitBadge';
+import { Button } from '../ui/button';
+import { Trash2 } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../ui/alert-dialog';
+import { completionGoals } from './HabitTrackerContent';
 
 interface HabitItemHeaderProps {
-  dimension: HEARTIDimension;
-  frequency: 'daily' | 'weekly' | 'monthly';
-  isHabitMastered: boolean;
-  onDeleteHabit: () => void;
+  habit: Habit;
+  streak: number;
+  onDelete: () => void;
+  completedCount: number;
+  completionTarget?: number;
 }
 
-const frequencyColors = {
-  daily: 'text-blue-600',
-  weekly: 'text-purple-600',
-  monthly: 'text-orange-600'
-};
-
-const HabitItemHeader: React.FC<HabitItemHeaderProps> = ({
-  dimension,
-  frequency,
-  isHabitMastered,
-  onDeleteHabit
+const HabitItemHeader: React.FC<HabitItemHeaderProps> = ({ 
+  habit, 
+  streak, 
+  onDelete,
+  completedCount,
+  completionTarget
 }) => {
-  const isMobile = useIsMobile();
-  const DimensionIcon = dimensionIcons[dimension] || Gauge;
+  const target = completionTarget || completionGoals[habit.frequency];
+  const isCompleted = completedCount >= target;
+  
+  const dimensionColor = dimensionColors[habit.dimension] || '#6B7280';
   
   return (
-    <div className="flex justify-between items-center">
-      <div className="flex items-center gap-1">
-        <DimensionIcon size={isMobile ? 14 : 16} style={{ color: dimensionColors[dimension] }} />
-        <span className={`text-xs ${frequencyColors[frequency]} uppercase font-medium`}>
-          {frequency}
-        </span>
+    <div className="flex items-start justify-between gap-2">
+      <div className="flex-1">
+        <HabitItemTitle
+          habit={habit}
+          dimensionColor={dimensionColor}
+        />
+        
+        <div className="flex items-center text-xs text-gray-500 mt-1">
+          <span className="capitalize">{habit.frequency}</span>
+          <span className="mx-1">•</span>
+          {streak > 0 && (
+            <>
+              <span>{streak} day streak</span>
+              <span className="mx-1">•</span>
+            </>
+          )}
+          <span>{completedCount}/{target} completions</span>
+        </div>
       </div>
-      {!isHabitMastered && (
-        <Button 
-          variant="ghost" 
-          className="h-auto p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50"
-          onClick={onDeleteHabit}
-        >
-          <Trash size={isMobile ? 14 : 16} />
-        </Button>
-      )}
+      
+      <div className="flex items-center gap-2">
+        {isCompleted && <CompletedHabitBadge />}
+        
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="h-7 w-7 rounded-full hover:bg-red-100 hover:text-red-600 text-gray-400"
+            >
+              <Trash2 size={14} />
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Habit</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete this habit? This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={onDelete} className="bg-red-600 hover:bg-red-700">
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </div>
   );
 };

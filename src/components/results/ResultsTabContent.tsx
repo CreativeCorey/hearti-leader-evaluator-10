@@ -13,7 +13,7 @@ interface ResultsTabContentProps {
   assessment: HEARTIAssessment;
   assessments?: HEARTIAssessment[];
   reportRef?: React.RefObject<HTMLDivElement>;
-  onExportPDF?: () => void;
+  onExportPDF?: () => Promise<void>;
   exportingPdf?: boolean;
   topDevelopmentArea?: 'humility' | 'empathy' | 'accountability' | 'resiliency' | 'transparency' | 'inclusivity';
   onSelectAssessment?: (assessment: HEARTIAssessment) => void;
@@ -28,6 +28,14 @@ const ResultsTabContent: React.FC<ResultsTabContentProps> = ({
   topDevelopmentArea = 'humility',
   onSelectAssessment
 }) => {
+  // Create a Promise-returning function for the PDF export
+  const handleExportPDF = async () => {
+    if (onExportPDF) {
+      await onExportPDF();
+    }
+    return Promise.resolve();
+  };
+
   return (
     <>
       <TabsContent value="overview" className="mt-0">
@@ -50,20 +58,19 @@ const ResultsTabContent: React.FC<ResultsTabContentProps> = ({
         <ReportTabContent 
           assessment={assessment} 
           reportRef={reportRef} 
-          onExportPDF={onExportPDF} 
+          onExportPDF={handleExportPDF} 
           exportingPdf={exportingPdf}
         />
       </TabsContent>
       
       <TabsContent value="development" className="mt-0">
         <DevelopmentTabContent 
-          assessment={assessment} 
           topDevelopmentArea={topDevelopmentArea} 
         />
       </TabsContent>
       
       <TabsContent value="habits" className="mt-0">
-        <HabitTabContent assessment={assessment} dimensionToFocus={topDevelopmentArea} />
+        <HabitTabContent topDevelopmentArea={topDevelopmentArea} />
       </TabsContent>
     </>
   );

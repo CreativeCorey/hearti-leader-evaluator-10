@@ -2,6 +2,7 @@
 import { parseISO, isToday, differenceInCalendarDays, isBefore, isAfter, format } from 'date-fns';
 import { Habit } from '@/hooks/useHabits';
 import { HEARTIDimension } from '@/types';
+import { completionGoals } from '@/components/habit-tracker/HabitTrackerContent';
 
 // Filter habits based on active dimension
 export const filterHabits = (habits: Habit[], activeDimension: HEARTIDimension | 'all') => {
@@ -68,4 +69,17 @@ export const calculateStreaks = (habit: Habit) => {
   }
   
   return currentStreak;
+};
+
+// Calculate mastery percentage based on completed dates and frequency
+export const calculateMasteryPercentage = (habit: Habit) => {
+  const completedCount = habit.completedDates.length;
+  const goal = completionGoals[habit.frequency];
+  
+  return Math.min(Math.round((completedCount / goal) * 100), 100);
+};
+
+// Determine if a habit has reached mastery
+export const hasMastery = (habit: Habit) => {
+  return habit.completedDates.length >= completionGoals[habit.frequency];
 };

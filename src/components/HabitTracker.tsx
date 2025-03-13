@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { HEARTIDimension } from '@/types';
 import HabitTrackerCore from './habit-tracker/HabitTrackerCore';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { completionGoals } from './habit-tracker/HabitTrackerContent';
 
 interface HabitTrackerProps {
   focusDimension?: HEARTIDimension;
@@ -22,7 +23,7 @@ const HabitTracker: React.FC<HabitTrackerProps> = ({ focusDimension }) => {
         </CardTitle>
         <CardDescription className="text-blue-100 flex items-center gap-2 text-sm sm:text-base">
           <Calendar className="text-blue-100" size={16} />
-          Build consistent habits by practicing them 30 times
+          Build consistent habits through repeated practice
         </CardDescription>
       </CardHeader>
       <CardContent className={`${isMobile ? 'p-3 sm:p-4' : 'p-6'} bg-gray-50`}>
@@ -30,7 +31,7 @@ const HabitTracker: React.FC<HabitTrackerProps> = ({ focusDimension }) => {
       </CardContent>
       <CardFooter className="bg-white p-3 text-xs sm:text-sm text-muted-foreground border-t flex items-center">
         <Target size={16} className="mr-2 text-blue-600" />
-        <p>Complete each habit 30 times to build lasting behavioral change.</p>
+        <p>Daily: {completionGoals.daily} completions | Weekly: {completionGoals.weekly} completions | Monthly: {completionGoals.monthly} completions</p>
       </CardFooter>
     </Card>
   );
