@@ -9,7 +9,6 @@ import HabitItemActions from './HabitItemActions';
 import { useIsMobile } from '@/hooks/use-mobile';
 import WeekHeader from './WeekHeader';
 import HabitProgressCircle from './HabitProgressCircle';
-import { completionGoals } from './HabitTrackerContent';
 
 interface HabitItemProps {
   habit: Habit;
@@ -24,18 +23,25 @@ interface HabitItemProps {
   };
 }
 
+// Default completion goals
+const DEFAULT_COMPLETION_GOALS = {
+  daily: 30,
+  weekly: 12,
+  monthly: 6
+};
+
 const HabitItem: React.FC<HabitItemProps> = ({
   habit,
   weekDates,
   onToggleCompletion,
   onDelete,
   streak,
-  completionGoals: goals = completionGoals
+  completionGoals = DEFAULT_COMPLETION_GOALS
 }) => {
   const isMobile = useIsMobile();
   
   const getCompletionTarget = () => {
-    return goals ? goals[habit.frequency] : completionGoals[habit.frequency];
+    return completionGoals[habit.frequency];
   };
   
   return (
@@ -57,6 +63,7 @@ const HabitItem: React.FC<HabitItemProps> = ({
             <HabitProgressCircle 
               completedCount={habit.completedDates.length} 
               frequency={habit.frequency}
+              completionTarget={getCompletionTarget()}
             />
             <div className="text-[10px] text-gray-500 mt-1 text-center">
               {habit.completedDates.length}/{getCompletionTarget()}

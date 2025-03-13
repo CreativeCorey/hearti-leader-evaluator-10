@@ -7,7 +7,6 @@ import CompletedHabitBadge from './CompletedHabitBadge';
 import { Button } from '../ui/button';
 import { Trash2 } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../ui/alert-dialog';
-import { completionGoals } from './HabitTrackerContent';
 
 interface HabitItemHeaderProps {
   habit: Habit;
@@ -22,10 +21,9 @@ const HabitItemHeader: React.FC<HabitItemHeaderProps> = ({
   streak, 
   onDelete,
   completedCount,
-  completionTarget
+  completionTarget = 30
 }) => {
-  const target = completionTarget || completionGoals[habit.frequency];
-  const isCompleted = completedCount >= target;
+  const isCompleted = completedCount >= completionTarget;
   
   const dimensionColor = dimensionColors[habit.dimension] || '#6B7280';
   
@@ -46,7 +44,7 @@ const HabitItemHeader: React.FC<HabitItemHeaderProps> = ({
               <span className="mx-1">•</span>
             </>
           )}
-          <span>{completedCount}/{target} completions</span>
+          <span>{completedCount}/{completionTarget} completions</span>
         </div>
       </div>
       
