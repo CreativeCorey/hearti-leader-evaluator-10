@@ -1,7 +1,5 @@
 
-import { completionGoals } from './HabitTrackerContent';
-
-// Update the completionGoals export to use our new values
+// Define completion goals for habit mastery
 export const completionGoals = {
   daily: 30,
   weekly: 12,

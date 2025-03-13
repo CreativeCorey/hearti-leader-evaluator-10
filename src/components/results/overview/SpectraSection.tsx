@@ -4,9 +4,8 @@ import { HEARTIAssessment } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useLanguage } from '@/contexts/language/LanguageContext';
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
-import { formatDataForRadarChart } from '@/utils/calculations';
-import { DimensionIcons } from '../comparison/radar';
+import { RadialBarChart, RadialBar, Legend, ResponsiveContainer, PolarAngleAxis, PolarRadiusAxis, Tooltip } from 'recharts';
+import { dimensionColors } from '../development/DimensionIcons';
 
 interface SpectraSectionProps {
   assessment: HEARTIAssessment;
@@ -16,8 +15,12 @@ const SpectraSection: React.FC<SpectraSectionProps> = ({ assessment }) => {
   const isMobile = useIsMobile();
   const { t } = useLanguage();
   
-  // Format data for the radar chart
-  const chartData = formatDataForRadarChart(assessment.dimensionScores);
+  // Format data for the radial bar chart
+  const chartData = Object.entries(assessment.dimensionScores).map(([dimension, score]) => ({
+    name: dimension.charAt(0).toUpperCase() + dimension.slice(1),
+    value: score * 20, // Convert 0-5 scale to 0-100 scale for better visualization
+    fill: dimensionColors[dimension as keyof typeof dimensionColors]
+  })).sort((a, b) => b.value - a.value); // Sort by value descending for better layering
   
   return (
     <Card className="overflow-hidden">
@@ -27,36 +30,64 @@ const SpectraSection: React.FC<SpectraSectionProps> = ({ assessment }) => {
           <CardDescription className="text-sm">{t('results.spectra.subtitle')}</CardDescription>
         </div>
       </CardHeader>
-      <CardContent className="px-2 pt-0 pb-6">
+      <CardContent className="px-2 pt-0 pb-6 text-left">
         <div className="h-[250px] sm:h-[280px] w-full mx-auto max-w-[380px] relative">
-          <DimensionIcons iconSize={isMobile ? 24 : 24} />
           <ResponsiveContainer width="100%" height="100%">
-            <RadarChart 
-              outerRadius={isMobile ? "58%" : "65%"} 
+            <RadialBarChart 
+              cx="50%" 
+              cy="50%" 
+              innerRadius="20%" 
+              outerRadius="80%" 
+              barSize={20} 
               data={chartData}
+              startAngle={90}
+              endAngle={-270}
             >
-              <PolarGrid gridType="polygon" />
-              <PolarAngleAxis 
-                dataKey="name" 
-                tick={false} 
-                axisLineType="polygon"
+              <PolarAngleAxis
+                type="number"
+                domain={[0, 100]}
+                angleAxisId={0}
+                tick={false}
               />
-              <PolarRadiusAxis 
-                angle={30} 
-                domain={[0, 5]} 
-                tick={{ fontSize: 10 }} 
-                tickCount={6}
+              <PolarRadiusAxis
+                angle={0}
+                domain={[0, 100]}
+                tick={{ fill: '#9ca3af', fontSize: 10 }}
+                tickCount={5}
               />
-              <Radar
-                name="Your HEARTI"
+              <RadialBar
+                background
                 dataKey="value"
-                stroke="#D946EF"
-                fill="#D946EF"
-                fillOpacity={0.6}
-                dot={{ r: 4, strokeWidth: 1, stroke: "white" }}
-                isAnimationActive={true}
+                cornerRadius={8}
+                label={{ 
+                  position: 'insideStart', 
+                  fill: '#fff', 
+                  fontWeight: 'bold',
+                  fontSize: 12
+                }}
               />
-            </RadarChart>
+              <Legend 
+                iconSize={10} 
+                layout="vertical" 
+                verticalAlign="middle" 
+                align="right"
+                wrapperStyle={{
+                  fontSize: isMobile ? '10px' : '12px',
+                  paddingLeft: '10px'
+                }}
+              />
+              <Tooltip
+                formatter={(value) => [`${(value as number / 20).toFixed(1)}/5`, 'Score']}
+                contentStyle={{ 
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                  borderRadius: '6px', 
+                  border: 'none', 
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                  fontSize: '12px',
+                  padding: '8px 12px'
+                }}
+              />
+            </RadialBarChart>
           </ResponsiveContainer>
         </div>
       </CardContent>
