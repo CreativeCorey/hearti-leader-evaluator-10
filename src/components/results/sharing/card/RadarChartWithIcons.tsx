@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { HEARTIAssessment } from '@/types';
+import { HEARTIAssessment, HEARTIDimension } from '@/types';
 import { RadialBarChart, RadialBar, ResponsiveContainer, PolarAngleAxis, Tooltip } from 'recharts';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useLanguage } from '@/contexts/language/LanguageContext';
@@ -10,7 +10,7 @@ import CenteredHexagon from './CenteredHexagon';
 
 interface RadarChartWithIconsProps {
   assessment: HEARTIAssessment;
-  topStrength: string;
+  topStrength: HEARTIDimension;
   chartColor: string;
 }
 
@@ -26,7 +26,8 @@ const RadarChartWithIcons: React.FC<RadarChartWithIconsProps> = ({
   const chartData = Object.entries(assessment.dimensionScores).map(([dimension, score]) => ({
     name: t(`dimensions.${dimension}`),
     value: score * 20, // Convert 0-5 scale to 0-100 scale for better visualization
-    fill: dimensionColors[dimension as keyof typeof dimensionColors]
+    fill: dimensionColors[dimension as keyof typeof dimensionColors],
+    dimension: dimension as HEARTIDimension
   })).sort((a, b) => b.value - a.value); // Sort by value descending for better layering
   
   const iconSize = isMobile ? 20 : 18;
@@ -98,6 +99,10 @@ const RadarChartWithIcons: React.FC<RadarChartWithIconsProps> = ({
               boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
               fontSize: '12px',
               padding: '8px 12px'
+            }}
+            labelFormatter={(label) => {
+              const item = chartData.find(item => item.name === label);
+              return item ? t(`dimensions.${item.dimension}`) : label;
             }}
           />
         </RadialBarChart>

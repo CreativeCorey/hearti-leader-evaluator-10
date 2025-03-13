@@ -6,6 +6,9 @@ import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface HabitProgressCircleProps {
   progress: number;
+  completedCount?: number;
+  frequency?: 'daily' | 'weekly' | 'monthly';
+  completionTarget?: number;
   size?: 'sm' | 'md' | 'lg';
   showLabel?: boolean;
   className?: string;
@@ -14,6 +17,9 @@ interface HabitProgressCircleProps {
 
 const HabitProgressCircle: React.FC<HabitProgressCircleProps> = ({
   progress,
+  completedCount,
+  frequency,
+  completionTarget,
   size = 'md',
   showLabel = true,
   className = '',

@@ -1,5 +1,4 @@
-
-// Define completion goals for habit mastery
+// Export the completion goals
 export const completionGoals = {
   daily: 30,
   weekly: 12,

@@ -6,6 +6,7 @@ import HabitHeader from './HabitHeader';
 import HabitList from './HabitList';
 import { useLanguage } from '@/contexts/language/LanguageContext';
 import { eachDayOfInterval, startOfWeek, endOfWeek } from 'date-fns';
+import { completionGoals } from './HabitTrackerContent';
 
 interface HabitTrackerCoreProps {
   focusDimension?: HEARTIDimension;

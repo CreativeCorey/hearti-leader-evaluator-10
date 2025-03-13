@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface TabHeaderProps {
   title: string;
@@ -20,6 +21,7 @@ const TabHeader: React.FC<TabHeaderProps> = ({
   exportingPdf = false
 }) => {
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   
   return (
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 pb-2 border-b">
@@ -37,7 +39,7 @@ const TabHeader: React.FC<TabHeaderProps> = ({
           className="pdf-export-button whitespace-nowrap"
         >
           <Download size={isMobile ? 14 : 16} className="mr-1" />
-          {exportingPdf ? "Exporting..." : "Export as PDF"}
+          {exportingPdf ? t('common.exporting') : t('common.exportPdf')}
         </Button>
       )}
     </div>

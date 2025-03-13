@@ -19,7 +19,8 @@ const SpectraSection: React.FC<SpectraSectionProps> = ({ assessment }) => {
   const chartData = Object.entries(assessment.dimensionScores).map(([dimension, score]) => ({
     name: t(`dimensions.${dimension}`),
     value: score * 20, // Convert 0-5 scale to 0-100 scale for better visualization
-    fill: dimensionColors[dimension as keyof typeof dimensionColors]
+    fill: dimensionColors[dimension as keyof typeof dimensionColors],
+    dimension: dimension
   })).sort((a, b) => b.value - a.value); // Sort by value descending for better layering
   
   return (
@@ -69,6 +70,10 @@ const SpectraSection: React.FC<SpectraSectionProps> = ({ assessment }) => {
                   fontSize: isMobile ? '10px' : '12px',
                   paddingLeft: '10px'
                 }}
+                formatter={(value, entry) => {
+                  const { payload } = entry as any;
+                  return t(`dimensions.${payload.dimension}`);
+                }}
               />
               <Tooltip
                 formatter={(value) => [`${(value as number / 20).toFixed(1)}/5`, 'Score']}
@@ -79,6 +84,10 @@ const SpectraSection: React.FC<SpectraSectionProps> = ({ assessment }) => {
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
                   fontSize: '12px',
                   padding: '8px 12px'
+                }}
+                labelFormatter={(label) => {
+                  const item = chartData.find(item => item.name === label);
+                  return item ? t(`dimensions.${item.dimension}`) : label;
                 }}
               />
             </RadialBarChart>

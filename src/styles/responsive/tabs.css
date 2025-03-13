@@ -35,6 +35,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    line-height: 1.1;
+    font-size: 0.875rem;
   }
   
   /* Mobile tabs container for habits */
@@ -48,10 +50,20 @@
     }
     
     .results-tab {
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       padding: 0.25rem 0.4rem;
       line-height: 1.1;
       min-height: 32px;
+      hyphens: auto;
+      word-break: break-word;
+    }
+  }
+  
+  @media (min-width: 641px) and (max-width: 768px) {
+    .results-tab {
+      font-size: 0.7rem;
+      hyphens: auto;
+      word-break: break-word;
     }
   }
 }
