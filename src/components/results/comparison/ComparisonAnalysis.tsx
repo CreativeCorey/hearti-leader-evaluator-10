@@ -7,34 +7,40 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ComparisonAnalysisProps {
   assessment: HEARTIAssessment;
-  compareMode: 'none' | 'average';
-  sortedDimensions: HEARTIDimension[];
-  getComparisonLabel: () => string;
-  getComparisonColor: () => string;
-  aggregateData: any;
+  averageScores?: Record<HEARTIDimension, number>;
+  comparisonLabel: string;
+  comparisonColor: string;
 }
 
 const ComparisonAnalysis: React.FC<ComparisonAnalysisProps> = ({
   assessment,
-  compareMode,
-  sortedDimensions,
-  getComparisonLabel,
-  getComparisonColor,
-  aggregateData
+  averageScores,
+  comparisonLabel,
+  comparisonColor
 }) => {
   const isMobile = useIsMobile();
 
-  // Skip rendering if no comparison is selected
-  if (compareMode === 'none') return null;
+  // Skip rendering if no comparison data is provided
+  if (!averageScores) return null;
+
+  // Sort dimensions by score difference (largest to smallest)
+  const sortedDimensions = Object.keys(assessment.dimensionScores)
+    .sort((a, b) => {
+      const aScore = assessment.dimensionScores[a as HEARTIDimension];
+      const bScore = assessment.dimensionScores[b as HEARTIDimension];
+      const aCompare = averageScores[a as HEARTIDimension];
+      const bCompare = averageScores[b as HEARTIDimension];
+      return Math.abs(bScore - bCompare) - Math.abs(aScore - aCompare);
+    }) as HEARTIDimension[];
 
   return (
-    <div className="space-y-4 mt-24">
+    <div className="space-y-4 mt-8">
       <h3 className="text-lg font-medium mb-2 text-center">Comparison Analysis</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {sortedDimensions.map((dimension: HEARTIDimension) => {
           const userScore = assessment.dimensionScores[dimension];
-          const comparisonScore = aggregateData.averageScores[dimension];
+          const comparisonScore = averageScores[dimension];
           const difference = userScore - comparisonScore;
           const isHigher = difference > 0;
           
@@ -51,8 +57,8 @@ const ComparisonAnalysis: React.FC<ComparisonAnalysisProps> = ({
                       You: {userScore.toFixed(1)}
                     </div>
                     <span className="text-gray-400">|</span>
-                    <div className="text-sm font-semibold" style={{ color: getComparisonColor() }}>
-                      {getComparisonLabel()}: {comparisonScore.toFixed(1)}
+                    <div className="text-sm font-semibold" style={{ color: comparisonColor }}>
+                      {comparisonLabel}: {comparisonScore.toFixed(1)}
                     </div>
                   </div>
                 </div>
@@ -66,7 +72,7 @@ const ComparisonAnalysis: React.FC<ComparisonAnalysisProps> = ({
                 
                 <p className="text-gray-600 text-sm">
                   Your score is {Math.abs(difference).toFixed(1)} {isHigher ? 'higher' : 'lower'} than 
-                  the {getComparisonLabel().toLowerCase()} score.
+                  the {comparisonLabel.toLowerCase()} score.
                 </p>
               </div>
             </Card>

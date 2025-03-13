@@ -57,6 +57,7 @@ const ResultsTabContent: React.FC<ResultsTabContentProps> = ({
       <TabsContent value="report" className="mt-0">
         <ReportTabContent 
           assessment={assessment} 
+          assessments={assessments}
           reportRef={reportRef} 
           onExportPDF={handleExportPDF} 
           exportingPdf={exportingPdf}
