@@ -11,26 +11,13 @@ import ComparisonAnalysis from "./comparison/ComparisonAnalysis";
 import ProgressChart from "./comparison/ProgressChart";
 import { aggregateData, userColor, comparisonColors } from "./comparison/aggregateData";
 import { useIsMobile } from '@/hooks/use-mobile';
-import { formatDataForRadarChart } from '@/utils/calculations';
+import { formatDataForRadarChart, convertToComparisonFormat } from '@/utils/calculations';
 import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface ComparisonTabProps {
   assessment: HEARTIAssessment;
   assessments?: HEARTIAssessment[];
 }
-
-// Helper function to convert dimensions to comparison format
-const convertToComparisonFormat = (
-  userScores: Record<string, number>,
-  comparisonScores: Record<string, number> | null
-) => {
-  return Object.keys(userScores).map(key => ({
-    dimension: key,
-    name: key.charAt(0).toUpperCase() + key.slice(1),
-    'Your Score': userScores[key],
-    Comparison: comparisonScores ? comparisonScores[key] : 0
-  }));
-};
 
 const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment: initialAssessment, assessments = [] }) => {
   const [chartView, setChartView] = useState<'combined' | 'separate'>('combined');
