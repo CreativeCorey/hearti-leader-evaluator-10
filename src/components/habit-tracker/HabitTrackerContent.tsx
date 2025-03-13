@@ -1,4 +1,7 @@
-// Export the completion goals
+
+import { completionGoals } from './HabitTrackerContent';
+
+// Update the completionGoals export to use our new values
 export const completionGoals = {
   daily: 30,
   weekly: 12,

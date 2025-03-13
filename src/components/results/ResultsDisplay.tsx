@@ -52,21 +52,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
       t('tabs.dataViz.desktop');
   };
 
-  // For Spanish and other languages with long words, use abbreviated versions on mobile
-  const getDevelopSkillsTabName = () => {
-    if (isMobile) {
-      return t('tabs.developSkillsShort');
-    }
-    return t('tabs.developSkills');
-  };
-
-  const getBuildHabitsTabName = () => {
-    if (isMobile) {
-      return t('tabs.buildHabitsShort');
-    }
-    return t('tabs.buildHabits');
-  };
-
   // Handle assessment selection (for the progress chart interaction)
   const handleAssessmentSelect = (assessment: HEARTIAssessment) => {
     setSelectedAssessment(assessment);
@@ -81,42 +66,24 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
       onValueChange={setActiveTab}
       className="space-y-6"
     >
-      <TabsList className="w-full grid grid-cols-2 md:grid-cols-6 gap-1 p-1 h-auto sm:min-h-[40px]">
-        <TabsTrigger 
-          value="overview" 
-          className="text-xs md:text-sm py-1 px-1 sm:px-2 whitespace-normal min-h-[36px] flex items-center justify-center"
-        >
+      <TabsList className="w-full grid grid-cols-2 md:grid-cols-6 gap-1 p-1 h-auto flex-wrap">
+        <TabsTrigger value="overview" className="text-xs md:text-sm whitespace-nowrap">
           {t('tabs.summary')}
         </TabsTrigger>
-        <TabsTrigger 
-          value="dimensions" 
-          className="text-xs md:text-sm py-1 px-1 sm:px-2 whitespace-normal min-h-[36px] flex items-center justify-center"
-        >
+        <TabsTrigger value="dimensions" className="text-xs md:text-sm whitespace-nowrap">
           {t('tabs.dimensions')}
         </TabsTrigger>
-        <TabsTrigger 
-          value="comparison" 
-          className="text-xs md:text-sm py-1 px-1 sm:px-2 whitespace-normal min-h-[36px] flex items-center justify-center"
-        >
+        <TabsTrigger value="comparison" className="text-xs md:text-sm whitespace-nowrap">
           {getDataVizTabName()}
         </TabsTrigger>
-        <TabsTrigger 
-          value="report" 
-          className="text-xs md:text-sm py-1 px-1 sm:px-2 whitespace-normal min-h-[36px] flex items-center justify-center"
-        >
-          {t('tabs.guide')}
+        <TabsTrigger value="report" className="text-xs md:text-sm whitespace-nowrap">
+          Guide
         </TabsTrigger>
-        <TabsTrigger 
-          value="development" 
-          className="text-xs md:text-sm py-1 px-1 sm:px-2 whitespace-normal min-h-[36px] flex items-center justify-center hyphens-auto"
-        >
-          {getDevelopSkillsTabName()}
+        <TabsTrigger value="development" className="text-xs md:text-sm whitespace-nowrap">
+          {t('tabs.developSkills')}
         </TabsTrigger>
-        <TabsTrigger 
-          value="habits" 
-          className="text-xs md:text-sm py-1 px-1 sm:px-2 whitespace-normal min-h-[36px] flex items-center justify-center"
-        >
-          {getBuildHabitsTabName()}
+        <TabsTrigger value="habits" className="text-xs md:text-sm whitespace-nowrap">
+          {t('tabs.buildHabits')}
         </TabsTrigger>
       </TabsList>
       
