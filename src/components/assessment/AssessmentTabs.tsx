@@ -93,8 +93,8 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = memo(({
     >
       <div className={`w-full overflow-hidden mb-4 ${viewTransitioning ? 'opacity-75 transition-opacity' : ''}`}>
         <TabsList className="w-full grid grid-cols-2 gap-1">
-          <TabsTrigger value="take" className="px-4 py-2">{t('assessment.takeAssessment')}</TabsTrigger>
-          <TabsTrigger value="results" className="px-4 py-2" disabled={userAssessments.length === 0}>{t('assessment.viewResults')}</TabsTrigger>
+          <TabsTrigger value="take" className="px-4 py-2 text-sm">{t('assessment.takeAssessment')}</TabsTrigger>
+          <TabsTrigger value="results" className="px-4 py-2 text-sm" disabled={userAssessments.length === 0}>{t('assessment.viewResults')}</TabsTrigger>
         </TabsList>
       </div>
       

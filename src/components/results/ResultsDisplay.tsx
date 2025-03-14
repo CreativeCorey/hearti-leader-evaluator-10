@@ -60,29 +60,38 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
     }
   };
   
+  // Determine tab classes based on screen size
+  const getTabClasses = () => {
+    const baseClasses = "whitespace-nowrap";
+    if (isMobile) {
+      return `text-xs ${baseClasses} px-2 py-1.5`;  // Smaller padding on mobile
+    }
+    return `text-xs md:text-sm ${baseClasses}`;
+  };
+  
   return (
     <Tabs 
       value={activeTab} 
       onValueChange={setActiveTab}
       className="space-y-6"
     >
-      <TabsList className="w-full grid grid-cols-2 md:grid-cols-6 gap-1 p-1 h-auto flex-wrap">
-        <TabsTrigger value="overview" className="text-xs md:text-sm whitespace-nowrap">
+      <TabsList className="w-full grid grid-cols-3 md:grid-cols-6 gap-1 p-1 h-auto flex-wrap">
+        <TabsTrigger value="overview" className={getTabClasses()}>
           {t('tabs.summary')}
         </TabsTrigger>
-        <TabsTrigger value="dimensions" className="text-xs md:text-sm whitespace-nowrap">
+        <TabsTrigger value="dimensions" className={getTabClasses()}>
           {t('tabs.dimensions')}
         </TabsTrigger>
-        <TabsTrigger value="comparison" className="text-xs md:text-sm whitespace-nowrap">
+        <TabsTrigger value="comparison" className={getTabClasses()}>
           {getDataVizTabName()}
         </TabsTrigger>
-        <TabsTrigger value="report" className="text-xs md:text-sm whitespace-nowrap">
-          Guide
+        <TabsTrigger value="report" className={getTabClasses()}>
+          {t('tabs.report')}
         </TabsTrigger>
-        <TabsTrigger value="development" className="text-xs md:text-sm whitespace-nowrap">
+        <TabsTrigger value="development" className={getTabClasses()}>
           {t('tabs.developSkills')}
         </TabsTrigger>
-        <TabsTrigger value="habits" className="text-xs md:text-sm whitespace-nowrap">
+        <TabsTrigger value="habits" className={getTabClasses()}>
           {t('tabs.buildHabits')}
         </TabsTrigger>
       </TabsList>

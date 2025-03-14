@@ -1,3 +1,4 @@
+
 export const es = {
   common: {
     loading: "Cargando...",
@@ -122,7 +123,7 @@ export const es = {
       desktop: "HEARTI Spectra",
       mobile: "Spectra"
     },
-    report: "Informe",
+    report: "Guía",
     developSkills: "Desarrollar Habilidades",
     buildHabits: "Crear Hábitos",
   },
@@ -145,7 +146,13 @@ export const es = {
       progress: "Progreso HEARTI a lo largo del tiempo",
       progressSubtitle: "Sigue tu viaje de desarrollo de liderazgo",
       noProgressData: "Completa más evaluaciones para ver tu progreso a lo largo del tiempo.",
-      strength: "Fortaleza"
+      strength: "Fortaleza",
+      vulnerability: "Vulnerabilidad",
+      competent: "Competente",
+      yourHEARTI: "Tu HEARTI",
+      score: "Puntuación",
+      selectOption: "Selecciona una opción de comparación para ver datos",
+      useControls: "Usa los controles de comparación para visualizar tus datos HEARTI"
     },
     development: {
       title: "Actividades de Desarrollo",
@@ -160,6 +167,11 @@ export const es = {
       resiliency: "Resiliency",
       transparency: "Transparency",
       inclusivity: "Inclusivity",
+      scoreLabel: "Puntuación",
+      levelsOf: "Niveles de",
+      developmentTips: "Consejos de desarrollo",
+      tipsForIncreasing: "Consejos para aumentar la",
+      leadership: "de liderazgo"
     },
     habits: {
       title: "Tus Hábitos",
@@ -177,5 +189,8 @@ export const es = {
       monthly: "MENSUAL",
       noHabits: "No se encontraron hábitos. Haz clic en \"Añadir Hábito\" para crear uno.",
     },
+    report: {
+      description: "Insights y recomendaciones para ayudarte a desarrollar tus habilidades de liderazgo"
+    }
   },
 };

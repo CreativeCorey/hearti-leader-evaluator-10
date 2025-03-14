@@ -34,7 +34,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   assessments = [], 
   onSelectAssessment 
 }) => {
-  const { t } = useLanguage();
+  const { t, currentLanguage } = useLanguage();
   
   // Check if assessment is valid and has necessary data
   const isValidAssessment = assessment && 
@@ -46,8 +46,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
     ? assessment 
     : { ...assessment, ...fallbackAssessment } as HEARTIAssessment;
   
-  // Format date string for display
-  const formattedDate = formatDate(safeAssessment.date);
+  // Format date string for display (respect language settings)
+  const formattedDate = formatDate(safeAssessment.date, currentLanguage);
   
   return (
     <div className="space-y-6">

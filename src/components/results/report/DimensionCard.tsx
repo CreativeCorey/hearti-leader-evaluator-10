@@ -96,7 +96,7 @@ const DimensionCard: React.FC<DimensionCardProps> = ({
                 <div className="mb-4">
                   <h4 className="text-lg font-medium uppercase mb-2 flex items-center gap-2">
                     <DimensionIcon size={18} className="text-gray-500" />
-                    {dimension}
+                    {t('results.dimensions.levelsOf')} {dimension}
                   </h4>
                   <div dangerouslySetInnerHTML={{ __html: levels }} />
                 </div>
@@ -106,7 +106,7 @@ const DimensionCard: React.FC<DimensionCardProps> = ({
                 <div>
                   <h4 className="text-lg font-medium mb-2 flex items-center gap-2">
                     <DimensionIcon size={18} className="text-gray-500" />
-                    {t('results.dimensions.tipsForIncreasing')} {dimension} {t('results.dimensions.leadership')}:
+                    {t('results.dimensions.tipsForIncreasing')} {dimension} {t('results.dimensions.leadership')}
                   </h4>
                   <div dangerouslySetInnerHTML={{ __html: tips }} />
                 </div>

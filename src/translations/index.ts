@@ -24,10 +24,19 @@ export const translations = {
 
 export const getTranslation = (language: SupportedLanguage, key: string, params?: Record<string, string>): string => {
   // Check if we're trying to access a HEARTI dimension directly
-  if (key.startsWith('results.dimensions.') && 
-      ['humility', 'empathy', 'accountability', 'resiliency', 'transparency', 'inclusivity'].includes(key.split('.').pop() || '')) {
+  if ((key.startsWith('results.dimensions.') && 
+      ['humility', 'empathy', 'accountability', 'resiliency', 'transparency', 'inclusivity'].includes(key.split('.').pop() || '')) ||
+      key === 'dimensions.humility' || 
+      key === 'dimensions.empathy' || 
+      key === 'dimensions.accountability' || 
+      key === 'dimensions.resiliency' || 
+      key === 'dimensions.transparency' || 
+      key === 'dimensions.inclusivity'
+  ) {
     // Return the dimension name untranslated
-    return key.split('.').pop() || key;
+    const dimensionName = key.split('.').pop();
+    // Capitalize first letter
+    return dimensionName ? dimensionName.charAt(0).toUpperCase() + dimensionName.slice(1) : key;
   }
   
   // Split the key by dots to access nested properties

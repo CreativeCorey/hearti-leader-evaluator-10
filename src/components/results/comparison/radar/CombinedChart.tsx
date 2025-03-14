@@ -5,6 +5,7 @@ import { useRadarChartConfig } from '@/hooks/use-radar-chart-config';
 import BaseRadarChart from './BaseRadarChart';
 import DimensionIcons from './DimensionIcons';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface CombinedChartProps {
   combinedChartData: any[];
@@ -23,14 +24,15 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
 }) => {
   const { config, iconSize } = useRadarChartConfig();
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   
   // Handle the case where no data should be shown (no comparison mode)
   if (compareMode === 'none') {
     return (
       <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg h-[280px] sm:h-[350px] w-full flex flex-col items-center justify-center">
         <div className="text-center text-gray-500">
-          <p className="mb-2">Select a comparison option to view data</p>
-          <p className="text-sm">Use the comparison controls above to visualize your HEARTI data</p>
+          <p className="mb-2">{t('results.comparison.selectOption')}</p>
+          <p className="text-sm">{t('results.comparison.useControls')}</p>
         </div>
       </div>
     );
@@ -78,7 +80,7 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
           )}
           
           <Radar
-            name="Your HEARTI"
+            name={t('results.comparison.yourHEARTI')}
             dataKey="Your Score"
             stroke={userColor}
             fill={userColor}
@@ -93,7 +95,7 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
           />
           
           <Tooltip 
-            formatter={(value) => [`${value}/5`, 'Score']} 
+            formatter={(value) => [`${value}/5`, t('results.comparison.score')]} 
             contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: '6px', border: 'none', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}
           />
           <Legend 

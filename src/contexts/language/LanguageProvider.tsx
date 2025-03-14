@@ -22,10 +22,18 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     if (isRTLLanguage(currentLanguage)) {
       document.documentElement.dir = 'rtl';
       document.documentElement.lang = currentLanguage;
+      
+      // Add RTL specific classname to body for additional styling
+      document.body.classList.add('rtl');
     } else {
       document.documentElement.dir = 'ltr';
       document.documentElement.lang = currentLanguage;
+      
+      // Remove RTL classname if it exists
+      document.body.classList.remove('rtl');
     }
+    
+    console.log(`Language changed to: ${currentLanguage}, RTL: ${isRTLLanguage(currentLanguage)}`);
   }, [currentLanguage]);
 
   const setLanguage = (language: SupportedLanguage) => {

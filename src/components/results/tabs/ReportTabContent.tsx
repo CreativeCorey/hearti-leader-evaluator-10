@@ -4,6 +4,7 @@ import { HEARTIAssessment } from '@/types';
 import ReportTab from '../ReportTab';
 import TabHeader from './TabHeader';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface ReportTabContentProps {
   assessment: HEARTIAssessment;
@@ -21,13 +22,14 @@ const ReportTabContent: React.FC<ReportTabContentProps> = ({
   exportingPdf
 }) => {
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   
   return (
     <>
       {!isMobile && (
         <TabHeader
-          title="Guide"
-          description="Insights and recommendations to help you develop your leadership skills"
+          title={t('tabs.report')}
+          description={t('results.report.description')}
           showExportButton={false}
         />
       )}
