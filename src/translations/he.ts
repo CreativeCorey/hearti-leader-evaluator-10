@@ -20,7 +20,8 @@ export const he = {
     signOut: "התנתק",
     anonymous: "מצב אנונימי",
     enableAnonymous: "הפעל אנונימיות",
-    account: "חשבון"
+    account: "חשבון",
+    you: "אתה"
   },
   assessment: {
     title: "הערכת מנהיגות HEARTI™",
@@ -74,13 +75,25 @@ export const he = {
       average: "ממוצע",
       progress: "התקדמות HEARTI לאורך זמן",
       progressSubtitle: "עקוב אחר מסע פיתוח המנהיגות שלך",
-      noProgressData: "השלם הערכות נוספות כדי לראות את התקדמותך לאורך זמן."
+      noProgressData: "השלם הערכות נוספות כדי לראות את התקדמותך לאורך זמן.",
+      strength: "חוזקה",
+      vulnerability: "פגיעות",
+      competent: "כשיר",
+      higher: "גבוה יותר",
+      lower: "נמוך יותר",
+      overallScore: "ציון כולל",
+      dimensions: "ממדים",
+      score: "ציון",
+      date: "תאריך",
+      clickDataPoint: "לחץ על נקודת נתונים כלשהי כדי להציג את הדוח המפורט של הערכה זו",
+      scoreComparison: "הציון שלך הוא {{difference}} {{direction}} מהציון {{label}}."
     },
     development: {
       title: "פעילויות פיתוח",
       subtitle: "פעילויות מותאמות אישית לפיתוח מיומנויות המנהיגות שלך",
       focused: "מיקוד",
       complete: "מלא",
+      activities: "פעילויות פיתוח"
     },
     dimensions: {
       humility: "Humility",
@@ -89,7 +102,12 @@ export const he = {
       resiliency: "Resiliency",
       transparency: "Transparency",
       inclusivity: "Inclusivity",
-      score: "ציון: {{value}}/5"
+      score: "ציון: {{value}}/5",
+      scoreLabel: "ציון",
+      levelsOf: "רמות של",
+      developmentTips: "טיפים לפיתוח",
+      tipsForIncreasing: "טיפים להגברת",
+      leadership: "מנהיגות"
     },
     habits: {
       title: "ההרגלים שלך",
@@ -119,11 +137,44 @@ export const he = {
     },
   },
   dimensions: {
-    humility: "Humility",
-    empathy: "Empathy",
-    accountability: "Accountability",
-    resiliency: "Resiliency",
-    transparency: "Transparency",
-    inclusivity: "Inclusivity"
+    descriptions: {
+      humility: "היכולת להכיר במגבלות ובטעויות של האדם, ולהיות פתוח למשוב וצמיחה.",
+      empathy: "היכולת להבין ולשתף את רגשותיהם של אחרים, ולהגיב בחמלה.",
+      accountability: "הנכונות לקחת אחריות על מעשים והחלטות, ולעמוד בהתחייבויות.",
+      resiliency: "היכולת להתאושש מקשיים, להסתגל לשינויים, ולהמשיך בפני מכשולים.",
+      transparency: "הנוהג להיות פתוח, כן, וברור בתקשורת ובתהליכי קבלת החלטות.",
+      inclusivity: "המחויבות ליצירת סביבות בהן כל האנשים מרגישים מקובלים, מוערכים ומכובדים."
+    },
+    feedback: {
+      "humility.excellent": "ציון הענווה שלך מצוין. זהו חוזק משמעותי בגישת המנהיגות שלך.",
+      "humility.good": "ציון הענווה שלך טוב. זהו היבט חיובי במנהיגות שלך עם מקום להתפתחות נוספת.",
+      "humility.average": "ציון הענווה שלך ממוצע. שקול להתמקד בפיתוח היבט זה של המנהיגות שלך.",
+      "humility.needsImprovement": "ציון הענווה שלך דורש שיפור. תחום זה מייצג הזדמנות לצמיחה משמעותית.",
+      
+      "empathy.excellent": "ציון האמפתיה שלך מצוין. זהו חוזק משמעותי בגישת המנהיגות שלך.",
+      "empathy.good": "ציון האמפתיה שלך טוב. זהו היבט חיובי במנהיגות שלך עם מקום להתפתחות נוספת.",
+      "empathy.average": "ציון האמפתיה שלך ממוצע. שקול להתמקד בפיתוח היבט זה של המנהיגות שלך.",
+      "empathy.needsImprovement": "ציון האמפתיה שלך מתחת לממוצע. תחום זה מייצג הזדמנות לצמיחה משמעותית.",
+      
+      "accountability.excellent": "ציון האחריותיות שלך מצוין. זהו חוזק משמעותי בגישת המנהיגות שלך.",
+      "accountability.good": "ציון האחריותיות שלך טוב. זהו היבט חיובי במנהיגות שלך עם מקום להתפתחות נוספת.",
+      "accountability.average": "ציון האחריותיות שלך ממוצע. שקול להתמקד בפיתוח היבט זה של המנהיגות שלך.",
+      "accountability.needsImprovement": "ציון האחריותיות שלך דורש שיפור. תחום זה מייצג הזדמנות לצמיחה משמעותית.",
+      
+      "resiliency.excellent": "ציון החוסן שלך מצוין. זהו חוזק משמעותי בגישת המנהיגות שלך.",
+      "resiliency.good": "ציון החוסן שלך טוב. זהו היבט חיובי במנהיגות שלך עם מקום להתפתחות נוספת.",
+      "resiliency.average": "ציון החוסן שלך ממוצע. שקול להתמקד בפיתוח היבט זה של המנהיגות שלך.",
+      "resiliency.needsImprovement": "ציון החוסן שלך דורש שיפור. תחום זה מייצג הזדמנות לצמיחה משמעותית.",
+      
+      "transparency.excellent": "ציון השקיפות שלך מצוין. זהו חוזק משמעותי בגישת המנהיגות שלך.",
+      "transparency.good": "ציון השקיפות שלך טוב. זהו היבט חיובי במנהיגות שלך עם מקום להתפתחות נוספת.",
+      "transparency.average": "ציון השקיפות שלך ממוצע. שקול להתמקד בפיתוח היבט זה של המנהיגות שלך.",
+      "transparency.needsImprovement": "ציון השקיפות שלך דורש שיפור. תחום זה מייצג הזדמנות לצמיחה משמעותית.",
+      
+      "inclusivity.excellent": "ציון ההכללה שלך מצוין. זהו חוזק משמעותי בגישת המנהיגות שלך.",
+      "inclusivity.good": "ציון ההכללה שלך טוב. זהו היבט חיובי במנהיגות שלך עם מקום להתפתחות נוספת.",
+      "inclusivity.average": "ציון ההכללה שלך ממוצע. שקול להתמקד בפיתוח היבט זה של המנהיגות שלך.",
+      "inclusivity.needsImprovement": "ציון ההכללה שלך דורש שיפור. תחום זה מייצג הזדמנות לצמיחה משמעותית."
+    }
   }
 };

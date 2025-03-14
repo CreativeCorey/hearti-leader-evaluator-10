@@ -7,6 +7,7 @@ import {
   SpectraSection,
   ScoreCard
 } from './overview';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface OverviewTabProps {
   assessment: HEARTIAssessment;
@@ -33,6 +34,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   assessments = [], 
   onSelectAssessment 
 }) => {
+  const { t } = useLanguage();
+  
   // Check if assessment is valid and has necessary data
   const isValidAssessment = assessment && 
     assessment.dimensionScores && 

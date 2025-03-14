@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { LanguageContext, SupportedLanguage } from './LanguageContext';
-import { getTranslation } from '@/translations';
+import { getTranslation, isRTLLanguage } from '@/translations';
 
 interface LanguageProviderProps {
   children: React.ReactNode;
@@ -19,7 +19,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     localStorage.setItem('preferredLanguage', currentLanguage);
     
     // Update document direction for RTL languages (Arabic and Hebrew)
-    if (currentLanguage === 'ar' || currentLanguage === 'he') {
+    if (isRTLLanguage(currentLanguage)) {
       document.documentElement.dir = 'rtl';
       document.documentElement.lang = currentLanguage;
     } else {

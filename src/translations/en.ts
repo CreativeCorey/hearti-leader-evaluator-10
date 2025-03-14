@@ -19,7 +19,8 @@ export const en = {
     signOut: "Sign Out",
     anonymous: "Anonymous Mode",
     enableAnonymous: "Enable Anonymous",
-    account: "Account"
+    account: "Account",
+    you: "You"
   },
   auth: {
     welcome: "Welcome to HEARTI",
@@ -74,7 +75,6 @@ export const en = {
       "5": "Almost Always"
     },
     questions: {
-      // Humility
       "1": "I acknowledge when I don't know the answer.",
       "2": "I ask for feedback.",
       "3": "If people express criticism, I implement what I learn.",
@@ -85,7 +85,6 @@ export const en = {
       "8": "I let my team figure out how to get work done.",
       "9": "I listen more than I talk.",
       
-      // Empathy
       "10": "I seek to understand situations from another person's point of view by asking questions and being curious.",
       "11": "I reach out and express my support when I see that others are struggling.",
       "13": "When making an important decision, I deliberately consult with those who think differently than me.",
@@ -96,7 +95,6 @@ export const en = {
       "18": "I prioritize delivering results even when there is a cost to the well-being of my team.",
       "19": "When I am talking with someone, I often think about what I am going to say next.",
       
-      // Accountability
       "20": "I hold others accountable for their behaviors to create a workplace of belonging.",
       "21": "I take ownership of my decisions and the consequences of mistakes.",
       "22": "My colleagues trust me to get the job done.",
@@ -107,7 +105,6 @@ export const en = {
       "27": "I hold others accountable even if it makes me feel uncomfortable.",
       "28": "My team tells me when they are behind on goals.",
       
-      // Resiliency
       "29": "Unexpected obstacles present opportunities.",
       "30": "I have a hard time giving up on a goal.",
       "31": "When I fail, I am able to adapt and try an alternative approach.",
@@ -119,7 +116,6 @@ export const en = {
       "37": "I practice self-care to avoid burn out.",
       "38": "My team feels burned out.",
       
-      // Transparency
       "39": "I share information that allows my team to do their jobs more effectively.",
       "40": "I avoid difficult conversations.",
       "41": "I am comfortable being vulnerable about my shortcomings and challenges.",
@@ -132,7 +128,6 @@ export const en = {
       "48": "When the news is bad, I don't try to gloss over the truth.",
       "49": "People tell me I am easy to talk to.",
       
-      // Inclusivity
       "50": "I hire, refer, and recommend BIPOC candidates.",
       "51": "I seek out and participate in training that mentions microaggressions, anti-racism, or white privilege.",
       "52": "I provide corrective feedback to people who behave in a sexist, racist, or homophobic manner.",
@@ -175,13 +170,24 @@ export const en = {
       progress: "HEARTI Progress Over Time",
       progressSubtitle: "Track your leadership development journey",
       noProgressData: "Complete more assessments to see your progress over time.",
-      strength: "Strength"
+      strength: "Strength",
+      vulnerability: "Vulnerability",
+      competent: "Competent",
+      higher: "higher",
+      lower: "lower",
+      overallScore: "Overall Score",
+      dimensions: "Dimensions",
+      score: "Score",
+      date: "Date",
+      clickDataPoint: "Click on any data point to view that assessment's detailed report",
+      scoreComparison: "Your score is {{difference}} {{direction}} than the {{label}} score."
     },
     development: {
       title: "Development Activities",
       subtitle: "Personalized activities to grow your leadership skills",
       focused: "Focus on",
       complete: "Complete",
+      activities: "Development Activities"
     },
     dimensions: {
       humility: "Humility",
@@ -190,6 +196,12 @@ export const en = {
       resiliency: "Resiliency",
       transparency: "Transparency",
       inclusivity: "Inclusivity",
+      score: "Score: {{value}}/5",
+      scoreLabel: "Score",
+      levelsOf: "Levels of",
+      developmentTips: "Development Tips",
+      tipsForIncreasing: "Tips for increasing your",
+      leadership: "leadership"
     },
     habits: {
       title: "Your Habits",
@@ -208,4 +220,45 @@ export const en = {
       noHabits: "No habits found. Click \"Add Habit\" to create one.",
     },
   },
+  dimensions: {
+    descriptions: {
+      humility: "The ability to recognize one's limitations and mistakes, and to be open to feedback and growth.",
+      empathy: "The capacity to understand and share the feelings of others, and to respond with compassion.",
+      accountability: "The willingness to take responsibility for one's actions and decisions, and to follow through on commitments.",
+      resiliency: "The ability to recover from setbacks, adapt to change, and keep going in the face of adversity.",
+      transparency: "The practice of being open, honest, and clear in communications and decision-making processes.",
+      inclusivity: "The commitment to creating environments where all people feel welcomed, respected, and valued."
+    },
+    feedback: {
+      "humility.excellent": "Your humility score is excellent. This is a significant strength in your leadership approach.",
+      "humility.good": "Your humility score is good. This is a positive aspect of your leadership with room for further development.",
+      "humility.average": "Your humility score is average. Consider focusing on developing this aspect of your leadership.",
+      "humility.needsImprovement": "Your humility score needs improvement. This area represents an opportunity for significant growth.",
+      
+      "empathy.excellent": "Your empathy score is excellent. This is a significant strength in your leadership approach.",
+      "empathy.good": "Your empathy score is good. This is a positive aspect of your leadership with room for further development.",
+      "empathy.average": "Your empathy score is average. Consider focusing on developing this aspect of your leadership.",
+      "empathy.needsImprovement": "Your empathy score is below average. This area represents an opportunity for significant growth.",
+      
+      "accountability.excellent": "Your accountability score is excellent. This is a significant strength in your leadership approach.",
+      "accountability.good": "Your accountability score is good. This is a positive aspect of your leadership with room for further development.",
+      "accountability.average": "Your accountability score is average. Consider focusing on developing this aspect of your leadership.",
+      "accountability.needsImprovement": "Your accountability score needs improvement. This area represents an opportunity for significant growth.",
+      
+      "resiliency.excellent": "Your resiliency score is excellent. This is a significant strength in your leadership approach.",
+      "resiliency.good": "Your resiliency score is good. This is a positive aspect of your leadership with room for further development.",
+      "resiliency.average": "Your resiliency score is average. Consider focusing on developing this aspect of your leadership.",
+      "resiliency.needsImprovement": "Your resiliency score needs improvement. This area represents an opportunity for significant growth.",
+      
+      "transparency.excellent": "Your transparency score is excellent. This is a significant strength in your leadership approach.",
+      "transparency.good": "Your transparency score is good. This is a positive aspect of your leadership with room for further development.",
+      "transparency.average": "Your transparency score is average. Consider focusing on developing this aspect of your leadership.",
+      "transparency.needsImprovement": "Your transparency score needs improvement. This area represents an opportunity for significant growth.",
+      
+      "inclusivity.excellent": "Your inclusivity score is excellent. This is a significant strength in your leadership approach.",
+      "inclusivity.good": "Your inclusivity score is good. This is a positive aspect of your leadership with room for further development.",
+      "inclusivity.average": "Your inclusivity score is average. Consider focusing on developing this aspect of your leadership.",
+      "inclusivity.needsImprovement": "Your inclusivity score needs improvement. This area represents an opportunity for significant growth."
+    }
+  }
 };

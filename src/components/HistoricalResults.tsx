@@ -14,6 +14,7 @@ import {
 import { HEARTIAssessment, HEARTIDimension } from '../types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface HistoricalResultsProps {
   assessments: HEARTIAssessment[];
@@ -21,15 +22,17 @@ interface HistoricalResultsProps {
 }
 
 const HistoricalResults: React.FC<HistoricalResultsProps> = ({ assessments, onSelect }) => {
+  const { t } = useLanguage();
+  
   // If no assessments or only one, show a message
   if (!assessments || assessments.length <= 1) {
     return (
       <Card className="appear-animate">
         <CardHeader>
-          <CardTitle>Historical Progress</CardTitle>
+          <CardTitle>{t('results.comparison.progress')}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">Complete more assessments to track your progress over time.</p>
+          <p className="text-muted-foreground">{t('results.comparison.noProgressData')}</p>
         </CardContent>
       </Card>
     );
@@ -84,18 +87,18 @@ const HistoricalResults: React.FC<HistoricalResultsProps> = ({ assessments, onSe
   return (
     <Card className="appear-animate">
       <CardHeader>
-        <CardTitle>Progress Over Time</CardTitle>
+        <CardTitle>{t('results.comparison.progress')}</CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="overall">
           <TabsList className="mb-4">
-            <TabsTrigger value="overall">Overall Score</TabsTrigger>
-            <TabsTrigger value="dimensions">Dimensions</TabsTrigger>
+            <TabsTrigger value="overall">{t('results.comparison.overallScore')}</TabsTrigger>
+            <TabsTrigger value="dimensions">{t('results.comparison.dimensions')}</TabsTrigger>
           </TabsList>
           
           <TabsContent value="overall">
             <div className="h-[300px] w-full">
-              <p className="text-xs text-muted-foreground mb-2">Click on any data point to view that assessment's detailed report</p>
+              <p className="text-xs text-muted-foreground mb-2">{t('results.comparison.clickDataPoint')}</p>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart 
                   data={overallScoreData} 
@@ -106,14 +109,14 @@ const HistoricalResults: React.FC<HistoricalResultsProps> = ({ assessments, onSe
                   <XAxis dataKey="date" />
                   <YAxis domain={[0, 5]} />
                   <Tooltip 
-                    formatter={(value) => [`${value}/5`, 'Score']}
-                    labelFormatter={(label) => `Date: ${label}`}
+                    formatter={(value) => [`${value}/5`, t('results.comparison.score')]}
+                    labelFormatter={(label) => `${t('results.comparison.date')}: ${label}`}
                   />
                   <Legend />
                   <Line 
                     type="monotone" 
                     dataKey="score" 
-                    name="Overall Score" 
+                    name={t('results.comparison.overallScore')} 
                     stroke="#000" 
                     activeDot={{ r: 8, onClick: (data) => handleDataPointClick(data.payload) }} 
                   />
@@ -124,7 +127,7 @@ const HistoricalResults: React.FC<HistoricalResultsProps> = ({ assessments, onSe
           
           <TabsContent value="dimensions">
             <div className="h-[400px] w-full">
-              <p className="text-xs text-muted-foreground mb-2">Click on any data point to view that assessment's detailed report</p>
+              <p className="text-xs text-muted-foreground mb-2">{t('results.comparison.clickDataPoint')}</p>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart 
                   data={dimensionData} 
@@ -135,8 +138,8 @@ const HistoricalResults: React.FC<HistoricalResultsProps> = ({ assessments, onSe
                   <XAxis dataKey="date" />
                   <YAxis domain={[0, 5]} />
                   <Tooltip 
-                    formatter={(value) => [`${value}/5`, 'Score']}
-                    labelFormatter={(label) => `Date: ${label}`}
+                    formatter={(value) => [`${value}/5`, t('results.comparison.score')]}
+                    labelFormatter={(label) => `${t('results.comparison.date')}: ${label}`}
                   />
                   <Legend />
                   {Object.keys(dimensionColors).map(dimension => (
@@ -144,7 +147,7 @@ const HistoricalResults: React.FC<HistoricalResultsProps> = ({ assessments, onSe
                       key={dimension}
                       type="monotone" 
                       dataKey={dimension} 
-                      name={dimension.charAt(0).toUpperCase() + dimension.slice(1)} 
+                      name={dimension} // Keep dimension names untranslated
                       stroke={dimensionColors[dimension as HEARTIDimension]} 
                       activeDot={{ 
                         r: 6, 

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { HEARTIAssessment, HEARTIDimension } from '@/types';
 import { Card, CardContent } from '@/components/ui/card';
@@ -6,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { getDimensionReportContent } from '@/utils/calculations';
 import { dimensionIcons } from '../development/DimensionIcons';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface DimensionCardProps {
   dimension: HEARTIDimension;
@@ -25,6 +25,7 @@ const DimensionCard: React.FC<DimensionCardProps> = ({
   const { statusContent, description, levels, tips } = getDimensionReportContent(dimension, status, userName);
   const DimensionIcon = dimensionIcons[dimension];
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
 
   // PDF class mapping for dimension headers
   const dimensionHeaderClass = `${dimension.toLowerCase()}-header`;
@@ -35,6 +36,13 @@ const DimensionCard: React.FC<DimensionCardProps> = ({
     status === 'vulnerability' ? 'bg-amber-600' : 
     'bg-blue-600';
 
+  // Translate status text but keep dimension name untranslated
+  const getStatusText = () => {
+    if (status === 'strength') return `(${t('results.comparison.strength')})`;
+    if (status === 'vulnerability') return `(${t('results.comparison.vulnerability')})`;
+    return `(${t('results.comparison.competent')})`;
+  };
+
   return (
     <Card className={`mb-8 overflow-hidden pdf-dimension-card ${isMobile ? 'h-full' : ''}`}>
       <div className={`py-4 px-5 text-white pdf-dimension-header ${bgColorClass} ${dimensionHeaderClass}`}>
@@ -44,13 +52,11 @@ const DimensionCard: React.FC<DimensionCardProps> = ({
             {dimension}
           </h3>
           <Badge className="text-sm py-1 px-3 bg-white text-gray-800 pdf-dimension-score">
-            Score: {score}/5
+            {t('results.dimensions.scoreLabel')}: {score}/5
           </Badge>
         </div>
         <span className="text-sm text-white/90 mt-1 inline-block">
-          {status === 'strength' ? '(Strength)' : 
-            status === 'vulnerability' ? '(Vulnerability)' : 
-            '(Competent)'}
+          {getStatusText()}
         </span>
       </div>
       
@@ -67,7 +73,7 @@ const DimensionCard: React.FC<DimensionCardProps> = ({
                 <div className="mb-4">
                   <h4 className="text-lg font-medium uppercase mb-2 flex items-center gap-2">
                     <DimensionIcon size={18} className="text-gray-500" />
-                    Levels of {dimension}
+                    {t('results.dimensions.levelsOf')} {dimension}
                   </h4>
                   <div dangerouslySetInnerHTML={{ __html: levels }} />
                 </div>
@@ -77,7 +83,7 @@ const DimensionCard: React.FC<DimensionCardProps> = ({
                 <div>
                   <h4 className="text-lg font-medium mb-2 flex items-center gap-2">
                     <DimensionIcon size={18} className="text-gray-500" />
-                    Development Tips
+                    {t('results.dimensions.developmentTips')}
                   </h4>
                   <div dangerouslySetInnerHTML={{ __html: tips }} />
                 </div>
@@ -100,7 +106,7 @@ const DimensionCard: React.FC<DimensionCardProps> = ({
                 <div>
                   <h4 className="text-lg font-medium mb-2 flex items-center gap-2">
                     <DimensionIcon size={18} className="text-gray-500" />
-                    Tips for increasing your {dimension} leadership:
+                    {t('results.dimensions.tipsForIncreasing')} {dimension} {t('results.dimensions.leadership')}:
                   </h4>
                   <div dangerouslySetInnerHTML={{ __html: tips }} />
                 </div>

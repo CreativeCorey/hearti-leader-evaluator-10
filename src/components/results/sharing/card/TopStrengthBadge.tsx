@@ -33,7 +33,7 @@ const TopStrengthBadge: React.FC<TopStrengthBadgeProps> = ({
         </div>
       </div>
       <p className="text-green-700 font-semibold mt-1 text-center">
-        {topStrengthScore}/5
+        {topStrengthScore.toString()}/5
       </p>
     </div>
   );

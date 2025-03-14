@@ -28,7 +28,8 @@ const DimensionsTab: React.FC<DimensionsTabProps> = ({ assessment }) => {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {sortedDimensions.map((dimension) => {
         const DimensionIcon = dimensionIcons[dimension];
-        const dimensionName = t(`results.dimensions.${dimension}`);
+        // Don't translate dimension names
+        const dimensionName = dimension;
         
         return (
           <Card key={dimension} className="shadow-sm overflow-hidden border-t-4" style={{ borderTopColor: dimensionColors[dimension] }}>
@@ -42,8 +43,8 @@ const DimensionsTab: React.FC<DimensionsTabProps> = ({ assessment }) => {
               </Badge>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground text-sm mb-2">{getDimensionDescription(dimension)}</p>
-              <p className="text-sm">{getFeedback(assessment.dimensionScores[dimension], dimension)}</p>
+              <p className="text-muted-foreground text-sm mb-2">{t(`dimensions.descriptions.${dimension}`)}</p>
+              <p className="text-sm">{t(`dimensions.feedback.${getFeedbackKey(assessment.dimensionScores[dimension], dimension)}`)}</p>
             </CardContent>
           </Card>
         );
@@ -51,5 +52,13 @@ const DimensionsTab: React.FC<DimensionsTabProps> = ({ assessment }) => {
     </div>
   );
 };
+
+// Helper function to get the feedback key for translation
+function getFeedbackKey(score: number, dimension: HEARTIDimension): string {
+  if (score >= 4.5) return `${dimension}.excellent`;
+  if (score >= 3.5) return `${dimension}.good`;
+  if (score >= 2.5) return `${dimension}.average`;
+  return `${dimension}.needsImprovement`;
+}
 
 export default DimensionsTab;

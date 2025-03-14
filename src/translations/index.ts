@@ -23,6 +23,13 @@ export const translations = {
 };
 
 export const getTranslation = (language: SupportedLanguage, key: string, params?: Record<string, string>): string => {
+  // Check if we're trying to access a HEARTI dimension directly
+  if (key.startsWith('results.dimensions.') && 
+      ['humility', 'empathy', 'accountability', 'resiliency', 'transparency', 'inclusivity'].includes(key.split('.').pop() || '')) {
+    // Return the dimension name untranslated
+    return key.split('.').pop() || key;
+  }
+  
   // Split the key by dots to access nested properties
   const keys = key.split('.');
   let translation: any = translations[language];
@@ -68,6 +75,10 @@ const processInterpolation = (text: string, params?: Record<string, string>): st
   });
 
   return result;
+};
+
+export const isRTLLanguage = (language: SupportedLanguage): boolean => {
+  return ['ar', 'he'].includes(language);
 };
 
 export const languageNames = {

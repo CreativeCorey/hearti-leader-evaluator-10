@@ -25,13 +25,10 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
   // Get the dimension color for the active dimension
   const dimensionColor = dimensionColors[activeDimension] || "#6366f1";
   
-  // The dimension names should NOT be translated
-  const dimensionName = activeDimension;
-  
-  // Determine chart title based on whether we're showing all dimensions
+  // The chart title should show the dimension name untranslated
   const chartTitle = showAllDimensions ? 
     t('results.development.activities') : 
-    dimensionName;
+    activeDimension;
 
   // Only show the spectra chart in overview, not in development tab
   const isOverviewTab = window.location.hash.includes('overview') || !window.location.hash;
@@ -70,7 +67,7 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
           }}
         >
           <Radar
-            name={dimensionName}
+            name={activeDimension}
             dataKey="value"
             stroke={dimensionColor}
             fill={dimensionColor}
@@ -79,7 +76,10 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
             dot={{ r: 4 }}
             isAnimationActive={true}
           />
-          <Tooltip formatter={(value) => [`${value}/5`, t('results.comparison.average')]} />
+          <Tooltip 
+            formatter={(value) => [`${value}/5`, activeDimension]} 
+            labelFormatter={(label) => label} // Keep dimension names untranslated
+          />
           <Legend />
         </BaseRadarChart>
       </div>
