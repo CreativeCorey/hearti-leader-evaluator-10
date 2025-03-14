@@ -54,7 +54,7 @@ const HabitTabs: React.FC<HabitTabsProps> = ({
                 onClick={() => onDimensionChange(dimName)}
               >
                 <Icon size={isMobile ? 16 : 18} style={{ color }} />
-                <span className={isMobile ? "text-xs" : "text-sm"}>{t(`dimensions.${dimName}`)}</span>
+                <span className={isMobile ? "text-xs" : "text-sm"}>{dimName}</span>
               </TabsTrigger>
             );
           })}

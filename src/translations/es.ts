@@ -1,4 +1,3 @@
-
 export const es = {
   common: {
     loading: "Cargando...",
@@ -145,7 +144,8 @@ export const es = {
       average: "Promedio",
       progress: "Progreso HEARTI a lo largo del tiempo",
       progressSubtitle: "Sigue tu viaje de desarrollo de liderazgo",
-      noProgressData: "Completa más evaluaciones para ver tu progreso a lo largo del tiempo."
+      noProgressData: "Completa más evaluaciones para ver tu progreso a lo largo del tiempo.",
+      strength: "Fortaleza"
     },
     development: {
       title: "Actividades de Desarrollo",

@@ -174,7 +174,8 @@ export const en = {
       average: "Average",
       progress: "HEARTI Progress Over Time",
       progressSubtitle: "Track your leadership development journey",
-      noProgressData: "Complete more assessments to see your progress over time."
+      noProgressData: "Complete more assessments to see your progress over time.",
+      strength: "Strength"
     },
     development: {
       title: "Development Activities",

@@ -18,10 +18,10 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   useEffect(() => {
     localStorage.setItem('preferredLanguage', currentLanguage);
     
-    // Update document direction for RTL languages
-    if (currentLanguage === 'ar') {
+    // Update document direction for RTL languages (Arabic and Hebrew)
+    if (currentLanguage === 'ar' || currentLanguage === 'he') {
       document.documentElement.dir = 'rtl';
-      document.documentElement.lang = 'ar';
+      document.documentElement.lang = currentLanguage;
     } else {
       document.documentElement.dir = 'ltr';
       document.documentElement.lang = currentLanguage;

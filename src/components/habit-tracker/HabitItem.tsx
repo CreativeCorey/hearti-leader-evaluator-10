@@ -47,7 +47,7 @@ const HabitItem: React.FC<HabitItemProps> = ({
           </div>
           
           <div className="flex items-center text-xs text-gray-500 mt-1">
-            <span className="capitalize">{habit.frequency}</span>
+            <span className="capitalize">{t(`results.habits.${habit.frequency}`)}</span>
             <span className="mx-1">•</span>
             {streak > 0 && (
               <>

@@ -16,10 +16,8 @@ const TopStrengthBadge: React.FC<TopStrengthBadgeProps> = ({
 }) => {
   const { t } = useLanguage();
   
-  // Get translated dimension name
-  const getTranslatedDimensionName = (dimension: HEARTIDimension) => {
-    return t(`results.dimensions.${dimension}`);
-  };
+  // Do not translate dimension names
+  const dimensionName = topStrength;
   
   return (
     <div className="mt-4 bg-green-50 p-3 rounded-md border border-green-100">
@@ -27,7 +25,7 @@ const TopStrengthBadge: React.FC<TopStrengthBadgeProps> = ({
         <div className="flex items-center">
           <Crown size={16} className="mr-2" />
           <span className="font-medium text-green-800">
-            <span className="font-semibold">Strength:</span> {getTranslatedDimensionName(topStrength)}
+            <span className="font-semibold">{t('results.comparison.strength')}:</span> {dimensionName}
           </span>
         </div>
         <div>

@@ -8,6 +8,7 @@ import { ar } from './ar';
 import { de } from './de';
 import { zh } from './zh';
 import { ja } from './ja';
+import { he } from './he';
 
 export const translations = {
   en,
@@ -17,7 +18,8 @@ export const translations = {
   ar,
   de,
   zh,
-  ja
+  ja,
+  he
 };
 
 export const getTranslation = (language: SupportedLanguage, key: string, params?: Record<string, string>): string => {
@@ -76,5 +78,6 @@ export const languageNames = {
   ar: "العربية",
   de: "Deutsch",
   zh: "中文",
-  ja: "日本語"
+  ja: "日本語",
+  he: "עברית"
 };

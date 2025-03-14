@@ -25,13 +25,13 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
   // Get the dimension color for the active dimension
   const dimensionColor = dimensionColors[activeDimension] || "#6366f1";
   
-  // Get the translated dimension name
-  const translatedDimension = t(`results.dimensions.${activeDimension}`);
+  // The dimension names should NOT be translated
+  const dimensionName = activeDimension;
   
   // Determine chart title based on whether we're showing all dimensions
   const chartTitle = showAllDimensions ? 
     t('results.development.activities') : 
-    `${translatedDimension}`;
+    dimensionName;
 
   // Only show the spectra chart in overview, not in development tab
   const isOverviewTab = window.location.hash.includes('overview') || !window.location.hash;
@@ -41,19 +41,18 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
       <div className="rounded-lg h-full relative p-4 border">
         <p className="text-center font-medium text-lg mb-1">{chartTitle}</p>
         <p className="text-center text-sm text-muted-foreground mb-3">
-          {t('results.dimensions.score')}: {dimensionScores[activeDimension]}/5
+          {t('results.dimensions.score', { value: dimensionScores[activeDimension].toString() })}
         </p>
       </div>
     );
   }
 
   // This is what will render in the overview tab
-  // The rest of the radar chart rendering logic goes here
   return (
     <div className="rounded-lg h-full relative p-4 border">
       <p className="text-center font-medium text-lg mb-1">{chartTitle}</p>
       <p className="text-center text-sm text-muted-foreground mb-3">
-        {t('results.dimensions.score')}: {dimensionScores[activeDimension]}/5
+        {t('results.dimensions.score', { value: dimensionScores[activeDimension].toString() })}
       </p>
       
       <div className="h-[180px] sm:h-[200px] relative">
@@ -71,7 +70,7 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
           }}
         >
           <Radar
-            name={translatedDimension}
+            name={dimensionName}
             dataKey="value"
             stroke={dimensionColor}
             fill={dimensionColor}
@@ -80,7 +79,7 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
             dot={{ r: 4 }}
             isAnimationActive={true}
           />
-          <Tooltip formatter={(value) => [`${value}/5`, 'Score']} />
+          <Tooltip formatter={(value) => [`${value}/5`, t('results.comparison.average')]} />
           <Legend />
         </BaseRadarChart>
       </div>
