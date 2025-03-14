@@ -5,7 +5,7 @@ import { HEARTIDimension } from '@/types';
 import { Habit, useHabits } from '@/hooks/useHabits';
 import { filterHabits } from '@/utils/habitUtils';
 import { toast } from '@/hooks/use-toast';
-import { completionGoals } from '@/components/habit-tracker/HabitTrackerContent';
+import { completionGoals } from '@/constants/habitGoals';
 
 interface HabitTrackerContextType {
   habits: Habit[];

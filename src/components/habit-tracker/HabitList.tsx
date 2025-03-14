@@ -2,6 +2,7 @@
 import React from 'react';
 import { Habit } from '@/hooks/useHabits';
 import HabitItem from './HabitItem';
+import { completionGoals } from '@/constants/habitGoals';
 
 interface HabitListProps {
   habits: Habit[];
@@ -16,20 +17,13 @@ interface HabitListProps {
   };
 }
 
-// Updated completion goals as requested
-const DEFAULT_COMPLETION_GOALS = {
-  daily: 30,
-  weekly: 12,
-  monthly: 6
-};
-
 const HabitList: React.FC<HabitListProps> = ({
   habits,
   weekDates,
   onToggleHabit,
   onDeleteHabit,
   calculateStreaks,
-  completionGoals = DEFAULT_COMPLETION_GOALS
+  completionGoals = completionGoals
 }) => {
   return (
     <div className="space-y-4 mt-4">

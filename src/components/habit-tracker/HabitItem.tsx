@@ -9,6 +9,7 @@ import HabitItemActions from './HabitItemActions';
 import { useIsMobile } from '@/hooks/use-mobile';
 import WeekHeader from './WeekHeader';
 import HabitProgressCircle from './HabitProgressCircle';
+import { completionGoals } from '@/constants/habitGoals';
 
 interface HabitItemProps {
   habit: Habit;
@@ -23,25 +24,23 @@ interface HabitItemProps {
   };
 }
 
-// Default completion goals
-const DEFAULT_COMPLETION_GOALS = {
-  daily: 30,
-  weekly: 12,
-  monthly: 6
-};
-
 const HabitItem: React.FC<HabitItemProps> = ({
   habit,
   weekDates,
   onToggleCompletion,
   onDelete,
   streak,
-  completionGoals = DEFAULT_COMPLETION_GOALS
+  completionGoals = completionGoals
 }) => {
   const isMobile = useIsMobile();
   
   const getCompletionTarget = () => {
     return completionGoals[habit.frequency];
+  };
+  
+  // Calculate progress percentage for the HabitProgressCircle
+  const calculateProgress = (completedCount: number, target: number) => {
+    return Math.min(Math.round((completedCount / target) * 100), 100);
   };
   
   return (
@@ -64,6 +63,7 @@ const HabitItem: React.FC<HabitItemProps> = ({
               completedCount={habit.completedDates.length} 
               frequency={habit.frequency}
               completionTarget={getCompletionTarget()}
+              progress={calculateProgress(habit.completedDates.length, getCompletionTarget())}
             />
             <div className="text-[10px] text-gray-500 mt-1 text-center">
               {habit.completedDates.length}/{getCompletionTarget()}

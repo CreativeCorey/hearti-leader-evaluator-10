@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { HEARTIDimension } from '@/types';
 import HabitTrackerCore from './habit-tracker/HabitTrackerCore';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { completionGoals } from './habit-tracker/HabitTrackerContent';
+import { completionGoals } from '@/constants/habitGoals';
 
 interface HabitTrackerProps {
   focusDimension?: HEARTIDimension;

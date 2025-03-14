@@ -2,7 +2,7 @@
 import { parseISO, isToday, differenceInCalendarDays, isBefore, isAfter, format } from 'date-fns';
 import { Habit } from '@/hooks/useHabits';
 import { HEARTIDimension } from '@/types';
-import { completionGoals } from '@/components/habit-tracker/HabitTrackerContent';
+import { completionGoals } from '@/constants/habitGoals';
 
 // Filter habits based on active dimension
 export const filterHabits = (habits: Habit[], activeDimension: HEARTIDimension | 'all') => {
