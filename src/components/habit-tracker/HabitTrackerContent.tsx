@@ -1,8 +1,8 @@
 
-import React from 'react';
-import { completionGoals } from '@/constants/habitGoals';
+import React, { useState } from 'react';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { useHabitTracker } from '@/contexts/HabitTrackerContext';
+import { HEARTIDimension } from '@/types';
 import HabitList from './HabitList';
 import HabitForm from './HabitForm';
 import HabitHeader from './HabitHeader';
@@ -11,6 +11,17 @@ import EmptyHabitState from './EmptyHabitState';
 import LoadingSpinner from './LoadingSpinner';
 import TodayHeader from './TodayHeader';
 import SavedHabitsView from './SavedHabitsView';
+import { useLanguage } from '@/contexts/language/LanguageContext';
+
+interface HabitHeaderProps {
+  habitCount: number;
+}
+
+interface HabitTabsProps {
+  children: React.ReactNode;
+  activeDimension: "all" | HEARTIDimension;
+  onDimensionChange: (dimension: "all" | HEARTIDimension) => void;
+}
 
 const HabitTrackerContent: React.FC = () => {
   const { 
@@ -20,9 +31,10 @@ const HabitTrackerContent: React.FC = () => {
     weekDates, 
     toggleHabitCompletion, 
     deleteHabit,
-    activeDimension,
-    setActiveDimension
   } = useHabitTracker();
+  
+  const [activeDimension, setActiveDimension] = useState<"all" | HEARTIDimension>("all");
+  const { t } = useLanguage();
   
   // Calculate streaks for a habit
   const calculateStreaks = (habit: any) => {
@@ -37,12 +49,13 @@ const HabitTrackerContent: React.FC = () => {
       ) : (
         <>
           <HabitHeader 
-            activeDimension={activeDimension} 
-            setActiveDimension={setActiveDimension} 
-            habitCount={filteredHabits.length}
+            habitCount={filteredHabits.length} 
           />
           
-          <HabitTabs>
+          <HabitTabs
+            activeDimension={activeDimension}
+            onDimensionChange={setActiveDimension}
+          >
             <TabsContent value="all" className="mt-2">
               <TodayHeader />
               
@@ -55,7 +68,6 @@ const HabitTrackerContent: React.FC = () => {
                   onToggleHabit={toggleHabitCompletion}
                   onDeleteHabit={deleteHabit}
                   calculateStreaks={calculateStreaks}
-                  completionGoals={completionGoals}
                 />
               )}
             </TabsContent>
@@ -65,7 +77,7 @@ const HabitTrackerContent: React.FC = () => {
             </TabsContent>
             
             <TabsContent value="saved" className="mt-2">
-              <SavedHabitsView />
+              <SavedHabitsView habits={habits} />
             </TabsContent>
           </HabitTabs>
         </>
