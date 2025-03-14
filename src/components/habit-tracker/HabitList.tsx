@@ -2,7 +2,7 @@
 import React from 'react';
 import { Habit } from '@/hooks/useHabits';
 import HabitItem from './HabitItem';
-import { completionGoals } from '@/constants/habitGoals';
+import { completionGoals as defaultGoals } from '@/constants/habitGoals';
 
 interface HabitListProps {
   habits: Habit[];
@@ -10,7 +10,7 @@ interface HabitListProps {
   onToggleHabit: (habitId: string, date: Date) => void;
   onDeleteHabit: (habitId: string) => void;
   calculateStreaks: (habit: Habit) => number;
-  completionGoals?: {
+  completionTargets?: {
     daily: number;
     weekly: number;
     monthly: number;
@@ -23,7 +23,7 @@ const HabitList: React.FC<HabitListProps> = ({
   onToggleHabit,
   onDeleteHabit,
   calculateStreaks,
-  completionGoals = completionGoals
+  completionTargets = defaultGoals
 }) => {
   return (
     <div className="space-y-4 mt-4">
@@ -35,7 +35,7 @@ const HabitList: React.FC<HabitListProps> = ({
           onToggleCompletion={(date) => habit.id && onToggleHabit(habit.id, date)}
           onDelete={() => habit.id && onDeleteHabit(habit.id)}
           streak={calculateStreaks(habit)}
-          completionGoals={completionGoals}
+          completionGoals={completionTargets}
         />
       ))}
     </div>

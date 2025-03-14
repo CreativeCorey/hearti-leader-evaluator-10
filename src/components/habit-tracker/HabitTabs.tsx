@@ -5,6 +5,7 @@ import { HEARTIDimension } from '@/types';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { dimensionIcons, dimensionLabels, dimensionColors } from '../results/development/DimensionIcons';
 import { Search } from 'lucide-react';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface HabitTabsProps {
   activeDimension: HEARTIDimension | 'all';
@@ -16,6 +17,7 @@ const HabitTabs: React.FC<HabitTabsProps> = ({
   onDimensionChange 
 }) => {
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   
   return (
     <div className="mobile-tabs-container space-y-2">
@@ -27,7 +29,7 @@ const HabitTabs: React.FC<HabitTabsProps> = ({
           onClick={() => onDimensionChange('all')}
         >
           <Search className="text-gray-600" size={isMobile ? 16 : 18} />
-          All Habits
+          {t('results.habits.allHabits')}
         </TabsTrigger>
       </TabsList>
       
@@ -52,7 +54,7 @@ const HabitTabs: React.FC<HabitTabsProps> = ({
                 onClick={() => onDimensionChange(dimName)}
               >
                 <Icon size={isMobile ? 16 : 18} style={{ color }} />
-                <span className={isMobile ? "text-xs" : "text-sm"}>{dimensionLabels[dimName]}</span>
+                <span className={isMobile ? "text-xs" : "text-sm"}>{t(`dimensions.${dimName}`)}</span>
               </TabsTrigger>
             );
           })}

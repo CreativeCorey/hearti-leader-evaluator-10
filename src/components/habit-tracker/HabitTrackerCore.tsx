@@ -1,8 +1,6 @@
 
 import React from 'react';
-import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { HEARTIDimension } from '@/types';
-import { calculateStreaks } from '@/utils/habitUtils';
 import { HabitTrackerProvider } from '@/contexts/HabitTrackerContext';
 import HabitTrackerContent from './HabitTrackerContent';
 
