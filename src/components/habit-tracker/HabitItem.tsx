@@ -127,7 +127,7 @@ const HabitItem: React.FC<HabitItemProps> = ({
       
       <div className="px-4 pb-3 flex items-center justify-between">
         <Badge variant="outline" className="text-xs">
-          {t('results.habits.streak', { count: streak })}
+          {t('results.habits.streak', { count: streak.toString() })}
         </Badge>
       </div>
     </div>
