@@ -1,4 +1,3 @@
-
 import { SupportedLanguage } from '@/contexts/language/LanguageContext';
 import { en } from './en';
 import { es } from './es';
@@ -6,7 +5,7 @@ import { fr } from './fr';
 import { it } from './it';
 import { ar } from './ar';
 import { de } from './de';
-import { zh } from './zh';
+import { zh } from './zh/index';
 import { ja } from './ja';
 import { he } from './he';
 
@@ -58,7 +57,6 @@ export const getTranslation = (language: SupportedLanguage, key: string, params?
   return processInterpolation(translation, params);
 };
 
-// Helper function to determine if a key is a dimension name
 function isDimensionNameKey(key: string): boolean {
   const dimensionNames = ['humility', 'empathy', 'accountability', 'resiliency', 'transparency', 'inclusivity'];
   const parts = key.split('.');
@@ -72,17 +70,14 @@ function isDimensionNameKey(key: string): boolean {
   );
 }
 
-// Helper function to determine if a key is related to activities
 function isActivityKey(key: string): boolean {
   return key.includes('activities.') || key.includes('activity.') || key.startsWith('Choose Activities for:');
 }
 
-// Helper function to determine if a key is related to the report content
 function isReportKey(key: string): boolean {
   return key.startsWith('report.') || key.includes('.report.');
 }
 
-// Helper function to get activity translations
 function getActivityTranslation(language: SupportedLanguage, key: string, params?: Record<string, string>): string {
   // Check if this language has activity translations
   const activityTranslation = getNestedTranslation(translations[language], ['activities', key]);
@@ -96,7 +91,6 @@ function getActivityTranslation(language: SupportedLanguage, key: string, params
   return processInterpolation(englishTranslation || key, params);
 }
 
-// Helper function to get report translations
 function getReportTranslation(language: SupportedLanguage, key: string, params?: Record<string, string>): string {
   // Check if this language has report translations
   const reportTranslation = getNestedTranslation(translations[language], key.split('.'));
@@ -110,12 +104,10 @@ function getReportTranslation(language: SupportedLanguage, key: string, params?:
   return processInterpolation(englishTranslation || key, params);
 }
 
-// Helper function to capitalize first letter
 function capitalizeFirstLetter(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-// Helper function to get nested translation
 const getNestedTranslation = (obj: any, keys: string[]): string | undefined => {
   let result = obj;
   for (const key of keys) {
@@ -128,7 +120,6 @@ const getNestedTranslation = (obj: any, keys: string[]): string | undefined => {
   return typeof result === 'string' ? result : undefined;
 };
 
-// Helper function to process string interpolation
 const processInterpolation = (text: string, params?: Record<string, string>): string => {
   if (!params || typeof text !== 'string') {
     return text;
