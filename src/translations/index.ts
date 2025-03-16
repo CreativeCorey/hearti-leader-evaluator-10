@@ -29,27 +29,14 @@ export const getTranslation = (language: SupportedLanguage, key: string, params?
     return dimensionName ? capitalizeFirstLetter(dimensionName) : key;
   }
   
-  // Special handling for feedback keys that contain dimension names
-  if (key.startsWith('dimensions.feedback.') || key.includes('.feedback.')) {
-    const parts = key.split('.');
-    const lastPart = parts[parts.length - 1];
-    
-    // Try to get the translation from the translations object
-    let translation = getNestedTranslation(translations[language], parts);
-    
-    // If no translation found, fall back to English
-    if (!translation) {
-      translation = getNestedTranslation(translations.en, parts);
-    }
-    
-    return processInterpolation(translation || key, params);
+  // Activity descriptions should be translated
+  if (isActivityKey(key)) {
+    return getActivityTranslation(language, key, params);
   }
   
-  // Special handling for activity descriptions and titles which should remain in English
-  if (key.startsWith('activities.') || key.includes('activity.')) {
-    // Return the English translation for activities
-    const englishTranslation = getNestedTranslation(translations.en, key.split('.'));
-    return processInterpolation(englishTranslation || key, params);
+  // For report content we should translate it based on the language
+  if (isReportKey(key)) {
+    return getReportTranslation(language, key, params);
   }
   
   // Split the key by dots to access nested properties
@@ -83,6 +70,44 @@ function isDimensionNameKey(key: string): boolean {
     (key.startsWith('dimensions.') && dimensionNames.includes(lastPart)) ||
     dimensionNames.includes(key)
   );
+}
+
+// Helper function to determine if a key is related to activities
+function isActivityKey(key: string): boolean {
+  return key.includes('activities.') || key.includes('activity.') || key.startsWith('Choose Activities for:');
+}
+
+// Helper function to determine if a key is related to the report content
+function isReportKey(key: string): boolean {
+  return key.startsWith('report.') || key.includes('.report.');
+}
+
+// Helper function to get activity translations
+function getActivityTranslation(language: SupportedLanguage, key: string, params?: Record<string, string>): string {
+  // Check if this language has activity translations
+  const activityTranslation = getNestedTranslation(translations[language], ['activities', key]);
+  
+  if (activityTranslation) {
+    return processInterpolation(activityTranslation, params);
+  }
+  
+  // Fallback to English for activities if not found
+  const englishTranslation = getNestedTranslation(translations.en, ['activities', key]);
+  return processInterpolation(englishTranslation || key, params);
+}
+
+// Helper function to get report translations
+function getReportTranslation(language: SupportedLanguage, key: string, params?: Record<string, string>): string {
+  // Check if this language has report translations
+  const reportTranslation = getNestedTranslation(translations[language], key.split('.'));
+  
+  if (reportTranslation) {
+    return processInterpolation(reportTranslation, params);
+  }
+  
+  // Fallback to English for report content if not found
+  const englishTranslation = getNestedTranslation(translations.en, key.split('.'));
+  return processInterpolation(englishTranslation || key, params);
 }
 
 // Helper function to capitalize first letter

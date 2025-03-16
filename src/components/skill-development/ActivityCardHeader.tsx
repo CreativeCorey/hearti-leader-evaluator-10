@@ -3,8 +3,9 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { SkillActivity, dimensionColors, dimensionTitles } from '@/data/heartActivities';
+import { SkillActivity, dimensionColors } from '@/data/heartActivities';
 import { dimensionIcons } from '@/components/results/development/DimensionIcons';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface ActivityCardHeaderProps {
   activity: SkillActivity;
@@ -17,6 +18,7 @@ const ActivityCardHeader: React.FC<ActivityCardHeaderProps> = ({
   showExpandButton = false,
   toggleExpanded
 }) => {
+  const { t } = useLanguage();
   const DimensionIcon = dimensionIcons[activity.dimension] || dimensionIcons.humility;
   
   return (
@@ -24,7 +26,7 @@ const ActivityCardHeader: React.FC<ActivityCardHeaderProps> = ({
       <div className="flex items-center">
         <Badge className={`${dimensionColors[activity.dimension]} font-normal mr-2 flex items-center gap-1`}>
           <DimensionIcon size={14} />
-          {dimensionTitles[activity.dimension]}
+          {t(activity.dimension)}
         </Badge>
         <span className="text-xs text-muted-foreground">
           {activity.category}

@@ -45,7 +45,14 @@ const SkillDevelopment: React.FC = () => {
     saveActivity(activity, addToHabitTracker, frequency);
   };
 
-  const filteredActivities = activities.filter(activity => activity.dimension === selectedDimension);
+  // Translate activity descriptions before filtering
+  const translatedActivities = activities.map(activity => ({
+    ...activity,
+    description: t(`activities.descriptions.${activity.id}`, { fallback: activity.description }),
+    category: t(`activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`, { fallback: activity.category })
+  }));
+
+  const filteredActivities = translatedActivities.filter(activity => activity.dimension === selectedDimension);
 
   return (
     <div className="container py-10">
@@ -56,7 +63,7 @@ const SkillDevelopment: React.FC = () => {
           {Object.keys(dimensionIcons).map((dimension) => (
             <TabsTrigger value={dimension} key={dimension} onClick={() => setSelectedDimension(dimension)}>
               {React.createElement(dimensionIcons[dimension], { className: "mr-2 h-4 w-4" })}
-              {dimension.charAt(0).toUpperCase() + dimension.slice(1)}
+              {t(dimension)}
             </TabsTrigger>
           ))}
         </TabsList>
@@ -87,11 +94,18 @@ const SkillDevelopment: React.FC = () => {
                 const activityDetails = activities.find(activity => activity.id === savedActivity.activityId);
                 if (!activityDetails) return null;
 
+                // Translate the activity details
+                const translatedActivity = {
+                  ...activityDetails,
+                  description: t(`activities.descriptions.${activityDetails.id}`, { fallback: activityDetails.description }),
+                  category: t(`activities.categories.${activityDetails.category.toLowerCase().replace(/[- ]/g, '')}`, { fallback: activityDetails.category })
+                };
+
                 return (
                   <SavedActivityCard
                     key={savedActivity.id}
                     savedActivity={savedActivity}
-                    activityDetails={activityDetails}
+                    activityDetails={translatedActivity}
                     onToggleCompletion={toggleActivityCompletion}
                     onRemove={removeSavedActivity}
                   />

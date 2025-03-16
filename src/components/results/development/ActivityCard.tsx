@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { BarChart, Check, Plus } from 'lucide-react';
 import FrequencySelector from './FrequencySelector';
 import { dimensionIcons } from './DimensionIcons';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface ActivityCardProps {
   activity: {
@@ -28,6 +29,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
   onFrequencyChange,
   onAddToHabitTracker
 }) => {
+  const { t } = useLanguage();
+  
   // Get the appropriate dimension icon or default to Plus
   const dimensionName = activity.dimension || 'humility';
   const DimensionIcon = dimensionIcons[dimensionName] || Plus;
@@ -64,7 +67,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
               }}
             >
               <BarChart size={14} />
-              Add to Habit Tracker
+              {t('results.development.addToHabitTracker')}
             </Button>
           </div>
         )}

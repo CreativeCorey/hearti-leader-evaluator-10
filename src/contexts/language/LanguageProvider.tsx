@@ -39,28 +39,53 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     setCurrentLanguage(language);
   };
 
-  // Translation function with support for string interpolation
+  // Translation function with support for string interpolation and special cases
   const t = (key: string, params?: Record<string, string>) => {
-    // Check if the key belongs to a special group that should not be translated
-    if (key.startsWith('dimensions.') || 
-        key.includes('.humility') || 
-        key.includes('.empathy') || 
-        key.includes('.accountability') || 
-        key.includes('.resiliency') || 
-        key.includes('.transparency') || 
-        key.includes('.inclusivity')) {
-      
-      // Special handling for dimension labels - keep the dimension names capitalized in English
-      const lastSegment = key.split('.').pop();
-      if (lastSegment && ['humility', 'empathy', 'accountability', 'resiliency', 'transparency', 'inclusivity'].includes(lastSegment)) {
-        return lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1);
-      }
-      
-      // For other dimension-related text, get the translation
+    // Always keep HEARTI dimension names in English
+    if (isDimensionName(key)) {
+      return capitalizeFirstLetter(getDimensionName(key));
     }
     
-    // For all other keys, return the translated text
+    // Get translation with appropriate fallback
     return getTranslation(currentLanguage, key, params);
+  };
+
+  // Helper function to determine if a key is a dimension name
+  const isDimensionName = (key: string): boolean => {
+    const dimensionNames = ['humility', 'empathy', 'accountability', 'resiliency', 'transparency', 'inclusivity'];
+    
+    // Check if the key directly matches a dimension name
+    if (dimensionNames.includes(key.toLowerCase())) {
+      return true;
+    }
+    
+    // Check if the key ends with a dimension name (e.g., 'results.dimensions.humility')
+    const lastSegment = key.split('.').pop()?.toLowerCase();
+    return lastSegment ? dimensionNames.includes(lastSegment) : false;
+  };
+  
+  // Helper function to extract the dimension name from a key
+  const getDimensionName = (key: string): string => {
+    const dimensionNames = ['humility', 'empathy', 'accountability', 'resiliency', 'transparency', 'inclusivity'];
+    const lastSegment = key.split('.').pop()?.toLowerCase();
+    
+    if (lastSegment && dimensionNames.includes(lastSegment)) {
+      return lastSegment;
+    }
+    
+    // If the key itself is a dimension name
+    for (const dimension of dimensionNames) {
+      if (key.toLowerCase() === dimension) {
+        return dimension;
+      }
+    }
+    
+    return key;
+  };
+  
+  // Helper function to capitalize first letter
+  const capitalizeFirstLetter = (str: string): string => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
   return (

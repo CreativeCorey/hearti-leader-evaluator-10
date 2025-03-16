@@ -5,6 +5,7 @@ import DimensionTabs from './development/DimensionTabs';
 import InfoBanner from './development/InfoBanner';
 import ChartSection from './development/ChartSection';
 import ActivitySection from './development/ActivitySection';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface DevelopmentTabProps {
   focusDimension: HEARTIDimension;
@@ -14,6 +15,7 @@ interface DevelopmentTabProps {
 const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension, assessments = [] }) => {
   const [activeDimension, setActiveDimension] = useState<HEARTIDimension>(focusDimension);
   const [showActivities, setShowActivities] = useState(true);
+  const { t } = useLanguage();
   
   // Get the most recent assessment's dimension scores
   const latestAssessment = assessments.length > 0 ? assessments[0] : null;

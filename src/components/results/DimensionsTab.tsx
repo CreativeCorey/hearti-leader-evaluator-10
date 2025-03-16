@@ -28,6 +28,7 @@ const DimensionsTab: React.FC<DimensionsTabProps> = ({ assessment }) => {
       {sortedDimensions.map((dimension) => {
         const DimensionIcon = dimensionIcons[dimension];
         const score = assessment.dimensionScores[dimension];
+        const feedbackLevel = getFeedbackLevel(score);
         
         return (
           <Card key={dimension} className="shadow-sm overflow-hidden border-t-4" style={{ borderTopColor: dimensionColors[dimension] }}>
@@ -42,7 +43,7 @@ const DimensionsTab: React.FC<DimensionsTabProps> = ({ assessment }) => {
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground text-sm mb-2">{t(`dimensions.descriptions.${dimension}`)}</p>
-              <p className="text-sm">{t(`dimensions.feedback.${dimension}.${getFeedbackLevel(score)}`)}</p>
+              <p className="text-sm">{t(`dimensions.feedback.${dimension}.${feedbackLevel}`)}</p>
             </CardContent>
           </Card>
         );

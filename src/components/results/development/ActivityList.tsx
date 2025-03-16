@@ -3,6 +3,7 @@ import React from 'react';
 import { HEARTIDimension } from '@/types';
 import { dimensionIcons, dimensionLabels } from './DimensionIcons';
 import ActivityCard from './ActivityCard';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface ActivityListProps {
   activeDimension: HEARTIDimension;
@@ -28,17 +29,17 @@ const ActivityList: React.FC<ActivityListProps> = ({
   onFrequencyChange,
   onAddToHabitTracker
 }) => {
+  const { t } = useLanguage();
   const DimensionIcon = dimensionIcons[activeDimension] || dimensionIcons.humility;
   
   return (
     <div className="mt-6">
       <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
         <DimensionIcon className="text-indigo-600" size={24} />
-        Choose Activities for: {dimensionLabels[activeDimension].toUpperCase()}
+        {t('results.development.chooseActivitiesFor')}: {t(activeDimension)}
       </h3>
       <p className="text-muted-foreground mb-6">
-        These activities are designed to help you develop your {activeDimension} leadership dimension.
-        Select up to 3 activities to focus on.
+        {t('results.development.activitiesDescription', { dimension: t(activeDimension) })}
       </p>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -48,7 +49,12 @@ const ActivityList: React.FC<ActivityListProps> = ({
           return (
             <ActivityCard
               key={activity.id}
-              activity={activity}
+              activity={{
+                ...activity,
+                // Translate category and description
+                category: t(`activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`, { fallback: activity.category }),
+                description: t(`activities.descriptions.${activity.id}`, { fallback: activity.description })
+              }}
               isSelected={isSelected}
               selectedFrequency={selectedFrequency}
               onActivitySelect={onActivitySelect}
