@@ -23,20 +23,26 @@ export const translations = {
 };
 
 export const getTranslation = (language: SupportedLanguage, key: string, params?: Record<string, string>): string => {
-  // Check if we're trying to access a HEARTI dimension directly
-  if ((key.startsWith('results.dimensions.') && 
-      ['humility', 'empathy', 'accountability', 'resiliency', 'transparency', 'inclusivity'].includes(key.split('.').pop() || '')) ||
-      key === 'dimensions.humility' || 
-      key === 'dimensions.empathy' || 
-      key === 'dimensions.accountability' || 
-      key === 'dimensions.resiliency' || 
-      key === 'dimensions.transparency' || 
-      key === 'dimensions.inclusivity'
-  ) {
-    // Return the dimension name untranslated
+  // Special handling for dimension names - these should always remain in English
+  if (isDimensionNameKey(key)) {
     const dimensionName = key.split('.').pop();
-    // Capitalize first letter
-    return dimensionName ? dimensionName.charAt(0).toUpperCase() + dimensionName.slice(1) : key;
+    return dimensionName ? capitalizeFirstLetter(dimensionName) : key;
+  }
+  
+  // Special handling for feedback keys that contain dimension names
+  if (key.startsWith('dimensions.feedback.') || key.includes('.feedback.')) {
+    const parts = key.split('.');
+    const lastPart = parts[parts.length - 1];
+    
+    // Try to get the translation from the translations object
+    let translation = getNestedTranslation(translations[language], parts);
+    
+    // If no translation found, fall back to English
+    if (!translation) {
+      translation = getNestedTranslation(translations.en, parts);
+    }
+    
+    return processInterpolation(translation || key, params);
   }
   
   // Special handling for activity descriptions and titles which should remain in English
@@ -64,6 +70,25 @@ export const getTranslation = (language: SupportedLanguage, key: string, params?
   // Process any string interpolation
   return processInterpolation(translation, params);
 };
+
+// Helper function to determine if a key is a dimension name
+function isDimensionNameKey(key: string): boolean {
+  const dimensionNames = ['humility', 'empathy', 'accountability', 'resiliency', 'transparency', 'inclusivity'];
+  const parts = key.split('.');
+  const lastPart = parts[parts.length - 1];
+  
+  // Check if the key is directly a dimension name or ends with a dimension name
+  return (
+    (key.startsWith('results.dimensions.') && dimensionNames.includes(lastPart)) ||
+    (key.startsWith('dimensions.') && dimensionNames.includes(lastPart)) ||
+    dimensionNames.includes(key)
+  );
+}
+
+// Helper function to capitalize first letter
+function capitalizeFirstLetter(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
 // Helper function to get nested translation
 const getNestedTranslation = (obj: any, keys: string[]): string | undefined => {

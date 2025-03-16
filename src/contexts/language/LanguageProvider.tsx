@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { LanguageContext, SupportedLanguage } from './LanguageContext';
 import { getTranslation, isRTLLanguage } from '@/translations';
@@ -42,6 +41,25 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
 
   // Translation function with support for string interpolation
   const t = (key: string, params?: Record<string, string>) => {
+    // Check if the key belongs to a special group that should not be translated
+    if (key.startsWith('dimensions.') || 
+        key.includes('.humility') || 
+        key.includes('.empathy') || 
+        key.includes('.accountability') || 
+        key.includes('.resiliency') || 
+        key.includes('.transparency') || 
+        key.includes('.inclusivity')) {
+      
+      // Special handling for dimension labels - keep the dimension names capitalized in English
+      const lastSegment = key.split('.').pop();
+      if (lastSegment && ['humility', 'empathy', 'accountability', 'resiliency', 'transparency', 'inclusivity'].includes(lastSegment)) {
+        return lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1);
+      }
+      
+      // For other dimension-related text, get the translation
+    }
+    
+    // For all other keys, return the translated text
     return getTranslation(currentLanguage, key, params);
   };
 

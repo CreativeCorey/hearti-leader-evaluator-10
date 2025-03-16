@@ -51,7 +51,9 @@ const ActivitySection: React.FC<ActivitySectionProps> = ({
     
     toast({
       title: t('results.development.activityAdded'),
-      description: t('results.development.activityAddedDescription', { frequency: t(`results.habits.${selectedFrequency.toLowerCase()}`) }),
+      description: t('results.development.activityAddedDescription', { 
+        frequency: t(`results.habits.${selectedFrequency.toLowerCase()}`) 
+      }),
     });
   };
   

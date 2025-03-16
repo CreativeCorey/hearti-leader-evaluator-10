@@ -4,7 +4,6 @@ import { HEARTIDimension } from '@/types';
 import { formatDataForRadarChart } from '@/utils/calculations';
 import { BaseRadarChart, DimensionIcons } from '../comparison/radar';
 import { Radar, Tooltip, Legend } from 'recharts';
-import { useRadarChartConfig } from '@/hooks/use-radar-chart-config';
 import { dimensionColors } from './DimensionIcons';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useLanguage } from '@/contexts/language/LanguageContext';
@@ -28,7 +27,7 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
   // The chart title should show the dimension name untranslated
   const chartTitle = showAllDimensions ? 
     t('results.development.activities') : 
-    activeDimension;
+    activeDimension.charAt(0).toUpperCase() + activeDimension.slice(1);
 
   // Only show the spectra chart in overview, not in development tab
   const isOverviewTab = window.location.hash.includes('overview') || !window.location.hash;
@@ -38,7 +37,7 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
       <div className="rounded-lg h-full relative p-4 border">
         <p className="text-center font-medium text-lg mb-1">{chartTitle}</p>
         <p className="text-center text-sm text-muted-foreground mb-3">
-          {t('results.dimensions.score', { value: dimensionScores[activeDimension].toString() })}
+          {t('results.dimensions.scoreLabel')}: {dimensionScores[activeDimension].toFixed(1)}/5
         </p>
       </div>
     );
@@ -49,7 +48,7 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
     <div className="rounded-lg h-full relative p-4 border">
       <p className="text-center font-medium text-lg mb-1">{chartTitle}</p>
       <p className="text-center text-sm text-muted-foreground mb-3">
-        {t('results.dimensions.score', { value: dimensionScores[activeDimension].toString() })}
+        {t('results.dimensions.scoreLabel')}: {dimensionScores[activeDimension].toFixed(1)}/5
       </p>
       
       <div className="h-[180px] sm:h-[200px] relative">
@@ -67,7 +66,7 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
           }}
         >
           <Radar
-            name={activeDimension}
+            name={chartTitle}
             dataKey="value"
             stroke={dimensionColor}
             fill={dimensionColor}
@@ -77,8 +76,8 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
             isAnimationActive={true}
           />
           <Tooltip 
-            formatter={(value) => [`${value}/5`, activeDimension]} 
-            labelFormatter={(label) => label} // Keep dimension names untranslated
+            formatter={(value) => [`${value}/5`, chartTitle]} 
+            labelFormatter={(label) => label}
           />
           <Legend />
         </BaseRadarChart>
