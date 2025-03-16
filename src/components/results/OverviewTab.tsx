@@ -47,7 +47,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
     : { ...assessment, ...fallbackAssessment } as HEARTIAssessment;
   
   // Format date string for display (respect language settings)
-  const formattedDate = formatDate(safeAssessment.date, currentLanguage);
+  // Fixed here: pass only the date as formatDate only expects one argument
+  const formattedDate = formatDate(safeAssessment.date);
   
   return (
     <div className="space-y-6">

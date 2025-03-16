@@ -62,11 +62,11 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   
   // Determine tab classes based on screen size
   const getTabClasses = () => {
-    const baseClasses = "whitespace-nowrap";
+    const baseClasses = "whitespace-nowrap overflow-hidden text-ellipsis";
     if (isMobile) {
-      return `text-xs ${baseClasses} px-2 py-1.5`;  // Smaller padding on mobile
+      return `text-xs ${baseClasses} px-1.5 py-1 max-w-[80px]`;  // Smaller on mobile
     }
-    return `text-xs md:text-sm ${baseClasses}`;
+    return `text-xs md:text-sm ${baseClasses} max-w-[120px]`;  // Limited width on desktop too
   };
   
   return (

@@ -39,6 +39,13 @@ export const getTranslation = (language: SupportedLanguage, key: string, params?
     return dimensionName ? dimensionName.charAt(0).toUpperCase() + dimensionName.slice(1) : key;
   }
   
+  // Special handling for activity descriptions and titles which should remain in English
+  if (key.startsWith('activities.') || key.includes('activity.')) {
+    // Return the English translation for activities
+    const englishTranslation = getNestedTranslation(translations.en, key.split('.'));
+    return processInterpolation(englishTranslation || key, params);
+  }
+  
   // Split the key by dots to access nested properties
   const keys = key.split('.');
   let translation: any = translations[language];

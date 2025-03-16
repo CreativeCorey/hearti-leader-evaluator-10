@@ -8,6 +8,7 @@ import { activityData } from '@/data/heartActivities';
 import ActivityList from './ActivityList';
 import DevelopmentFrequencySelector from './DevelopmentFrequencySelector';
 import ActivitiesToggleButton from './ActivitiesToggleButton';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface ActivitySectionProps {
   activeDimension: HEARTIDimension;
@@ -23,6 +24,7 @@ const ActivitySection: React.FC<ActivitySectionProps> = ({
   const [selectedActivities, setSelectedActivities] = React.useState<string[]>([]);
   const [selectedFrequency, setSelectedFrequency] = React.useState<'daily' | 'weekly' | 'monthly'>('daily');
   const { toast } = useToast();
+  const { t } = useLanguage();
   
   const activities = activityData.filter(activity => activity.dimension === activeDimension);
   
@@ -33,8 +35,8 @@ const ActivitySection: React.FC<ActivitySectionProps> = ({
       setSelectedActivities(prev => [...prev, activityId]);
     } else {
       toast({
-        title: "Maximum activities selected",
-        description: "You can only select up to 3 activities. Deselect one before adding another.",
+        title: t('results.development.maxActivities'),
+        description: t('results.development.maxActivitiesDescription'),
         variant: "destructive",
       });
     }
@@ -48,8 +50,8 @@ const ActivitySection: React.FC<ActivitySectionProps> = ({
     addActivityToHabitTracker(userId, activity, selectedFrequency);
     
     toast({
-      title: "Added to Habit Tracker",
-      description: `This activity has been added to your ${selectedFrequency} habits. Go to the Habits tab to track your progress.`,
+      title: t('results.development.activityAdded'),
+      description: t('results.development.activityAddedDescription', { frequency: t(`results.habits.${selectedFrequency.toLowerCase()}`) }),
     });
   };
   

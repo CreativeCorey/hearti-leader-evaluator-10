@@ -65,7 +65,7 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
           
           {compareMode === 'average' && (
             <Radar
-              name={`${getComparisonLabel()} HEARTI`}
+              name={`${getComparisonLabel()} ${t('results.comparison.score')}`}
               dataKey="Comparison"
               stroke={getComparisonColor()}
               fill={getComparisonColor()}

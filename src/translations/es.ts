@@ -159,6 +159,14 @@ export const es = {
       subtitle: "Actividades personalizadas para hacer crecer tus habilidades de liderazgo",
       focused: "Enfocado",
       complete: "Completo",
+      maxActivities: "Máximo de actividades",
+      maxActivitiesDescription: "Solo puedes seleccionar hasta 3 actividades. Deselecciona una antes de agregar otra.",
+      activityAdded: "Añadido al seguimiento de hábitos",
+      activityAddedDescription: "Esta actividad ha sido añadida a tus hábitos {{frequency}}. Ve a la pestaña de Hábitos para seguir tu progreso.",
+      tooManySaved: "Demasiadas actividades guardadas",
+      removeBeforeSaving: "Solo puedes guardar hasta 3 actividades. Por favor, elimina una antes de guardar otra.",
+      mySavedActivities: "Mis Actividades Guardadas",
+      noActivitiesSaved: "No hay actividades guardadas todavía. ¡Comienza a explorar y guarda actividades que te resuenen!"
     },
     dimensions: {
       humility: "Humility",

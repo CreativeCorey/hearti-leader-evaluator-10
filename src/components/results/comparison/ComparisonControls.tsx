@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ChartScatter } from 'lucide-react';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 type CompareMode = 'none' | 'average';
 
@@ -11,6 +12,8 @@ interface ComparisonControlsProps {
 }
 
 const ComparisonControls: React.FC<ComparisonControlsProps> = ({ compareMode, setCompareMode }) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="flex gap-2 flex-wrap">
       <Button 
@@ -18,7 +21,7 @@ const ComparisonControls: React.FC<ComparisonControlsProps> = ({ compareMode, se
         variant={compareMode === 'none' ? "default" : "outline"}
         onClick={() => setCompareMode('none')}
       >
-        No Comparison
+        {t('results.comparison.noComparison')}
       </Button>
       <Button 
         size="sm" 
@@ -26,7 +29,7 @@ const ComparisonControls: React.FC<ComparisonControlsProps> = ({ compareMode, se
         onClick={() => setCompareMode('average')}
         className="bg-purple-600 hover:bg-purple-700"
       >
-        <ChartScatter size={16} className="mr-1" /> Average
+        <ChartScatter size={16} className="mr-1" /> {t('results.comparison.average')}
       </Button>
     </div>
   );
