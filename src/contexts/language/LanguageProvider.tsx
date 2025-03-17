@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { LanguageContext, SupportedLanguage } from './LanguageContext';
 import { getTranslation, isRTLLanguage } from '@/translations';
@@ -39,53 +40,39 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     setCurrentLanguage(language);
   };
 
-  // Translation function with support for string interpolation and special cases
+  // Translation function with special handling for dimension names
   const t = (key: string, params?: Record<string, string>) => {
-    // Always keep HEARTI dimension names in English
-    if (isDimensionName(key)) {
-      return capitalizeFirstLetter(getDimensionName(key));
+    // For dimension names and some special keys, always return in English
+    if (shouldKeepInEnglish(key)) {
+      return getTranslation('en', key, params);
     }
     
-    // Get translation with appropriate fallback
     return getTranslation(currentLanguage, key, params);
   };
-
-  // Helper function to determine if a key is a dimension name
-  const isDimensionName = (key: string): boolean => {
+  
+  // Helper function to determine if a key should remain in English
+  const shouldKeepInEnglish = (key: string): boolean => {
+    // Dimension names should always be in English
     const dimensionNames = ['humility', 'empathy', 'accountability', 'resiliency', 'transparency', 'inclusivity'];
     
-    // Check if the key directly matches a dimension name
+    // Check exact dimension name matches
     if (dimensionNames.includes(key.toLowerCase())) {
       return true;
     }
     
-    // Check if the key ends with a dimension name (e.g., 'results.dimensions.humility')
-    const lastSegment = key.split('.').pop()?.toLowerCase();
-    return lastSegment ? dimensionNames.includes(lastSegment) : false;
-  };
-  
-  // Helper function to extract the dimension name from a key
-  const getDimensionName = (key: string): string => {
-    const dimensionNames = ['humility', 'empathy', 'accountability', 'resiliency', 'transparency', 'inclusivity'];
-    const lastSegment = key.split('.').pop()?.toLowerCase();
+    // HEARTI-related keys and titles should remain in English
+    if (key.includes('HEARTI') || key.includes('Spectra') || 
+        key.includes('Leader') || key.includes(':Leader')) {
+      return true;
+    }
     
+    // Check for dimension names at the end of translation keys
+    const lastSegment = key.split('.').pop()?.toLowerCase();
     if (lastSegment && dimensionNames.includes(lastSegment)) {
-      return lastSegment;
+      return true;
     }
     
-    // If the key itself is a dimension name
-    for (const dimension of dimensionNames) {
-      if (key.toLowerCase() === dimension) {
-        return dimension;
-      }
-    }
-    
-    return key;
-  };
-  
-  // Helper function to capitalize first letter
-  const capitalizeFirstLetter = (str: string): string => {
-    return str.charAt(0).toUpperCase() + str.slice(1);
+    return false;
   };
 
   return (

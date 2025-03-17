@@ -31,7 +31,7 @@ const SkillDevelopment: React.FC = () => {
   const [selectedDimension, setSelectedDimension] = useState<string>('accountability');
   const { savedActivities, loading, saveActivity, toggleActivityCompletion, removeSavedActivity } = useActivities();
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t, currentLanguage } = useLanguage();
 
   const handleSaveActivity = (activity: SkillActivity, addToHabitTracker?: boolean, frequency?: 'daily' | 'weekly' | 'monthly') => {
     if (savedActivities.length >= 3) {
@@ -45,25 +45,36 @@ const SkillDevelopment: React.FC = () => {
     saveActivity(activity, addToHabitTracker, frequency);
   };
 
-  // Translate activity descriptions before filtering
-  const translatedActivities = activities.map(activity => ({
-    ...activity,
-    description: t(`activities.descriptions.${activity.id}`, { fallback: activity.description }),
-    category: t(`activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`, { fallback: activity.category })
-  }));
+  // Filter activities by selected dimension
+  const filteredActivities = activities
+    .filter(activity => activity.dimension === selectedDimension)
+    .map(activity => ({
+      ...activity,
+      // Ensure descriptions are properly translated
+      description: t(`activities.descriptions.${activity.id}`, { fallback: activity.description }),
+      category: t(`activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`, { fallback: activity.category })
+    }));
 
-  const filteredActivities = translatedActivities.filter(activity => activity.dimension === selectedDimension);
+  // Adjust tab text size for languages with longer words
+  const getTabStyles = () => {
+    return ['zh', 'ja', 'de'].includes(currentLanguage) ? 'text-xs' : '';
+  };
 
   return (
     <div className="container py-10">
       <h1 className="text-3xl font-semibold mb-6">{t('results.development.title')}</h1>
 
       <Tabs defaultValue="accountability" className="w-full">
-        <TabsList>
+        <TabsList className="flex flex-wrap">
           {Object.keys(dimensionIcons).map((dimension) => (
-            <TabsTrigger value={dimension} key={dimension} onClick={() => setSelectedDimension(dimension)}>
+            <TabsTrigger 
+              value={dimension} 
+              key={dimension} 
+              onClick={() => setSelectedDimension(dimension)}
+              className={getTabStyles()}
+            >
               {React.createElement(dimensionIcons[dimension], { className: "mr-2 h-4 w-4" })}
-              {t(dimension)}
+              {dimension}
             </TabsTrigger>
           ))}
         </TabsList>

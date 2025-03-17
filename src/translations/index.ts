@@ -1,3 +1,4 @@
+
 import { SupportedLanguage } from '@/contexts/language/LanguageContext';
 import { en } from './en';
 import { es } from './es';
@@ -21,21 +22,36 @@ export const translations = {
   he
 };
 
+// Terms that should always remain in English regardless of translation
+const keepInEnglishTerms = [
+  'HEARTI',
+  'Humility',
+  'Empathy',
+  'Accountability',
+  'Resiliency',
+  'Transparency',
+  'Inclusivity',
+  'Spectra',
+  'Leader',
+  'humility',
+  'empathy',
+  'accountability',
+  'resiliency',
+  'transparency',
+  'inclusivity'
+];
+
 export const getTranslation = (language: SupportedLanguage, key: string, params?: Record<string, string>): string => {
+  // Special handling for comparison labels that were showing as untranslated
+  if (key.includes('results.comparison.')) {
+    const comparisonKey = handleComparisonKeys(language, key);
+    if (comparisonKey) return comparisonKey;
+  }
+  
   // Special handling for dimension names - these should always remain in English
-  if (isDimensionNameKey(key)) {
-    const dimensionName = key.split('.').pop();
-    return dimensionName ? capitalizeFirstLetter(dimensionName) : key;
-  }
-  
-  // Activity descriptions should be translated
-  if (isActivityKey(key)) {
-    return getActivityTranslation(language, key, params);
-  }
-  
-  // For report content we should translate it based on the language
-  if (isReportKey(key)) {
-    return getReportTranslation(language, key, params);
+  if (shouldKeepInEnglish(key)) {
+    const dimensionName = extractDimensionName(key);
+    return dimensionName || key;
   }
   
   // Split the key by dots to access nested properties
@@ -47,7 +63,7 @@ export const getTranslation = (language: SupportedLanguage, key: string, params?
     if (translation && translation[k]) {
       translation = translation[k];
     } else {
-      // If no translation found, return the key or the English translation
+      // If no translation found, return the English translation
       const englishTranslation = getNestedTranslation(translations.en, keys);
       return processInterpolation(englishTranslation || key, params);
     }
@@ -57,57 +73,68 @@ export const getTranslation = (language: SupportedLanguage, key: string, params?
   return processInterpolation(translation, params);
 };
 
-function isDimensionNameKey(key: string): boolean {
-  const dimensionNames = ['humility', 'empathy', 'accountability', 'resiliency', 'transparency', 'inclusivity'];
-  const parts = key.split('.');
-  const lastPart = parts[parts.length - 1];
+// Special handling for comparison keys that were showing untranslated
+function handleComparisonKeys(language: SupportedLanguage, key: string): string | null {
+  const comparisonTerms: Record<string, Record<string, string>> = {
+    zh: {
+      'results.comparison.averageLabel': '平均',
+      'results.comparison.yourHEARTI': '你的 HEARTI',
+      'results.comparison.score': '分数',
+      'results.comparison.strength': '优势',
+      'results.comparison.vulnerability': '需发展',
+      'results.comparison.competent': '胜任',
+      'results.comparison.selectOption': '选择比较选项以查看数据',
+      'results.comparison.useControls': '使用上方的比较控制查看您的 HEARTI 数据'
+    }
+  };
   
-  // Check if the key is directly a dimension name or ends with a dimension name
-  return (
-    (key.startsWith('results.dimensions.') && dimensionNames.includes(lastPart)) ||
-    (key.startsWith('dimensions.') && dimensionNames.includes(lastPart)) ||
-    dimensionNames.includes(key)
+  if (comparisonTerms[language] && comparisonTerms[language][key]) {
+    return comparisonTerms[language][key];
+  }
+  
+  return null;
+}
+
+// Helper to detect if a key should remain in English
+function shouldKeepInEnglish(key: string): boolean {
+  // Check if the key contains any of the terms that should remain in English
+  return keepInEnglishTerms.some(term => 
+    key === term || 
+    key.endsWith(`.${term}`) || 
+    key.includes(`${term}.`)
   );
 }
 
-function isActivityKey(key: string): boolean {
-  return key.includes('activities.') || key.includes('activity.') || key.startsWith('Choose Activities for:');
-}
-
-function isReportKey(key: string): boolean {
-  return key.startsWith('report.') || key.includes('.report.');
-}
-
-function getActivityTranslation(language: SupportedLanguage, key: string, params?: Record<string, string>): string {
-  // Check if this language has activity translations
-  const activityTranslation = getNestedTranslation(translations[language], ['activities', key]);
+// Extract the dimension name from a key
+function extractDimensionName(key: string): string | null {
+  const dimensionNames = ['Humility', 'Empathy', 'Accountability', 'Resiliency', 'Transparency', 'Inclusivity'];
+  const lowerDimensionNames = dimensionNames.map(d => d.toLowerCase());
   
-  if (activityTranslation) {
-    return processInterpolation(activityTranslation, params);
+  // Direct match for dimension name
+  for (const dimension of [...dimensionNames, ...lowerDimensionNames]) {
+    if (key === dimension) {
+      return capitalizeFirstLetter(dimension);
+    }
   }
   
-  // Fallback to English for activities if not found
-  const englishTranslation = getNestedTranslation(translations.en, ['activities', key]);
-  return processInterpolation(englishTranslation || key, params);
-}
-
-function getReportTranslation(language: SupportedLanguage, key: string, params?: Record<string, string>): string {
-  // Check if this language has report translations
-  const reportTranslation = getNestedTranslation(translations[language], key.split('.'));
+  // Check if the key ends with a dimension name
+  const parts = key.split('.');
+  const lastPart = parts[parts.length - 1];
   
-  if (reportTranslation) {
-    return processInterpolation(reportTranslation, params);
+  for (const dimension of lowerDimensionNames) {
+    if (lastPart.toLowerCase() === dimension) {
+      return capitalizeFirstLetter(dimension);
+    }
   }
   
-  // Fallback to English for report content if not found
-  const englishTranslation = getNestedTranslation(translations.en, key.split('.'));
-  return processInterpolation(englishTranslation || key, params);
+  return null;
 }
 
 function capitalizeFirstLetter(str: string): string {
-  return str.charAt(0).toUpperCase() + str.slice(1);
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
+// Utility function to get a nested translation
 const getNestedTranslation = (obj: any, keys: string[]): string | undefined => {
   let result = obj;
   for (const key of keys) {
@@ -120,6 +147,7 @@ const getNestedTranslation = (obj: any, keys: string[]): string | undefined => {
   return typeof result === 'string' ? result : undefined;
 };
 
+// Process string interpolation in translations
 const processInterpolation = (text: string, params?: Record<string, string>): string => {
   if (!params || typeof text !== 'string') {
     return text;

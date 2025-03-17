@@ -32,14 +32,19 @@ const ActivityList: React.FC<ActivityListProps> = ({
   const { t } = useLanguage();
   const DimensionIcon = dimensionIcons[activeDimension] || dimensionIcons.humility;
   
+  // Fix for the chooseActivitiesFor translation key
+  const getChooseActivitiesForText = () => {
+    return `${t('results.development.chooseActivitiesFor')}: ${activeDimension}`;
+  };
+  
   return (
     <div className="mt-6">
       <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
         <DimensionIcon className="text-indigo-600" size={24} />
-        {t('results.development.chooseActivitiesFor')}: {t(activeDimension)}
+        {getChooseActivitiesForText()}
       </h3>
       <p className="text-muted-foreground mb-6">
-        {t('results.development.activitiesDescription', { dimension: t(activeDimension) })}
+        {t('results.development.activitiesDescription', { dimension: activeDimension })}
       </p>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

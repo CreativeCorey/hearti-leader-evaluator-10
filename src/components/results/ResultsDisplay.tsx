@@ -22,7 +22,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   const [exportingPdf, setExportingPdf] = useState(false);
   const [selectedAssessment, setSelectedAssessment] = useState<HEARTIAssessment>(assessment);
   const reportRef = useRef<HTMLDivElement>(null);
-  const { t } = useLanguage();
+  const { t, currentLanguage } = useLanguage();
   const isMobile = useIsMobile();
   
   // Get top development area (lowest scoring dimension)
@@ -60,11 +60,13 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
     }
   };
   
-  // Determine tab classes based on screen size
+  // Determine tab classes based on screen size and language
   const getTabClasses = () => {
     const baseClasses = "whitespace-nowrap overflow-hidden text-ellipsis";
-    if (isMobile) {
-      return `text-xs ${baseClasses} px-1.5 py-1 max-w-[80px]`;  // Smaller on mobile
+    
+    // Use smaller text for languages with longer translations like Chinese
+    if (isMobile || ['zh', 'ja', 'de'].includes(currentLanguage)) {
+      return `text-xs ${baseClasses} px-1 py-1 max-w-[70px]`;  // Smaller for challenging languages
     }
     return `text-xs md:text-sm ${baseClasses} max-w-[120px]`;  // Limited width on desktop too
   };

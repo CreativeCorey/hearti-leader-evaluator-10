@@ -17,7 +17,24 @@ const HabitTabs: React.FC<HabitTabsProps> = ({
   onDimensionChange 
 }) => {
   const isMobile = useIsMobile();
-  const { t } = useLanguage();
+  const { t, currentLanguage } = useLanguage();
+  
+  // Adjust font size based on language
+  const getDimensionTabStyle = (dimension: string, isActive: boolean) => {
+    const dimName = dimension as HEARTIDimension;
+    const color = dimensionColors[dimName];
+    
+    const needsSmallerText = ['zh', 'ja', 'de'].includes(currentLanguage);
+    const fontSize = needsSmallerText ? 
+      (isMobile ? "text-[10px]" : "text-xs") : 
+      (isMobile ? "text-xs" : "text-sm");
+    
+    return {
+      color: isActive ? color : undefined,
+      backgroundColor: isActive ? `${color}10` : undefined,
+      fontSize: needsSmallerText ? '0.75rem' : undefined
+    };
+  };
   
   return (
     <div className="mobile-tabs-container space-y-2">
@@ -46,15 +63,12 @@ const HabitTabs: React.FC<HabitTabsProps> = ({
               <TabsTrigger 
                 key={dimension}
                 value={dimension} 
-                className={`flex flex-col items-center justify-center gap-1 py-3`}
-                style={{ 
-                  color: isActive ? color : undefined,
-                  backgroundColor: isActive ? `${color}10` : undefined
-                }}
+                className={`flex flex-col items-center justify-center gap-1 py-3 ${['zh', 'ja', 'de'].includes(currentLanguage) ? 'text-xs' : ''}`}
+                style={getDimensionTabStyle(dimension, isActive)}
                 onClick={() => onDimensionChange(dimName)}
               >
                 <Icon size={isMobile ? 16 : 18} style={{ color }} />
-                <span className={isMobile ? "text-xs" : "text-sm"}>{dimName}</span>
+                <span>{dimName}</span>
               </TabsTrigger>
             );
           })}

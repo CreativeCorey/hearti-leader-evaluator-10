@@ -2,12 +2,14 @@
 import React from 'react';
 import { HEARTIDimension } from '@/types';
 import { dimensionIcons, dimensionLabels } from './DimensionIcons';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface InfoBannerProps {
   focusDimension: HEARTIDimension;
 }
 
 const InfoBanner: React.FC<InfoBannerProps> = ({ focusDimension }) => {
+  const { t } = useLanguage();
   const DimensionIcon = dimensionIcons[focusDimension] || dimensionIcons.humility;
   
   return (
@@ -17,13 +19,13 @@ const InfoBanner: React.FC<InfoBannerProps> = ({ focusDimension }) => {
         Development Recommendations for HEARTI™ Leadership
       </h3>
       <p className="text-indigo-700 mt-1">
-        Choose 3 behaviors below that will help strengthen your leadership dimensions. We recommend focusing on your development area: 
+        {t('results.development.activitiesDescription', { dimension: focusDimension })}
         <strong className="uppercase flex items-center gap-1 inline-flex mt-1">
-          <DimensionIcon size={14} /> {dimensionLabels[focusDimension]}
+          <DimensionIcon size={14} /> {focusDimension}
         </strong>
       </p>
       <p className="text-indigo-700 mt-2 text-sm">
-        Practice each behavior 30 times to develop a new habit and master the skill.
+        {t('results.development.complete')}
       </p>
     </div>
   );

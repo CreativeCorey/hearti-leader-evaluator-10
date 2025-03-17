@@ -24,9 +24,9 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
   // Get the dimension color for the active dimension
   const dimensionColor = dimensionColors[activeDimension] || "#6366f1";
   
-  // The chart title should show the dimension name untranslated
+  // Always use English dimension name for the chart title
   const chartTitle = showAllDimensions ? 
-    t('results.development.activities') : 
+    'HEARTI Dimensions' : 
     activeDimension.charAt(0).toUpperCase() + activeDimension.slice(1);
 
   // Only show the spectra chart in overview, not in development tab
@@ -76,7 +76,7 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
             isAnimationActive={true}
           />
           <Tooltip 
-            formatter={(value) => [`${value}/5`, chartTitle]} 
+            formatter={(value) => [`${value}/5`, chartTitle]}
             labelFormatter={(label) => label}
           />
           <Legend />
