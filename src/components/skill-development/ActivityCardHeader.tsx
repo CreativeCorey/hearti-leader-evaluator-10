@@ -21,12 +21,15 @@ const ActivityCardHeader: React.FC<ActivityCardHeaderProps> = ({
   const { t } = useLanguage();
   const DimensionIcon = dimensionIcons[activity.dimension] || dimensionIcons.humility;
   
+  // Always display the dimension name in English
+  const dimensionDisplayName = activity.dimension.charAt(0).toUpperCase() + activity.dimension.slice(1);
+  
   return (
     <div className="flex items-center justify-between mb-2">
       <div className="flex items-center">
         <Badge className={`${dimensionColors[activity.dimension]} font-normal mr-2 flex items-center gap-1`}>
           <DimensionIcon size={14} />
-          {t(activity.dimension)}
+          {dimensionDisplayName}
         </Badge>
         <span className="text-xs text-muted-foreground">
           {activity.category}

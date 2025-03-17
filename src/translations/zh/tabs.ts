@@ -1,11 +1,11 @@
 
 export const tabs = {
   tabs: {
-    summary: "概述",
+    summary: "概要",
     dimensions: "维度",
     dataViz: {
-      desktop: "光谱",
-      mobile: "光谱"
+      desktop: "数据",
+      mobile: "数据"
     },
     report: "报告",
     developSkills: "技能",

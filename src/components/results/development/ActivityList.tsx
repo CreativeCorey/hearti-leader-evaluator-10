@@ -32,7 +32,7 @@ const ActivityList: React.FC<ActivityListProps> = ({
   const { t } = useLanguage();
   const DimensionIcon = dimensionIcons[activeDimension] || dimensionIcons.humility;
   
-  // Fix for the chooseActivitiesFor translation key
+  // Get proper text for the dimension being shown
   const getChooseActivitiesForText = () => {
     return `${t('results.development.chooseActivitiesFor')}: ${activeDimension}`;
   };
@@ -50,15 +50,17 @@ const ActivityList: React.FC<ActivityListProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {activities.slice(0, 9).map(activity => {
           const isSelected = selectedActivities.includes(activity.id);
+          const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`;
+          const descriptionKey = `activities.descriptions.${activity.id}`;
           
           return (
             <ActivityCard
               key={activity.id}
               activity={{
                 ...activity,
-                // Translate category and description
-                category: t(`activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`, { fallback: activity.category }),
-                description: t(`activities.descriptions.${activity.id}`, { fallback: activity.description })
+                // Ensure proper translation with fallbacks
+                category: t(categoryKey, { fallback: activity.category }),
+                description: t(descriptionKey, { fallback: activity.description })
               }}
               isSelected={isSelected}
               selectedFrequency={selectedFrequency}

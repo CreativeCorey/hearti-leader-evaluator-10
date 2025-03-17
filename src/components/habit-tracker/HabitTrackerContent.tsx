@@ -79,7 +79,7 @@ const HabitTrackerContent: React.FC = () => {
                 className={`rounded-full flex items-center gap-1.5 border-green text-green hover:bg-green/10 ${isMobile ? 'text-xs py-1 h-7 px-2.5' : ''}`}
               >
                 <Plus size={isMobile ? 14 : 16} />
-                {isMobile ? t('common.add') : t('results.habits.addHabit')}
+                {isMobile ? t('results.habits.add') : t('results.habits.addHabit')}
               </Button>
             ) : (
               <Button 
@@ -92,7 +92,7 @@ const HabitTrackerContent: React.FC = () => {
                 className={`rounded-full flex items-center gap-1.5 border-red text-red hover:bg-red/10 ${isMobile ? 'text-xs py-1 h-7 px-2.5' : ''}`}
               >
                 <X size={isMobile ? 14 : 16} />
-                {isMobile ? t('common.cancel') : t('common.cancel')}
+                {t('results.habits.cancel')}
               </Button>
             )}
           </div>

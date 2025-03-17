@@ -42,16 +42,10 @@ const keepInEnglishTerms = [
 ];
 
 export const getTranslation = (language: SupportedLanguage, key: string, params?: Record<string, string>): string => {
-  // Special handling for comparison labels that were showing as untranslated
+  // Special handling for comparison section labels that were showing as untranslated
   if (key.includes('results.comparison.')) {
     const comparisonKey = handleComparisonKeys(language, key);
-    if (comparisonKey) return comparisonKey;
-  }
-  
-  // Special handling for dimension names - these should always remain in English
-  if (shouldKeepInEnglish(key)) {
-    const dimensionName = extractDimensionName(key);
-    return dimensionName || key;
+    if (comparisonKey) return processInterpolation(comparisonKey, params);
   }
   
   // Split the key by dots to access nested properties
@@ -60,13 +54,18 @@ export const getTranslation = (language: SupportedLanguage, key: string, params?
   
   // Traverse the translation object based on the key path
   for (const k of keys) {
-    if (translation && translation[k]) {
+    if (translation && translation[k] !== undefined) {
       translation = translation[k];
     } else {
       // If no translation found, return the English translation
       const englishTranslation = getNestedTranslation(translations.en, keys);
       return processInterpolation(englishTranslation || key, params);
     }
+  }
+  
+  // Handle dimension names that should always be in English
+  if (keepInEnglishTerms.includes(translation)) {
+    return translation;
   }
   
   // Process any string interpolation
@@ -77,11 +76,11 @@ export const getTranslation = (language: SupportedLanguage, key: string, params?
 function handleComparisonKeys(language: SupportedLanguage, key: string): string | null {
   const comparisonTerms: Record<string, Record<string, string>> = {
     zh: {
-      'results.comparison.averageLabel': '平均',
-      'results.comparison.yourHEARTI': '你的 HEARTI',
+      'results.comparison.averageLabel': '平均值',
+      'results.comparison.yourHEARTI': '您的 HEARTI',
       'results.comparison.score': '分数',
       'results.comparison.strength': '优势',
-      'results.comparison.vulnerability': '需发展',
+      'results.comparison.vulnerability': '弱点',
       'results.comparison.competent': '胜任',
       'results.comparison.selectOption': '选择比较选项以查看数据',
       'results.comparison.useControls': '使用上方的比较控制查看您的 HEARTI 数据'
@@ -93,45 +92,6 @@ function handleComparisonKeys(language: SupportedLanguage, key: string): string 
   }
   
   return null;
-}
-
-// Helper to detect if a key should remain in English
-function shouldKeepInEnglish(key: string): boolean {
-  // Check if the key contains any of the terms that should remain in English
-  return keepInEnglishTerms.some(term => 
-    key === term || 
-    key.endsWith(`.${term}`) || 
-    key.includes(`${term}.`)
-  );
-}
-
-// Extract the dimension name from a key
-function extractDimensionName(key: string): string | null {
-  const dimensionNames = ['Humility', 'Empathy', 'Accountability', 'Resiliency', 'Transparency', 'Inclusivity'];
-  const lowerDimensionNames = dimensionNames.map(d => d.toLowerCase());
-  
-  // Direct match for dimension name
-  for (const dimension of [...dimensionNames, ...lowerDimensionNames]) {
-    if (key === dimension) {
-      return capitalizeFirstLetter(dimension);
-    }
-  }
-  
-  // Check if the key ends with a dimension name
-  const parts = key.split('.');
-  const lastPart = parts[parts.length - 1];
-  
-  for (const dimension of lowerDimensionNames) {
-    if (lastPart.toLowerCase() === dimension) {
-      return capitalizeFirstLetter(dimension);
-    }
-  }
-  
-  return null;
-}
-
-function capitalizeFirstLetter(str: string): string {
-  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
 // Utility function to get a nested translation

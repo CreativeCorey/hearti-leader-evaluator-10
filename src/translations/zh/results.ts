@@ -2,7 +2,7 @@
 export const results = {
   results: {
     spectra: {
-      title: "HEARTI 光谱",
+      title: "HEARTI 数据",
       subtitle: "您的领导力维度分数",
     },
     lq: {
@@ -19,12 +19,12 @@ export const results = {
       progress: "HEARTI 随时间的进展",
       progressSubtitle: "跟踪您的领导力发展之旅",
       noProgressData: "完成更多评估以查看您随时间的进展。",
-      yourHEARTI: "你的 HEARTI",
+      yourHEARTI: "您的 HEARTI",
       score: "分数",
       strength: "优势",
-      vulnerability: "需发展",
+      vulnerability: "弱点",
       competent: "胜任",
-      averageLabel: "平均",
+      averageLabel: "平均值",
       selectOption: "选择比较选项以查看数据",
       useControls: "使用上方的比较控制查看您的 HEARTI 数据"
     },
@@ -45,7 +45,7 @@ export const results = {
       title: "发展活动",
       subtitle: "个性化活动以提升您的领导能力",
       focused: "专注",
-      complete: "完整",
+      complete: "完成",
       chooseActivitiesFor: "为以下选择活动",
       activitiesDescription: "这些活动旨在帮助您发展您的{{dimension}}领导维度。选择最多3个活动来关注。",
       maxActivities: "已选择最大数量的活动",
@@ -60,6 +60,7 @@ export const results = {
     },
     habits: {
       title: "您的习惯",
+      yourHabits: "您的习惯",
       addHabit: "添加习惯",
       add: "添加",
       cancel: "取消",
