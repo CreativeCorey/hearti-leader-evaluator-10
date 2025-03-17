@@ -3,6 +3,7 @@ import React from 'react';
 import { HEARTIAssessment } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface ScoreCardProps {
   assessment: HEARTIAssessment;
@@ -10,16 +11,18 @@ interface ScoreCardProps {
 }
 
 const ScoreCard: React.FC<ScoreCardProps> = ({ assessment, formattedDate }) => {
+  const { t } = useLanguage();
+  
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle>Your HEARTI:Leader Quotient</CardTitle>
-        <CardDescription>Assessment completed on {formattedDate}</CardDescription>
+        <CardTitle>{t('results.lq.title', { fallback: "Your HEARTI:Leader Quotient" })}</CardTitle>
+        <CardDescription>{t('assessment.completed', { fallback: "Assessment completed on" })} {formattedDate}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2 text-center flex flex-col items-center">
-            <p className="text-muted-foreground">Overall Score</p>
+            <p className="text-muted-foreground">{t('results.summary.overallScore', { fallback: "Overall Score" })}</p>
             <div className="flex items-center justify-center">
               {/* Proper oval background for the score */}
               <div className="relative flex items-center justify-center">
@@ -28,11 +31,13 @@ const ScoreCard: React.FC<ScoreCardProps> = ({ assessment, formattedDate }) => {
                 <span className="text-muted-foreground ml-1 relative z-10">/5</span>
               </div>
             </div>
-            <p className="text-sm text-center max-w-[220px]">Your HEARTI:Leader Quotient indicates your overall proficiency in the skills needed for 21st century leadership.</p>
+            <p className="text-sm text-center max-w-[220px]">
+              {t('results.summary.overallDescription', { fallback: "Your HEARTI:Leader Quotient indicates your overall proficiency in the skills needed for 21st century leadership." })}
+            </p>
           </div>
           
           <div className="space-y-2 text-center flex flex-col items-center">
-            <p className="text-muted-foreground">Top Strength</p>
+            <p className="text-muted-foreground">{t('results.summary.topStrength', { fallback: "Top Strength" })}</p>
             <div className="flex items-center gap-2 justify-center">
               {Object.entries(assessment.dimensionScores)
                 .sort(([, a], [, b]) => b - a)
@@ -44,11 +49,13 @@ const ScoreCard: React.FC<ScoreCardProps> = ({ assessment, formattedDate }) => {
                   </div>
                 ))}
             </div>
-            <p className="text-sm text-center max-w-[220px]">This is your highest-scoring HEARTI dimension.</p>
+            <p className="text-sm text-center max-w-[220px]">
+              {t('results.summary.strengthDescription', { fallback: "This is your highest-scoring HEARTI dimension." })}
+            </p>
           </div>
           
           <div className="space-y-2 text-center flex flex-col items-center">
-            <p className="text-muted-foreground">Development Area</p>
+            <p className="text-muted-foreground">{t('results.summary.developmentArea', { fallback: "Development Area" })}</p>
             <div className="flex items-center gap-2 justify-center">
               {Object.entries(assessment.dimensionScores)
                 .sort(([, a], [, b]) => a - b)
@@ -60,7 +67,9 @@ const ScoreCard: React.FC<ScoreCardProps> = ({ assessment, formattedDate }) => {
                   </div>
                 ))}
             </div>
-            <p className="text-sm text-center max-w-[220px]">This dimension has the most potential for growth.</p>
+            <p className="text-sm text-center max-w-[220px]">
+              {t('results.summary.developmentDescription', { fallback: "This dimension has the most potential for growth." })}
+            </p>
           </div>
         </div>
       </CardContent>

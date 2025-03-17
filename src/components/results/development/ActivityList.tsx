@@ -29,12 +29,13 @@ const ActivityList: React.FC<ActivityListProps> = ({
   onFrequencyChange,
   onAddToHabitTracker
 }) => {
-  const { t } = useLanguage();
+  const { t, currentLanguage } = useLanguage();
   const DimensionIcon = dimensionIcons[activeDimension] || dimensionIcons.humility;
   
   // Get proper text for the dimension being shown
   const getChooseActivitiesForText = () => {
-    return `${t('results.development.chooseActivitiesFor')}: ${activeDimension}`;
+    const chooseActivitiesText = t('results.development.chooseActivitiesFor', { fallback: "Choose Activities For" });
+    return `${chooseActivitiesText}: ${activeDimension}`;
   };
   
   return (
@@ -44,7 +45,7 @@ const ActivityList: React.FC<ActivityListProps> = ({
         {getChooseActivitiesForText()}
       </h3>
       <p className="text-muted-foreground mb-6">
-        {t('results.development.activitiesDescription', { dimension: activeDimension })}
+        {t('results.development.activitiesDescription', { dimension: activeDimension, fallback: `These activities are designed to help you develop your ${activeDimension} leadership dimension. Select up to 3 activities to focus on.` })}
       </p>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -42,6 +42,16 @@ const SkillDevelopment: React.FC = () => {
       })
       return;
     }
+    
+    // If adding to habit tracker, show a success toast with translated message
+    if (addToHabitTracker) {
+      const frequencyText = t(`results.habits.${frequency}`, { fallback: frequency });
+      toast({
+        title: t('results.development.activityAdded', { fallback: "Activity added" }),
+        description: t('results.development.activityAddedDescription', { frequency: frequencyText, fallback: `Activity has been added to your ${frequency} habit tracker` }),
+      });
+    }
+    
     saveActivity(activity, addToHabitTracker, frequency);
   };
 
@@ -53,6 +63,7 @@ const SkillDevelopment: React.FC = () => {
         const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`;
         const descriptionKey = `activities.descriptions.${activity.id}`;
         
+        // Make sure to include fallbacks
         return {
           ...activity,
           description: t(descriptionKey, { fallback: activity.description }),
@@ -70,7 +81,9 @@ const SkillDevelopment: React.FC = () => {
 
   return (
     <div className="container py-10">
-      <h1 className="text-3xl font-semibold mb-6">{t('results.development.title', { fallback: "Development Activities" })}</h1>
+      <h1 className="text-3xl font-semibold mb-6">
+        {t('results.development.title', { fallback: "Development Activities" })}
+      </h1>
 
       <Tabs defaultValue="accountability" className="w-full">
         <TabsList className="flex flex-wrap">
@@ -82,7 +95,7 @@ const SkillDevelopment: React.FC = () => {
               className={getTabStyles()}
             >
               {React.createElement(dimensionIcons[dimension], { className: "mr-2 h-4 w-4" })}
-              {dimension}
+              {dimension.charAt(0).toUpperCase() + dimension.slice(1)}
             </TabsTrigger>
           ))}
         </TabsList>
@@ -103,7 +116,9 @@ const SkillDevelopment: React.FC = () => {
       </Tabs>
 
       <div className="mt-8">
-        <h2 className="text-2xl font-semibold mb-4">{t('results.development.mySavedActivities', { fallback: "My Saved Activities" })}</h2>
+        <h2 className="text-2xl font-semibold mb-4">
+          {t('results.development.mySavedActivities', { fallback: "My Saved Activities" })}
+        </h2>
         {loading ? (
           <p>{t('common.loading', { fallback: "Loading..." })}</p>
         ) : savedActivities.length > 0 ? (
@@ -113,7 +128,7 @@ const SkillDevelopment: React.FC = () => {
                 const activityDetails = activities.find(activity => activity.id === savedActivity.activityId);
                 if (!activityDetails) return null;
 
-                // Translate the activity details
+                // Translate the activity details with fallbacks
                 const categoryKey = `activities.categories.${activityDetails.category.toLowerCase().replace(/[- ]/g, '')}`;
                 const descriptionKey = `activities.descriptions.${activityDetails.id}`;
                 
