@@ -41,7 +41,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   };
 
   // Translation function with special handling for dimension names
-  const t = (key: string, params?: Record<string, string>) => {
+  const t = (key: string, params?: Record<string, any>) => {
     // For dimension names and some special keys, always return in English
     if (shouldKeepInEnglish(key)) {
       return getTranslation('en', key, params);
@@ -53,22 +53,42 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
       if (specificTranslation) return specificTranslation;
     }
     
-    // Fix for the development activity strings
-    if (key.startsWith('activities.categories.') || key.startsWith('activities.descriptions.')) {
-      const activityTranslation = getTranslation(currentLanguage, key, params);
-      if (activityTranslation === key && currentLanguage !== 'en') {
-        // Fall back to English for missing translations
-        return getTranslation('en', key, params);
+    // Fix for the development activity strings and habit tracker text
+    if (key.startsWith('activities.categories.') || 
+        key.startsWith('activities.descriptions.') || 
+        key.startsWith('results.development.') ||
+        key.startsWith('results.habits.')) {
+      
+      // Get the translation
+      const translation = getTranslation(currentLanguage, key, params);
+      
+      // If the translation is the same as the key (not found) and we're not in English, fall back to English
+      if (translation === key && currentLanguage !== 'en') {
+        const englishTranslation = getTranslation('en', key, params);
+        return englishTranslation !== key ? englishTranslation : params?.fallback || key;
       }
-      return activityTranslation;
+      
+      // If we have a fallback parameter and the translation is the key, use the fallback
+      if (translation === key && params?.fallback) {
+        return params.fallback;
+      }
+      
+      return translation;
     }
     
     // Regular translation
-    return getTranslation(currentLanguage, key, params);
+    const translation = getTranslation(currentLanguage, key, params);
+    
+    // If we have a fallback and the translation is the same as the key (not found), use the fallback
+    if (translation === key && params?.fallback) {
+      return params.fallback;
+    }
+    
+    return translation;
   };
   
   // Helper function to handle special cases in comparison section
-  const handleComparisonSpecialCases = (language: SupportedLanguage, key: string, params?: Record<string, string>): string | null => {
+  const handleComparisonSpecialCases = (language: SupportedLanguage, key: string, params?: Record<string, any>): string | null => {
     // Special case translations for comparison section
     const comparisonTerms: Record<string, Record<string, string>> = {
       zh: {

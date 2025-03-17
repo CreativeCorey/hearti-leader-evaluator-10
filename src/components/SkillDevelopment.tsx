@@ -36,8 +36,8 @@ const SkillDevelopment: React.FC = () => {
   const handleSaveActivity = (activity: SkillActivity, addToHabitTracker?: boolean, frequency?: 'daily' | 'weekly' | 'monthly') => {
     if (savedActivities.length >= 3) {
       toast({
-        title: t('results.development.tooManySaved'),
-        description: t('results.development.removeBeforeSaving'),
+        title: t('results.development.tooManySaved', { fallback: "Too many activities saved" }),
+        description: t('results.development.removeBeforeSaving', { fallback: "Please remove one before saving another" }),
         variant: "destructive",
       })
       return;
@@ -45,15 +45,23 @@ const SkillDevelopment: React.FC = () => {
     saveActivity(activity, addToHabitTracker, frequency);
   };
 
-  // Filter activities by selected dimension
-  const filteredActivities = activities
-    .filter(activity => activity.dimension === selectedDimension)
-    .map(activity => ({
-      ...activity,
-      // Ensure descriptions are properly translated
-      description: t(`activities.descriptions.${activity.id}`, { fallback: activity.description }),
-      category: t(`activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`, { fallback: activity.category })
-    }));
+  // Properly translate activities
+  const getTranslatedActivities = () => {
+    return activities
+      .filter(activity => activity.dimension === selectedDimension)
+      .map(activity => {
+        const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`;
+        const descriptionKey = `activities.descriptions.${activity.id}`;
+        
+        return {
+          ...activity,
+          description: t(descriptionKey, { fallback: activity.description }),
+          category: t(categoryKey, { fallback: activity.category })
+        };
+      });
+  };
+
+  const filteredActivities = getTranslatedActivities();
 
   // Adjust tab text size for languages with longer words
   const getTabStyles = () => {
@@ -62,7 +70,7 @@ const SkillDevelopment: React.FC = () => {
 
   return (
     <div className="container py-10">
-      <h1 className="text-3xl font-semibold mb-6">{t('results.development.title')}</h1>
+      <h1 className="text-3xl font-semibold mb-6">{t('results.development.title', { fallback: "Development Activities" })}</h1>
 
       <Tabs defaultValue="accountability" className="w-full">
         <TabsList className="flex flex-wrap">
@@ -81,7 +89,7 @@ const SkillDevelopment: React.FC = () => {
         {Object.keys(dimensionIcons).map((dimension) => (
           <TabsContent value={dimension} key={dimension}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredActivities.map(activity => (
+              {dimension === selectedDimension && filteredActivities.map(activity => (
                 <ActivityCard
                   key={activity.id}
                   activity={activity}
@@ -95,9 +103,9 @@ const SkillDevelopment: React.FC = () => {
       </Tabs>
 
       <div className="mt-8">
-        <h2 className="text-2xl font-semibold mb-4">{t('results.development.mySavedActivities')}</h2>
+        <h2 className="text-2xl font-semibold mb-4">{t('results.development.mySavedActivities', { fallback: "My Saved Activities" })}</h2>
         {loading ? (
-          <p>{t('common.loading')}</p>
+          <p>{t('common.loading', { fallback: "Loading..." })}</p>
         ) : savedActivities.length > 0 ? (
           <ScrollArea className="h-[300px] w-full rounded-md border">
             <div className="flex flex-col gap-4 p-4">
@@ -106,10 +114,13 @@ const SkillDevelopment: React.FC = () => {
                 if (!activityDetails) return null;
 
                 // Translate the activity details
+                const categoryKey = `activities.categories.${activityDetails.category.toLowerCase().replace(/[- ]/g, '')}`;
+                const descriptionKey = `activities.descriptions.${activityDetails.id}`;
+                
                 const translatedActivity = {
                   ...activityDetails,
-                  description: t(`activities.descriptions.${activityDetails.id}`, { fallback: activityDetails.description }),
-                  category: t(`activities.categories.${activityDetails.category.toLowerCase().replace(/[- ]/g, '')}`, { fallback: activityDetails.category })
+                  description: t(descriptionKey, { fallback: activityDetails.description }),
+                  category: t(categoryKey, { fallback: activityDetails.category })
                 };
 
                 return (
@@ -125,7 +136,7 @@ const SkillDevelopment: React.FC = () => {
             </div>
           </ScrollArea>
         ) : (
-          <p>{t('results.development.noActivitiesSaved')}</p>
+          <p>{t('results.development.noActivitiesSaved', { fallback: "No activities saved. Select some activities in the Development tab." })}</p>
         )}
       </div>
     </div>

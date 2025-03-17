@@ -41,11 +41,60 @@ const keepInEnglishTerms = [
   'inclusivity'
 ];
 
-export const getTranslation = (language: SupportedLanguage, key: string, params?: Record<string, string>): string => {
+export const getTranslation = (language: SupportedLanguage, key: string, params?: Record<string, any>): string => {
   // Special handling for comparison section labels that were showing as untranslated
   if (key.includes('results.comparison.')) {
     const comparisonKey = handleComparisonKeys(language, key);
     if (comparisonKey) return processInterpolation(comparisonKey, params);
+  }
+  
+  // Handle activity categories and descriptions
+  if (key.startsWith('activities.categories.') || key.startsWith('activities.descriptions.')) {
+    const activityTranslation = getNestedTranslation(translations[language], key.split('.'));
+    
+    // If no translation found in current language, try English
+    if (!activityTranslation && language !== 'en') {
+      const englishTranslation = getNestedTranslation(translations.en, key.split('.'));
+      if (englishTranslation) {
+        return processInterpolation(englishTranslation, params);
+      }
+    }
+    
+    // If we have a translation, return it
+    if (activityTranslation) {
+      return processInterpolation(activityTranslation, params);
+    }
+    
+    // If all else fails and we have a fallback, use it
+    if (params?.fallback) {
+      return params.fallback;
+    }
+    
+    // Last resort - return the key
+    return key;
+  }
+  
+  // Handle development text
+  if (key.startsWith('results.development.') || key.startsWith('results.habits.')) {
+    const developmentTranslation = getNestedTranslation(translations[language], key.split('.'));
+    
+    // If no translation found in current language, try English
+    if (!developmentTranslation && language !== 'en') {
+      const englishTranslation = getNestedTranslation(translations.en, key.split('.'));
+      if (englishTranslation) {
+        return processInterpolation(englishTranslation, params);
+      }
+    }
+    
+    // If we have a translation, return it
+    if (developmentTranslation) {
+      return processInterpolation(developmentTranslation, params);
+    }
+    
+    // If all else fails and we have a fallback, use it
+    if (params?.fallback) {
+      return params.fallback;
+    }
   }
   
   // Split the key by dots to access nested properties
@@ -57,9 +106,9 @@ export const getTranslation = (language: SupportedLanguage, key: string, params?
     if (translation && translation[k] !== undefined) {
       translation = translation[k];
     } else {
-      // If no translation found, return the English translation
+      // If no translation found, return the English translation or fallback
       const englishTranslation = getNestedTranslation(translations.en, keys);
-      return processInterpolation(englishTranslation || key, params);
+      return processInterpolation(englishTranslation || params?.fallback || key, params);
     }
   }
   
@@ -108,15 +157,20 @@ const getNestedTranslation = (obj: any, keys: string[]): string | undefined => {
 };
 
 // Process string interpolation in translations
-const processInterpolation = (text: string, params?: Record<string, string>): string => {
+const processInterpolation = (text: string, params?: Record<string, any>): string => {
   if (!params || typeof text !== 'string') {
     return text;
   }
 
+  // Filter out special keys like 'fallback' that are not for interpolation
+  const interpolationParams = Object.fromEntries(
+    Object.entries(params).filter(([key]) => key !== 'fallback')
+  );
+
   let result = text;
-  Object.entries(params).forEach(([key, value]) => {
+  Object.entries(interpolationParams).forEach(([key, value]) => {
     const placeholder = new RegExp(`{{\\s*${key}\\s*}}`, 'g');
-    result = result.replace(placeholder, value);
+    result = result.replace(placeholder, String(value));
   });
 
   return result;

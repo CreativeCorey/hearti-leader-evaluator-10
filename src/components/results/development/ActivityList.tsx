@@ -53,14 +53,17 @@ const ActivityList: React.FC<ActivityListProps> = ({
           const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`;
           const descriptionKey = `activities.descriptions.${activity.id}`;
           
+          // Get translated category and description with fallbacks
+          const translatedCategory = t(categoryKey, { fallback: activity.category });
+          const translatedDescription = t(descriptionKey, { fallback: activity.description });
+          
           return (
             <ActivityCard
               key={activity.id}
               activity={{
                 ...activity,
-                // Ensure proper translation with fallbacks
-                category: t(categoryKey, { fallback: activity.category }),
-                description: t(descriptionKey, { fallback: activity.description })
+                category: translatedCategory,
+                description: translatedDescription
               }}
               isSelected={isSelected}
               selectedFrequency={selectedFrequency}

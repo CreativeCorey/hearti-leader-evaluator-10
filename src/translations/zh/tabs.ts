@@ -1,7 +1,7 @@
 
 export const tabs = {
   tabs: {
-    summary: "概要",
+    summary: "概览",
     dimensions: "维度",
     dataViz: {
       desktop: "数据",

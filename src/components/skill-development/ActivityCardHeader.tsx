@@ -24,6 +24,10 @@ const ActivityCardHeader: React.FC<ActivityCardHeaderProps> = ({
   // Always display the dimension name in English
   const dimensionDisplayName = activity.dimension.charAt(0).toUpperCase() + activity.dimension.slice(1);
   
+  // Make sure the category is properly translated
+  const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`;
+  const translatedCategory = t(categoryKey, { fallback: activity.category });
+  
   return (
     <div className="flex items-center justify-between mb-2">
       <div className="flex items-center">
@@ -32,7 +36,7 @@ const ActivityCardHeader: React.FC<ActivityCardHeaderProps> = ({
           {dimensionDisplayName}
         </Badge>
         <span className="text-xs text-muted-foreground">
-          {activity.category}
+          {translatedCategory}
         </span>
       </div>
       {showExpandButton && (
