@@ -66,9 +66,11 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment: initialAssess
     compareMode === 'average' ? aggregateData.averageScores : null
   );
   
-  // Get comparison label based on selection
+  // Get comparison label based on selection with proper translation
   const getComparisonLabel = () => {
-    if (compareMode === 'average') return t('results.comparison.averageLabel');
+    if (compareMode === 'average') {
+      return t('results.comparison.averageLabel', { fallback: 'Average' });
+    }
     return '';
   };
   
@@ -78,32 +80,40 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment: initialAssess
     return "#000000";
   };
   
+  // Get translated text for UI elements
+  const spectaText = t('results.comparison.title', { fallback: 'HEARTI:Leader Spectra' });
+  const compareText = t('results.comparison.subtitle', { fallback: 'Compare your results with global benchmarks' });
+  const combinedText = t('results.comparison.combined', { fallback: 'Combined' });
+  const separateText = t('results.comparison.separate', { fallback: 'Separate' });
+  const noneText = t('results.comparison.noneLabel', { fallback: 'None' });
+  const averageText = t('results.comparison.averageLabel', { fallback: 'Average' });
+  
   return (
     <div className={`space-y-6 ${isMobile ? 'mb-12' : ''}`}>
       <Card>
         <CardContent className={`pt-6 ${isMobile ? 'px-2' : ''}`}>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
             <div>
-              <h3 className="text-lg font-semibold mb-1">HEARTI:Leader Spectra</h3>
-              <p className="text-sm text-muted-foreground">Compare your results with global benchmarks</p>
+              <h3 className="text-lg font-semibold mb-1">{spectaText}</h3>
+              <p className="text-sm text-muted-foreground">{compareText}</p>
             </div>
             
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <Tabs defaultValue="combined" className="w-full sm:w-auto" onValueChange={(value) => setChartView(value as 'combined' | 'separate')}>
                 <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="combined">{t('results.visualization.combined')}</TabsTrigger>
-                  <TabsTrigger value="separate">{t('results.visualization.separate')}</TabsTrigger>
+                  <TabsTrigger value="combined">{combinedText}</TabsTrigger>
+                  <TabsTrigger value="separate">{separateText}</TabsTrigger>
                 </TabsList>
               </Tabs>
               
               <RadioGroup defaultValue="average" className="flex flex-row sm:flex-row space-x-2 w-auto" onValueChange={(value) => setCompareMode(value as 'none' | 'average')}>
                 <div className="flex items-center space-x-1">
                   <RadioGroupItem value="none" id="none" />
-                  <Label htmlFor="none" className="text-xs sm:text-sm">{t('results.comparison.noneLabel')}</Label>
+                  <Label htmlFor="none" className="text-xs sm:text-sm">{noneText}</Label>
                 </div>
                 <div className="flex items-center space-x-1">
                   <RadioGroupItem value="average" id="average" />
-                  <Label htmlFor="average" className="text-xs sm:text-sm">{t('results.comparison.averageLabel')}</Label>
+                  <Label htmlFor="average" className="text-xs sm:text-sm">{averageText}</Label>
                 </div>
               </RadioGroup>
             </div>

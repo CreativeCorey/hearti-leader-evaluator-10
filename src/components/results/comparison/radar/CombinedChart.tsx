@@ -26,13 +26,23 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
   const isMobile = useIsMobile();
   const { t } = useLanguage();
   
+  // Get properly translated text with fallbacks
+  const yourHeartiText = t('results.comparison.yourHEARTI', { fallback: 'Your HEARTI' });
+  const scoreText = t('results.comparison.score', { fallback: 'Score' });
+  const selectOptionText = t('results.comparison.selectOption', { 
+    fallback: 'Select a comparison option to view data' 
+  });
+  const useControlsText = t('results.comparison.useControls', { 
+    fallback: 'Use the comparison controls above to visualize your HEARTI data' 
+  });
+  
   // Handle the case where no data should be shown (no comparison mode)
   if (compareMode === 'none') {
     return (
       <div className="bg-gradient-to-br from-white to-gray-50 p-4 rounded-lg h-[280px] sm:h-[350px] w-full flex flex-col items-center justify-center">
         <div className="text-center text-gray-500">
-          <p className="mb-2">{t('results.comparison.selectOption')}</p>
-          <p className="text-sm">{t('results.comparison.useControls')}</p>
+          <p className="mb-2">{selectOptionText}</p>
+          <p className="text-sm">{useControlsText}</p>
         </div>
       </div>
     );
@@ -65,7 +75,7 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
           
           {compareMode === 'average' && (
             <Radar
-              name={`${getComparisonLabel()} ${t('results.comparison.score')}`}
+              name={`${getComparisonLabel()} ${scoreText}`}
               dataKey="Comparison"
               stroke={getComparisonColor()}
               fill={getComparisonColor()}
@@ -80,7 +90,7 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
           )}
           
           <Radar
-            name={t('results.comparison.yourHEARTI')}
+            name={yourHeartiText}
             dataKey="Your Score"
             stroke={userColor}
             fill={userColor}
@@ -95,7 +105,7 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
           />
           
           <Tooltip 
-            formatter={(value) => [`${value}/5`, t('results.comparison.score')]} 
+            formatter={(value) => [`${value}/5`, scoreText]} 
             contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: '6px', border: 'none', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}
           />
           <Legend 

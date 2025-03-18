@@ -13,16 +13,32 @@ interface ScoreCardProps {
 const ScoreCard: React.FC<ScoreCardProps> = ({ assessment, formattedDate }) => {
   const { t } = useLanguage();
   
+  // Compute proper translations with fallbacks
+  const lqTitle = t('results.lq.title', { fallback: "Your HEARTI:Leader Quotient" });
+  const completedText = t('assessment.completed', { fallback: "Assessment completed on" });
+  const overallScoreText = t('results.summary.overallScore', { fallback: "Overall Score" });
+  const overallDescriptionText = t('results.summary.overallDescription', { 
+    fallback: "Your HEARTI:Leader Quotient indicates your overall proficiency in the skills needed for 21st century leadership." 
+  });
+  const topStrengthText = t('results.summary.topStrength', { fallback: "Top Strength" });
+  const strengthDescriptionText = t('results.summary.strengthDescription', { 
+    fallback: "This is your highest-scoring HEARTI dimension." 
+  });
+  const developmentAreaText = t('results.summary.developmentArea', { fallback: "Development Area" });
+  const developmentDescriptionText = t('results.summary.developmentDescription', { 
+    fallback: "This dimension has the most potential for growth." 
+  });
+  
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle>{t('results.lq.title', { fallback: "Your HEARTI:Leader Quotient" })}</CardTitle>
-        <CardDescription>{t('assessment.completed', { fallback: "Assessment completed on" })} {formattedDate}</CardDescription>
+        <CardTitle>{lqTitle}</CardTitle>
+        <CardDescription>{completedText} {formattedDate}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2 text-center flex flex-col items-center">
-            <p className="text-muted-foreground">{t('results.summary.overallScore', { fallback: "Overall Score" })}</p>
+            <p className="text-muted-foreground">{overallScoreText}</p>
             <div className="flex items-center justify-center">
               {/* Proper oval background for the score */}
               <div className="relative flex items-center justify-center">
@@ -32,12 +48,12 @@ const ScoreCard: React.FC<ScoreCardProps> = ({ assessment, formattedDate }) => {
               </div>
             </div>
             <p className="text-sm text-center max-w-[220px]">
-              {t('results.summary.overallDescription', { fallback: "Your HEARTI:Leader Quotient indicates your overall proficiency in the skills needed for 21st century leadership." })}
+              {overallDescriptionText}
             </p>
           </div>
           
           <div className="space-y-2 text-center flex flex-col items-center">
-            <p className="text-muted-foreground">{t('results.summary.topStrength', { fallback: "Top Strength" })}</p>
+            <p className="text-muted-foreground">{topStrengthText}</p>
             <div className="flex items-center gap-2 justify-center">
               {Object.entries(assessment.dimensionScores)
                 .sort(([, a], [, b]) => b - a)
@@ -50,12 +66,12 @@ const ScoreCard: React.FC<ScoreCardProps> = ({ assessment, formattedDate }) => {
                 ))}
             </div>
             <p className="text-sm text-center max-w-[220px]">
-              {t('results.summary.strengthDescription', { fallback: "This is your highest-scoring HEARTI dimension." })}
+              {strengthDescriptionText}
             </p>
           </div>
           
           <div className="space-y-2 text-center flex flex-col items-center">
-            <p className="text-muted-foreground">{t('results.summary.developmentArea', { fallback: "Development Area" })}</p>
+            <p className="text-muted-foreground">{developmentAreaText}</p>
             <div className="flex items-center gap-2 justify-center">
               {Object.entries(assessment.dimensionScores)
                 .sort(([, a], [, b]) => a - b)
@@ -68,7 +84,7 @@ const ScoreCard: React.FC<ScoreCardProps> = ({ assessment, formattedDate }) => {
                 ))}
             </div>
             <p className="text-sm text-center max-w-[220px]">
-              {t('results.summary.developmentDescription', { fallback: "This dimension has the most potential for growth." })}
+              {developmentDescriptionText}
             </p>
           </div>
         </div>

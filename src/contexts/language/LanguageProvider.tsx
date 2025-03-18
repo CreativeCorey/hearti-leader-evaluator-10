@@ -40,54 +40,88 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     setCurrentLanguage(language);
   };
 
-  // Translation function with special handling
+  // Translation function
   const t = (key: string, params?: Record<string, any>) => {
-    // Special handling for dimensions, development, activities, and habits sections
-    const specialSections = [
-      'dimensions.feedback.',
-      'results.development.',
-      'results.habits.',
-      'results.report.',
-      'activities.categories.',
-      'activities.descriptions.',
-      'results.comparison.'
-    ];
+    // Common special case keys that need fallbacks
+    const commonFallbacks = {
+      'results.comparison.yourHEARTI': 'Your HEARTI',
+      'results.comparison.score': 'Score',
+      'results.comparison.strength': 'Strength',
+      'results.comparison.vulnerability': 'Vulnerability',
+      'results.comparison.competent': 'Competent',
+      'results.comparison.averageLabel': 'Average',
+      'results.comparison.noneLabel': 'None',
+      'results.comparison.selectOption': 'Select a comparison option to view data',
+      'results.comparison.useControls': 'Use the comparison controls above to visualize your HEARTI data',
+      'results.development.addToHabitTracker': 'Add to Habit Tracker',
+      'results.development.chooseActivitiesFor': 'Choose Activities For',
+      'results.habits.yourHabits': 'Your Habits',
+      'results.habits.addHabit': 'Add Habit',
+      'results.report.description': 'Insights and recommendations to help you develop your leadership skills'
+    };
     
     // For dimension names and some special keys, always return in English
     if (shouldKeepInEnglish(key)) {
       return getTranslation('en', key, params);
     }
     
-    // Handle special cases for various sections that need fallbacks
-    for (const section of specialSections) {
-      if (key.startsWith(section)) {
-        // Get the translation
-        const translation = getTranslation(currentLanguage, key, params);
-        
-        // If the translation is the same as the key (not found) and we're not in English, fall back to English
-        if (translation === key && currentLanguage !== 'en') {
-          const englishTranslation = getTranslation('en', key, params);
-          return englishTranslation !== key ? englishTranslation : params?.fallback || key;
-        }
-        
-        // If we have a fallback parameter and the translation is the key, use the fallback
-        if (translation === key && params?.fallback) {
-          return params.fallback;
-        }
-        
-        return translation;
+    // For specific keys with known fallbacks
+    if (commonFallbacks[key] && currentLanguage !== 'en') {
+      const translation = getTranslation(currentLanguage, key, {
+        ...(params || {}),
+        fallback: commonFallbacks[key]
+      });
+      
+      // If translation is the key itself, use the fallback
+      if (translation === key) {
+        return commonFallbacks[key];
       }
+      
+      return translation;
     }
     
-    // Regular translation
-    const translation = getTranslation(currentLanguage, key, params);
-    
-    // If we have a fallback and the translation is the same as the key (not found), use the fallback
-    if (translation === key && params?.fallback) {
-      return params.fallback;
+    // Special handling for feedback sections
+    if (key.startsWith('dimensions.feedback.')) {
+      const dimensionPart = key.split('.')[2]; // e.g., "humility"
+      const levelPart = key.split('.')[3];     // e.g., "excellent"
+      
+      const genericFallbacks = {
+        excellent: `You excel in ${dimensionPart}. You actively seek feedback, admit mistakes, and recognize others' contributions.`,
+        good: `You have a good level of ${dimensionPart}. Continue developing your awareness and openness to others.`,
+        average: `You have some understanding of ${dimensionPart}. Try to be more intentional in this area.`,
+        needsImprovement: `You need to focus more on ${dimensionPart}. Try to develop this dimension through practice and learning.`
+      };
+      
+      const translation = getTranslation(currentLanguage, key, {
+        ...(params || {}),
+        fallback: genericFallbacks[levelPart] || `Feedback for ${dimensionPart}`
+      });
+      
+      // If translation is the key itself, use the fallback
+      if (translation === key) {
+        return genericFallbacks[levelPart] || `Feedback for ${dimensionPart}`;
+      }
+      
+      return translation;
     }
     
-    return translation;
+    // Handle activity categories and descriptions with proper fallbacks
+    if (key.startsWith('activities.categories.') || key.startsWith('activities.descriptions.')) {
+      const lastPart = key.split('.').pop();
+      const fallbackText = key.startsWith('activities.categories.') 
+        ? lastPart.charAt(0).toUpperCase() + lastPart.slice(1).replace(/([A-Z])/g, ' $1').trim()
+        : params?.fallback || `Description for activity ${lastPart}`;
+      
+      const translation = getTranslation(currentLanguage, key, {
+        ...(params || {}),
+        fallback: fallbackText
+      });
+      
+      return translation;
+    }
+    
+    // Regular translation with optional fallback
+    return getTranslation(currentLanguage, key, params);
   };
     
   // Helper function to determine if a key should remain in English

@@ -30,6 +30,12 @@ const DimensionsTab: React.FC<DimensionsTabProps> = ({ assessment }) => {
         const score = assessment.dimensionScores[dimension];
         const feedbackLevel = getFeedbackLevel(score);
         
+        // Create the feedback key and provide dimension-specific fallbacks
+        const feedbackKey = `dimensions.feedback.${dimension}.${feedbackLevel}`;
+        
+        // Generate fallback text based on dimension and level
+        const fallbackText = generateFeedbackFallback(dimension, feedbackLevel);
+        
         return (
           <Card key={dimension} className="shadow-sm overflow-hidden border-t-4" style={{ borderTopColor: dimensionColors[dimension] }}>
             <CardHeader className="pb-2 flex flex-row items-center justify-between">
@@ -42,8 +48,10 @@ const DimensionsTab: React.FC<DimensionsTabProps> = ({ assessment }) => {
               </Badge>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground text-sm mb-2">{t(`dimensions.descriptions.${dimension}`)}</p>
-              <p className="text-sm">{t(`dimensions.feedback.${dimension}.${feedbackLevel}`)}</p>
+              <p className="text-muted-foreground text-sm mb-2">{t(`dimensions.descriptions.${dimension}`, {
+                fallback: getDimensionDescription(dimension)
+              })}</p>
+              <p className="text-sm">{t(feedbackKey, { fallback: fallbackText })}</p>
             </CardContent>
           </Card>
         );
@@ -58,6 +66,32 @@ function getFeedbackLevel(score: number): string {
   if (score >= 3.5) return "good";
   if (score >= 2.5) return "average";
   return "needsImprovement";
+}
+
+// Helper to generate fallback feedback text
+function generateFeedbackFallback(dimension: string, level: string): string {
+  const baseFeedback = {
+    excellent: `You excel in ${dimension}. Your high score demonstrates exceptional competence in this area.`,
+    good: `You have a good level of ${dimension}. Continue strengthening this dimension for leadership success.`,
+    average: `You have a moderate level of ${dimension}. There's room to grow in this dimension.`,
+    needsImprovement: `You should focus on developing ${dimension}. This is an opportunity area for your leadership growth.`
+  };
+  
+  return baseFeedback[level];
+}
+
+// Helper to provide dimension descriptions
+function getDimensionDescription(dimension: string): string {
+  const descriptions = {
+    humility: "The ability to recognize one's limitations and mistakes, and to be open to feedback and growth.",
+    empathy: "The capacity to understand and share the feelings of others, and to respond with compassion.",
+    accountability: "The willingness to take responsibility for one's actions and decisions, and to follow through on commitments.",
+    resiliency: "The ability to recover from setbacks, adapt to change, and keep going in the face of adversity.",
+    transparency: "The practice of being open, honest, and clear in communications and decision-making processes.",
+    inclusivity: "The commitment to creating environments where all people feel welcomed, respected, and valued."
+  };
+  
+  return descriptions[dimension] || `Description for ${dimension}`;
 }
 
 export default DimensionsTab;
