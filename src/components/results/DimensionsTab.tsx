@@ -11,7 +11,7 @@ interface DimensionsTabProps {
 }
 
 const DimensionsTab: React.FC<DimensionsTabProps> = ({ assessment }) => {
-  const { t } = useLanguage();
+  const { t, currentLanguage } = useLanguage();
   const sortedDimensions = Object.entries(assessment.dimensionScores)
     .sort(([, a], [, b]) => b - a)
     .map(([dimension]) => dimension as HEARTIDimension);
@@ -30,11 +30,19 @@ const DimensionsTab: React.FC<DimensionsTabProps> = ({ assessment }) => {
         const score = assessment.dimensionScores[dimension];
         const feedbackLevel = getFeedbackLevel(score);
         
+        // Get dimension description with fallback
+        const dimensionDescription = t(`dimensions.descriptions.${dimension}`, {
+          fallback: getDimensionDescription(dimension)
+        });
+        
         // Create the feedback key and provide dimension-specific fallbacks
         const feedbackKey = `dimensions.feedback.${dimension}.${feedbackLevel}`;
         
         // Generate fallback text based on dimension and level
         const fallbackText = generateFeedbackFallback(dimension, feedbackLevel);
+        
+        // Get the specific feedback with appropriate fallback
+        const feedbackText = t(feedbackKey, { fallback: fallbackText });
         
         return (
           <Card key={dimension} className="shadow-sm overflow-hidden border-t-4" style={{ borderTopColor: dimensionColors[dimension] }}>
@@ -48,10 +56,8 @@ const DimensionsTab: React.FC<DimensionsTabProps> = ({ assessment }) => {
               </Badge>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground text-sm mb-2">{t(`dimensions.descriptions.${dimension}`, {
-                fallback: getDimensionDescription(dimension)
-              })}</p>
-              <p className="text-sm">{t(feedbackKey, { fallback: fallbackText })}</p>
+              <p className="text-muted-foreground text-sm mb-2">{dimensionDescription}</p>
+              <p className="text-sm">{feedbackText}</p>
             </CardContent>
           </Card>
         );

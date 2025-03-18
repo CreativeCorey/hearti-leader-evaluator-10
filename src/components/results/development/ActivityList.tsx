@@ -32,13 +32,13 @@ const ActivityList: React.FC<ActivityListProps> = ({
   const { t } = useLanguage();
   const DimensionIcon = dimensionIcons[activeDimension] || dimensionIcons.humility;
   
-  // Get proper text for the dimension being shown
-  const chooseActivitiesForText = t('results.development.chooseActivitiesFor', { 
+  // Get all translated strings with fallbacks
+  const chooseActivitiesText = t('results.development.chooseActivitiesFor', { 
     fallback: "Choose Activities For" 
   });
   
-  // Format title correctly
-  const activitiesTitle = `${chooseActivitiesForText}: ${activeDimension}`;
+  // Format title correctly with dimension
+  const activitiesTitle = `${chooseActivitiesText}: ${activeDimension}`;
   
   // Create a proper description with fallback
   const activitiesDescription = t('results.development.activitiesDescription', { 
@@ -60,7 +60,7 @@ const ActivityList: React.FC<ActivityListProps> = ({
         {activities.slice(0, 9).map(activity => {
           const isSelected = selectedActivities.includes(activity.id);
           
-          // Create proper category key with fallback
+          // Create proper category key with appropriate fallback
           const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`;
           // Create proper description key with fallback
           const descriptionKey = `activities.descriptions.${activity.id}`;

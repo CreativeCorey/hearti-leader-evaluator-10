@@ -26,7 +26,21 @@ const ActivitySection: React.FC<ActivitySectionProps> = ({
   const { toast } = useToast();
   const { t } = useLanguage();
   
+  // Filter activities by the active dimension
   const activities = activityData.filter(activity => activity.dimension === activeDimension);
+  
+  // Create translated versions of all the needed strings
+  const maxActivitiesTitle = t('results.development.maxActivities', { 
+    fallback: "Maximum activities selected" 
+  });
+  
+  const maxActivitiesDescription = t('results.development.maxActivitiesDescription', { 
+    fallback: "You can only select up to 3 activities. Please remove one before adding another." 
+  });
+  
+  const activityAddedTitle = t('results.development.activityAdded', { 
+    fallback: "Activity added" 
+  });
   
   const handleSelectActivity = (activityId: string) => {
     if (selectedActivities.includes(activityId)) {
@@ -35,8 +49,8 @@ const ActivitySection: React.FC<ActivitySectionProps> = ({
       setSelectedActivities(prev => [...prev, activityId]);
     } else {
       toast({
-        title: t('results.development.maxActivities'),
-        description: t('results.development.maxActivitiesDescription'),
+        title: maxActivitiesTitle,
+        description: maxActivitiesDescription,
         variant: "destructive",
       });
     }
@@ -49,11 +63,20 @@ const ActivitySection: React.FC<ActivitySectionProps> = ({
     const userId = getOrCreateAnonymousId();
     addActivityToHabitTracker(userId, activity, selectedFrequency);
     
+    // Get the properly translated frequency
+    const frequencyText = t(`results.habits.${selectedFrequency.toLowerCase()}`, {
+      fallback: selectedFrequency
+    });
+    
+    // Create the description with the translated frequency
+    const activityAddedDescription = t('results.development.activityAddedDescription', { 
+      frequency: frequencyText,
+      fallback: `Activity has been added to your ${frequencyText} habit tracker`
+    });
+    
     toast({
-      title: t('results.development.activityAdded'),
-      description: t('results.development.activityAddedDescription', { 
-        frequency: t(`results.habits.${selectedFrequency.toLowerCase()}`) 
-      }),
+      title: activityAddedTitle,
+      description: activityAddedDescription,
     });
   };
   

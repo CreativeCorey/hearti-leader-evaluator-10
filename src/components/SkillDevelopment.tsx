@@ -63,16 +63,29 @@ const SkillDevelopment: React.FC = () => {
         const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`;
         const descriptionKey = `activities.descriptions.${activity.id}`;
         
+        // Get readable category name as fallback
+        const readableCategoryFallback = activity.category
+          .replace(/([A-Z])/g, ' $1')
+          .replace(/^./, str => str.toUpperCase());
+        
         // Make sure to include fallbacks
-        return {
+        const translatedActivity = {
           ...activity,
           description: t(descriptionKey, { fallback: activity.description }),
-          category: t(categoryKey, { fallback: activity.category })
+          category: t(categoryKey, { fallback: readableCategoryFallback })
         };
+        
+        return translatedActivity;
       });
   };
 
   const filteredActivities = getTranslatedActivities();
+
+  // Get proper translations for headings
+  const developmentActivitiesTitle = t('results.development.title', { fallback: "Development Activities" });
+  const savedActivitiesTitle = t('results.development.mySavedActivities', { fallback: "My Saved Activities" });
+  const noActivitiesSavedText = t('results.development.noActivitiesSaved', { fallback: "No activities saved. Select some activities in the Development tab." });
+  const loadingText = t('common.loading', { fallback: "Loading..." });
 
   // Adjust tab text size for languages with longer words
   const getTabStyles = () => {
@@ -82,7 +95,7 @@ const SkillDevelopment: React.FC = () => {
   return (
     <div className="container py-10">
       <h1 className="text-3xl font-semibold mb-6">
-        {t('results.development.title', { fallback: "Development Activities" })}
+        {developmentActivitiesTitle}
       </h1>
 
       <Tabs defaultValue="accountability" className="w-full">
@@ -117,10 +130,10 @@ const SkillDevelopment: React.FC = () => {
 
       <div className="mt-8">
         <h2 className="text-2xl font-semibold mb-4">
-          {t('results.development.mySavedActivities', { fallback: "My Saved Activities" })}
+          {savedActivitiesTitle}
         </h2>
         {loading ? (
-          <p>{t('common.loading', { fallback: "Loading..." })}</p>
+          <p>{loadingText}</p>
         ) : savedActivities.length > 0 ? (
           <ScrollArea className="h-[300px] w-full rounded-md border">
             <div className="flex flex-col gap-4 p-4">
@@ -132,10 +145,15 @@ const SkillDevelopment: React.FC = () => {
                 const categoryKey = `activities.categories.${activityDetails.category.toLowerCase().replace(/[- ]/g, '')}`;
                 const descriptionKey = `activities.descriptions.${activityDetails.id}`;
                 
+                // Get readable category name as fallback
+                const readableCategoryFallback = activityDetails.category
+                  .replace(/([A-Z])/g, ' $1')
+                  .replace(/^./, str => str.toUpperCase());
+                
                 const translatedActivity = {
                   ...activityDetails,
                   description: t(descriptionKey, { fallback: activityDetails.description }),
-                  category: t(categoryKey, { fallback: activityDetails.category })
+                  category: t(categoryKey, { fallback: readableCategoryFallback })
                 };
 
                 return (
@@ -151,7 +169,7 @@ const SkillDevelopment: React.FC = () => {
             </div>
           </ScrollArea>
         ) : (
-          <p>{t('results.development.noActivitiesSaved', { fallback: "No activities saved. Select some activities in the Development tab." })}</p>
+          <p>{noActivitiesSavedText}</p>
         )}
       </div>
     </div>
