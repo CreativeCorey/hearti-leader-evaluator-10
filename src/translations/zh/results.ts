@@ -79,7 +79,7 @@ export const results = {
       trackerTitle: "HEARTI™ 领导力习惯跟踪器",
       trackerDescription: "跟踪您在建立所选行为的一致习惯时的进展。完成每项行为30次，使其成为持久习惯。",
       recommendedFocus: "我们建议专注于来自您发展领域的行为：",
-      addBehaviorsInstructions: "通过使用开发标签中的"添加到习惯跟踪器"按钮或在您保存的活动中添加行为到您的习惯跟踪器。"
+      addBehaviorsInstructions: "通过使用开发标签中的\"添加到习惯跟踪器\"按钮或在您保存的活动中添加行为到您的习惯跟踪器。"
     },
     report: {
       description: "帮助您发展领导能力的见解和建议",
