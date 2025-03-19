@@ -34,6 +34,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
           showExpandButton={!isSaved} 
           toggleExpanded={() => setExpanded(!expanded)}
           isSaved={isSaved}
+          expanded={expanded}
         />
         
         <p className="text-sm mb-3">{translatedDescription}</p>
@@ -47,6 +48,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
           <ActivityCardActions 
             activity={activity} 
             frequency={frequency}
+            setFrequency={setFrequency}
             maxSavedReached={maxSavedReached}
             onSave={onSave}
           />

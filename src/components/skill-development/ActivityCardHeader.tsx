@@ -9,6 +9,7 @@ interface ActivityCardHeaderProps {
   showExpandButton?: boolean;
   toggleExpanded?: () => void;
   isSaved?: boolean;
+  expanded?: boolean;
 }
 
 // Function to format category names from camelCase to Title Case With Spaces
@@ -33,7 +34,8 @@ const ActivityCardHeader: React.FC<ActivityCardHeaderProps> = ({
   activity, 
   showExpandButton = false,
   toggleExpanded,
-  isSaved = false
+  isSaved = false,
+  expanded = false
 }) => {
   const { t } = useLanguage();
   const formattedCategory = formatCategoryName(activity.category);
