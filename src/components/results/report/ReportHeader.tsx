@@ -9,7 +9,7 @@ interface ReportHeaderProps {
 }
 
 const ReportHeader: React.FC<ReportHeaderProps> = ({ assessment }) => {
-  const { t } = useLanguage();
+  const { t, currentLanguage } = useLanguage();
   
   // Get translated title and content from the language provider
   const title = t('report.header.title', { 

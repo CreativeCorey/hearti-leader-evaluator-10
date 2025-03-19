@@ -24,9 +24,17 @@ const ActivityCardHeader: React.FC<ActivityCardHeaderProps> = ({
   // Always display the dimension name in English
   const dimensionDisplayName = activity.dimension.charAt(0).toUpperCase() + activity.dimension.slice(1);
   
+  // Format the category properly with spaces before looking for translations
+  let formattedCategory = activity.category;
+  if (activity.category.match(/[a-z][A-Z]/)) {
+    formattedCategory = activity.category
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/^[a-z]/, match => match.toUpperCase());
+  }
+  
   // Make sure the category is properly translated
   const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`;
-  const translatedCategory = t(categoryKey, { fallback: activity.category });
+  const translatedCategory = t(categoryKey, { fallback: formattedCategory });
   
   return (
     <div className="flex items-center justify-between mb-2">
