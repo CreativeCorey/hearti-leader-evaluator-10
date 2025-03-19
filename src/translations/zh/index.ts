@@ -7,6 +7,7 @@ import { tabs } from './tabs';
 import { results } from './results';
 import { dimensions } from './dimensions';
 import { activities } from './activities';
+import { report } from './report';
 
 // Combine all translation modules
 export const zh = {
@@ -17,5 +18,6 @@ export const zh = {
   ...tabs,
   ...results,
   ...dimensions,
-  ...activities
+  ...activities,
+  ...report
 };

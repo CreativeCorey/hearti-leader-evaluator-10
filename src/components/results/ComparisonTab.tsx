@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { HEARTIAssessment } from '@/types';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import RadarChartDisplay from "./comparison/RadarChartDisplay";
@@ -143,7 +142,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment: initialAssess
         </CardContent>
       </Card>
       
-      {/* Ensure progress chart is always shown if there are multiple assessments */}
+      {/* Only show the progress chart at the bottom */}
       {assessments && assessments.length > 0 && (
         <div className="mt-8 mb-8">
           <ProgressChart assessments={assessments} onSelectAssessment={handleSelectAssessment} />

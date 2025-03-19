@@ -26,10 +26,6 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
   const descriptionKey = `activities.descriptions.${activity.id}`;
   const translatedDescription = t(descriptionKey, { fallback: activity.description });
 
-  const handleFrequencyChange = (newFrequency: 'daily' | 'weekly' | 'monthly') => {
-    setFrequency(newFrequency);
-  };
-  
   return (
     <Card className={`border ${isSaved ? 'border-indigo-300 bg-indigo-50' : ''}`}>
       <CardContent className="p-4">
@@ -37,6 +33,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
           activity={activity} 
           showExpandButton={!isSaved} 
           toggleExpanded={() => setExpanded(!expanded)}
+          isSaved={isSaved}
         />
         
         <p className="text-sm mb-3">{translatedDescription}</p>

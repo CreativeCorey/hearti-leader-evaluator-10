@@ -1,61 +1,68 @@
 
 import React from 'react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
-import { SkillActivity, dimensionColors } from '@/data/heartActivities';
-import { dimensionIcons } from '@/components/results/development/DimensionIcons';
+import { ChevronDown, ChevronUp, BookmarkCheck } from 'lucide-react';
+import { SkillActivity } from '@/data/heartActivities';
 import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface ActivityCardHeaderProps {
   activity: SkillActivity;
   showExpandButton?: boolean;
   toggleExpanded?: () => void;
+  isSaved?: boolean;
 }
+
+// Function to format category names from camelCase to Title Case With Spaces
+const formatCategoryName = (category: string): string => {
+  if (!category) return '';
+  
+  // Handle categories that are in camelCase format
+  if (category.match(/[a-z][A-Z]/)) {
+    // Split camelCase into words and capitalize first letter of each word
+    return category
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  }
+  
+  // If it's not camelCase, just capitalize the first letter
+  return category.charAt(0).toUpperCase() + category.slice(1);
+};
 
 const ActivityCardHeader: React.FC<ActivityCardHeaderProps> = ({ 
   activity, 
   showExpandButton = false,
-  toggleExpanded
+  toggleExpanded,
+  isSaved = false
 }) => {
   const { t } = useLanguage();
-  const DimensionIcon = dimensionIcons[activity.dimension] || dimensionIcons.humility;
+  const formattedCategory = formatCategoryName(activity.category);
   
-  // Always display the dimension name in English
-  const dimensionDisplayName = activity.dimension.charAt(0).toUpperCase() + activity.dimension.slice(1);
-  
-  // Format the category properly with spaces before looking for translations
-  let formattedCategory = activity.category;
-  if (activity.category.match(/[a-z][A-Z]/)) {
-    formattedCategory = activity.category
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      .replace(/^[a-z]/, match => match.toUpperCase());
-  }
-  
-  // Make sure the category is properly translated
-  const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`;
+  // Get category translation with fallback to formatted English category
+  const categoryKey = `activities.categories.${activity.category}`;
   const translatedCategory = t(categoryKey, { fallback: formattedCategory });
   
   return (
-    <div className="flex items-center justify-between mb-2">
+    <div className="flex items-start justify-between mb-3">
       <div className="flex items-center">
-        <Badge className={`${dimensionColors[activity.dimension]} font-normal mr-2 flex items-center gap-1`}>
-          <DimensionIcon size={14} />
-          {dimensionDisplayName}
-        </Badge>
-        <span className="text-xs text-muted-foreground">
-          {translatedCategory}
-        </span>
+        {isSaved && (
+          <BookmarkCheck size={18} className="text-indigo-500 mr-1.5" />
+        )}
+        <h3 className="text-base font-medium text-indigo-600">{translatedCategory}</h3>
       </div>
-      {showExpandButton && (
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="px-2 py-1 h-auto"
+      
+      {showExpandButton && toggleExpanded && (
+        <button 
           onClick={toggleExpanded}
+          className="text-gray-500 hover:text-gray-700 p-1 -mt-1"
+          aria-label={expanded ? "Collapse" : "Expand"}
         >
-          <Plus size={16} />
-        </Button>
+          {expanded ? (
+            <ChevronUp size={18} />
+          ) : (
+            <ChevronDown size={18} />
+          )}
+        </button>
       )}
     </div>
   );
