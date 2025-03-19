@@ -16,13 +16,19 @@ interface ActivityCardProps {
 
 const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, onSave }) => {
   const [expanded, setExpanded] = useState(false);
+  const [frequency, setFrequency] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const { t } = useLanguage();
   
   const isSaved = savedActivities.some(saved => saved.activityId === activity.id);
+  const maxSavedReached = savedActivities.length >= 3;
   
   // Get the properly translated activity description
   const descriptionKey = `activities.descriptions.${activity.id}`;
   const translatedDescription = t(descriptionKey, { fallback: activity.description });
+
+  const handleFrequencyChange = (newFrequency: 'daily' | 'weekly' | 'monthly') => {
+    setFrequency(newFrequency);
+  };
   
   return (
     <Card className={`border ${isSaved ? 'border-indigo-300 bg-indigo-50' : ''}`}>
@@ -43,8 +49,9 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
         ) : expanded ? (
           <ActivityCardActions 
             activity={activity} 
-            onSave={onSave} 
-            onCancel={() => setExpanded(false)}
+            frequency={frequency}
+            maxSavedReached={maxSavedReached}
+            onSave={onSave}
           />
         ) : (
           <Button 

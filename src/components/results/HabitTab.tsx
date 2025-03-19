@@ -1,7 +1,7 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { HEARTIDimension } from '@/types';
-import { HabitTrackerCore } from '@/components/habit-tracker/HabitTrackerCore';
+import HabitTrackerCore from '@/components/habit-tracker/HabitTrackerCore';
 import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface HabitTabProps {
@@ -40,7 +40,7 @@ const HabitTab: React.FC<HabitTabProps> = ({ focusDimension }) => {
         
         <p className="text-sm text-muted-foreground mb-6">{addBehaviorsInstructions}</p>
         
-        <HabitTrackerCore filterDimension={focusDimension} />
+        <HabitTrackerCore focusDimension={focusDimension} />
       </div>
     </div>
   );
