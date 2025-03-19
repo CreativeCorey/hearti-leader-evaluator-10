@@ -60,18 +60,21 @@ const ActivityList: React.FC<ActivityListProps> = ({
         {activities.slice(0, 9).map(activity => {
           const isSelected = selectedActivities.includes(activity.id);
           
+          // Format the category properly with spaces
+          let formattedCategory = activity.category;
+          if (activity.category.match(/[a-z][A-Z]/)) {
+            formattedCategory = activity.category
+              .replace(/([a-z])([A-Z])/g, '$1 $2')
+              .replace(/^[a-z]/, match => match.toUpperCase());
+          }
+          
           // Create proper category key with appropriate fallback
           const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`;
           // Create proper description key with fallback
           const descriptionKey = `activities.descriptions.${activity.id}`;
           
-          // Get readable category name as fallback
-          const readableCategoryFallback = activity.category
-            .replace(/([A-Z])/g, ' $1')
-            .replace(/^./, str => str.toUpperCase());
-          
           // Get translated category and description with fallbacks
-          const translatedCategory = t(categoryKey, { fallback: readableCategoryFallback });
+          const translatedCategory = t(categoryKey, { fallback: formattedCategory });
           const translatedDescription = t(descriptionKey, { fallback: activity.description });
           
           return (

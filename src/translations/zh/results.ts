@@ -17,7 +17,7 @@ export const results = {
       noComparison: "无比较",
       average: "平均",
       progress: "HEARTI 随时间的进展",
-      progressSubtitle: "跟踪您的领导力发展之旅",
+      progressSubtitle: "选择图表上的一个点以查看该评估的数据",
       noProgressData: "完成更多评估以查看您随时间的进展。",
       yourHEARTI: "您的 HEARTI",
       score: "分数",
@@ -56,7 +56,8 @@ export const results = {
       mySavedActivities: "我的保存活动",
       noActivitiesSaved: "未找到已保存的活动。请在发展选项卡中选择一些活动。",
       tooManySaved: "已保存过多活动",
-      removeBeforeSaving: "在保存新活动前请移除一些活动"
+      removeBeforeSaving: "在保存新活动前请移除一些活动",
+      recommendationsTitle: "HEARTI™ 领导力发展建议"
     },
     habits: {
       title: "您的习惯",
@@ -74,7 +75,11 @@ export const results = {
       weekly: "每周",
       monthly: "每月",
       noHabits: "未找到习惯。点击\"添加习惯\"创建一个。",
-      allHabits: "所有习惯"
+      allHabits: "所有习惯",
+      trackerTitle: "HEARTI™ 领导力习惯跟踪器",
+      trackerDescription: "跟踪您在建立所选行为的一致习惯时的进展。完成每项行为30次，使其成为持久习惯。",
+      recommendedFocus: "我们建议专注于来自您发展领域的行为：",
+      addBehaviorsInstructions: "通过使用开发标签中的"添加到习惯跟踪器"按钮或在您保存的活动中添加行为到您的习惯跟踪器。"
     },
     report: {
       description: "帮助您发展领导能力的见解和建议",

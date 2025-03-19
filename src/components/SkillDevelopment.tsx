@@ -55,24 +55,29 @@ const SkillDevelopment: React.FC = () => {
     saveActivity(activity, addToHabitTracker, frequency);
   };
 
+  // Format the category with spaces
+  const formatCategory = (category: string): string => {
+    return category
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/^[a-z]/, match => match.toUpperCase());
+  };
+
   // Properly translate activities
   const getTranslatedActivities = () => {
     return activities
       .filter(activity => activity.dimension === selectedDimension)
       .map(activity => {
+        // Format the category properly with spaces
+        const formattedCategory = formatCategory(activity.category);
+        
         const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`;
         const descriptionKey = `activities.descriptions.${activity.id}`;
-        
-        // Get readable category name as fallback
-        const readableCategoryFallback = activity.category
-          .replace(/([A-Z])/g, ' $1')
-          .replace(/^./, str => str.toUpperCase());
         
         // Make sure to include fallbacks
         const translatedActivity = {
           ...activity,
           description: t(descriptionKey, { fallback: activity.description }),
-          category: t(categoryKey, { fallback: readableCategoryFallback })
+          category: t(categoryKey, { fallback: formattedCategory })
         };
         
         return translatedActivity;
@@ -141,19 +146,17 @@ const SkillDevelopment: React.FC = () => {
                 const activityDetails = activities.find(activity => activity.id === savedActivity.activityId);
                 if (!activityDetails) return null;
 
+                // Format the category properly with spaces
+                const formattedCategory = formatCategory(activityDetails.category);
+                
                 // Translate the activity details with fallbacks
                 const categoryKey = `activities.categories.${activityDetails.category.toLowerCase().replace(/[- ]/g, '')}`;
                 const descriptionKey = `activities.descriptions.${activityDetails.id}`;
                 
-                // Get readable category name as fallback
-                const readableCategoryFallback = activityDetails.category
-                  .replace(/([A-Z])/g, ' $1')
-                  .replace(/^./, str => str.toUpperCase());
-                
                 const translatedActivity = {
                   ...activityDetails,
                   description: t(descriptionKey, { fallback: activityDetails.description }),
-                  category: t(categoryKey, { fallback: readableCategoryFallback })
+                  category: t(categoryKey, { fallback: formattedCategory })
                 };
 
                 return (

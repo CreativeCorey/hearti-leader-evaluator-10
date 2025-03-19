@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { dimensionColors } from '../development/DimensionIcons';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface ProgressChartProps {
   assessment: HEARTIAssessment;
@@ -13,6 +14,7 @@ interface ProgressChartProps {
 
 const ProgressChart: React.FC<ProgressChartProps> = ({ assessment, assessments }) => {
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   
   // Format data for progress chart
   const formatShortDate = (dateString: string) => {
@@ -34,11 +36,24 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ assessment, assessments }
     return dimensionColors[dimension as HEARTIDimension] || "#000000";
   };
   
+  // Get translations for chart labels
+  const chartTitle = t('results.comparison.progress', { 
+    fallback: "HEARTI Progress Over Time" 
+  });
+  
+  const chartSubtitle = t('results.comparison.progressSubtitle', { 
+    fallback: "Select a point on the chart to view that assessment's data" 
+  });
+  
+  const noDataMessage = t('results.comparison.noProgressData', { 
+    fallback: "Complete more assessments to see your progress over time." 
+  });
+  
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle>HEARTI Progress Over Time</CardTitle>
-        <CardDescription>Track your leadership development journey</CardDescription>
+        <CardTitle>{chartTitle}</CardTitle>
+        <CardDescription>{chartSubtitle}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className={`${isMobile ? 'h-[300px]' : 'h-[250px]'} w-full`}>
@@ -62,7 +77,7 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ assessment, assessments }
                 <Line 
                   type="monotone" 
                   dataKey="score" 
-                  name="Overall Score" 
+                  name={t('results.comparison.overallScore', { fallback: "Overall Score" })} 
                   stroke="#000" 
                   strokeWidth={2} 
                   activeDot={{ r: 6 }} 
@@ -83,7 +98,7 @@ const ProgressChart: React.FC<ProgressChartProps> = ({ assessment, assessments }
             </ResponsiveContainer>
           ) : (
             <div className="flex items-center justify-center h-full">
-              <p className="text-muted-foreground">Complete more assessments to see your progress over time.</p>
+              <p className="text-muted-foreground">{noDataMessage}</p>
             </div>
           )}
         </div>
