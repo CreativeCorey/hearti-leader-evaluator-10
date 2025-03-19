@@ -29,8 +29,8 @@ const ActivityCardActions: React.FC<ActivityCardActionsProps> = ({
   return (
     <div className="mt-3">
       <FrequencySelector
-        selectedFrequency={selectedFrequency}
-        onFrequencyChange={handleFrequencyChange}
+        frequency={selectedFrequency}
+        setFrequency={handleFrequencyChange}
       />
       
       <div className="grid grid-cols-2 gap-2 mt-2">
