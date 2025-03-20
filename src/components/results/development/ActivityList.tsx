@@ -50,6 +50,37 @@ const ActivityList: React.FC<ActivityListProps> = ({
     fallback: `These activities are designed to help you develop your ${dimensionName} leadership dimension. Select up to 3 activities to focus on.`
   });
   
+  // Improved function to format category names with spaces
+  const formatCategoryName = (category: string): string => {
+    // First, handle camelCase by inserting spaces before capital letters
+    let formatted = category.replace(/([a-z])([A-Z])/g, '$1 $2');
+    
+    // Handle specific cases to give better names
+    const specialCases: Record<string, string> = {
+      'Setting Clear Expectations': 'Expectation Setting',
+      'Taking Ownership': 'Taking Ownership',
+      'Problem Solving Skills': 'Problem Solving',
+      'Support Systems & Community': 'Support Systems',
+      'Building Awareness': 'Building Awareness',
+      'Creating Safe Spaces': 'Creating Safe Spaces',
+      'Promoting Equity': 'Promoting Equity',
+      'Leading By Example': 'Leading By Example'
+    };
+    
+    // Check if we have a special case for this category
+    for (const [original, replacement] of Object.entries(specialCases)) {
+      if (formatted === original) {
+        return replacement;
+      }
+    }
+    
+    // For categories without special case, just capitalize first letter of each word
+    return formatted
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+  
   return (
     <div className="mt-6">
       <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -64,13 +95,8 @@ const ActivityList: React.FC<ActivityListProps> = ({
         {activities.slice(0, 9).map(activity => {
           const isSelected = selectedActivities.includes(activity.id);
           
-          // Format the category properly with spaces
-          let formattedCategory = activity.category;
-          if (activity.category.match(/[a-z][A-Z]/)) {
-            formattedCategory = activity.category
-              .replace(/([a-z])([A-Z])/g, '$1 $2')
-              .replace(/^[a-z]/, match => match.toUpperCase());
-          }
+          // Format the category properly with improved function
+          let formattedCategory = formatCategoryName(activity.category);
           
           // Create proper category key with appropriate fallback
           const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`;

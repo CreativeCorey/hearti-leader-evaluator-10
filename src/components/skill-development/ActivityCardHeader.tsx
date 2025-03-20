@@ -21,9 +21,41 @@ const ActivityCardHeader: React.FC<ActivityCardHeaderProps> = ({
 }) => {
   const { t } = useLanguage();
   
+  // Improved function to format category names with spaces
+  const formatCategoryName = (category: string): string => {
+    // First, handle camelCase by inserting spaces before capital letters
+    let formatted = category.replace(/([a-z])([A-Z])/g, '$1 $2');
+    
+    // Handle specific cases to give better names
+    const specialCases: Record<string, string> = {
+      'Setting Clear Expectations': 'Expectation Setting',
+      'Taking Ownership': 'Taking Ownership',
+      'Problem Solving Skills': 'Problem Solving',
+      'Support Systems & Community': 'Support Systems',
+      'Building Awareness': 'Building Awareness',
+      'Creating Safe Spaces': 'Creating Safe Spaces',
+      'Promoting Equity': 'Promoting Equity',
+      'Leading By Example': 'Leading By Example'
+    };
+    
+    // Check if we have a special case for this category
+    for (const [original, replacement] of Object.entries(specialCases)) {
+      if (formatted === original) {
+        return replacement;
+      }
+    }
+    
+    // For categories without special case, just capitalize first letter of each word
+    return formatted
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+  
   // Get category translation with fallback to formatted English category
   const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`;
-  const translatedCategory = t(categoryKey, { fallback: activity.category });
+  const formattedCategory = formatCategoryName(activity.category);
+  const translatedCategory = t(categoryKey, { fallback: formattedCategory });
   
   return (
     <div className="flex items-start justify-between mb-3">
