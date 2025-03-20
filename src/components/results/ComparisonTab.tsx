@@ -16,6 +16,7 @@ import { useLanguage } from '@/contexts/language/LanguageContext';
 interface ComparisonTabProps {
   assessment: HEARTIAssessment;
   assessments?: HEARTIAssessment[];
+  onSelectAssessment?: (assessment: HEARTIAssessment) => void;
 }
 
 // Helper function to convert dimensions to comparison format
@@ -31,7 +32,11 @@ const convertToComparisonFormat = (
   }));
 };
 
-const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment: initialAssessment, assessments = [] }) => {
+const ComparisonTab: React.FC<ComparisonTabProps> = ({ 
+  assessment: initialAssessment, 
+  assessments = [],
+  onSelectAssessment
+}) => {
   const [chartView, setChartView] = useState<'combined' | 'separate'>('combined');
   const [compareMode, setCompareMode] = useState<'none' | 'average'>('average');
   const [assessment, setAssessment] = useState<HEARTIAssessment>(initialAssessment);
@@ -46,6 +51,9 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment: initialAssess
   // Handle selection of an assessment from the progress chart
   const handleSelectAssessment = (selectedAssessment: HEARTIAssessment) => {
     setAssessment(selectedAssessment);
+    if (onSelectAssessment) {
+      onSelectAssessment(selectedAssessment);
+    }
   };
 
   // Format data for radar charts
@@ -142,7 +150,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({ assessment: initialAssess
         </CardContent>
       </Card>
       
-      {/* Only show the progress chart at the bottom */}
+      {/* Progress chart at the bottom */}
       {assessments && assessments.length > 0 && (
         <div className="mt-8 mb-8">
           <ProgressChart assessments={assessments} onSelectAssessment={handleSelectAssessment} />

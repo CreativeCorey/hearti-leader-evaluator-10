@@ -38,7 +38,21 @@ export const activities = {
       scheduleOneOnOnes: "Planifiez des réunions individuelles régulières avec chaque membre de votre équipe, en vous concentrant sur leurs besoins et leur développement.",
       createSafeSpace: "Établissez des normes et des pratiques qui encouragent tous les membres de l'équipe à partager leurs idées librement.",
       acknowledgeErrors: "Lorsque vous commettez une erreur, reconnaissez-la rapidement et ouvertement, en expliquant comment vous allez la corriger.",
-      seekDiversePerspectives: "Avant de prendre une décision importante, recueillez les perspectives d'au moins trois personnes ayant des antécédents ou des points de vue différents."
+      seekDiversePerspectives: "Avant de prendre une décision importante, recueillez les perspectives d'au moins trois personnes ayant des antécédents ou des points de vue différents.",
+      focusOnSpeaker: "Concentrez-vous entièrement sur l'orateur sans distraction.",
+      avoidInterrupting: "Évitez d'interrompre pendant que quelqu'un partage ses pensées.",
+      paraphraseConfirm: "Reformulez ce que quelqu'un dit pour confirmer la compréhension.",
+      askOpenEndedQuestions: "Posez des questions ouvertes comme \"Comment cela vous a-t-il fait sentir?\"",
+      imaginePerspective: "Imaginez-vous dans la situation d'un collègue avant de réagir.",
+      shadowSomeone: "Passez une journée à suivre quelqu'un dans un rôle différent pour comprendre ses défis.",
+      rolePlayScenarios: "Faites des jeux de rôle à partir du point de vue d'un autre membre de l'équipe.",
+      scheduleOneOnOne: "Planifiez des entretiens individuels réguliers avec les membres de l'équipe.",
+      sharePersonal: "Partagez quelque chose de personnel (de manière appropriée) pour encourager la confiance mutuelle."
+    },
+    activityTitles: {
+      escuchaActiva: "Écoute active",
+      tomaDePerspectiva: "Prise de perspective",
+      construirConexiones: "Construire des connexions"
     }
   }
 };

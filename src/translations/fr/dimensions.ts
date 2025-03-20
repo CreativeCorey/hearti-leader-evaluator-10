@@ -7,6 +7,36 @@ export const dimensions = {
         description: "Chaque dimension ci-dessous montre votre score, votre niveau de compétence et des conseils pour votre développement continu."
       }
     },
+    humility: {
+      title: "Humilité",
+      definition: "La capacité à reconnaître ses limites et ses erreurs, et à être ouvert aux commentaires et à la croissance.",
+      description: "Les leaders humbles sont conscients de leurs faiblesses, désireux de s'améliorer, apprécient les forces des autres et sont concentrés sur des objectifs au-delà de leur propre intérêt personnel."
+    },
+    empathy: {
+      title: "Empathie",
+      definition: "La capacité à comprendre et à partager les sentiments des autres.",
+      description: "L'empathie aide les leaders à construire des connexions plus profondes, à favoriser la confiance et à réduire les conflits au sein de l'équipe."
+    },
+    accountability: {
+      title: "Responsabilité",
+      definition: "La volonté d'assumer la responsabilité de ses actions et décisions, et de tenir ses engagements.",
+      description: "Les leaders responsables admettent leurs erreurs, respectent leurs promesses et établissent un exemple de fiabilité."
+    },
+    resiliency: {
+      title: "Résilience",
+      definition: "La capacité à rebondir après les échecs et à persévérer face aux défis.",
+      description: "La résilience permet aux leaders de gérer le stress, de s'adapter au changement et de maintenir une perspective positive."
+    },
+    transparency: {
+      title: "Transparence",
+      definition: "La pratique d'être ouvert, honnête et clair dans les communications et les processus de prise de décision.",
+      description: "La transparence crée la confiance, encourage l'authenticité et améliore la collaboration d'équipe."
+    },
+    inclusivity: {
+      title: "Inclusivité",
+      definition: "L'engagement à créer des environnements où toutes les personnes se sentent bienvenues, respectées et valorisées.",
+      description: "Les leaders inclusifs recherchent activement des perspectives diverses et créent des cultures d'appartenance."
+    },
     feedback: {
       humility: {
         excellent: "Vous excellez en humilité. Vous recherchez activement les retours, admettez les erreurs et reconnaissez les contributions des autres.",
@@ -44,6 +74,12 @@ export const dimensions = {
         average: "Vous avez un niveau modéré d'inclusivité. Essayez d'être plus attentif à inclure diverses perspectives.",
         needsImprovement: "Vous devez vous concentrer davantage sur l'inclusivité. Essayez de développer cette dimension par la pratique et l'apprentissage."
       }
+    },
+    competencyLevels: {
+      needsImprovement: "Besoin d'amélioration",
+      competent: "Compétent",
+      proficient: "Maîtrisé",
+      expert: "Expert"
     }
   }
 };

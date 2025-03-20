@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { HEARTIAssessment } from '@/types';
 import ComparisonTab from '../ComparisonTab';
 import TabHeader from './TabHeader';
-import ProgressChart from '../comparison/ProgressChart';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useLanguage } from '@/contexts/language/LanguageContext';
 
@@ -39,39 +38,11 @@ const ComparisonTabContent: React.FC<ComparisonTabContentProps> = ({
       )}
       
       <div className="space-y-8">
-        {/* Progress chart section */}
-        {assessments.length > 1 && (
-          <div className="mt-6">
-            <div className="bg-white p-6 rounded-md border">
-              <h3 className="text-lg font-medium mb-3">
-                {t('results.comparison.progress', { fallback: "HEARTI Progress Over Time" })}
-              </h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                {t('results.comparison.progressSubtitle', { 
-                  fallback: "Select a point on the chart to view that assessment's data" 
-                })}
-              </p>
-              
-              <ProgressChart 
-                assessments={assessments} 
-                onSelectAssessment={handleSelectAssessment}
-              />
-              
-              {assessments.length <= 1 && (
-                <p className="text-center text-muted-foreground mt-6">
-                  {t('results.comparison.noProgressData', { 
-                    fallback: "Complete more assessments to see your progress over time." 
-                  })}
-                </p>
-              )}
-            </div>
-          </div>
-        )}
-        
         {/* Main comparison content */}
         <ComparisonTab 
           assessment={selectedAssessment} 
           assessments={assessments}
+          onSelectAssessment={handleSelectAssessment}
         />
       </div>
     </>

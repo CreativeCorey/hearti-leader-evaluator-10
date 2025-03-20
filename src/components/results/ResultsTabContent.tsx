@@ -51,7 +51,10 @@ const ResultsTabContent: React.FC<ResultsTabContentProps> = ({
       </TabsContent>
       
       <TabsContent value="comparison" className="mt-0">
-        <ComparisonTabContent assessment={assessment} assessments={assessments} />
+        <ComparisonTabContent 
+          assessment={assessment} 
+          assessments={assessments} 
+        />
       </TabsContent>
       
       <TabsContent value="report" className="mt-0">
