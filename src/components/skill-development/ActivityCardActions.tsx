@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { BookmarkPlus, Plus } from 'lucide-react';
 import { SkillActivity } from '@/data/heartActivities';
@@ -20,7 +20,7 @@ const ActivityCardActions: React.FC<ActivityCardActionsProps> = ({
   onSave
 }) => {
   const { t } = useLanguage();
-  const [selectedFrequency, setSelectedFrequency] = useState<'daily' | 'weekly' | 'monthly'>(frequency);
+  const [selectedFrequency, setSelectedFrequency] = React.useState<'daily' | 'weekly' | 'monthly'>(frequency);
 
   const handleFrequencyChange = (newFrequency: 'daily' | 'weekly' | 'monthly') => {
     setSelectedFrequency(newFrequency);

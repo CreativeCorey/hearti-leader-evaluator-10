@@ -38,12 +38,16 @@ const ActivityList: React.FC<ActivityListProps> = ({
   });
   
   // Format title correctly with dimension
-  const activitiesTitle = `${chooseActivitiesText}: ${activeDimension}`;
+  const dimensionName = t(`dimensions.titles.${activeDimension}`, { 
+    fallback: activeDimension.charAt(0).toUpperCase() + activeDimension.slice(1) 
+  });
+  
+  const activitiesTitle = `${chooseActivitiesText}: ${dimensionName}`;
   
   // Create a proper description with fallback
   const activitiesDescription = t('results.development.activitiesDescription', { 
-    dimension: activeDimension,
-    fallback: `These activities are designed to help you develop your ${activeDimension} leadership dimension. Select up to 3 activities to focus on.`
+    dimension: dimensionName,
+    fallback: `These activities are designed to help you develop your ${dimensionName} leadership dimension. Select up to 3 activities to focus on.`
   });
   
   return (

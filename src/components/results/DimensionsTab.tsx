@@ -49,7 +49,7 @@ const DimensionsTab: React.FC<DimensionsTabProps> = ({ assessment }) => {
             <CardHeader className="pb-2 flex flex-row items-center justify-between">
               <CardTitle className="text-lg flex items-center gap-2">
                 <DimensionIcon size={22} style={{ color: dimensionColors[dimension] }} />
-                {dimension.charAt(0).toUpperCase() + dimension.slice(1)}
+                {t(`dimensions.titles.${dimension}`, { fallback: dimension.charAt(0).toUpperCase() + dimension.slice(1) })}
               </CardTitle>
               <Badge variant={getBadgeVariant(score)} className="ml-2">
                 {score.toFixed(1)}/5

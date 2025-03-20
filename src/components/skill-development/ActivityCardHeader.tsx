@@ -12,24 +12,6 @@ interface ActivityCardHeaderProps {
   expanded?: boolean;
 }
 
-// Function to format category names from camelCase to Title Case With Spaces
-const formatCategoryName = (category: string): string => {
-  if (!category) return '';
-  
-  // Handle categories that are in camelCase format
-  if (category.match(/[a-z][A-Z]/)) {
-    // Split camelCase into words and capitalize first letter of each word
-    return category
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ');
-  }
-  
-  // If it's not camelCase, just capitalize the first letter
-  return category.charAt(0).toUpperCase() + category.slice(1);
-};
-
 const ActivityCardHeader: React.FC<ActivityCardHeaderProps> = ({ 
   activity, 
   showExpandButton = false,
@@ -38,11 +20,10 @@ const ActivityCardHeader: React.FC<ActivityCardHeaderProps> = ({
   expanded = false
 }) => {
   const { t } = useLanguage();
-  const formattedCategory = formatCategoryName(activity.category);
   
   // Get category translation with fallback to formatted English category
-  const categoryKey = `activities.categories.${activity.category}`;
-  const translatedCategory = t(categoryKey, { fallback: formattedCategory });
+  const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`;
+  const translatedCategory = t(categoryKey, { fallback: activity.category });
   
   return (
     <div className="flex items-start justify-between mb-3">

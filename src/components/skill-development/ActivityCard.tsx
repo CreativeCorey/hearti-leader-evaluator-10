@@ -48,7 +48,6 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
           <ActivityCardActions 
             activity={activity} 
             frequency={frequency}
-            setFrequency={setFrequency}
             maxSavedReached={maxSavedReached}
             onSave={onSave}
           />
