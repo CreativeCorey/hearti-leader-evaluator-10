@@ -55,11 +55,55 @@ const SkillDevelopment: React.FC = () => {
     saveActivity(activity, addToHabitTracker, frequency);
   };
 
-  // Format the category with spaces
+  // Improved function to format category names with spaces
   const formatCategory = (category: string): string => {
-    return category
-      .replace(/([a-z])([A-Z])/g, '$1 $2')
-      .replace(/^[a-z]/, match => match.toUpperCase());
+    // First, handle camelCase by inserting spaces before capital letters
+    let formatted = category.replace(/([a-z])([A-Z])/g, '$1 $2');
+    
+    // Handle special characters and formatting
+    formatted = formatted
+      .replace(/([a-z])&([a-z])/gi, '$1 & $2')
+      .replace(/selfreflection/i, 'Self Reflection')
+      .replace(/mindsetshifts/i, 'Mindset Shifts')
+      .replace(/stressmanagement/i, 'Stress Management')
+      .replace(/trackingprogress/i, 'Tracking Progress')
+      .replace(/opencommunication/i, 'Open Communication')
+      .replace(/buildingawareness/i, 'Building Awareness')
+      .replace(/emotionalawareness/i, 'Emotional Awareness')
+      .replace(/emotionalregulation/i, 'Emotional Regulation')
+      .replace(/buildingconnections/i, 'Building Connections');
+    
+    // Handle specific cases to give better names
+    const specialCases: Record<string, string> = {
+      'Setting Clear Expectations': 'Expectation Setting',
+      'Taking Ownership': 'Taking Ownership',
+      'Problem Solving Skills': 'Problem Solving',
+      'Support Systems & Community': 'Support Systems',
+      'Building Awareness': 'Building Awareness',
+      'Creating Safe Spaces': 'Creating Safe Spaces',
+      'Promoting Equity': 'Promoting Equity',
+      'Leading By Example': 'Leading By Example',
+      'Self Reflection Awareness': 'Self Reflection & Awareness',
+      'Perspective Taking': 'Perspective Taking',
+      'Emotional Awareness': 'Emotional Awareness',
+      'Continuous Improvement': 'Continuous Improvement',
+      'Open Communication': 'Open Communication',
+      'Sharing Information': 'Sharing Information',
+      'Fostering Collaboration': 'Fostering Collaboration'
+    };
+    
+    // Check if we have a special case for this category
+    for (const [original, replacement] of Object.entries(specialCases)) {
+      if (formatted.toLowerCase() === original.toLowerCase()) {
+        return replacement;
+      }
+    }
+    
+    // For categories without special case, just capitalize first letter of each word
+    return formatted
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   };
 
   // Properly translate activities
@@ -146,7 +190,7 @@ const SkillDevelopment: React.FC = () => {
                 const activityDetails = activities.find(activity => activity.id === savedActivity.activityId);
                 if (!activityDetails) return null;
 
-                // Format the category properly with spaces
+                // Format the category properly with improved function
                 const formattedCategory = formatCategory(activityDetails.category);
                 
                 // Translate the activity details with fallbacks

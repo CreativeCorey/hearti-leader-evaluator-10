@@ -22,6 +22,57 @@ const ActivityList: React.FC<ActivityListProps> = ({
   const isRecommendationVisible = savedActivitiesCount < 3;
   const isMobile = useIsMobile();
 
+  // Format category names properly
+  const formatCategoryName = (category: string): string => {
+    // First, handle camelCase by inserting spaces before capital letters
+    let formatted = category.replace(/([a-z])([A-Z])/g, '$1 $2');
+    
+    // Handle special characters and formatting
+    formatted = formatted
+      .replace(/([a-z])&([a-z])/gi, '$1 & $2')
+      .replace(/selfreflection/i, 'Self Reflection')
+      .replace(/mindsetshifts/i, 'Mindset Shifts')
+      .replace(/stressmanagement/i, 'Stress Management')
+      .replace(/trackingprogress/i, 'Tracking Progress')
+      .replace(/opencommunication/i, 'Open Communication')
+      .replace(/buildingawareness/i, 'Building Awareness')
+      .replace(/emotionalawareness/i, 'Emotional Awareness')
+      .replace(/emotionalregulation/i, 'Emotional Regulation')
+      .replace(/buildingconnections/i, 'Building Connections');
+    
+    // Handle specific cases to give better names
+    const specialCases: Record<string, string> = {
+      'Setting Clear Expectations': 'Expectation Setting',
+      'Taking Ownership': 'Taking Ownership',
+      'Problem Solving Skills': 'Problem Solving',
+      'Support Systems & Community': 'Support Systems',
+      'Building Awareness': 'Building Awareness',
+      'Creating Safe Spaces': 'Creating Safe Spaces',
+      'Promoting Equity': 'Promoting Equity',
+      'Leading By Example': 'Leading By Example',
+      'Self Reflection Awareness': 'Self Reflection & Awareness',
+      'Perspective Taking': 'Perspective Taking',
+      'Emotional Awareness': 'Emotional Awareness',
+      'Continuous Improvement': 'Continuous Improvement',
+      'Open Communication': 'Open Communication',
+      'Sharing Information': 'Sharing Information',
+      'Fostering Collaboration': 'Fostering Collaboration'
+    };
+    
+    // Check if we have a special case for this category
+    for (const [original, replacement] of Object.entries(specialCases)) {
+      if (formatted.toLowerCase() === original.toLowerCase()) {
+        return replacement;
+      }
+    }
+    
+    // For categories without special case, just capitalize first letter of each word
+    return formatted
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
   if (Object.entries(groupedActivities).length === 0) {
     return (
       <div className="text-center py-8">
@@ -29,6 +80,14 @@ const ActivityList: React.FC<ActivityListProps> = ({
       </div>
     );
   }
+
+  // Format category names in the grouped activities
+  const formattedActivities: Record<string, SkillActivity[]> = {};
+  
+  Object.entries(groupedActivities).forEach(([category, activities]) => {
+    const formattedCategory = formatCategoryName(category);
+    formattedActivities[formattedCategory] = activities;
+  });
 
   return (
     <div className="space-y-6">
@@ -43,7 +102,7 @@ const ActivityList: React.FC<ActivityListProps> = ({
       
       {isMobile && <SwipeInstructions />}
       
-      {Object.entries(groupedActivities).map(([category, activities]) => (
+      {Object.entries(formattedActivities).map(([category, activities]) => (
         <div key={category} className="mb-6">
           <h3 className="text-lg font-medium mb-3">{category}</h3>
           <div className="grid gap-3">
