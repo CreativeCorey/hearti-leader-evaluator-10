@@ -69,7 +69,9 @@ const ResultsTabContent: React.FC<ResultsTabContentProps> = ({
       
       <TabsContent value="development" className="mt-0">
         <DevelopmentTabContent 
-          topDevelopmentArea={topDevelopmentArea} 
+          topDevelopmentArea={topDevelopmentArea}
+          assessments={assessments}
+          dimensionScores={assessment.dimensionScores} 
         />
       </TabsContent>
       

@@ -29,6 +29,10 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
     'HEARTI Dimensions' : 
     activeDimension.charAt(0).toUpperCase() + activeDimension.slice(1);
 
+  // Format the score with proper decimal places
+  const dimensionScore = dimensionScores[activeDimension];
+  const formattedScore = dimensionScore ? dimensionScore.toFixed(1) : "0.0";
+  
   // Only show the spectra chart in overview, not in development tab
   const isOverviewTab = window.location.hash.includes('overview') || !window.location.hash;
   
@@ -37,7 +41,7 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
       <div className="rounded-lg h-full relative p-4 border">
         <p className="text-center font-medium text-lg mb-1">{chartTitle}</p>
         <p className="text-center text-sm text-muted-foreground mb-3">
-          {t('results.dimensions.scoreLabel')}: {dimensionScores[activeDimension].toFixed(1)}/5
+          {t('results.dimensions.scoreLabel')}: {formattedScore}/5
         </p>
       </div>
     );
@@ -48,7 +52,7 @@ const DimensionChart: React.FC<DimensionChartProps> = ({
     <div className="rounded-lg h-full relative p-4 border">
       <p className="text-center font-medium text-lg mb-1">{chartTitle}</p>
       <p className="text-center text-sm text-muted-foreground mb-3">
-        {t('results.dimensions.scoreLabel')}: {dimensionScores[activeDimension].toFixed(1)}/5
+        {t('results.dimensions.scoreLabel')}: {formattedScore}/5
       </p>
       
       <div className="h-[180px] sm:h-[200px] relative">

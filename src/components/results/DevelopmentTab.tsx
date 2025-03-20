@@ -10,23 +10,31 @@ import { useLanguage } from '@/contexts/language/LanguageContext';
 interface DevelopmentTabProps {
   focusDimension: HEARTIDimension;
   assessments?: HEARTIAssessment[];
+  dimensionScores?: Record<HEARTIDimension, number>;
 }
 
-const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension, assessments = [] }) => {
+const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ 
+  focusDimension, 
+  assessments = [],
+  dimensionScores
+}) => {
   const [activeDimension, setActiveDimension] = useState<HEARTIDimension>(focusDimension);
   const [showActivities, setShowActivities] = useState(true);
   const { t } = useLanguage();
   
   // Get the most recent assessment's dimension scores
   const latestAssessment = assessments.length > 0 ? assessments[0] : null;
-  const dimensionScores = latestAssessment ? latestAssessment.dimensionScores : {
+  
+  // Use the passed dimensionScores if available, otherwise get from latest assessment
+  // If none are available, use default zero scores
+  const scores = dimensionScores || (latestAssessment ? latestAssessment.dimensionScores : {
     humility: 0,
     empathy: 0,
     accountability: 0,
     resiliency: 0,
     transparency: 0,
     inclusivity: 0
-  };
+  });
   
   const toggleActivities = () => {
     setShowActivities(prev => !prev);
@@ -43,7 +51,7 @@ const DevelopmentTab: React.FC<DevelopmentTabProps> = ({ focusDimension, assessm
       
       <ChartSection 
         activeDimension={activeDimension}
-        dimensionScores={dimensionScores}
+        dimensionScores={scores}
       />
       
       <ActivitySection 
