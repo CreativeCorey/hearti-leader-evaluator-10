@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { fetchMessages, subscribeToMessages } from '@/utils/supabase/messages';
 import { useToast } from '@/hooks/use-toast';
@@ -21,6 +21,8 @@ export function useChat() {
 
   // Load initial messages
   useEffect(() => {
+    let isMounted = true;
+    
     const loadMessages = async () => {
       try {
         setLoading(true);
@@ -30,33 +32,41 @@ export function useChat() {
           
         if (error) {
           console.error('Error loading messages:', error);
-          toast({
-            title: 'Error loading messages',
-            description: error.message,
-            variant: 'destructive',
-          });
+          if (isMounted) {
+            toast({
+              title: 'Error loading messages',
+              description: error.message,
+              variant: 'destructive',
+            });
+          }
           return;
         }
         
         // Count unique participants
-        if (data) {
+        if (data && isMounted) {
           const uniqueUsers = new Set(data.map(msg => msg.user_id));
           setParticipants(uniqueUsers.size);
+          setMessages(data || []);
         }
-        
-        setMessages(data || []);
       } catch (error) {
         console.error('Failed to load messages:', error);
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
     
     loadMessages();
+    
+    return () => {
+      isMounted = false;
+    };
   }, [toast]);
   
   // Set up real-time subscription
   useEffect(() => {
+    // Create a channel
     const channel = subscribeToMessages((newMessage) => {
       setMessages((current) => {
         // Add message if not already in the list
@@ -71,10 +81,12 @@ export function useChat() {
         return current;
       });
     });
-      
+    
     // Clean up subscription on unmount
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
     };
   }, []);
 

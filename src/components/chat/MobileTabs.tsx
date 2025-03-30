@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { Users, Hash, User } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Users, Hash, User, ArrowLeft } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface MobileTabsProps {
@@ -11,6 +12,11 @@ interface MobileTabsProps {
 const MobileTabs: React.FC<MobileTabsProps> = ({ activeTab, setActiveTab }) => {
   return (
     <div className="md:hidden border-b">
+      <div className="flex items-center justify-between py-2 px-4">
+        <Link to="/" className="text-sm flex items-center text-blue-600">
+          <ArrowLeft size={16} className="mr-1" /> Back to Assessment
+        </Link>
+      </div>
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="w-full grid grid-cols-3 h-auto">
           <TabsTrigger value="group" className="py-2">

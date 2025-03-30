@@ -2,6 +2,8 @@
 import { useAuth } from '@/hooks/use-auth';
 import { Card } from '@/components/ui/card';
 import { Tabs } from '@/components/ui/tabs';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 import ChatHeader from '@/components/chat/ChatHeader';
 import ChatSidebar from '@/components/chat/ChatSidebar';
 import MobileTabs from '@/components/chat/MobileTabs';
@@ -25,7 +27,14 @@ const ChatPage = () => {
 
   return (
     <div className="container mx-auto py-6 px-4 max-w-4xl">
-      <div className="flex gap-4 h-[80vh]">
+      <div className="mb-4 md:hidden">
+        <Link to="/">
+          <Button variant="outline" className="w-full">
+            Back to Assessment
+          </Button>
+        </Link>
+      </div>
+      <div className="flex gap-4 h-[75vh]">
         {/* Sidebar navigation */}
         <ChatSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
         

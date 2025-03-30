@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { Users, Hash, User, Plus } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Users, Hash, User, Plus, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -12,7 +13,14 @@ interface ChatSidebarProps {
 const ChatSidebar: React.FC<ChatSidebarProps> = ({ activeTab, setActiveTab }) => {
   return (
     <div className="hidden md:block w-64 bg-white dark:bg-gray-900 shadow-md rounded-lg p-4">
-      <h2 className="font-semibold text-lg mb-4">Chats</h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="font-semibold text-lg">Chats</h2>
+        <Link to="/">
+          <Button variant="ghost" size="sm" className="flex items-center">
+            <ArrowLeft size={16} className="mr-1" /> Back
+          </Button>
+        </Link>
+      </div>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} orientation="vertical" className="w-full">
         <TabsList className="flex flex-col w-full bg-transparent space-y-1 items-start p-0">
