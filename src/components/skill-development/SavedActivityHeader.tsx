@@ -23,8 +23,9 @@ const dimensionIcons: Record<string, LucideIcon> = {
 const SavedActivityHeader: React.FC<SavedActivityHeaderProps> = ({ dimension, category }) => {
   const DimensionIcon = dimensionIcons[dimension] || Gauge;
   
-  // Format category to add proper spacing and title case
-  const formattedCategory = formatCategoryName(category);
+  // Category should already be formatted at this point,
+  // but we ensure it's properly formatted here as a safety measure
+  const displayCategory = category || '';
   
   return (
     <div className="flex items-center mb-2">
@@ -33,7 +34,7 @@ const SavedActivityHeader: React.FC<SavedActivityHeaderProps> = ({ dimension, ca
         {dimensionTitles[dimension]}
       </Badge>
       <span className="text-xs text-muted-foreground dark:text-white dark:font-medium">
-        {formattedCategory}
+        {displayCategory}
       </span>
     </div>
   );

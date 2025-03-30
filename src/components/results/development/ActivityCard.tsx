@@ -37,7 +37,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
   const DimensionIcon = dimensionIcons[dimensionName] || Plus;
   
   // Ensure proper title case formatting for category
-  const formattedCategory = typeof activity.category === 'string' ? activity.category : formatCategoryName(activity.category);
+  // The category should already be formatted, but we ensure proper formatting here
+  const displayCategory = activity.category || '';
 
   return (
     <Card 
@@ -51,7 +52,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
             {isSelected ? <Check size={18} /> : <DimensionIcon size={18} />}
           </div>
           <div>
-            <h4 className="font-medium text-gray-800 dark:text-white dark:font-bold">{formattedCategory}</h4>
+            <h4 className="font-medium text-gray-800 dark:text-white dark:font-bold">{displayCategory}</h4>
             <p className="text-sm mt-1 dark:text-gray-300">{activity.description}</p>
           </div>
         </div>

@@ -174,7 +174,7 @@
   
   /* Ensure category text is always visible */
   .dark .text-muted-foreground {
-    @apply text-gray-300;
+    color: hsl(var(--muted-foreground));
     font-weight: 500;
   }
 }

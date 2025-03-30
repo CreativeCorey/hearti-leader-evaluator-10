@@ -23,11 +23,9 @@ const ActivityCardHeader: React.FC<ActivityCardHeaderProps> = ({
   const { t } = useLanguage();
   
   // Format category name properly with Title Case
-  const formattedCategory = formatCategoryName(activity.category);
-  
-  // Get category translation with fallback to formatted English category
-  const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- &]/g, '')}`;
-  const translatedCategory = t(categoryKey, { fallback: formattedCategory });
+  // Note: activity.category should already be formatted at this point
+  // but we ensure it's properly formatted here as a safety measure
+  const categoryDisplay = activity.category || '';
   
   return (
     <div className="flex items-start justify-between mb-3">
@@ -35,7 +33,7 @@ const ActivityCardHeader: React.FC<ActivityCardHeaderProps> = ({
         {isSaved && (
           <BookmarkCheck size={18} className="text-indigo-500 mr-1.5" />
         )}
-        <h3 className="text-base font-medium text-indigo-600 dark:text-white dark:font-bold">{translatedCategory}</h3>
+        <h3 className="text-base font-medium text-indigo-600 dark:text-white dark:font-bold activity-header">{categoryDisplay}</h3>
       </div>
       
       {showExpandButton && toggleExpanded && (

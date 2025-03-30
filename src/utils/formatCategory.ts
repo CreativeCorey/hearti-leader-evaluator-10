@@ -6,19 +6,7 @@
 export const formatCategoryName = (category: string): string => {
   if (!category) return '';
   
-  // Convert camelCase, hyphenated, or concatenated words to spaces
-  let formatted = category
-    // Add space before capital letters in camelCase
-    .replace(/([a-z])([A-Z])/g, '$1 $2')
-    // Replace hyphens with spaces
-    .replace(/-/g, ' ')
-    // Replace underscores with spaces
-    .replace(/_/g, ' ')
-    // Handle ampersand spacing - ensure spaces around &
-    .replace(/([a-zA-Z])&([a-zA-Z])/g, '$1 & $2');
-  
-  // Handle common category names with custom formatting
-  // This ensures consistent formatting for specific categories across all translations
+  // First check if it's in our common categories dictionary
   const lowerCaseCategory = category.toLowerCase().replace(/[-_\s&]/g, '');
   
   const commonCategories: Record<string, string> = {
@@ -56,7 +44,18 @@ export const formatCategoryName = (category: string): string => {
     return commonCategories[lowerCaseCategory];
   }
   
-  // Otherwise, capitalize each word
+  // Convert camelCase, hyphenated, or concatenated words to spaces
+  let formatted = category
+    // Add space before capital letters in camelCase
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    // Replace hyphens with spaces
+    .replace(/-/g, ' ')
+    // Replace underscores with spaces
+    .replace(/_/g, ' ')
+    // Handle ampersand spacing - ensure spaces around &
+    .replace(/([a-zA-Z])&([a-zA-Z])/g, '$1 & $2');
+  
+  // Capitalize each word
   return formatted
     .split(' ')
     .map(word => {
