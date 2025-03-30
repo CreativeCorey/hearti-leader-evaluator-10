@@ -9,7 +9,7 @@ import { formatCategoryName } from '@/utils/formatCategory';
 
 import DimensionTabs from './DimensionTabs';
 import SavedActivitiesList from './SavedActivitiesList';
-import { useTranslatedActivities } from './DevelopmentActivities';
+import DevelopmentActivities, { useTranslatedActivities } from './DevelopmentActivities';
 
 const SkillDevelopment: React.FC = () => {
   const [selectedDimension, setSelectedDimension] = useState<string>('accountability');

@@ -11,7 +11,7 @@ interface ActivityCardActionsProps {
   frequency: 'daily' | 'weekly' | 'monthly';
   maxSavedReached: boolean;
   onSave: (activity: SkillActivity, addToHabitTracker?: boolean, frequency?: 'daily' | 'weekly' | 'monthly') => void;
-  onFrequencyChange?: (frequency: 'daily' | 'weekly' | 'monthly') => void;
+  onFrequencyChange: (frequency: 'daily' | 'weekly' | 'monthly') => void;
 }
 
 const ActivityCardActions: React.FC<ActivityCardActionsProps> = ({
