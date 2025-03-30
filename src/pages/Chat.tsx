@@ -10,6 +10,7 @@ import MobileTabs from '@/components/chat/MobileTabs';
 import TabContent from '@/components/chat/TabContent';
 import ChatInput from '@/components/chat/ChatInput';
 import { useChat } from '@/hooks/useChat';
+import { useEffect } from 'react';
 
 const ChatPage = () => {
   const { user } = useAuth();

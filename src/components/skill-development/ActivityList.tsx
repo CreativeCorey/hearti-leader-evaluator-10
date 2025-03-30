@@ -33,12 +33,15 @@ const ActivityList: React.FC<ActivityListProps> = ({
     );
   }
 
-  // Format category names in the grouped activities
+  // Format category names in the grouped activities to ensure proper Title Case
   const formattedActivities: Record<string, SkillActivity[]> = {};
   
   Object.entries(groupedActivities).forEach(([category, activities]) => {
     const formattedCategory = formatCategoryName(category);
-    formattedActivities[formattedCategory] = activities;
+    formattedActivities[formattedCategory] = activities.map(activity => ({
+      ...activity,
+      category: formatCategoryName(activity.category)
+    }));
   });
 
   return (
