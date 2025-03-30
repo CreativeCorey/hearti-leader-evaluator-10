@@ -41,7 +41,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
   };
 
   return (
-    <Card className={`border ${isSaved ? 'border-indigo-300 bg-indigo-50' : ''}`}>
+    <Card className={`border ${isSaved ? 'border-indigo-300 bg-indigo-50 dark:bg-indigo-950 dark:border-indigo-800' : 'dark:bg-gray-900'}`}>
       <CardContent className="p-4">
         <ActivityCardHeader 
           activity={formattedActivity} 
@@ -51,7 +51,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
           expanded={expanded}
         />
         
-        <p className="text-sm mb-3">{translatedDescription}</p>
+        <p className="text-sm mb-3 dark:text-gray-300">{translatedDescription}</p>
         
         {isSaved ? (
           <Button size="sm" className="w-full mt-2 bg-indigo-500" disabled>
@@ -69,7 +69,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
           <Button 
             variant="outline" 
             size="sm" 
-            className="w-full mt-2" 
+            className="w-full mt-2 dark:text-white dark:border-gray-700 dark:hover:bg-gray-800" 
             onClick={() => setExpanded(true)}
           >
             <Plus className="mr-2 h-4 w-4" />

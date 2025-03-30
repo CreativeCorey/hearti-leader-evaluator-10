@@ -153,4 +153,9 @@
     @apply font-heading;
     font-family: 'Century Gothic', sans-serif !important;
   }
+
+  /* Improve visibility for activity headers in dark mode */
+  .dark .activity-header {
+    @apply text-white font-bold;
+  }
 }

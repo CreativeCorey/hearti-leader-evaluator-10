@@ -35,13 +35,13 @@ const ActivityCardHeader: React.FC<ActivityCardHeaderProps> = ({
         {isSaved && (
           <BookmarkCheck size={18} className="text-indigo-500 mr-1.5" />
         )}
-        <h3 className="text-base font-medium text-indigo-600">{translatedCategory}</h3>
+        <h3 className="text-base font-medium text-indigo-600 dark:text-white dark:font-bold">{translatedCategory}</h3>
       </div>
       
       {showExpandButton && toggleExpanded && (
         <button 
           onClick={toggleExpanded}
-          className="text-gray-500 hover:text-gray-700 p-1 -mt-1"
+          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 p-1 -mt-1"
           aria-label={expanded ? "Collapse" : "Expand"}
         >
           {expanded ? (

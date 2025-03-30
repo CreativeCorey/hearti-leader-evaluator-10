@@ -32,7 +32,7 @@ const SavedActivityHeader: React.FC<SavedActivityHeaderProps> = ({ dimension, ca
         <DimensionIcon size={14} />
         {dimensionTitles[dimension]}
       </Badge>
-      <span className="text-xs text-muted-foreground">
+      <span className="text-xs text-muted-foreground dark:text-white dark:font-medium">
         {formattedCategory}
       </span>
     </div>

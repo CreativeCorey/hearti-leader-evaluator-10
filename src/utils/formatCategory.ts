@@ -1,4 +1,3 @@
-
 /**
  * Formats activity category names by adding spaces between words
  * and ensuring proper Title Case format
@@ -59,15 +58,11 @@ export const formatCategoryName = (category: string): string => {
   // Otherwise, capitalize each word
   return formatted
     .split(' ')
-    .map(word => {
+    .map((word, index) => {
       // Skip empty strings
       if (!word) return '';
-      // Don't capitalize certain words if they're not the first word
-      const lowerCaseWord = word.toLowerCase();
-      if (['a', 'an', 'the', 'and', 'but', 'or', 'for', 'nor', 'on', 'at', 'to', 'from', 'by', 'with'].includes(lowerCaseWord)) {
-        return word.toLowerCase();
-      }
-      // Capitalize first letter of each word
+      
+      // Always capitalize first letter of each word, regardless of position
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     })
     .join(' ');

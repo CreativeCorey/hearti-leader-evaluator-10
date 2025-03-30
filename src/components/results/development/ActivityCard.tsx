@@ -38,21 +38,21 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
   return (
     <Card 
       key={activity.id} 
-      className={`cursor-pointer transition-all ${isSelected ? 'border-indigo-500 bg-indigo-50' : 'hover:border-indigo-200'}`}
+      className={`cursor-pointer transition-all ${isSelected ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-950 dark:border-indigo-800' : 'dark:bg-gray-900'}`}
       onClick={() => onActivitySelect(activity.id)}
     >
       <CardContent className="p-4">
         <div className="flex items-start gap-2 mb-2">
-          <div className={`mt-1 ${isSelected ? 'text-indigo-600' : 'text-gray-400'}`}>
+          <div className={`mt-1 ${isSelected ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-400 dark:text-gray-500'}`}>
             {isSelected ? <Check size={18} /> : <DimensionIcon size={18} />}
           </div>
           <div>
-            <h4 className="font-medium text-gray-800">{activity.category}</h4>
-            <p className="text-sm mt-1">{activity.description}</p>
+            <h4 className="font-medium text-gray-800 dark:text-white dark:font-bold">{activity.category}</h4>
+            <p className="text-sm mt-1 dark:text-gray-300">{activity.description}</p>
           </div>
         </div>
         {isSelected && (
-          <div className="mt-3 pt-3 border-t">
+          <div className="mt-3 pt-3 border-t dark:border-gray-700">
             <FrequencySelector 
               selectedFrequency={selectedFrequency}
               onFrequencyChange={onFrequencyChange}
@@ -60,7 +60,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
             <Button 
               variant="outline" 
               size="sm" 
-              className="w-full flex items-center gap-2 text-indigo-700"
+              className="w-full flex items-center gap-2 text-indigo-700 dark:text-indigo-400 dark:border-gray-700 dark:hover:bg-gray-800"
               onClick={(e) => {
                 e.stopPropagation();
                 onAddToHabitTracker(activity.id);

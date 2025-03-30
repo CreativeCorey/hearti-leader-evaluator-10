@@ -54,10 +54,10 @@ const ActivityList: React.FC<ActivityListProps> = ({
   return (
     <div className="mt-6">
       <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
-        <DimensionIcon className="text-indigo-600" size={24} />
+        <DimensionIcon className="text-indigo-600 dark:text-indigo-400" size={24} />
         {activitiesTitle}
       </h3>
-      <p className="text-muted-foreground mb-6">
+      <p className="text-muted-foreground dark:text-gray-300 mb-6">
         {activitiesDescription}
       </p>
       
