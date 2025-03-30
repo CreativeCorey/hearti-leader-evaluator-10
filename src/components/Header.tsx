@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
 const Header = () => {
   const { user, signOut } = useAuth();
@@ -90,10 +89,11 @@ const Header = () => {
           )}
         </div>
         
+        {/* Mobile menu */}
         {isMobile && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="ml-2">
                 <Menu className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
