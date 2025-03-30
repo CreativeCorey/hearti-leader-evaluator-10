@@ -6,6 +6,7 @@ import { BarChart, Check, Plus } from 'lucide-react';
 import FrequencySelector from './FrequencySelector';
 import { dimensionIcons } from './DimensionIcons';
 import { useLanguage } from '@/contexts/language/LanguageContext';
+import { formatCategoryName } from '@/utils/formatCategory';
 
 interface ActivityCardProps {
   activity: {
@@ -34,6 +35,9 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
   // Get the appropriate dimension icon or default to Plus
   const dimensionName = activity.dimension || 'humility';
   const DimensionIcon = dimensionIcons[dimensionName] || Plus;
+  
+  // Ensure proper title case formatting for category
+  const formattedCategory = formatCategoryName(activity.category);
 
   return (
     <Card 
@@ -47,7 +51,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
             {isSelected ? <Check size={18} /> : <DimensionIcon size={18} />}
           </div>
           <div>
-            <h4 className="font-medium text-gray-800 dark:text-white dark:font-bold">{activity.category}</h4>
+            <h4 className="font-medium text-gray-800 dark:text-white dark:font-bold">{formattedCategory}</h4>
             <p className="text-sm mt-1 dark:text-gray-300">{activity.description}</p>
           </div>
         </div>

@@ -158,4 +158,16 @@
   .dark .activity-header {
     @apply text-white font-bold;
   }
+  
+  /* Dark mode text enhancements for activity elements */
+  .dark h3.text-base, 
+  .dark h4.font-medium,
+  .dark .activity-title {
+    @apply text-white font-bold;
+  }
+  
+  /* Ensure category text is always visible */
+  .dark .text-muted-foreground {
+    @apply text-gray-300 font-medium;
+  }
 }

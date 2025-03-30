@@ -1,3 +1,4 @@
+
 /**
  * Formats activity category names by adding spaces between words
  * and ensuring proper Title Case format
@@ -58,11 +59,11 @@ export const formatCategoryName = (category: string): string => {
   // Otherwise, capitalize each word
   return formatted
     .split(' ')
-    .map((word, index) => {
+    .map(word => {
       // Skip empty strings
       if (!word) return '';
       
-      // Always capitalize first letter of each word, regardless of position
+      // Always capitalize first letter of each word
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     })
     .join(' ');
