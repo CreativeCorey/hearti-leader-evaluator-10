@@ -6,6 +6,7 @@ import { SkillActivity } from '@/data/heartActivities';
 import SavedActivityCard from './SavedActivityCard';
 import { useLanguage } from '@/contexts/language/LanguageContext';
 import { formatCategoryName } from '@/utils/formatCategory';
+import { activityData } from '@/data/heartActivities';
 
 interface SavedActivitiesListProps {
   savedActivities: SavedActivity[];
@@ -40,10 +41,10 @@ const SavedActivitiesList: React.FC<SavedActivitiesListProps> = ({
         <ScrollArea className="h-[300px] w-full rounded-md border">
           <div className="flex flex-col gap-4 p-4">
             {savedActivities.map(savedActivity => {
-              const activityDetails = activities.find(activity => activity.id === savedActivity.activityId);
+              const activityDetails = activityData.find(activity => activity.id === savedActivity.activityId);
               if (!activityDetails) return null;
 
-              // Format the category properly with improved function
+              // Format the category properly with our utility function
               const formattedCategory = formatCategoryName(activityDetails.category);
               
               // Translate the activity details with fallbacks

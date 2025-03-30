@@ -10,9 +10,6 @@ import DimensionTabs from './DimensionTabs';
 import SavedActivitiesList from './SavedActivitiesList';
 import useTranslatedActivities from './DevelopmentActivities';
 
-// Get activities from the module
-import { activityData as activities } from '@/data/heartActivities';
-
 const SkillDevelopment: React.FC = () => {
   const [selectedDimension, setSelectedDimension] = useState<string>('accountability');
   const { savedActivities, loading, saveActivity, toggleActivityCompletion, removeSavedActivity } = useActivities();
@@ -44,13 +41,10 @@ const SkillDevelopment: React.FC = () => {
     saveActivity(activity, addToHabitTracker, frequency);
   };
 
-  // Get proper translations for headings
-  const developmentActivitiesTitle = t('results.development.title', { fallback: "Development Activities" });
-
   return (
     <div className="container py-10">
       <h1 className="text-3xl font-semibold mb-6">
-        {developmentActivitiesTitle}
+        {t('results.development.title', { fallback: "Development Activities" })}
       </h1>
 
       <Tabs defaultValue="accountability" className="w-full">
@@ -66,7 +60,7 @@ const SkillDevelopment: React.FC = () => {
       <SavedActivitiesList 
         savedActivities={savedActivities}
         loading={loading}
-        activities={activities}
+        activities={filteredActivities}
         onToggleCompletion={toggleActivityCompletion}
         onRemove={removeSavedActivity}
       />
