@@ -5,6 +5,7 @@ import { dimensionColors, dimensionTitles } from '@/data/heartActivities';
 import { LucideIcon } from 'lucide-react';
 import { Gauge, Ear, ChartNoAxesCombined, TreePalm, Blend, Users } from 'lucide-react';
 import { formatCategoryName } from '@/utils/formatCategory';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface SavedActivityHeaderProps {
   dimension: string;
@@ -21,11 +22,15 @@ const dimensionIcons: Record<string, LucideIcon> = {
 };
 
 const SavedActivityHeader: React.FC<SavedActivityHeaderProps> = ({ dimension, category }) => {
+  const { t } = useLanguage();
   const DimensionIcon = dimensionIcons[dimension] || Gauge;
   
-  // Category should already be formatted at this point,
-  // but we ensure it's properly formatted here as a safety measure
-  const displayCategory = category || '';
+  // Format the category properly, first checking for translations
+  const lowerCaseCategory = category?.toLowerCase().replace(/[-_\s&]/g, '') || '';
+  const translationKey = `activities.categories.${lowerCaseCategory}`;
+  
+  // Use translated category if available, otherwise format the provided category
+  const displayCategory = t(translationKey, { fallback: formatCategoryName(category) });
   
   return (
     <div className="flex items-center mb-2">

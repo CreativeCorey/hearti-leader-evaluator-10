@@ -22,10 +22,12 @@ const ActivityCardHeader: React.FC<ActivityCardHeaderProps> = ({
 }) => {
   const { t } = useLanguage();
   
-  // Format category name properly with Title Case
-  // Note: activity.category should already be formatted at this point
-  // but we ensure it's properly formatted here as a safety measure
-  const categoryDisplay = activity.category || '';
+  // Format category name properly with Title Case and check for translations
+  const lowerCaseCategory = activity.category?.toLowerCase().replace(/[-_\s&]/g, '') || '';
+  const translationKey = `activities.categories.${lowerCaseCategory}`;
+  
+  // Use translated category if available, otherwise format the provided category
+  const categoryDisplay = t(translationKey, { fallback: formatCategoryName(activity.category) });
   
   return (
     <div className="flex items-start justify-between mb-3">

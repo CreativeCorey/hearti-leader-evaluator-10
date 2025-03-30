@@ -26,10 +26,12 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
   // Ensure proper Title Case formatting for categories
   const formattedCategory = formatCategoryName(activity.category);
   
-  // Get the properly translated activity description
-  const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- &]/g, '')}`;
+  // Create translation keys for category and description
+  const lowerCaseCategory = activity.category?.toLowerCase().replace(/[-_\s&]/g, '') || '';
+  const categoryKey = `activities.categories.${lowerCaseCategory}`;
   const descriptionKey = `activities.descriptions.${activity.id}`;
   
+  // Use translated values if available, otherwise use formatted values
   const translatedCategory = t(categoryKey, { fallback: formattedCategory });
   const translatedDescription = t(descriptionKey, { fallback: activity.description });
   
@@ -51,7 +53,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
           expanded={expanded}
         />
         
-        <p className="text-sm mb-3 dark:text-gray-300">{translatedDescription}</p>
+        <p className="text-sm mb-3 dark:text-gray-300">{formattedActivity.description}</p>
         
         {isSaved ? (
           <Button size="sm" className="w-full mt-2 bg-indigo-500" disabled>
@@ -61,6 +63,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
         ) : expanded ? (
           <ActivityCardActions 
             activity={activity} 
+            onFrequencyChange={setFrequency}
             frequency={frequency}
             maxSavedReached={maxSavedReached}
             onSave={onSave}

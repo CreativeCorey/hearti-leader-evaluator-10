@@ -37,11 +37,26 @@ export const formatCategoryName = (category: string): string => {
     'buildingconnections': 'Building Connections',
     'perspectivemaking': 'Perspective Making',
     'perspectiveforming': 'Perspective Forming',
-    'perspectivegiving': 'Perspective Giving'
+    'perspectivegiving': 'Perspective Giving',
+    'escuchaactiva': 'Escucha Activa',
+    'tomadeperspectiva': 'Toma de Perspectiva',
+    'construirconexiones': 'Construir Conexiones',
+    'construirconexionesrelaciones': 'Construir Conexiones',
+    'ascoltoattivo': 'Ascolto Attivo',
+    'presadiperspettiva': 'Presa di Prospettiva',
+    'costruireconnessioni': 'Costruire Connessioni',
+    'ecouteactive': 'Écoute Active',
+    'prisedeperspective': 'Prise de Perspective',
+    'creerdesliens': 'Créer des Liens'
   };
   
   if (commonCategories[lowerCaseCategory]) {
     return commonCategories[lowerCaseCategory];
+  }
+  
+  // Special case for single-word categories that are already known
+  if (/^[a-zA-Z]+$/.test(category)) {
+    return category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
   }
   
   // Convert camelCase, hyphenated, or concatenated words to spaces

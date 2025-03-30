@@ -22,7 +22,8 @@ export const useTranslatedActivities = (selectedDimension: string) => {
         const formattedCategory = formatCategoryName(activity.category);
         
         // Create translation keys based on activity ID and category
-        const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`;
+        const lowerCaseCategory = activity.category?.toLowerCase().replace(/[-_\s&]/g, '') || '';
+        const categoryKey = `activities.categories.${lowerCaseCategory}`;
         const descriptionKey = `activities.descriptions.${activity.id}`;
         
         // Make sure to include fallbacks

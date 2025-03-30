@@ -36,9 +36,14 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
   const dimensionName = activity.dimension || 'humility';
   const DimensionIcon = dimensionIcons[dimensionName] || Plus;
   
-  // Ensure proper title case formatting for category
-  // The category should already be formatted, but we ensure proper formatting here
-  const displayCategory = activity.category || '';
+  // Create translation keys for category and description
+  const lowerCaseCategory = activity.category?.toLowerCase().replace(/[-_\s&]/g, '') || '';
+  const categoryKey = `activities.categories.${lowerCaseCategory}`;
+  const descriptionKey = `activities.descriptions.${activity.id}`;
+  
+  // Use translated values if available, otherwise use formatted values
+  const displayCategory = t(categoryKey, { fallback: formatCategoryName(activity.category) });
+  const displayDescription = t(descriptionKey, { fallback: activity.description });
 
   return (
     <Card 
@@ -53,7 +58,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
           </div>
           <div>
             <h4 className="font-medium text-gray-800 dark:text-white dark:font-bold">{displayCategory}</h4>
-            <p className="text-sm mt-1 dark:text-gray-300">{activity.description}</p>
+            <p className="text-sm mt-1 dark:text-gray-300">{displayDescription}</p>
           </div>
         </div>
         {isSelected && (
