@@ -4,3 +4,4 @@ export * from './assessments';
 export * from './profiles';
 export * from './organizations';
 export * from './types';
+export * from './messages';
