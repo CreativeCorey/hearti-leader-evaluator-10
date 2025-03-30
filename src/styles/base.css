@@ -1,4 +1,5 @@
 
+
 @tailwind base;
 
 @layer base {
@@ -160,14 +161,22 @@
   }
   
   /* Dark mode text enhancements for activity elements */
-  .dark h3.text-base, 
-  .dark h4.font-medium,
+  .dark h3.text-base {
+    @apply text-white font-bold;
+  }
+  
+  .dark h4.font-medium {
+    @apply text-white font-bold;
+  }
+  
   .dark .activity-title {
     @apply text-white font-bold;
   }
   
   /* Ensure category text is always visible */
   .dark .text-muted-foreground {
-    @apply text-gray-300 font-medium;
+    @apply text-gray-300;
+    font-weight: 500;
   }
 }
+
