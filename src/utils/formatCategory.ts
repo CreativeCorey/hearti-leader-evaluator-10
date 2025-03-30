@@ -1,3 +1,4 @@
+
 /**
  * Formats activity category names by adding spaces between words
  * and ensuring proper Title Case format
@@ -46,8 +47,8 @@ export const formatCategoryName = (category: string): string => {
     'buildingconnections': 'Building Connections',
     'perspectivemaking': 'Perspective Making',
     'perspectiveforming': 'Perspective Forming',
-    'perspectivegiving': 'Perspective Giving',
-    'perspectivetaking': 'Perspective Taking'
+    'perspectivegiving': 'Perspective Giving'
+    // Removed duplicate 'perspectivetaking' entry that was causing the error
   };
   
   if (commonCategories[lowerCaseCategory]) {
