@@ -50,14 +50,16 @@ const ActivityList: React.FC<ActivityListProps> = ({
     fallback: `These activities are designed to help you develop your ${dimensionName} leadership dimension. Select up to 3 activities to focus on.`
   });
   
-  // Improved function to format category names with spaces
+  // Enhanced function to format category names with spaces for all possible cases
   const formatCategoryName = (category: string): string => {
     // First, handle camelCase by inserting spaces before capital letters
     let formatted = category.replace(/([a-z])([A-Z])/g, '$1 $2');
     
-    // Handle special characters and formatting
+    // Replace special characters with spaces and handle ampersands
+    formatted = formatted.replace(/([a-z])&([a-z])/gi, '$1 & $2');
+    
+    // Handle all specific keyword cases that need spaces
     formatted = formatted
-      .replace(/([a-z])&([a-z])/gi, '$1 & $2')
       .replace(/selfreflection/i, 'Self Reflection')
       .replace(/mindsetshifts/i, 'Mindset Shifts')
       .replace(/stressmanagement/i, 'Stress Management')
@@ -66,7 +68,22 @@ const ActivityList: React.FC<ActivityListProps> = ({
       .replace(/buildingawareness/i, 'Building Awareness')
       .replace(/emotionalawareness/i, 'Emotional Awareness')
       .replace(/emotionalregulation/i, 'Emotional Regulation')
-      .replace(/buildingconnections/i, 'Building Connections');
+      .replace(/buildingconnections/i, 'Building Connections')
+      .replace(/selfreflectionawareness/i, 'Self Reflection & Awareness')
+      .replace(/problemsolvingskills/i, 'Problem Solving Skills')
+      .replace(/supportsystemscommunity/i, 'Support Systems & Community')
+      .replace(/settingclearexpectations/i, 'Setting Clear Expectations')
+      .replace(/takingownership/i, 'Taking Ownership')
+      .replace(/creatingsafespaces/i, 'Creating Safe Spaces')
+      .replace(/promotingequity/i, 'Promoting Equity')
+      .replace(/fosteringcollaboration/i, 'Fostering Collaboration')
+      .replace(/leadingbyexample/i, 'Leading By Example')
+      .replace(/sharinginformation/i, 'Sharing Information')
+      .replace(/empoweringothers/i, 'Empowering Others')
+      .replace(/continuousimprovement/i, 'Continuous Improvement')
+      .replace(/buildingtrust/i, 'Building Trust')
+      .replace(/acknowledgingothers/i, 'Acknowledging Others')
+      .replace(/activelistening/i, 'Active Listening');
     
     // Handle specific cases to give better names
     const specialCases: Record<string, string> = {
@@ -78,7 +95,7 @@ const ActivityList: React.FC<ActivityListProps> = ({
       'Creating Safe Spaces': 'Creating Safe Spaces',
       'Promoting Equity': 'Promoting Equity',
       'Leading By Example': 'Leading By Example',
-      'Self Reflection Awareness': 'Self Reflection & Awareness',
+      'Self Reflection & Awareness': 'Self Reflection & Awareness',
       'Perspective Taking': 'Perspective Taking',
       'Emotional Awareness': 'Emotional Awareness',
       'Continuous Improvement': 'Continuous Improvement',
