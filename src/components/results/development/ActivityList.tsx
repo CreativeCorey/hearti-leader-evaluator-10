@@ -33,16 +33,17 @@ const ActivityList: React.FC<ActivityListProps> = ({
   const { t } = useLanguage();
   const DimensionIcon = dimensionIcons[activeDimension] || dimensionIcons.humility;
   
-  // Get all translated strings with fallbacks
+  // Get translated strings with fallbacks
   const chooseActivitiesText = t('results.development.chooseActivitiesFor', { 
     fallback: "Choose Activities For" 
   });
   
-  // Format title correctly with dimension
+  // Get the translated dimension name
   const dimensionName = t(`dimensions.titles.${activeDimension}`, { 
     fallback: activeDimension.charAt(0).toUpperCase() + activeDimension.slice(1) 
   });
   
+  // Format title correctly with dimension
   const activitiesTitle = `${chooseActivitiesText}: ${dimensionName}`;
   
   // Create a proper description with fallback
@@ -68,9 +69,9 @@ const ActivityList: React.FC<ActivityListProps> = ({
           // Always properly format category with Title Case
           const formattedCategory = formatCategoryName(activity.category);
           
-          // Create proper category key with appropriate fallback
+          // Create proper category key for translation
           const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- &]/g, '')}`;
-          // Create proper description key with fallback
+          // Create proper description key for translation
           const descriptionKey = `activities.descriptions.${activity.id}`;
           
           // Get translated category and description with fallbacks

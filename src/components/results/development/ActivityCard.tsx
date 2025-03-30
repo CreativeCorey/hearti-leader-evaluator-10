@@ -37,7 +37,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
   const DimensionIcon = dimensionIcons[dimensionName] || Plus;
   
   // Ensure proper title case formatting for category
-  const formattedCategory = formatCategoryName(activity.category);
+  const formattedCategory = typeof activity.category === 'string' ? activity.category : formatCategoryName(activity.category);
 
   return (
     <Card 

@@ -21,6 +21,7 @@ export const useTranslatedActivities = (selectedDimension: string) => {
         // Always format the category properly with spaces and title case
         const formattedCategory = formatCategoryName(activity.category);
         
+        // Create translation keys based on activity ID and category
         const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`;
         const descriptionKey = `activities.descriptions.${activity.id}`;
         
