@@ -1,9 +1,10 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/use-auth';
 import { useLanguage } from '@/contexts/language/LanguageContext';
 import { useTheme } from '@/hooks/use-theme';
-import { MoonIcon, SunIcon } from '@radix-ui/react-icons';
+import { Moon, Sun, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -14,7 +15,6 @@ import {
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Menu } from 'lucide-react';
 
 const Header = () => {
   const { user, signOut } = useAuth();
@@ -60,7 +60,7 @@ const Header = () => {
           
           {/* Theme toggle */}
           <Button variant="ghost" size="sm" onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
-            {theme === "light" ? <MoonIcon /> : <SunIcon />}
+            {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
           </Button>
           
           {/* Auth buttons */}

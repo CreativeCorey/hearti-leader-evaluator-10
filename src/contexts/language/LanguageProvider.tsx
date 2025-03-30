@@ -14,6 +14,9 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     return (savedLanguage as SupportedLanguage) || 'en';
   });
 
+  // Define available languages
+  const availableLanguages = ['en', 'es', 'fr', 'it', 'ar', 'de', 'zh', 'ja', 'he'];
+
   // Save language preference to localStorage when it changes
   useEffect(() => {
     localStorage.setItem('preferredLanguage', currentLanguage);
@@ -38,6 +41,12 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
 
   const setLanguage = (language: SupportedLanguage) => {
     setCurrentLanguage(language);
+  };
+
+  // i18n compatible interface
+  const i18n = {
+    language: currentLanguage,
+    changeLanguage: setLanguage,
   };
 
   // Translation function
@@ -456,7 +465,13 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   };
 
   return (
-    <LanguageContext.Provider value={{ currentLanguage, setLanguage, t }}>
+    <LanguageContext.Provider value={{ 
+      currentLanguage, 
+      setLanguage, 
+      t,
+      i18n,
+      availableLanguages
+    }}>
       {children}
     </LanguageContext.Provider>
   );

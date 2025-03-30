@@ -7,6 +7,11 @@ export interface LanguageContextType {
   currentLanguage: SupportedLanguage;
   setLanguage: (language: SupportedLanguage) => void;
   t: (key: string, params?: Record<string, string>) => string;
+  i18n: {
+    language: string;
+    changeLanguage: (lang: string) => void;
+  };
+  availableLanguages: string[];
 }
 
 // Default translations for fallback
@@ -69,6 +74,11 @@ export const LanguageContext = createContext<LanguageContextType>({
   currentLanguage: 'en',
   setLanguage: () => {},
   t: defaultTranslator,
+  i18n: {
+    language: 'en',
+    changeLanguage: () => {},
+  },
+  availableLanguages: ['en'],
 });
 
 export const useLanguage = () => useContext(LanguageContext);
