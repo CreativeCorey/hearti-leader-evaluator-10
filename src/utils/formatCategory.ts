@@ -1,3 +1,4 @@
+
 /**
  * Formats activity category names by adding spaces between words
  * and ensuring proper Title Case format
@@ -13,11 +14,13 @@ export const formatCategoryName = (category: string): string => {
     .replace(/-/g, ' ')
     // Replace underscores with spaces
     .replace(/_/g, ' ')
-    // Handle ampersand spacing
-    .replace(/([a-z])&([a-z])/gi, '$1 & $2');
+    // Handle ampersand spacing - ensure spaces around &
+    .replace(/([a-zA-Z])&([a-zA-Z])/g, '$1 & $2');
   
   // Handle common category names with custom formatting
-  const lowerCaseCategory = category.toLowerCase().replace(/[-_\s]/g, '');
+  // This ensures consistent formatting for specific categories across all translations
+  const lowerCaseCategory = category.toLowerCase().replace(/[-_\s&]/g, '');
+  
   const commonCategories: Record<string, string> = {
     'activelistening': 'Active Listening',
     'selfreflection': 'Self Reflection',
@@ -56,6 +59,16 @@ export const formatCategoryName = (category: string): string => {
   // Otherwise, capitalize each word
   return formatted
     .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .map(word => {
+      // Skip empty strings
+      if (!word) return '';
+      // Don't capitalize certain words if they're not the first word
+      const lowerCaseWord = word.toLowerCase();
+      if (['a', 'an', 'the', 'and', 'but', 'or', 'for', 'nor', 'on', 'at', 'to', 'from', 'by', 'with'].includes(lowerCaseWord)) {
+        return word.toLowerCase();
+      }
+      // Capitalize first letter of each word
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
     .join(' ');
 };

@@ -19,10 +19,18 @@ export function useChat() {
   const [participants, setParticipants] = useState(0);
   const [activeTab, setActiveTab] = useState('group');
   const isMountedRef = useRef(true);
-  const channelRef = useRef<any>(null);
+  const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+  const initializationCompleted = useRef(false);
 
-  // Load initial messages
+  // Load initial messages - only run once
   useEffect(() => {
+    // Prevent duplicate initialization
+    if (initializationCompleted.current) {
+      return;
+    }
+    
+    initializationCompleted.current = true;
+    
     const loadMessages = async () => {
       try {
         setLoading(true);
@@ -57,19 +65,13 @@ export function useChat() {
       }
     };
     
-    if (isMountedRef.current) {
-      loadMessages();
-    }
-    
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, [toast]);
+    loadMessages();
+  }, [toast]); // Only depend on toast to prevent re-runs
   
   // Set up real-time subscription
   useEffect(() => {
-    // Create a channel
-    if (isMountedRef.current) {
+    // Create a channel only if not already created
+    if (!channelRef.current && isMountedRef.current) {
       channelRef.current = subscribeToMessages((newMessage) => {
         if (isMountedRef.current) {
           setMessages((current) => {
@@ -92,8 +94,12 @@ export function useChat() {
     return () => {
       isMountedRef.current = false;
       if (channelRef.current) {
+        // Properly remove channel using supabase.removeChannel
         supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
       }
+      // Reset the initialization flag when component unmounts
+      initializationCompleted.current = false;
     };
   }, []);
 

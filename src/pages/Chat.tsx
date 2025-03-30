@@ -2,7 +2,7 @@
 import { useAuth } from '@/hooks/use-auth';
 import { Card } from '@/components/ui/card';
 import { Tabs } from '@/components/ui/tabs';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import ChatHeader from '@/components/chat/ChatHeader';
 import ChatSidebar from '@/components/chat/ChatSidebar';
@@ -10,31 +10,72 @@ import MobileTabs from '@/components/chat/MobileTabs';
 import TabContent from '@/components/chat/TabContent';
 import ChatInput from '@/components/chat/ChatInput';
 import { useChat } from '@/hooks/useChat';
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 const ChatPage = () => {
   const { user } = useAuth();
-  const { messages, loading, participants, activeTab, setActiveTab } = useChat();
   const navigate = useNavigate();
-  const isInitializedRef = useRef(false);
+  const { toast } = useToast();
+  const [isLoaded, setIsLoaded] = useState(false);
   
-  // Prevent multiple initializations
+  // Initialize chat hook only after component is mounted
+  const [chatHook, setChatHook] = useState<ReturnType<typeof useChat> | null>(null);
+  
   useEffect(() => {
-    if (isInitializedRef.current) {
-      // This is a duplicate instance, navigate back
-      navigate('/');
-      return;
+    // Prevent duplicate initialization
+    if (isLoaded) return;
+    
+    try {
+      // Initialize the chat hook
+      const hook = useChat();
+      setChatHook(hook);
+      setIsLoaded(true);
+    } catch (error) {
+      console.error("Error initializing chat:", error);
+      toast({
+        title: "Chat Error",
+        description: "There was an error loading the chat. Please try again.",
+        variant: "destructive"
+      });
     }
     
-    isInitializedRef.current = true;
-    
-    // Cleanup when component unmounts
     return () => {
-      isInitializedRef.current = false;
+      // This cleanup happens when the component unmounts
+      setIsLoaded(false);
     };
-  }, [navigate]);
+  }, [isLoaded, toast]);
   
+  // Handle navigation back to the main app
+  const handleBackToAssessment = () => {
+    navigate('/');
+  };
+  
+  // If chat isn't loaded yet, show a loading state
+  if (!isLoaded || !chatHook) {
+    return (
+      <div className="container mx-auto py-6 px-4 max-w-4xl">
+        <div className="mb-4">
+          <Button 
+            variant="outline" 
+            className="flex items-center justify-center gap-2"
+            onClick={handleBackToAssessment}
+          >
+            <ArrowLeft size={16} />
+            Back to Assessment
+          </Button>
+        </div>
+        <Card className="shadow-md p-8 text-center">
+          <div className="animate-pulse">Loading chat...</div>
+        </Card>
+      </div>
+    );
+  }
+  
+  // Destructure the chat hook properties
+  const { messages, loading, participants, activeTab, setActiveTab } = chatHook;
+
   // Get chat title based on active tab
   const getChatTitle = () => {
     switch(activeTab) {
@@ -43,10 +84,6 @@ const ChatPage = () => {
       case 'group':
       default: return 'Group Chat';
     }
-  };
-
-  const handleBackToAssessment = () => {
-    navigate('/');
   };
 
   return (

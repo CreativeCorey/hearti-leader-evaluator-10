@@ -65,11 +65,11 @@ const ActivityList: React.FC<ActivityListProps> = ({
         {activities.slice(0, 9).map(activity => {
           const isSelected = selectedActivities.includes(activity.id);
           
-          // Format the category properly with improved function
+          // Always properly format category with Title Case
           const formattedCategory = formatCategoryName(activity.category);
           
           // Create proper category key with appropriate fallback
-          const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`;
+          const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- &]/g, '')}`;
           // Create proper description key with fallback
           const descriptionKey = `activities.descriptions.${activity.id}`;
           
