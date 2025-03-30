@@ -188,7 +188,9 @@ export const en = {
       focused: "Focus on",
       complete: "Complete",
       activities: "Development Activities",
-      recommendation: "We recommend selecting at least 3 behaviors to track - choose ones that address both your strengths and vulnerability areas."
+      recommendation: "We recommend selecting at least 3 behaviors to track - choose ones that address both your strengths and vulnerability areas.",
+      addToHabitTracker: "Add to Tracker",
+      selectFrequency: "Select Frequency:"
     },
     dimensions: {
       humility: "Humility",

@@ -1,4 +1,3 @@
-
 export const de = {
   common: {
     loading: "Laden...",
@@ -166,7 +165,8 @@ export const de = {
       maxActivitiesDescription: "Sie können maximal 3 Aktivitäten auswählen. Bitte entfernen Sie eine, bevor Sie eine neue hinzufügen.",
       activityAdded: "Aktivität hinzugefügt",
       activityAddedDescription: "Aktivität wurde zu Ihrem {{frequency}} Gewohnheitstracker hinzugefügt",
-      addToHabitTracker: "Zum Gewohnheitstracker hinzufügen",
+      addToHabitTracker: "Zum Gewohnheitstracker",
+      selectFrequency: "Frequenz auswählen:",
       mySavedActivities: "Meine gespeicherten Aktivitäten",
       noActivitiesSaved: "Keine gespeicherten Aktivitäten gefunden. Bitte wählen Sie einige im Entwicklungs-Tab aus.",
       tooManySaved: "Zu viele Aktivitäten gespeichert",

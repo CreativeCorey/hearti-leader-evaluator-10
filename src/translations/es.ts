@@ -1,4 +1,3 @@
-
 export const es = {
   common: {
     loading: "Cargando...",
@@ -166,7 +165,9 @@ export const es = {
       tooManySaved: "Demasiadas actividades guardadas",
       removeBeforeSaving: "Solo puedes guardar hasta 3 actividades. Por favor, elimina una antes de guardar otra.",
       mySavedActivities: "Mis Actividades Guardadas",
-      noActivitiesSaved: "No hay actividades guardadas todavía. ¡Comienza a explorar y guarda actividades que te resuenen!"
+      noActivitiesSaved: "No hay actividades guardadas todavía. ¡Comienza a explorar y guarda actividades que te resuenen!",
+      addToHabitTracker: "Añadir al Seguimiento",
+      selectFrequency: "Seleccionar Frecuencia:"
     },
     dimensions: {
       humility: "Humility",
@@ -200,5 +201,5 @@ export const es = {
     report: {
       description: "Insights y recomendaciones para ayudarte a desarrollar tus habilidades de liderazgo"
     }
-  },
+  }
 };

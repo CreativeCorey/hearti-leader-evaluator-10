@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Check, Calendar, BookmarkCheck } from 'lucide-react';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface SavedActivityActionsProps {
   isCompleted: boolean;
@@ -16,6 +17,13 @@ const SavedActivityActions: React.FC<SavedActivityActionsProps> = ({
   onShowFrequencySelector,
   onRemove
 }) => {
+  const { t } = useLanguage();
+  
+  const markCompleteText = t('results.habits.markComplete', { fallback: "Mark Complete" });
+  const completedText = t('results.habits.complete', { fallback: "Completed" });
+  const addToTrackerText = t('results.development.addToHabitTracker', { fallback: "Add to Tracker" });
+  const removeText = t('common.delete', { fallback: "Remove" });
+  
   return (
     <div className="flex flex-wrap gap-2 mt-1">
       <Button 
@@ -27,10 +35,10 @@ const SavedActivityActions: React.FC<SavedActivityActionsProps> = ({
         {isCompleted ? (
           <>
             <Check size={16} className="text-green-600" />
-            Completed
+            {completedText}
           </>
         ) : (
-          'Mark Complete'
+          markCompleteText
         )}
       </Button>
       
@@ -41,7 +49,7 @@ const SavedActivityActions: React.FC<SavedActivityActionsProps> = ({
         onClick={onShowFrequencySelector}
       >
         <Calendar size={16} />
-        Add to Tracker
+        {addToTrackerText}
       </Button>
       
       <Button 
@@ -51,7 +59,7 @@ const SavedActivityActions: React.FC<SavedActivityActionsProps> = ({
         className="text-red-500 hover:text-red-700 hover:bg-red-50"
       >
         <BookmarkCheck size={16} className="mr-1" />
-        Remove
+        {removeText}
       </Button>
     </div>
   );

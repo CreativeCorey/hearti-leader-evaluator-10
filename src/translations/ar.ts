@@ -1,4 +1,3 @@
-
 export const ar = {
   common: {
     loading: "جاري التحميل...",
@@ -141,6 +140,8 @@ export const ar = {
       subtitle: "أنشطة مخصصة لتنمية مهارات القيادة الخاصة بك",
       focused: "مركز",
       complete: "كامل",
+      addToHabitTracker: "إضافة إلى المتتبع",
+      selectFrequency: "اختر التكرار:"
     },
     dimensions: {
       humility: "Humility",

@@ -1,4 +1,3 @@
-
 export const fr = {
   common: {
     loading: "Chargement...",
@@ -152,6 +151,8 @@ export const fr = {
       subtitle: "Activités personnalisées pour développer vos compétences en leadership",
       focused: "Ciblé",
       complete: "Complet",
+      addToHabitTracker: "Ajouter au suivi",
+      selectFrequency: "Sélectionner la fréquence:"
     },
     dimensions: {
       humility: "Humility",
