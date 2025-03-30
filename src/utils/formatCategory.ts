@@ -27,7 +27,6 @@ export const formatCategoryName = (category: string): string => {
     'buildingawareness': 'Building Awareness',
     'emotionalawareness': 'Emotional Awareness',
     'emotionalregulation': 'Emotional Regulation',
-    'buildingconnections': 'Building Connections',
     'problemsolvingskills': 'Problem Solving Skills',
     'supportsystemscommunity': 'Support Systems & Community',
     'settingclearexpectations': 'Setting Clear Expectations',
