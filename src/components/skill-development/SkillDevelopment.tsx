@@ -9,7 +9,7 @@ import { formatCategoryName } from '@/utils/formatCategory';
 
 import DimensionTabs from './DimensionTabs';
 import SavedActivitiesList from './SavedActivitiesList';
-import useTranslatedActivities from './DevelopmentActivities';
+import { useTranslatedActivities } from './DevelopmentActivities';
 
 const SkillDevelopment: React.FC = () => {
   const [selectedDimension, setSelectedDimension] = useState<string>('accountability');
@@ -17,7 +17,7 @@ const SkillDevelopment: React.FC = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
 
-  // Get filtered activities for the selected dimension
+  // Get filtered activities for the selected dimension using our custom hook
   const filteredActivities = useTranslatedActivities(selectedDimension);
   
   // Ensure all activities have properly formatted categories

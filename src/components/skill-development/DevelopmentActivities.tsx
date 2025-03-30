@@ -9,18 +9,8 @@ interface DevelopmentActivitiesProps {
   selectedDimension: string;
 }
 
-const DevelopmentActivities: React.FC<DevelopmentActivitiesProps> = ({ selectedDimension }) => {
-  const translatedActivities = useTranslatedActivities(selectedDimension);
-  
-  return (
-    <div className="development-activities">
-      {/* Your activities display code */}
-      {/* This component should display the activities for the selected dimension */}
-    </div>
-  );
-};
-
-export const useTranslatedActivities = (selectedDimension: string) => {
+// The custom hook to get translated activities for a dimension
+export const useTranslatedActivities = (selectedDimension: string): SkillActivity[] => {
   const { t } = useLanguage();
 
   // Get translated activities for the selected dimension
@@ -48,6 +38,24 @@ export const useTranslatedActivities = (selectedDimension: string) => {
   };
 
   return getTranslatedActivities();
+};
+
+const DevelopmentActivities: React.FC<DevelopmentActivitiesProps> = ({ selectedDimension }) => {
+  const translatedActivities = useTranslatedActivities(selectedDimension);
+  
+  return (
+    <div className="development-activities">
+      {/* This component displays the activities for the selected dimension */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {translatedActivities.map(activity => (
+          <div key={activity.id} className="activity-card">
+            <h3>{activity.category}</h3>
+            <p>{activity.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default DevelopmentActivities;
