@@ -187,7 +187,8 @@ export const en = {
       subtitle: "Personalized activities to grow your leadership skills",
       focused: "Focus on",
       complete: "Complete",
-      activities: "Development Activities"
+      activities: "Development Activities",
+      recommendation: "We recommend selecting at least 3 behaviors to track - choose ones that address both your strengths and vulnerability areas."
     },
     dimensions: {
       humility: "Humility",
@@ -205,6 +206,7 @@ export const en = {
     },
     habits: {
       title: "Your Habits",
+      yourHabits: "Your Habits",
       addHabit: "Add Habit",
       add: "Add",
       cancel: "Cancel",
@@ -218,6 +220,10 @@ export const en = {
       weekly: "WEEKLY",
       monthly: "MONTHLY",
       noHabits: "No habits found. Click \"Add Habit\" to create one.",
+      trackerTitle: "HEARTI™ Leadership Habit Tracker",
+      trackerDescription: "Track your progress as you build consistent habits for your chosen behaviors. Complete each behavior 30 times to turn it into a lasting habit.",
+      recommendedFocus: "We recommend focusing on behaviors from your development area:",
+      addBehaviorsInstructions: "Add behaviors to your habit tracker by using the \"Add to Habit Tracker\" button in the Development tab or on your saved activities."
     },
   },
   dimensions: {

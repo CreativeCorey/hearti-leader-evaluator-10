@@ -6,6 +6,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Info } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import SwipeInstructions from './SwipeInstructions';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface ActivityListProps {
   groupedActivities: Record<string, SkillActivity[]>;
@@ -21,6 +22,7 @@ const ActivityList: React.FC<ActivityListProps> = ({
   const savedActivitiesCount = savedActivities.length;
   const isRecommendationVisible = savedActivitiesCount < 3;
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
 
   // Enhanced function to format category names with spaces for all possible cases
   const formatCategoryName = (category: string): string => {
@@ -55,7 +57,8 @@ const ActivityList: React.FC<ActivityListProps> = ({
       .replace(/continuousimprovement/i, 'Continuous Improvement')
       .replace(/buildingtrust/i, 'Building Trust')
       .replace(/acknowledgingothers/i, 'Acknowledging Others')
-      .replace(/activelistening/i, 'Active Listening');
+      .replace(/activelistening/i, 'Active Listening')
+      .replace(/perspectivetaking/i, 'Perspective Taking');
     
     // Handle specific cases to give better names
     const specialCases: Record<string, string> = {
@@ -70,10 +73,15 @@ const ActivityList: React.FC<ActivityListProps> = ({
       'Self Reflection & Awareness': 'Self Reflection & Awareness',
       'Perspective Taking': 'Perspective Taking',
       'Emotional Awareness': 'Emotional Awareness',
+      'Emotional Regulation': 'Emotional Regulation',
       'Continuous Improvement': 'Continuous Improvement',
       'Open Communication': 'Open Communication',
       'Sharing Information': 'Sharing Information',
-      'Fostering Collaboration': 'Fostering Collaboration'
+      'Fostering Collaboration': 'Fostering Collaboration',
+      'Building Trust': 'Building Trust',
+      'Building Connections': 'Building Connections',
+      'Empowering Others': 'Empowering Others',
+      'Acknowledging Others': 'Acknowledging Others'
     };
     
     // Check if we have a special case for this category
@@ -112,7 +120,9 @@ const ActivityList: React.FC<ActivityListProps> = ({
         <Alert className="bg-blue-50 border-blue-200 text-blue-800">
           <Info className="h-4 w-4 text-blue-500" />
           <AlertDescription>
-            We recommend selecting at least 3 behaviors to track - choose ones that address both your strengths and vulnerability areas.
+            {t('results.development.recommendation', {
+              fallback: "We recommend selecting at least 3 behaviors to track - choose ones that address both your strengths and vulnerability areas."
+            })}
           </AlertDescription>
         </Alert>
       )}

@@ -16,12 +16,15 @@ const HabitTracker: React.FC<HabitTrackerProps> = ({ focusDimension }) => {
   const isMobile = useIsMobile();
   const { t } = useLanguage();
   
+  // Get the properly translated title
+  const title = t('results.habits.title', { fallback: "Your Habits" });
+  
   return (
     <Card className="shadow-lg border-0 overflow-hidden">
       <CardHeader className="bg-gradient-to-r from-blue to-light-blue text-white">
         <CardTitle className="text-xl sm:text-2xl flex items-center gap-2">
           <Hexagon className="text-white" size={24} />
-          {t('results.habits.title')}
+          {title}
         </CardTitle>
         <CardDescription className="text-blue-100 flex items-center gap-2 text-sm sm:text-base">
           <Calendar className="text-blue-100" size={16} />

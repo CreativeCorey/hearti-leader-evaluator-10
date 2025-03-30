@@ -83,7 +83,8 @@ const ActivityList: React.FC<ActivityListProps> = ({
       .replace(/continuousimprovement/i, 'Continuous Improvement')
       .replace(/buildingtrust/i, 'Building Trust')
       .replace(/acknowledgingothers/i, 'Acknowledging Others')
-      .replace(/activelistening/i, 'Active Listening');
+      .replace(/activelistening/i, 'Active Listening')
+      .replace(/perspectivetaking/i, 'Perspective Taking');
     
     // Handle specific cases to give better names
     const specialCases: Record<string, string> = {
@@ -98,10 +99,15 @@ const ActivityList: React.FC<ActivityListProps> = ({
       'Self Reflection & Awareness': 'Self Reflection & Awareness',
       'Perspective Taking': 'Perspective Taking',
       'Emotional Awareness': 'Emotional Awareness',
+      'Emotional Regulation': 'Emotional Regulation',
       'Continuous Improvement': 'Continuous Improvement',
       'Open Communication': 'Open Communication',
       'Sharing Information': 'Sharing Information',
-      'Fostering Collaboration': 'Fostering Collaboration'
+      'Fostering Collaboration': 'Fostering Collaboration',
+      'Building Trust': 'Building Trust',
+      'Building Connections': 'Building Connections',
+      'Empowering Others': 'Empowering Others',
+      'Acknowledging Others': 'Acknowledging Others'
     };
     
     // Check if we have a special case for this category
