@@ -19,6 +19,7 @@ export function useChat() {
   const [participants, setParticipants] = useState(0);
   const [activeTab, setActiveTab] = useState('group');
   const isMountedRef = useRef(true);
+  const channelRef = useRef<any>(null);
 
   // Load initial messages
   useEffect(() => {
@@ -56,7 +57,9 @@ export function useChat() {
       }
     };
     
-    loadMessages();
+    if (isMountedRef.current) {
+      loadMessages();
+    }
     
     return () => {
       isMountedRef.current = false;
@@ -65,11 +68,9 @@ export function useChat() {
   
   // Set up real-time subscription
   useEffect(() => {
-    let channel;
-    
     // Create a channel
     if (isMountedRef.current) {
-      channel = subscribeToMessages((newMessage) => {
+      channelRef.current = subscribeToMessages((newMessage) => {
         if (isMountedRef.current) {
           setMessages((current) => {
             // Add message if not already in the list
@@ -90,8 +91,8 @@ export function useChat() {
     // Clean up subscription on unmount
     return () => {
       isMountedRef.current = false;
-      if (channel) {
-        supabase.removeChannel(channel);
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
       }
     };
   }, []);

@@ -1,28 +1,43 @@
 
 import React from 'react';
-import { Users } from 'lucide-react';
+import { ArrowLeft, Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface ChatHeaderProps {
-  title?: string;
-  type?: 'group' | 'space' | 'direct';
+  title: string;
+  type: 'group' | 'space' | 'direct';
   participants?: number;
+  onBack?: () => void;
 }
 
 const ChatHeader: React.FC<ChatHeaderProps> = ({ 
-  title = 'Group Chat', 
-  type = 'group',
-  participants = 0
+  title, 
+  type, 
+  participants = 0,
+  onBack
 }) => {
   return (
-    <div className="bg-gradient-to-r from-indigo-600 to-indigo-800 text-white p-4 rounded-t-lg flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <Users className="h-6 w-6" />
-        <h2 className="text-xl font-bold">{title}</h2>
-        {participants > 0 && (
-          <span className="text-sm bg-white/20 px-2 py-0.5 rounded-full">
-            {participants} {participants === 1 ? 'member' : 'members'}
-          </span>
+    <div className="flex justify-between items-center p-4 border-b">
+      <div className="flex items-center space-x-3">
+        {onBack && (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={onBack}
+            className="hidden md:flex h-9 w-9 rounded-full"
+          >
+            <ArrowLeft size={18} />
+          </Button>
         )}
+        <div>
+          <h2 className="text-lg font-semibold">{title}</h2>
+          {type === 'group' && participants > 0 && (
+            <div className="flex items-center text-sm text-muted-foreground">
+              <Users size={14} className="mr-1" />
+              <span>{participants} participants</span>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

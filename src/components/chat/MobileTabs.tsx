@@ -1,8 +1,7 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Users, Hash, User, ArrowLeft } from 'lucide-react';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Users, MessageSquare, Layout } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface MobileTabsProps {
   activeTab: string;
@@ -11,25 +10,39 @@ interface MobileTabsProps {
 
 const MobileTabs: React.FC<MobileTabsProps> = ({ activeTab, setActiveTab }) => {
   return (
-    <div className="md:hidden border-b">
-      <div className="flex items-center justify-between py-2 px-4">
-        <Link to="/" className="text-sm flex items-center text-blue-600">
-          <ArrowLeft size={16} className="mr-1" /> Back to Assessment
-        </Link>
-      </div>
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="w-full grid grid-cols-3 h-auto">
-          <TabsTrigger value="group" className="py-2">
-            <Users size={16} className="mr-2" /> Group
-          </TabsTrigger>
-          <TabsTrigger value="spaces" className="py-2">
-            <Hash size={16} className="mr-2" /> Spaces
-          </TabsTrigger>
-          <TabsTrigger value="direct" className="py-2">
-            <User size={16} className="mr-2" /> DMs
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
+    <div className="md:hidden flex border-b">
+      <button
+        onClick={() => setActiveTab('group')}
+        className={cn(
+          "flex items-center justify-center flex-1 py-3 border-b-2 border-transparent",
+          activeTab === 'group' && "border-blue-500 text-blue-600"
+        )}
+      >
+        <Users size={20} className="mr-2" />
+        <span>Group</span>
+      </button>
+      
+      <button
+        onClick={() => setActiveTab('direct')}
+        className={cn(
+          "flex items-center justify-center flex-1 py-3 border-b-2 border-transparent",
+          activeTab === 'direct' && "border-blue-500 text-blue-600"
+        )}
+      >
+        <MessageSquare size={20} className="mr-2" />
+        <span>Direct</span>
+      </button>
+      
+      <button
+        onClick={() => setActiveTab('spaces')}
+        className={cn(
+          "flex items-center justify-center flex-1 py-3 border-b-2 border-transparent",
+          activeTab === 'spaces' && "border-blue-500 text-blue-600"
+        )}
+      >
+        <Layout size={20} className="mr-2" />
+        <span>Spaces</span>
+      </button>
     </div>
   );
 };
