@@ -23,7 +23,7 @@ const dimensionIcons: Record<string, LucideIcon> = {
 const SavedActivityHeader: React.FC<SavedActivityHeaderProps> = ({ dimension, category }) => {
   const DimensionIcon = dimensionIcons[dimension] || Gauge;
   
-  // Format category to add proper spacing
+  // Format category to add proper spacing and title case
   const formattedCategory = formatCategoryName(category);
   
   return (

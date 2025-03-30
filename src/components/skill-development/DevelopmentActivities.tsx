@@ -18,7 +18,7 @@ export const useTranslatedActivities = (selectedDimension: string) => {
     return activityData
       .filter(activity => activity.dimension === selectedDimension)
       .map(activity => {
-        // Format the category properly with spaces
+        // Format the category properly with spaces and title case
         const formattedCategory = formatCategoryName(activity.category);
         
         const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`;
