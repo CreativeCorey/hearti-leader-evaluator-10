@@ -222,40 +222,43 @@ const ChatPage = () => {
             </Tabs>
           </div>
           
-          <TabsContent value="group" className="flex-1 overflow-y-auto p-4 space-y-4 m-0">
-            {loading ? (
-              <div className="flex justify-center items-center h-full">
-                <p className="text-muted-foreground">Loading messages...</p>
+          {/* Chat content area - Fix: Wrap all TabsContent in a Tabs component */}
+          <Tabs value={activeTab} className="flex-1 flex flex-col overflow-hidden">
+            <TabsContent value="group" className="flex-1 overflow-y-auto p-4 space-y-4 m-0">
+              {loading ? (
+                <div className="flex justify-center items-center h-full">
+                  <p className="text-muted-foreground">Loading messages...</p>
+                </div>
+              ) : messages.length === 0 ? (
+                <div className="flex justify-center items-center h-full">
+                  <p className="text-muted-foreground">No messages yet. Be the first to say something!</p>
+                </div>
+              ) : (
+                messages.map((message) => (
+                  <ChatMessage 
+                    key={message.id} 
+                    message={message} 
+                    isOwn={user?.id === message.user_id}
+                  />
+                ))
+              )}
+              <div ref={messagesEndRef} />
+            </TabsContent>
+            
+            <TabsContent value="spaces" className="flex-1 overflow-y-auto p-4 m-0 flex items-center justify-center">
+              <div className="text-center">
+                <h3 className="text-lg font-medium mb-2">Spaces Coming Soon</h3>
+                <p className="text-muted-foreground">Topic-based discussion spaces will be available soon!</p>
               </div>
-            ) : messages.length === 0 ? (
-              <div className="flex justify-center items-center h-full">
-                <p className="text-muted-foreground">No messages yet. Be the first to say something!</p>
+            </TabsContent>
+            
+            <TabsContent value="direct" className="flex-1 overflow-y-auto p-4 m-0 flex items-center justify-center">
+              <div className="text-center">
+                <h3 className="text-lg font-medium mb-2">Direct Messages Coming Soon</h3>
+                <p className="text-muted-foreground">1-to-1 messaging will be available soon!</p>
               </div>
-            ) : (
-              messages.map((message) => (
-                <ChatMessage 
-                  key={message.id} 
-                  message={message} 
-                  isOwn={user?.id === message.user_id}
-                />
-              ))
-            )}
-            <div ref={messagesEndRef} />
-          </TabsContent>
-          
-          <TabsContent value="spaces" className="flex-1 overflow-y-auto p-4 m-0 flex items-center justify-center">
-            <div className="text-center">
-              <h3 className="text-lg font-medium mb-2">Spaces Coming Soon</h3>
-              <p className="text-muted-foreground">Topic-based discussion spaces will be available soon!</p>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="direct" className="flex-1 overflow-y-auto p-4 m-0 flex items-center justify-center">
-            <div className="text-center">
-              <h3 className="text-lg font-medium mb-2">Direct Messages Coming Soon</h3>
-              <p className="text-muted-foreground">1-to-1 messaging will be available soon!</p>
-            </div>
-          </TabsContent>
+            </TabsContent>
+          </Tabs>
           
           <div className="border-t p-4">
             {!user && !anonymousMode ? (
