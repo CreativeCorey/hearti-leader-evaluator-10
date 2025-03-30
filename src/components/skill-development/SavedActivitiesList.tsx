@@ -5,7 +5,7 @@ import { SavedActivity } from '@/data/heartActivities';
 import { SkillActivity } from '@/data/heartActivities';
 import SavedActivityCard from './SavedActivityCard';
 import { useLanguage } from '@/contexts/language/LanguageContext';
-import { formatCategory } from '@/utils/formatCategory';
+import { formatCategoryName } from '@/utils/formatCategory';
 
 interface SavedActivitiesListProps {
   savedActivities: SavedActivity[];
@@ -44,7 +44,7 @@ const SavedActivitiesList: React.FC<SavedActivitiesListProps> = ({
               if (!activityDetails) return null;
 
               // Format the category properly with improved function
-              const formattedCategory = formatCategory(activityDetails.category);
+              const formattedCategory = formatCategoryName(activityDetails.category);
               
               // Translate the activity details with fallbacks
               const categoryKey = `activities.categories.${activityDetails.category.toLowerCase().replace(/[- ]/g, '')}`;

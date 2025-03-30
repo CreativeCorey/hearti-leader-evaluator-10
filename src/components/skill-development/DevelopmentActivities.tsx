@@ -4,7 +4,7 @@ import { SkillActivity } from '@/data/heartActivities';
 import { SavedActivity } from '@/data/heartActivities';
 import { activityData } from '@/data/heartActivities';
 import { useLanguage } from '@/contexts/language/LanguageContext';
-import { formatCategory } from '@/utils/formatCategory';
+import { formatCategoryName } from '@/utils/formatCategory';
 
 interface DevelopmentActivitiesProps {
   selectedDimension: string;
@@ -19,7 +19,7 @@ export const useTranslatedActivities = (selectedDimension: string) => {
       .filter(activity => activity.dimension === selectedDimension)
       .map(activity => {
         // Format the category properly with spaces
-        const formattedCategory = formatCategory(activity.category);
+        const formattedCategory = formatCategoryName(activity.category);
         
         const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`;
         const descriptionKey = `activities.descriptions.${activity.id}`;
