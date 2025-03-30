@@ -27,11 +27,20 @@ const Header = () => {
       <div className="container flex h-16 max-w-screen-2xl items-center p-4">
         <div className="flex gap-4 items-center">
           <Link to="/" className="flex items-center gap-2 font-semibold">
-            <img 
-              src="/lovable-uploads/eeabbcb2-eae5-4d68-8275-2fe4b955c9a9.png" 
-              alt="HEARTI Logo" 
-              className="h-8" 
-            />
+            {/* Logo - normal on desktop, smaller on mobile */}
+            {isMobile ? (
+              <img 
+                src="/lovable-uploads/d9369043-9937-4a15-8fe8-005c083613fc.png" 
+                alt="HEARTI Logo" 
+                className="h-6" 
+              />
+            ) : (
+              <img 
+                src="/lovable-uploads/eeabbcb2-eae5-4d68-8275-2fe4b955c9a9.png" 
+                alt="HEARTI Logo" 
+                className="h-8" 
+              />
+            )}
           </Link>
           <nav className="hidden md:flex gap-6 text-sm">
             <Link to="/" className={`${location.pathname === '/' ? 'text-foreground font-medium' : 'text-muted-foreground'} hover:text-foreground transition-colors`}>
