@@ -24,6 +24,7 @@ const SavedActivityHeader: React.FC<SavedActivityHeaderProps> = ({ dimension, ca
   const DimensionIcon = dimensionIcons[dimension] || Gauge;
   
   // Format category to add proper spacing and title case
+  // Make sure we're formatting the category regardless of whether it was formatted earlier
   const formattedCategory = formatCategoryName(category);
   
   return (

@@ -6,6 +6,14 @@
 export const formatCategoryName = (category: string): string => {
   if (!category) return '';
   
+  // Check if the category already has spaces, and if so, just capitalize
+  if (category.includes(' ')) {
+    return category
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
+  
   // First, handle camelCase by inserting spaces before capital letters
   let formatted = category.replace(/([a-z])([A-Z])/g, '$1 $2');
   
@@ -41,7 +49,6 @@ export const formatCategoryName = (category: string): string => {
     'buildingtrust': 'Building Trust',
     'acknowledgingothers': 'Acknowledging Others',
     'perspectivetaking': 'Perspective Taking',
-    // Removed duplicate 'buildingconnections' entry that was causing the TS error
     'buildingconnections': 'Building Connections'
   };
   

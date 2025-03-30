@@ -22,9 +22,11 @@ const ActivityCardHeader: React.FC<ActivityCardHeaderProps> = ({
 }) => {
   const { t } = useLanguage();
   
+  // Always format the category name for consistent display, regardless if it was formatted earlier
+  const formattedCategory = formatCategoryName(activity.category);
+  
   // Get category translation with fallback to formatted English category
   const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`;
-  const formattedCategory = formatCategoryName(activity.category);
   const translatedCategory = t(categoryKey, { fallback: formattedCategory });
   
   return (

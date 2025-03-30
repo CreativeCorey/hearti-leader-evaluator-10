@@ -9,6 +9,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import SavedActivityHeader from './SavedActivityHeader';
 import SavedActivityActions from './SavedActivityActions';
 import ActivityFrequencySelector from './ActivityFrequencySelector';
+import { formatCategoryName } from '@/utils/formatCategory';
 
 interface SavedActivityCardProps {
   savedActivity: SavedActivity;
@@ -26,6 +27,15 @@ const SavedActivityCard: React.FC<SavedActivityCardProps> = ({
   const isMobile = useIsMobile();
   const [frequency, setFrequency] = useState<'daily' | 'weekly' | 'monthly'>('daily');
   const [showFrequency, setShowFrequency] = useState(false);
+  
+  // Format the category name properly here too for consistency
+  const formattedCategory = formatCategoryName(activityDetails.category);
+  
+  // Create a formatted activity details object with the properly formatted category
+  const formattedActivityDetails = {
+    ...activityDetails,
+    category: formattedCategory
+  };
   
   const handleAddToHabitTracker = async () => {
     try {
@@ -65,10 +75,10 @@ const SavedActivityCard: React.FC<SavedActivityCardProps> = ({
       <div className="flex flex-col gap-3">
         <div>
           <SavedActivityHeader 
-            dimension={activityDetails.dimension} 
-            category={activityDetails.category} 
+            dimension={formattedActivityDetails.dimension} 
+            category={formattedActivityDetails.category} 
           />
-          <p className="text-sm font-medium">{activityDetails.description}</p>
+          <p className="text-sm font-medium">{formattedActivityDetails.description}</p>
         </div>
         
         {showFrequency ? (

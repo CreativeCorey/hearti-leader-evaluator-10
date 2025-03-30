@@ -44,7 +44,8 @@ const SavedActivitiesList: React.FC<SavedActivitiesListProps> = ({
               const activityDetails = activityData.find(activity => activity.id === savedActivity.activityId);
               if (!activityDetails) return null;
 
-              // Format the category properly with our utility function
+              // Always format the category properly with our utility function
+              // Do this regardless of if it was formatted elsewhere to ensure consistency
               const formattedCategory = formatCategoryName(activityDetails.category);
               
               // Translate the activity details with fallbacks
