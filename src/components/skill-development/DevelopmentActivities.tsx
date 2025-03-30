@@ -1,7 +1,6 @@
 
 import React from 'react';
-import { SkillActivity } from '@/data/heartActivities';
-import { SavedActivity } from '@/data/heartActivities';
+import { SkillActivity, SavedActivity } from '@/data/heartActivities';
 import { activityData } from '@/data/heartActivities';
 import { useLanguage } from '@/contexts/language/LanguageContext';
 import { formatCategoryName } from '@/utils/formatCategory';
@@ -9,6 +8,17 @@ import { formatCategoryName } from '@/utils/formatCategory';
 interface DevelopmentActivitiesProps {
   selectedDimension: string;
 }
+
+const DevelopmentActivities: React.FC<DevelopmentActivitiesProps> = ({ selectedDimension }) => {
+  const translatedActivities = useTranslatedActivities(selectedDimension);
+  
+  return (
+    <div className="development-activities">
+      {/* Your activities display code */}
+      {/* This component should display the activities for the selected dimension */}
+    </div>
+  );
+};
 
 export const useTranslatedActivities = (selectedDimension: string) => {
   const { t } = useLanguage();
@@ -40,4 +50,4 @@ export const useTranslatedActivities = (selectedDimension: string) => {
   return getTranslatedActivities();
 };
 
-export default useTranslatedActivities;
+export default DevelopmentActivities;

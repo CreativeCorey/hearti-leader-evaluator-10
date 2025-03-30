@@ -11,19 +11,24 @@ interface ActivityCardActionsProps {
   frequency: 'daily' | 'weekly' | 'monthly';
   maxSavedReached: boolean;
   onSave: (activity: SkillActivity, addToHabitTracker?: boolean, frequency?: 'daily' | 'weekly' | 'monthly') => void;
+  onFrequencyChange?: (frequency: 'daily' | 'weekly' | 'monthly') => void;
 }
 
 const ActivityCardActions: React.FC<ActivityCardActionsProps> = ({
   activity,
   frequency,
   maxSavedReached,
-  onSave
+  onSave,
+  onFrequencyChange
 }) => {
   const { t } = useLanguage();
   const [selectedFrequency, setSelectedFrequency] = React.useState<'daily' | 'weekly' | 'monthly'>(frequency);
 
   const handleFrequencyChange = (newFrequency: 'daily' | 'weekly' | 'monthly') => {
     setSelectedFrequency(newFrequency);
+    if (onFrequencyChange) {
+      onFrequencyChange(newFrequency);
+    }
   };
 
   return (
