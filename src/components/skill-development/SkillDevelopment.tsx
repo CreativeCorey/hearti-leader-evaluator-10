@@ -5,6 +5,7 @@ import { useActivities } from '@/hooks/useActivities';
 import { SkillActivity } from '@/data/heartActivities';
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from '@/contexts/language/LanguageContext';
+import { formatCategoryName } from '@/utils/formatCategory';
 
 import DimensionTabs from './DimensionTabs';
 import SavedActivitiesList from './SavedActivitiesList';
@@ -18,6 +19,12 @@ const SkillDevelopment: React.FC = () => {
 
   // Get filtered activities for the selected dimension
   const filteredActivities = useTranslatedActivities(selectedDimension);
+  
+  // Ensure all activities have properly formatted categories
+  const formattedActivities = filteredActivities.map(activity => ({
+    ...activity,
+    category: formatCategoryName(activity.category)
+  }));
 
   const handleSaveActivity = (activity: SkillActivity, addToHabitTracker?: boolean, frequency?: 'daily' | 'weekly' | 'monthly') => {
     if (savedActivities.length >= 3) {
@@ -51,7 +58,7 @@ const SkillDevelopment: React.FC = () => {
         <DimensionTabs 
           selectedDimension={selectedDimension}
           setSelectedDimension={setSelectedDimension}
-          filteredActivities={filteredActivities}
+          filteredActivities={formattedActivities}
           savedActivities={savedActivities}
           onSaveActivity={handleSaveActivity}
         />
@@ -60,7 +67,7 @@ const SkillDevelopment: React.FC = () => {
       <SavedActivitiesList 
         savedActivities={savedActivities}
         loading={loading}
-        activities={filteredActivities}
+        activities={formattedActivities}
         onToggleCompletion={toggleActivityCompletion}
         onRemove={removeSavedActivity}
       />

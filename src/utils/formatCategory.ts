@@ -41,6 +41,7 @@ export const formatCategoryName = (category: string): string => {
     'buildingtrust': 'Building Trust',
     'acknowledgingothers': 'Acknowledging Others',
     'perspectivetaking': 'Perspective Taking',
+    // Removed duplicate 'buildingconnections' entry that was causing the TS error
     'buildingconnections': 'Building Connections'
   };
   

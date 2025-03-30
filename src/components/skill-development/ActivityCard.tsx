@@ -7,6 +7,7 @@ import { SkillActivity, SavedActivity } from '@/data/heartActivities';
 import ActivityCardHeader from './ActivityCardHeader';
 import ActivityCardActions from './ActivityCardActions';
 import { useLanguage } from '@/contexts/language/LanguageContext';
+import { formatCategoryName } from '@/utils/formatCategory';
 
 interface ActivityCardProps {
   activity: SkillActivity;
@@ -22,15 +23,28 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
   const isSaved = savedActivities.some(saved => saved.activityId === activity.id);
   const maxSavedReached = savedActivities.length >= 3;
   
+  // Format the category name properly
+  const formattedCategory = formatCategoryName(activity.category);
+  
   // Get the properly translated activity description
+  const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- ]/g, '')}`;
   const descriptionKey = `activities.descriptions.${activity.id}`;
+  
+  const translatedCategory = t(categoryKey, { fallback: formattedCategory });
   const translatedDescription = t(descriptionKey, { fallback: activity.description });
+  
+  // Create a properly formatted activity object with translations
+  const formattedActivity = {
+    ...activity,
+    category: translatedCategory,
+    description: translatedDescription
+  };
 
   return (
     <Card className={`border ${isSaved ? 'border-indigo-300 bg-indigo-50' : ''}`}>
       <CardContent className="p-4">
         <ActivityCardHeader 
-          activity={activity} 
+          activity={formattedActivity} 
           showExpandButton={!isSaved} 
           toggleExpanded={() => setExpanded(!expanded)}
           isSaved={isSaved}
