@@ -9,7 +9,6 @@ import NotFound from './pages/NotFound';
 import AuthGuard from './components/AuthGuard';
 import AuthProvider from './contexts/auth/AuthProvider';
 import LanguageProvider from './contexts/language/LanguageProvider';
-import Chat from './pages/Chat';
 import './App.css';
 
 function App() {
@@ -22,7 +21,6 @@ function App() {
               <Route element={<AuthGuard />}>
                 <Route index element={<Index />} />
               </Route>
-              <Route path="/chat" element={<Layout><Chat /></Layout>} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="*" element={<NotFound />} />

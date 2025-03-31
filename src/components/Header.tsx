@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/use-auth';
@@ -37,9 +38,7 @@ const Header = () => {
             <Link to="/" className={`${location.pathname === '/' ? 'text-foreground font-medium' : 'text-muted-foreground'} hover:text-foreground transition-colors`}>
               Assessment
             </Link>
-            <Link to="/chat" className={`${location.pathname === '/chat' ? 'text-foreground font-medium' : 'text-muted-foreground'} hover:text-foreground transition-colors`}>
-              Group Chat
-            </Link>
+            {/* Chat link removed */}
           </nav>
         </div>
         
@@ -104,9 +103,7 @@ const Header = () => {
               <DropdownMenuItem asChild>
                 <Link to="/">Assessment</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/chat">Group Chat</Link>
-              </DropdownMenuItem>
+              {/* Chat link removed from mobile menu */}
               <DropdownMenuItem onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
                 {theme === "light" ? "Dark Mode" : "Light Mode"}
               </DropdownMenuItem>
