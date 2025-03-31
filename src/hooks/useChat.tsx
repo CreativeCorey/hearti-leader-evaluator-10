@@ -12,6 +12,7 @@ interface Message {
   created_at: string;
 }
 
+// Create a custom hook that properly handles React context
 export function useChat() {
   const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -22,7 +23,7 @@ export function useChat() {
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
   const initializationCompleted = useRef(false);
 
-  // Load initial messages - only run once
+  // Load initial messages
   useEffect(() => {
     // Prevent duplicate initialization
     if (initializationCompleted.current) {
@@ -66,6 +67,12 @@ export function useChat() {
     };
     
     loadMessages();
+
+    // Cleanup function
+    return () => {
+      isMountedRef.current = false;
+      initializationCompleted.current = false;
+    };
   }, [toast]); // Only depend on toast to prevent re-runs
   
   // Set up real-time subscription
@@ -98,8 +105,6 @@ export function useChat() {
         supabase.removeChannel(channelRef.current);
         channelRef.current = null;
       }
-      // Reset the initialization flag when component unmounts
-      initializationCompleted.current = false;
     };
   }, []);
 

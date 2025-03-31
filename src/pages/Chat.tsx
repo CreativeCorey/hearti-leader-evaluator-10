@@ -1,4 +1,5 @@
 
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { Card } from '@/components/ui/card';
 import { Tabs } from '@/components/ui/tabs';
@@ -10,50 +11,70 @@ import MobileTabs from '@/components/chat/MobileTabs';
 import TabContent from '@/components/chat/TabContent';
 import ChatInput from '@/components/chat/ChatInput';
 import { useChat } from '@/hooks/useChat';
-import { useEffect, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+
+// Define the chat state interface to avoid directly calling the hook in render
+interface ChatState {
+  messages: any[];
+  loading: boolean;
+  participants: number;
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+}
 
 const ChatPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [chatState, setChatState] = useState<ChatState | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
   // Initialize chat hook only after component is mounted
-  const [chatHook, setChatHook] = useState<ReturnType<typeof useChat> | null>(null);
-  
   useEffect(() => {
-    // Prevent duplicate initialization
-    if (isLoaded) return;
+    let isMounted = true;
     
     try {
-      // Initialize the chat hook
-      const hook = useChat();
-      setChatHook(hook);
-      setIsLoaded(true);
-    } catch (error) {
-      console.error("Error initializing chat:", error);
-      toast({
-        title: "Chat Error",
-        description: "There was an error loading the chat. Please try again.",
-        variant: "destructive"
-      });
+      // Initialize the chat properly using the hook inside the effect
+      const { messages, loading, participants, activeTab, setActiveTab } = useChat();
+      
+      if (isMounted) {
+        setChatState({
+          messages,
+          loading,
+          participants,
+          activeTab,
+          setActiveTab
+        });
+        setIsLoading(false);
+      }
+    } catch (err) {
+      console.error("Error initializing chat:", err);
+      if (isMounted) {
+        setError("Failed to load chat. Please try again later.");
+        setIsLoading(false);
+        
+        toast({
+          title: "Chat Error",
+          description: "There was an error loading the chat. Please try again.",
+          variant: "destructive"
+        });
+      }
     }
     
     return () => {
-      // This cleanup happens when the component unmounts
-      setIsLoaded(false);
+      isMounted = false;
     };
-  }, [isLoaded, toast]);
+  }, [toast]);
   
   // Handle navigation back to the main app
   const handleBackToAssessment = () => {
     navigate('/');
   };
   
-  // If chat isn't loaded yet, show a loading state
-  if (!isLoaded || !chatHook) {
+  // If chat is still loading or encountered an error
+  if (isLoading || error || !chatState) {
     return (
       <div className="container mx-auto py-6 px-4 max-w-4xl">
         <div className="mb-4">
@@ -67,14 +88,15 @@ const ChatPage = () => {
           </Button>
         </div>
         <Card className="shadow-md p-8 text-center">
-          <div className="animate-pulse">Loading chat...</div>
+          {isLoading && <div className="animate-pulse">Loading chat...</div>}
+          {error && <div className="text-red-500">{error}</div>}
         </Card>
       </div>
     );
   }
   
-  // Destructure the chat hook properties
-  const { messages, loading, participants, activeTab, setActiveTab } = chatHook;
+  // Destructure the chat state
+  const { messages, loading, participants, activeTab, setActiveTab } = chatState;
 
   // Get chat title based on active tab
   const getChatTitle = () => {

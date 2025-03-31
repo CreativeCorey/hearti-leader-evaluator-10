@@ -47,16 +47,36 @@ export const formatCategoryName = (category: string): string => {
     'costruireconnessioni': 'Costruire Connessioni',
     'ecouteactive': 'Écoute Active',
     'prisedeperspective': 'Prise de Perspective',
-    'creerdesliens': 'Créer des Liens'
+    'creerdesliens': 'Créer des Liens',
+    // Fix for specific category formatting issues seen in screenshots
+    'settingclearexpectations': 'Setting Clear Expectations',
+    'trackingprogress': 'Tracking Progress',
+    'buildingtrust': 'Building Trust',
+    'takingownership': 'Taking Ownership',
+    // Ensure single words are properly capitalized
+    'settingclearexpectations': 'Setting Clear Expectations',
+    'trackingprogress': 'Tracking Progress',
+    'buildingtrust': 'Building Trust',
   };
   
   if (commonCategories[lowerCaseCategory]) {
     return commonCategories[lowerCaseCategory];
   }
   
-  // Special case for single-word categories that are already known
-  if (/^[a-zA-Z]+$/.test(category)) {
-    return category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
+  // Handle concatenated category names like "SettingclearExpectations"
+  if (/^[A-Za-z]+$/.test(category)) {
+    // For single-word categories that don't match our dictionary
+    if (!/[A-Z]/.test(category.substring(1))) {
+      // If there are no capital letters after the first letter
+      return category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
+    }
+    
+    // Break camelCase into separate words
+    let result = category.replace(/([a-z])([A-Z])/g, '$1 $2');
+    // Capitalize first letter of each word
+    return result.split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
   }
   
   // Convert camelCase, hyphenated, or concatenated words to spaces

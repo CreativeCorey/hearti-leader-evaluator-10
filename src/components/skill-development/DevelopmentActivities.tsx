@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { SkillActivity, SavedActivity } from '@/data/heartActivities';
+import { SkillActivity } from '@/data/heartActivities';
 import { activityData } from '@/data/heartActivities';
 import { useLanguage } from '@/contexts/language/LanguageContext';
 import { formatCategoryName } from '@/utils/formatCategory';
@@ -18,18 +18,19 @@ export const useTranslatedActivities = (selectedDimension: string): SkillActivit
     return activityData
       .filter(activity => activity.dimension === selectedDimension)
       .map(activity => {
-        // Always format the category properly with spaces and title case
-        const formattedCategory = formatCategoryName(activity.category);
-        
         // Create translation keys based on activity ID and category
         const lowerCaseCategory = activity.category?.toLowerCase().replace(/[-_\s&]/g, '') || '';
         const categoryKey = `activities.categories.${lowerCaseCategory}`;
         const descriptionKey = `activities.descriptions.${activity.id}`;
         
+        // Format the category properly
+        const formattedCategory = formatCategoryName(activity.category);
+        
         // Make sure to include fallbacks
         const translatedActivity = {
           ...activity,
           description: t(descriptionKey, { fallback: activity.description }),
+          // Use translation if available, otherwise use our formatted category name
           category: t(categoryKey, { fallback: formattedCategory })
         };
         
@@ -49,7 +50,7 @@ const DevelopmentActivities: React.FC<DevelopmentActivitiesProps> = ({ selectedD
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {translatedActivities.map(activity => (
           <div key={activity.id} className="activity-card">
-            <h3>{activity.category}</h3>
+            <h3 className="text-base font-medium">{activity.category}</h3>
             <p>{activity.description}</p>
           </div>
         ))}
