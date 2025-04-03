@@ -17,14 +17,15 @@ function App() {
       <LanguageProvider>
         <Router>
           <Routes>
-            <Route path="/" element={<Layout><Outlet /></Layout>}>
+            <Route element={<Layout><Outlet /></Layout>}>
               <Route element={<AuthGuard />}>
                 <Route index element={<Index />} />
               </Route>
-              <Route path="/auth" element={<Auth />} />
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="*" element={<NotFound />} />
             </Route>
+            {/* Auth route doesn't use the Layout wrapper since it includes header in Layout */}
+            <Route path="/auth" element={<Layout><Auth /></Layout>} />
           </Routes>
           <Toaster />
         </Router>

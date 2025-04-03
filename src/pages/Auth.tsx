@@ -1,7 +1,6 @@
 
 import { useAuth } from "@/hooks/use-auth";
 import { Navigate } from "react-router-dom";
-import Layout from "@/components/Layout";
 import AuthCard from "@/components/auth/AuthCard";
 import { useEffect } from "react";
 import { useLanguage } from "@/contexts/language/LanguageContext";
@@ -28,11 +27,9 @@ const Auth = () => {
   }
 
   return (
-    <Layout>
-      <div className="flex items-center justify-center pt-4 md:pt-12">
-        <AuthCard />
-      </div>
-    </Layout>
+    <div className="flex items-center justify-center pt-4 md:pt-12">
+      <AuthCard />
+    </div>
   );
 };
 
