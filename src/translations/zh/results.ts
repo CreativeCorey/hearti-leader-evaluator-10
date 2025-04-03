@@ -57,7 +57,8 @@ export const results = {
       noActivitiesSaved: "未找到已保存的活动。请在发展选项卡中选择一些活动。",
       tooManySaved: "已保存过多活动",
       removeBeforeSaving: "在保存新活动前请移除一些活动",
-      recommendationsTitle: "HEARTI™ 领导力发展建议"
+      recommendationsTitle: "HEARTI™ 领导力发展建议",
+      selectFrequency: "选择频率："
     },
     habits: {
       title: "您的习惯",
@@ -79,7 +80,12 @@ export const results = {
       trackerTitle: "HEARTI™ 领导力习惯跟踪器",
       trackerDescription: "跟踪您在建立所选行为的一致习惯时的进展。完成每项行为30次，使其成为持久习惯。",
       recommendedFocus: "我们建议专注于来自您发展领域的行为：",
-      addBehaviorsInstructions: "通过使用开发标签中的\"添加到习惯跟踪器\"按钮或在您保存的活动中添加行为到您的习惯跟踪器。"
+      addBehaviorsInstructions: "通过使用开发标签中的\"添加到习惯跟踪器\"按钮或在您保存的活动中添加行为到您的习惯跟踪器。",
+      dimension: "维度",
+      frequency: "频率",
+      description: "描述",
+      descriptionPlaceholder: "输入习惯的描述",
+      saveHabit: "保存习惯"
     },
     report: {
       description: "帮助您发展领导能力的见解和建议",

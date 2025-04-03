@@ -1,4 +1,3 @@
-
 export const en = {
   common: {
     loading: "Loading...",
@@ -13,7 +12,8 @@ export const en = {
     back: "Back",
     complete: "Complete",
     copyright: "© PrismWork, Inc. All rights reserved.",
-    share: "Share"
+    share: "Share",
+    saved: "Saved"
   },
   header: {
     signIn: "Sign In",
@@ -192,7 +192,18 @@ export const en = {
       activities: "Development Activities",
       recommendation: "We recommend selecting at least 3 behaviors to track - choose ones that address both your strengths and vulnerability areas.",
       addToHabitTracker: "Add to Tracker",
-      selectFrequency: "Select Frequency:"
+      selectFrequency: "Select Frequency:",
+      chooseActivitiesFor: "Choose Activities For",
+      activitiesDescription: "These activities are designed to help you develop your {{dimension}} leadership dimension. Select up to 3 activities to focus on.",
+      maxActivities: "Maximum activities selected",
+      maxActivitiesDescription: "You can only select up to 3 activities. Please remove one before adding more.",
+      activityAdded: "Activity added",
+      activityAddedDescription: "Activity has been added to your {{frequency}} habit tracker",
+      mySavedActivities: "My Saved Activities",
+      noActivitiesSaved: "No saved activities found. Select some activities in the Development tab.",
+      tooManySaved: "Too many activities saved",
+      removeBeforeSaving: "Please remove one before saving another",
+      recommendationsTitle: "HEARTI™ Leadership Development Recommendations"
     },
     dimensions: {
       humility: "Humility",
@@ -220,17 +231,31 @@ export const en = {
       skipToday: "Skip today",
       streak: "Current streak: {{count}} day",
       streaks: "Current streak: {{count}} days",
-      daily: "DAILY",
-      weekly: "WEEKLY",
-      monthly: "MONTHLY",
+      daily: "Daily",
+      weekly: "Weekly",
+      monthly: "Monthly",
       noHabits: "No habits found. Click \"Add Habit\" to create one.",
       trackerTitle: "HEARTI™ Leadership Habit Tracker",
       trackerDescription: "Track your progress as you build consistent habits for your chosen behaviors. Complete each behavior 30 times to turn it into a lasting habit.",
       recommendedFocus: "We recommend focusing on behaviors from your development area:",
-      addBehaviorsInstructions: "Add behaviors to your habit tracker by using the \"Add to Habit Tracker\" button in the Development tab or on your saved activities."
+      addBehaviorsInstructions: "Add behaviors to your habit tracker by using the \"Add to Habit Tracker\" button in the Development tab or on your saved activities.",
+      allHabits: "All Habits",
+      dimension: "Dimension",
+      frequency: "Frequency",
+      description: "Description",
+      descriptionPlaceholder: "Enter a description for your habit",
+      saveHabit: "Save Habit"
     },
   },
   dimensions: {
+    titles: {
+      humility: "Humility",
+      empathy: "Empathy",
+      accountability: "Accountability",
+      resiliency: "Resiliency",
+      transparency: "Transparency",
+      inclusivity: "Inclusivity"
+    },
     descriptions: {
       humility: "The ability to recognize one's limitations and mistakes, and to be open to feedback and growth.",
       empathy: "The capacity to understand and share the feelings of others, and to respond with compassion.",
@@ -270,6 +295,26 @@ export const en = {
       "inclusivity.average": "Your inclusivity score is average. Consider focusing on developing this aspect of your leadership.",
       "inclusivity.needsImprovement": "Your inclusivity score needs improvement. This area represents an opportunity for significant growth."
     }
+  },
+  activities: {
+    categories: {
+      activelistening: "Active Listening",
+      perspectivetaking: "Perspective Taking",
+      buildingconnections: "Building Connections",
+      selfawareness: "Self Awareness",
+      feedbackseeking: "Feedback Seeking",
+      valuingothers: "Valuing Others",
+      decisionmaking: "Decision Making",
+      communicationstyle: "Communication Style",
+      teammeetings: "Team Meetings",
+      adaptability: "Adaptability",
+      mindfulness: "Mindfulness",
+      confidence: "Confidence",
+      informationsharing: "Information Sharing",
+      conversationquality: "Conversation Quality",
+      socialimpact: "Social Impact",
+      networking: "Networking",
+      teambuilding: "Team Building"
+    }
   }
 };
-

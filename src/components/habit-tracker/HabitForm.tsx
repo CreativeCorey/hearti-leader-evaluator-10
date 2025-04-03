@@ -27,32 +27,51 @@ const HabitForm: React.FC<HabitFormProps> = ({
   const isMobile = useIsMobile();
   const { t } = useLanguage();
   
+  const dimensionOptions = {
+    humility: t('dimensions.humility', { fallback: 'Humility' }),
+    empathy: t('dimensions.empathy', { fallback: 'Empathy' }),
+    accountability: t('dimensions.accountability', { fallback: 'Accountability' }),
+    resiliency: t('dimensions.resiliency', { fallback: 'Resiliency' }),
+    transparency: t('dimensions.transparency', { fallback: 'Transparency' }),
+    inclusivity: t('dimensions.inclusivity', { fallback: 'Inclusivity' })
+  };
+
+  const dimensionLabel = t('results.habits.dimension', { fallback: 'Dimension' });
+  const frequencyLabel = t('results.habits.frequency', { fallback: 'Frequency' });
+  const descriptionLabel = t('results.habits.description', { fallback: 'Description' });
+  const descriptionPlaceholder = t('results.habits.descriptionPlaceholder', { fallback: 'Enter a description for your habit' });
+  const dailyLabel = t('results.habits.daily', { fallback: 'Daily' });
+  const weeklyLabel = t('results.habits.weekly', { fallback: 'Weekly' });
+  const monthlyLabel = t('results.habits.monthly', { fallback: 'Monthly' });
+  const saveHabitLabel = t('results.habits.saveHabit', { fallback: 'Save Habit' });
+  const cancelLabel = t('common.cancel', { fallback: 'Cancel' });
+  
   return (
     <Card className="mb-6 border bg-white shadow-sm rounded-xl">
       <CardContent className={`${isMobile ? 'pt-4 px-3' : 'pt-6'}`}>
         <div className="grid gap-4">
           <div className={`grid ${isMobile ? 'grid-cols-1 gap-3' : 'grid-cols-1 md:grid-cols-2 gap-4'}`}>
             <div>
-              <Label htmlFor="habit-dimension" className="text-sm font-medium mb-1.5">{t('results.habits.dimension')}</Label>
+              <Label htmlFor="habit-dimension" className="text-sm font-medium mb-1.5">{dimensionLabel}</Label>
               <select
                 id="habit-dimension"
                 value={newHabit.dimension}
                 onChange={(e) => onHabitChange({ dimension: e.target.value as HEARTIDimension })}
                 className="w-full p-2.5 rounded-lg border border-gray-200 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               >
-                <option value="humility">{t('dimensions.humility')}</option>
-                <option value="empathy">{t('dimensions.empathy')}</option>
-                <option value="accountability">{t('dimensions.accountability')}</option>
-                <option value="resiliency">{t('dimensions.resiliency')}</option>
-                <option value="transparency">{t('dimensions.transparency')}</option>
-                <option value="inclusivity">{t('dimensions.inclusivity')}</option>
+                <option value="humility">{dimensionOptions.humility}</option>
+                <option value="empathy">{dimensionOptions.empathy}</option>
+                <option value="accountability">{dimensionOptions.accountability}</option>
+                <option value="resiliency">{dimensionOptions.resiliency}</option>
+                <option value="transparency">{dimensionOptions.transparency}</option>
+                <option value="inclusivity">{dimensionOptions.inclusivity}</option>
               </select>
             </div>
             
             <div>
               <Label htmlFor="habit-frequency" className="text-sm font-medium mb-1.5 flex items-center">
                 <Clock size={14} className="mr-1" />
-                {t('results.habits.frequency')}
+                {frequencyLabel}
               </Label>
               <div className="flex gap-2 mt-1">
                 <Toggle
@@ -60,33 +79,33 @@ const HabitForm: React.FC<HabitFormProps> = ({
                   onPressedChange={() => onHabitChange({ frequency: 'daily' })}
                   className={`flex-1 text-xs py-1 px-2 h-8 ${newHabit.frequency === 'daily' ? 'bg-blue-100 border-blue-300 text-blue-800' : ''}`}
                 >
-                  {t('results.habits.daily')}
+                  {dailyLabel}
                 </Toggle>
                 <Toggle
                   pressed={newHabit.frequency === 'weekly'}
                   onPressedChange={() => onHabitChange({ frequency: 'weekly' })}
                   className={`flex-1 text-xs py-1 px-2 h-8 ${newHabit.frequency === 'weekly' ? 'bg-purple-100 border-purple-300 text-purple-800' : ''}`}
                 >
-                  {t('results.habits.weekly')}
+                  {weeklyLabel}
                 </Toggle>
                 <Toggle
                   pressed={newHabit.frequency === 'monthly'}
                   onPressedChange={() => onHabitChange({ frequency: 'monthly' })}
                   className={`flex-1 text-xs py-1 px-2 h-8 ${newHabit.frequency === 'monthly' ? 'bg-orange-100 border-orange-300 text-orange-800' : ''}`}
                 >
-                  {t('results.habits.monthly')}
+                  {monthlyLabel}
                 </Toggle>
               </div>
             </div>
           </div>
           
           <div>
-            <Label htmlFor="habit-description" className="text-sm font-medium mb-1.5">{t('results.habits.description')}</Label>
+            <Label htmlFor="habit-description" className="text-sm font-medium mb-1.5">{descriptionLabel}</Label>
             <Input
               id="habit-description"
               value={newHabit.description}
               onChange={(e) => onHabitChange({ description: e.target.value })}
-              placeholder={t('results.habits.descriptionPlaceholder')}
+              placeholder={descriptionPlaceholder}
               className="p-2.5 rounded-lg border border-gray-200 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             />
           </div>
@@ -97,7 +116,7 @@ const HabitForm: React.FC<HabitFormProps> = ({
               className={`${isMobile ? 'w-full' : 'flex-1'} bg-indigo-600 hover:bg-indigo-700 text-white`}
             >
               <Save size={16} className="mr-2" />
-              {t('results.habits.saveHabit')}
+              {saveHabitLabel}
             </Button>
             {isMobile && (
               <Button 
@@ -106,7 +125,7 @@ const HabitForm: React.FC<HabitFormProps> = ({
                 className="w-full"
               >
                 <X size={16} className="mr-2" />
-                {t('common.cancel')}
+                {cancelLabel}
               </Button>
             )}
           </div>

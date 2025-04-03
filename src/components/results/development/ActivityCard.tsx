@@ -37,8 +37,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
   const DimensionIcon = dimensionIcons[dimensionName] || Plus;
   
   // Create translation keys for category and description
-  const lowerCaseCategory = activity.category?.toLowerCase().replace(/[-_\s&]/g, '') || '';
-  const categoryKey = `activities.categories.${lowerCaseCategory}`;
+  const rawCategory = activity.category?.toLowerCase().replace(/[-_\s&]/g, '') || '';
+  const categoryKey = `activities.categories.${rawCategory}`;
   const descriptionKey = `activities.descriptions.${activity.id}`;
   
   // Use translated values if available, otherwise use formatted values

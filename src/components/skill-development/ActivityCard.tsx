@@ -23,23 +23,20 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
   const isSaved = savedActivities.some(saved => saved.activityId === activity.id);
   const maxSavedReached = savedActivities.length >= 3;
   
-  // Ensure proper Title Case formatting for categories
-  const formattedCategory = formatCategoryName(activity.category);
-  
   // Create translation keys for category and description
-  const lowerCaseCategory = activity.category?.toLowerCase().replace(/[-_\s&]/g, '') || '';
-  const categoryKey = `activities.categories.${lowerCaseCategory}`;
+  const rawCategory = activity.category?.toLowerCase().replace(/[-_\s&]/g, '') || '';
+  const categoryKey = `activities.categories.${rawCategory}`;
   const descriptionKey = `activities.descriptions.${activity.id}`;
   
   // Use translated values if available, otherwise use formatted values
-  const translatedCategory = t(categoryKey, { fallback: formattedCategory });
-  const translatedDescription = t(descriptionKey, { fallback: activity.description });
+  const displayCategory = t(categoryKey, { fallback: formatCategoryName(activity.category) });
+  const displayDescription = t(descriptionKey, { fallback: activity.description });
   
   // Create a properly formatted activity object with translations
   const formattedActivity = {
     ...activity,
-    category: translatedCategory,
-    description: translatedDescription
+    category: displayCategory,
+    description: displayDescription
   };
 
   return (

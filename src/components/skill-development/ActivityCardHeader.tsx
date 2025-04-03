@@ -23,14 +23,14 @@ const ActivityCardHeader: React.FC<ActivityCardHeaderProps> = ({
   const { t } = useLanguage();
   
   // Format category name properly and check for translations
-  const lowerCaseCategory = activity.category?.toLowerCase().replace(/[-_\s&]/g, '') || '';
-  const translationKey = `activities.categories.${lowerCaseCategory}`;
+  const rawCategory = activity.category?.toLowerCase().replace(/[-_\s&]/g, '') || '';
+  const translationKey = `activities.categories.${rawCategory}`;
   
   // First try to get the translated category
   const translatedCategory = t(translationKey, { fallback: '' });
   
   // If no translation is found, use the formatCategoryName utility
-  const categoryDisplay = translatedCategory || formatCategoryName(activity.category);
+  const displayCategory = translatedCategory || formatCategoryName(activity.category);
   
   return (
     <div className="flex items-start justify-between mb-3">
@@ -38,7 +38,7 @@ const ActivityCardHeader: React.FC<ActivityCardHeaderProps> = ({
         {isSaved && (
           <BookmarkCheck size={18} className="text-indigo-500 mr-1.5" />
         )}
-        <h3 className="text-base font-medium text-indigo-600 dark:text-white dark:font-bold activity-header">{categoryDisplay}</h3>
+        <h3 className="text-base font-medium text-indigo-600 dark:text-white dark:font-bold activity-header">{displayCategory}</h3>
       </div>
       
       {showExpandButton && toggleExpanded && (
