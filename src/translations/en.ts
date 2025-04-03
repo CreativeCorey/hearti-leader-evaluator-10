@@ -1,3 +1,4 @@
+
 export const en = {
   common: {
     loading: "Loading...",
@@ -137,7 +138,8 @@ export const en = {
       "56": "I initiate conversations about challenging diversity and inclusion topics.",
       "57": "I actively sponsor people from underrepresented communities.",
       "58": "I ask BIPOC and LGBTQ+ colleagues about their experience in our work environment.",
-      "59": "I collaborate with diverse talent to ensure our workplace programs and policies are inclusive."
+      "59": "I collaborate with diverse talent to ensure our workplace programs and policies are inclusive.",
+      "60": "I consider white candidates when hiring, referring, and promoting teammates."
     }
   },
   tabs: {
@@ -270,3 +272,4 @@ export const en = {
     }
   }
 };
+

@@ -72,4 +72,6 @@ export const questions: HEARTIQuestion[] = [
   { id: 57, dimension: 'inclusivity', text: 'I actively sponsor people from underrepresented communities.' },
   { id: 58, dimension: 'inclusivity', text: 'I ask BIPOC and LGBTQ+ colleagues about their experience in our work environment.' },
   { id: 59, dimension: 'inclusivity', text: 'I collaborate with diverse talent to ensure our workplace programs and policies are inclusive.' },
+  { id: 60, dimension: 'inclusivity', text: 'I consider white candidates when hiring, referring, and promoting teammates.' },
 ];
+
