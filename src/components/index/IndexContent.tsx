@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { HEARTIAssessment, UserProfile } from '@/types';
-import HeaderSection from '@/components/assessment/HeaderSection';
 import AssessmentTabs from '@/components/assessment/AssessmentTabs';
 import SyncDialog from '@/components/sync/SyncDialog';
 
@@ -27,37 +26,26 @@ interface IndexContentProps {
   sendLatestToSheets: (assessment?: HEARTIAssessment) => Promise<void>;
   configuringWorkloadIdentity: boolean;
   isMobile: boolean;
+  viewTransitioning?: boolean;
 }
 
 const IndexContent: React.FC<IndexContentProps> = ({
-  profile,
   activeTab,
   setActiveTab,
   userAssessments,
   latestAssessment,
-  googleConnection,
-  isSupabaseEnabled,
   testingSheets,
   syncDialogOpen,
   syncStatus,
-  handleToggleSupabase,
   handleAssessmentComplete,
   handleConfirmSync,
   handleCancelSync,
   handleSyncDialogClose,
   sendLatestToSheets,
-  isMobile
+  viewTransitioning
 }) => {
   return (
-    <div className={`container max-w-6xl mx-auto p-4 ${isMobile ? 'pt-20' : 'pt-8'}`}>
-      <HeaderSection 
-        profile={profile}
-        isSupabaseEnabled={isSupabaseEnabled}
-        handleToggleSupabase={handleToggleSupabase}
-        googleConnection={googleConnection}
-        isMobile={isMobile}
-      />
-      
+    <>
       <AssessmentTabs 
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -66,9 +54,8 @@ const IndexContent: React.FC<IndexContentProps> = ({
         onComplete={handleAssessmentComplete}
         testingSheets={testingSheets}
         sendLatestToSheets={() => latestAssessment && sendLatestToSheets(latestAssessment)}
+        viewTransitioning={viewTransitioning}
       />
-      
-      {/* Debug and development tools are hidden */}
       
       <SyncDialog
         open={syncDialogOpen}
@@ -77,7 +64,7 @@ const IndexContent: React.FC<IndexContentProps> = ({
         onConfirm={handleConfirmSync}
         onCancel={handleCancelSync}
       />
-    </div>
+    </>
   );
 };
 
