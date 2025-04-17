@@ -1,45 +1,78 @@
 
-import React from 'react';
-import { Sparkles, Medal } from 'lucide-react';
+import React, { useState } from 'react';
+import { MoreHorizontal, Trash2, Ban } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { useLanguage } from '@/contexts/language/LanguageContext';
+import { HabitItemActionsProps } from '@/types';
 
-interface HabitItemActionsProps {
-  streak: number;
-  completedCount: number;
-  goal: number;
-}
-
-const HabitItemActions: React.FC<HabitItemActionsProps> = ({ 
-  streak, 
-  completedCount,
-  goal
+const HabitItemActions: React.FC<HabitItemActionsProps> = ({
+  id,
+  onDelete,
+  onSkipToday,
+  isCompletedToday,
+  skippedToday
 }) => {
-  // Calculate progress percentage
-  const progress = Math.min(Math.round((completedCount / goal) * 100), 100);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const { t } = useLanguage();
   
   return (
-    <div className="flex items-center justify-between mt-2 pl-2 pr-1">
-      <div className="flex items-center space-x-1 text-xs text-gray-500">
-        {streak > 0 && (
-          <div className="flex items-center text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
-            <Sparkles size={12} className="mr-1" />
-            <span className="font-medium">{streak} day streak</span>
-          </div>
-        )}
-      </div>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="sm" className="px-1">
+            <MoreHorizontal size={18} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-44">
+          {!isCompletedToday && !skippedToday && (
+            <DropdownMenuItem onClick={() => onSkipToday(id)}>
+              <Ban className="mr-2 h-4 w-4" />
+              <span>{t('results.habits.skipToday', { fallback: "Skip Today" })}</span>
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuItem onClick={() => setDeleteDialogOpen(true)}>
+            <Trash2 className="mr-2 h-4 w-4 text-destructive" />
+            <span className="text-destructive">{t('results.habits.delete', { fallback: "Delete" })}</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
       
-      <div className="flex items-center space-x-2">
-        {completedCount >= goal ? (
-          <div className="flex items-center text-green-600 bg-green-50 px-2 py-0.5 rounded-full text-xs">
-            <Medal size={12} className="mr-1" />
-            <span className="font-medium">Mastered!</span>
-          </div>
-        ) : completedCount > 0 ? (
-          <div className="text-xs text-gray-500 px-2">
-            {progress}% complete
-          </div>
-        ) : null}
-      </div>
-    </div>
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('results.habits.deleteConfirmTitle', { fallback: "Delete Habit?" })}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('results.habits.deleteConfirmDescription', { fallback: "This action cannot be undone. This will permanently delete this habit and all of its completion history." })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('common.cancel', { fallback: "Cancel" })}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => onDelete(id)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {t('results.habits.delete', { fallback: "Delete" })}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 };
 

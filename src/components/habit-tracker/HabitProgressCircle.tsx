@@ -1,69 +1,53 @@
 
 import React from 'react';
+import { HabitProgressCircleProps } from '@/types';
 
-interface HabitProgressCircleProps {
-  completedCount: number;
-  frequency: 'daily' | 'weekly' | 'monthly';
-  completionTarget: number;
-  progress: number;
-}
-
-const HabitProgressCircle: React.FC<HabitProgressCircleProps> = ({ 
-  completedCount, 
-  frequency, 
+const HabitProgressCircle: React.FC<HabitProgressCircleProps> = ({
+  completedCount,
+  frequency,
   completionTarget,
-  progress 
+  progress
 }) => {
-  // Size and stroke width for our SVG circle
-  const size = 36;
-  const strokeWidth = 4;
-  const radius = (size - strokeWidth) / 2;
-  const circumference = radius * 2 * Math.PI;
-  
-  // Calculate the stroke dash offset based on progress (0-100%)
-  const strokeDashoffset = circumference - (progress / 100) * circumference;
+  // Convert progress to percentage for display
+  const percentage = Math.round(progress * 100);
   
   // Determine color based on progress
   const getColor = () => {
-    if (progress >= 100) return '#16a34a'; // Green for completed
-    if (progress >= 75) return '#2563eb'; // Blue for good progress
-    if (progress >= 50) return '#d97706'; // Orange for medium progress
-    if (progress >= 25) return '#ef4444'; // Red for starting progress
-    return '#94a3b8'; // Gray for low progress
+    if (progress >= 1) return '#22c55e'; // green-500
+    if (progress >= 0.7) return '#3b82f6'; // blue-500
+    if (progress >= 0.3) return '#f97316'; // orange-500
+    return '#ef4444'; // red-500
   };
   
   return (
-    <div className="relative h-9 w-9 flex items-center justify-center">
-      <svg width={size} height={size} className="transform -rotate-90">
+    <div className="relative w-10 h-10 flex items-center justify-center">
+      <svg viewBox="0 0 36 36" className="w-10 h-10">
         {/* Background circle */}
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="transparent"
-          stroke="#e5e7eb"
-          strokeWidth={strokeWidth}
+        <circle 
+          cx="18" 
+          cy="18" 
+          r="15.91549430918954" 
+          fill="none" 
+          stroke="#e5e7eb" 
+          strokeWidth="2"
         />
         
         {/* Progress circle */}
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="transparent"
-          stroke={getColor()}
-          strokeWidth={strokeWidth}
-          strokeDasharray={circumference}
-          strokeDashoffset={strokeDashoffset}
-          strokeLinecap="round"
+        <circle 
+          cx="18" 
+          cy="18" 
+          r="15.91549430918954" 
+          fill="none" 
+          stroke={getColor()} 
+          strokeWidth="2" 
+          strokeDasharray={`${progress * 100} ${100 - progress * 100}`} 
+          strokeDashoffset="25" 
+          className="transition-all duration-500"
         />
       </svg>
       
-      {/* Display progress percentage in the center */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-xs font-semibold" style={{ color: getColor() }}>
-          {progress}%
-        </span>
+      <div className="absolute inset-0 flex items-center justify-center font-medium text-xs">
+        {completedCount}
       </div>
     </div>
   );

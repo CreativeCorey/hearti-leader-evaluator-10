@@ -2,7 +2,7 @@
 import React from 'react';
 import { CheckCircle2, Circle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Habit } from '@/types';
+import { Habit, HabitItemHeaderProps, HabitProgressCircleProps, HabitItemActionsProps } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/language/LanguageContext';
 import HabitItemHeader from './HabitItemHeader';
@@ -36,6 +36,10 @@ const HabitItem: React.FC<HabitItemProps> = ({
   const completionCount = completedDates?.length || 0;
   const habitId = typeof id === 'string' ? id : index.toString();
   
+  // Calculate progress and completion target based on frequency
+  const completionTarget = frequency === 'daily' ? 30 : frequency === 'weekly' ? 12 : 3;
+  const progress = Math.min(completionCount / completionTarget, 1);
+  
   return (
     <div className={cn(
       "mb-3 p-4 border rounded-lg shadow-sm transition-all",
@@ -44,16 +48,21 @@ const HabitItem: React.FC<HabitItemProps> = ({
       "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800"
     )}>
       <HabitItemHeader
-        description={description}
+        title={description}
         dimension={dimension}
         completedToday={isCompletedToday}
         skippedToday={skippedToday}
-        frequency={frequency}
+        frequency={frequency as 'daily' | 'weekly' | 'monthly'}
       />
       
       <div className="flex items-center justify-between mt-4">
         <div className="flex items-center gap-3">
-          <HabitProgressCircle completedCount={completionCount} />
+          <HabitProgressCircle 
+            completedCount={completionCount} 
+            frequency={frequency as 'daily' | 'weekly' | 'monthly'}
+            completionTarget={completionTarget}
+            progress={progress}
+          />
           
           <div className="flex flex-col">
             <Badge variant="outline" className="text-xs mb-1 font-normal px-2">
@@ -92,7 +101,7 @@ const HabitItem: React.FC<HabitItemProps> = ({
           )}
           
           <HabitItemActions
-            habitId={habitId}
+            id={habitId}
             onDelete={onDelete}
             onSkipToday={onSkipToday}
             isCompletedToday={isCompletedToday}

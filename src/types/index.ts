@@ -1,3 +1,4 @@
+
 export interface HEARTIQuestion {
   id: string;
   text: string;
@@ -28,6 +29,7 @@ export interface HEARTIAssessment {
   dimensionScores: DimensionScores;
   overallScore: number;
   demographics?: Demographics;
+  email?: string;
 }
 
 export interface UserProfile {
@@ -51,6 +53,8 @@ export interface Habit {
   frequency: 'daily' | 'weekly' | 'monthly';
   completedDates?: string[];
   skippedDates?: string[];
+  userId: string;
+  createdAt: string;
 }
 
 export interface Demographics {
@@ -62,4 +66,49 @@ export interface Demographics {
   genderIdentity?: string;
   raceEthnicity?: string[];
   salaryRange?: string;
+}
+
+// Type for chart data
+export interface ChartData {
+  name: string;
+  value: number;
+}
+
+// Define HEARTIDimension type
+export type HEARTIDimension = 'humility' | 'empathy' | 'accountability' | 'resiliency' | 'transparency' | 'inclusivity';
+
+// Define AssessmentTab type for ResultsDisplay component
+export type AssessmentTab = 'overview' | 'dimensions' | 'dataViz' | 'report' | 'developSkills' | 'buildHabits';
+
+// Define types for demographic-related selections
+export type AgeRange = string;
+export type CompanySize = string;
+export type GenderIdentity = string;
+export type JobRole = string;
+export type ManagementLevel = string;
+
+// Define types for HabitItemHeaderProps
+export interface HabitItemHeaderProps {
+  title: string;
+  dimension: string;
+  completedToday: boolean;
+  skippedToday: boolean;
+  frequency: 'daily' | 'weekly' | 'monthly';
+}
+
+// Define types for HabitProgressCircleProps
+export interface HabitProgressCircleProps {
+  completedCount: number;
+  frequency: 'daily' | 'weekly' | 'monthly';
+  completionTarget: number;
+  progress: number;
+}
+
+// Define types for HabitItemActionsProps
+export interface HabitItemActionsProps {
+  id: string;
+  onDelete: (id: string) => void;
+  onSkipToday: (id: string) => void;
+  isCompletedToday: boolean;
+  skippedToday: boolean;
 }

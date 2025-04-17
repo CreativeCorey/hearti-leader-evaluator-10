@@ -5,9 +5,8 @@ import { Card } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { useLanguage } from '@/contexts/language/LanguageContext';
 import { useIsMobile } from "@/hooks/use-mobile";
-import { HEARTIAssessment } from '@/types';
+import { HEARTIAssessment, AssessmentTab } from '@/types';
 import { useViewTransitions } from '@/hooks/useViewTransitions';
-import { AssessmentTab } from '@/components/assessment/AssessmentTabs';
 import OverviewTabContent from '@/components/results/tabs/OverviewTabContent';
 import DimensionsTabContent from '@/components/results/tabs/DimensionsTabContent';
 import ComparisonTabContent from '@/components/results/tabs/ComparisonTabContent';
@@ -141,19 +140,33 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
         </TabsContent>
 
         <TabsContent value="dataViz" className="p-0 m-0">
-          <ComparisonTabContent assessment={assessment} allAssessments={allAssessments} />
+          <ComparisonTabContent assessment={assessment} assessments={allAssessments} />
         </TabsContent>
 
         <TabsContent value="report" className="p-0 m-0">
-          <ReportTabContent assessment={assessment} />
+          <ReportTabContent 
+            assessment={assessment} 
+            assessments={allAssessments} 
+            reportRef={React.createRef()} 
+            onExportPDF={async () => {}} 
+            exportingPdf={false}
+          />
         </TabsContent>
 
         <TabsContent value="developSkills" className="p-0 m-0">
-          <DevelopmentTabContent assessment={assessment} />
+          <DevelopmentTabContent 
+            assessments={[assessment]} 
+            topDevelopmentArea={Object.entries(assessment.dimensionScores)
+              .sort(([, a], [, b]) => a - b)[0][0] as 'humility' | 'empathy' | 'accountability' | 'resiliency' | 'transparency' | 'inclusivity'}
+          />
         </TabsContent>
 
         <TabsContent value="buildHabits" className="p-0 m-0">
-          <HabitTabContent assessment={assessment} onRefreshAssessments={onRefreshAssessments} />
+          <HabitTabContent 
+            topDevelopmentArea={Object.entries(assessment.dimensionScores)
+              .sort(([, a], [, b]) => a - b)[0][0] as 'humility' | 'empathy' | 'accountability' | 'resiliency' | 'transparency' | 'inclusivity'} 
+            onRefreshAssessments={onRefreshAssessments}
+          />
         </TabsContent>
       </Tabs>
     </Card>
