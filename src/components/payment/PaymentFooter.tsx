@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
 interface PaymentFooterProps {
@@ -23,35 +25,44 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
   
   return (
     <CardFooter className="flex flex-col gap-3">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button 
-            size="lg" 
-            className={`w-full ${processingPayment ? 'bg-primary/80 hover:bg-primary/80' : ''}`}
-            disabled={buttonDisabled}
-          >
-            {processingPayment ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processing Payment...
-              </>
-            ) : (
-              <>
-                <CreditCard className="mr-2 h-4 w-4" />
-                Choose Payment Option
-              </>
-            )}
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-[240px]">
-          <DropdownMenuItem onClick={() => onPayNow('one-time')}>
-            $49 - Lifetime Access
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => onPayNow('subscription')}>
-            $7.99/month - Monthly Subscription
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <div className="space-y-2 w-full">
+        <Button 
+          size="lg" 
+          className={`w-full ${processingPayment ? 'bg-primary/80 hover:bg-primary/80' : ''}`}
+          disabled={buttonDisabled}
+          onClick={() => onPayNow('subscription')}
+        >
+          {processingPayment ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Processing Payment...
+            </>
+          ) : (
+            <>
+              <CreditCard className="mr-2 h-4 w-4" />
+              Start for $7.99/month
+            </>
+          )}
+        </Button>
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="w-full"
+              disabled={buttonDisabled}
+            >
+              See other payment options
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-[240px]">
+            <DropdownMenuItem onClick={() => onPayNow('one-time')}>
+              $49 - Lifetime Access
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
       
       {!user && (
         <p className="text-sm text-destructive">
