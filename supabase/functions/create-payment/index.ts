@@ -6,6 +6,9 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+  "Pragma": "no-cache",
+  "Expires": "0"
 };
 
 serve(async (req) => {
@@ -16,19 +19,17 @@ serve(async (req) => {
 
   console.log("Starting payment creation process");
 
-  // Get any request body (might contain cache-busting timestamp)
+  // Get any request body 
   let body;
   try {
     body = await req.json();
-    if (body.timestamp) {
-      console.log("Request with timestamp:", body.timestamp);
-    }
+    console.log("Request body:", JSON.stringify(body));
   } catch (e) {
-    // No request body or invalid JSON
-    body = {};
+    console.error("Failed to parse request body:", e);
+    body = { timestamp: Date.now() };
   }
 
-  // Create Supabase client using the anon key for user authentication.
+  // Create Supabase client using the anon key for user authentication
   const supabaseClient = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
     Deno.env.get("SUPABASE_ANON_KEY") ?? ""
@@ -36,7 +37,11 @@ serve(async (req) => {
 
   try {
     // Retrieve authenticated user
-    const authHeader = req.headers.get("Authorization")!;
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      throw new Error("No authorization header provided");
+    }
+    
     const token = authHeader.replace("Bearer ", "");
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
     
@@ -87,13 +92,12 @@ serve(async (req) => {
           message: "User has already paid for assessment results",
           timestamp: Date.now()
         }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" },
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
           status: 200,
         });
       }
     } catch (error) {
       // If there's an error checking payments, log it but continue
-      // This handles cases where the payments table doesn't exist yet
       console.log("Error checking payments, continuing:", error.message);
     }
 
@@ -128,6 +132,10 @@ serve(async (req) => {
       console.log("Created new customer:", customerId);
     }
 
+    // Get the origin from the request or use the provided one
+    const origin = body.origin || req.headers.get("origin") || "http://localhost:3000";
+    console.log("Using origin:", origin);
+
     // Create a one-time payment session
     console.log("Creating checkout session");
     const session = await stripe.checkout.sessions.create({
@@ -145,18 +153,18 @@ serve(async (req) => {
         },
       ],
       mode: "payment",
-      success_url: `${req.headers.get("origin")}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.get("origin")}/`,
+      success_url: `${origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/`,
       metadata: {
         user_id: user.id
       }
     });
     
     console.log("Checkout session created:", session.id);
+    console.log("Checkout URL:", session.url);
 
     try {
       // Try to create a pending payment record in the database
-      // This might fail if the table doesn't exist, but we'll handle it gracefully
       console.log("Creating payment record");
       await supabaseAdmin.from('payments').insert({
         user_id: user.id,
@@ -170,8 +178,19 @@ serve(async (req) => {
       console.log("Error creating payment record, continuing:", dbError.message);
     }
 
-    return new Response(JSON.stringify({ url: session.url, timestamp: Date.now() }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" },
+    // Return a proper response with the Stripe checkout URL and set cache control headers
+    return new Response(JSON.stringify({ 
+      url: session.url, 
+      sessionId: session.id,
+      timestamp: Date.now() 
+    }), {
+      headers: { 
+        ...corsHeaders, 
+        "Content-Type": "application/json", 
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0"
+      },
       status: 200,
     });
   } catch (error) {
@@ -181,7 +200,7 @@ serve(async (req) => {
       error: errorMessage,
       timestamp: Date.now()
     }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
   }

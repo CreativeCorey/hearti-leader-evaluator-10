@@ -13,18 +13,21 @@ interface PaymentFooterProps {
 }
 
 export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayNow }: PaymentFooterProps) => {
+  // Calculate if the button should be disabled due to a recent payment attempt
+  const recentAttempt = lastAttemptTime && (Date.now() - lastAttemptTime < 3000);
+  
   return (
     <CardFooter className="flex flex-col gap-3">
       <Button 
         size="lg" 
         className="w-full"
         onClick={onPayNow}
-        disabled={processingPayment || !user || lastAttemptTime && (Date.now() - lastAttemptTime < 3000)}
+        disabled={processingPayment || !user || recentAttempt}
       >
         {processingPayment ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Processing...
+            Connecting to Stripe...
           </>
         ) : (
           <>
@@ -37,9 +40,16 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
       {!user && (
         <p className="text-sm text-destructive">
           You need to be signed in to make a payment. 
-          <Button variant="link" className="p-0 h-auto text-sm" onClick={() => window.location.href = '/auth'}>
+          <Button variant="link" className="p-0 h-auto text-sm ml-1" onClick={() => window.location.href = '/auth'}>
             Sign in
           </Button>
+        </p>
+      )}
+      
+      {processingPayment && (
+        <p className="text-xs text-muted-foreground mt-2 text-center">
+          You will be redirected to Stripe's secure payment page.
+          If redirection doesn't happen automatically, check your browser's popup settings.
         </p>
       )}
     </CardFooter>

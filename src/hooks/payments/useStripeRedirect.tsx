@@ -30,7 +30,12 @@ export const useStripeRedirect = () => {
       
       console.log("Invoking create-payment function with timestamp:", Date.now());
       const { data, error } = await supabase.functions.invoke('create-payment', {
-        body: { timestamp: Date.now() } // Add timestamp to prevent caching issues
+        body: { 
+          timestamp: Date.now(),
+          userId: user.id,
+          userEmail: user.email,
+          origin: window.location.origin
+        }
       });
       
       if (error) {
@@ -53,48 +58,50 @@ export const useStripeRedirect = () => {
         return true;
       }
       
-      if (data.url) {
-        console.log("Redirecting to Stripe payment URL:", data.url);
-        toast({
-          title: "Redirecting to payment",
-          description: "You'll be redirected to complete your payment to unlock full results.",
-        });
-        
-        // Use a timeout to ensure the toast is shown before redirecting
-        setTimeout(() => {
-          try {
-            console.log("Executing redirect to:", data.url);
-            window.location.href = data.url;
-            
-            // Set a fallback timer in case the redirect doesn't happen
-            setTimeout(() => {
+      if (!data.url) {
+        throw new Error("No payment URL returned from server");
+      }
+
+      console.log("Redirecting to Stripe payment URL:", data.url);
+      toast({
+        title: "Redirecting to payment",
+        description: "You'll be redirected to complete your payment to unlock full results.",
+      });
+      
+      // Use a timeout to ensure the toast is shown before redirecting
+      setTimeout(() => {
+        try {
+          console.log("Executing redirect to:", data.url);
+          // Force redirect using direct assignment to avoid any interference
+          window.location.href = data.url;
+          
+          // If we're still here after 5 seconds, something went wrong
+          setTimeout(() => {
+            if (document.hasFocus()) {
               console.error("Redirect may have failed, still on the same page after 5 seconds");
               setRedirectError("Redirect timeout - please try again");
               setProcessingPayment(false);
-            }, 5000);
-            
-          } catch (redirectErr) {
-            console.error("Redirect execution error:", redirectErr);
-            setRedirectError("Failed to redirect to payment page");
-            setProcessingPayment(false);
-          }
-        }, 2000); // Increased delay to ensure toast is visible
-        return false;
-      } else {
-        throw new Error("No payment URL returned from server");
-      }
+            }
+          }, 5000);
+          
+        } catch (redirectErr) {
+          console.error("Redirect execution error:", redirectErr);
+          setRedirectError("Failed to redirect to payment page");
+          setProcessingPayment(false);
+        }
+      }, 1000);
+      
+      return false;
     } catch (error) {
       console.error("Payment error:", error);
       setRedirectError(error instanceof Error ? error.message : String(error));
+      setProcessingPayment(false);
       toast({
         title: "Payment Error",
         description: error instanceof Error ? error.message : "Failed to start payment process. Please try again.",
         variant: "destructive"
       });
       return false;
-    } finally {
-      // Note: We don't reset processingPayment here because we're redirecting
-      // It will be reset by the fallback timer if the redirect fails
     }
   };
 
