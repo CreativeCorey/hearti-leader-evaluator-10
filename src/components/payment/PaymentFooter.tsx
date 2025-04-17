@@ -1,42 +1,57 @@
-
 import React from 'react';
 import { CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2, CreditCard, ExternalLink } from 'lucide-react';
 import { User } from '@supabase/supabase-js';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface PaymentFooterProps {
   processingPayment: boolean;
   user: User | null;
   lastAttemptTime: number | null;
-  onPayNow: () => void;
+  onPayNow: (type: 'one-time' | 'subscription') => void;
 }
 
 export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayNow }: PaymentFooterProps) => {
-  // Calculate if the button should be disabled due to a recent payment attempt
   const recentAttempt = lastAttemptTime && (Date.now() - lastAttemptTime < 3000);
   const buttonDisabled = processingPayment || !user || recentAttempt;
   
   return (
     <CardFooter className="flex flex-col gap-3">
-      <Button 
-        size="lg" 
-        className={`w-full ${processingPayment ? 'bg-primary/80 hover:bg-primary/80' : ''}`}
-        onClick={onPayNow}
-        disabled={buttonDisabled}
-      >
-        {processingPayment ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Processing Payment...
-          </>
-        ) : (
-          <>
-            <CreditCard className="mr-2 h-4 w-4" />
-            Pay Now {lastAttemptTime ? `(Last Attempt: ${new Date(lastAttemptTime).toLocaleTimeString()})` : ''}
-          </>
-        )}
-      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button 
+            size="lg" 
+            className={`w-full ${processingPayment ? 'bg-primary/80 hover:bg-primary/80' : ''}`}
+            disabled={buttonDisabled}
+          >
+            {processingPayment ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Processing Payment...
+              </>
+            ) : (
+              <>
+                <CreditCard className="mr-2 h-4 w-4" />
+                Choose Payment Option
+              </>
+            )}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-[240px]">
+          <DropdownMenuItem onClick={() => onPayNow('one-time')}>
+            $49 - Lifetime Access
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onPayNow('subscription')}>
+            $7.99/month - Monthly Subscription
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
       
       {!user && (
         <p className="text-sm text-destructive">
