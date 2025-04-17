@@ -2,7 +2,8 @@
 import { useState, useCallback } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import { checkPaymentStatusFromAPI, validatePaymentData } from '@/utils/payment/paymentStatus';
+import { handlePaymentError, handlePaymentStatusError } from '@/utils/payment/paymentErrors';
 
 export const usePaymentStatusCheck = () => {
   const [checkingPayment, setCheckingPayment] = useState(true);
@@ -23,45 +24,24 @@ export const usePaymentStatusCheck = () => {
       setPaymentError(null);
       
       console.log("Checking payment status for user:", user.id);
-      const { data, error } = await supabase.functions.invoke('check-payment-status', {
-        body: { timestamp: Date.now() } // Add timestamp to prevent caching issues
-      });
+      const { data, error } = await checkPaymentStatusFromAPI(Date.now());
       
       if (error) {
-        console.error("Payment status check failed:", error);
-        setPaymentError("Failed to check payment status");
-        toast({
-          title: "Error",
-          description: "Failed to check payment status. Please try again.",
-          variant: "destructive"
-        });
+        handlePaymentStatusError(error, setPaymentError);
         setHasPaid(false);
-      } else if (data.error) {
-        console.error("Payment status error:", data.error);
-        setPaymentError(data.error);
-        toast({
-          title: "Error",
-          description: data.error || "Failed to check payment status",
-          variant: "destructive"
-        });
-        setHasPaid(false);
-      } else {
-        setHasPaid(data.hasPaid);
-        console.log("Payment status:", data.hasPaid ? "Paid" : "Not paid", data);
-        
-        if (data.tableExists === false) {
-          console.log("Payments table does not exist yet");
-          setPaymentError("Payment system is being set up. Please try again later.");
-        }
+        return;
       }
+      
+      const validationError = validatePaymentData(data);
+      if (validationError) {
+        setPaymentError(validationError);
+      }
+      
+      setHasPaid(data.hasPaid);
+      console.log("Payment status:", data.hasPaid ? "Paid" : "Not paid", data);
+      
     } catch (error) {
-      console.error("Payment status check error:", error);
-      setPaymentError("Failed to connect to payment service");
-      toast({
-        title: "Error",
-        description: "Failed to check payment status. Please try again.",
-        variant: "destructive"
-      });
+      handlePaymentError(error, setPaymentError);
       setHasPaid(false);
     } finally {
       setCheckingPayment(false);
@@ -75,3 +55,4 @@ export const usePaymentStatusCheck = () => {
     checkPaymentStatus
   };
 };
+
