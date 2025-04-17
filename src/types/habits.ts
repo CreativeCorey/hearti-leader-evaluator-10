@@ -2,12 +2,13 @@
 import { HEARTIDimension } from '@/types';
 
 export interface Habit {
-  id?: string;
+  id: string;
   userId: string;
   dimension: HEARTIDimension;
   description: string;
   frequency: 'daily' | 'weekly' | 'monthly';
   completedDates: string[];
+  skippedDates?: string[];
   createdAt: string;
 }
 

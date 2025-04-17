@@ -2,7 +2,7 @@
 import React from 'react';
 import { CheckCircle2, Circle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Habit, HabitItemHeaderProps, HabitProgressCircleProps, HabitItemActionsProps } from '@/types';
+import { Habit } from '@/types';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/language/LanguageContext';
 import HabitItemHeader from './HabitItemHeader';
@@ -13,22 +13,22 @@ import HabitNotificationsToggle from './HabitNotificationsToggle';
 
 interface HabitItemProps {
   habit: Habit;
-  isCompletedToday: boolean;
   onToggleComplete: (habitId: string) => void;
   onDelete: (habitId: string) => void;
-  skippedToday: boolean;
   onSkipToday: (habitId: string) => void;
   index?: number;
+  isCompletedToday?: boolean;
+  skippedToday?: boolean;
 }
 
 const HabitItem: React.FC<HabitItemProps> = ({
   habit,
-  isCompletedToday,
   onToggleComplete,
   onDelete,
-  skippedToday,
   onSkipToday,
   index = 0,
+  isCompletedToday = false,
+  skippedToday = false,
 }) => {
   const { id, description, dimension, completedDates = [], frequency } = habit;
   const { t } = useLanguage();

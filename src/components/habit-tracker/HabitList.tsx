@@ -67,8 +67,8 @@ const HabitList: React.FC<HabitListProps> = ({
         <HabitItem
           key={habit.id}
           habit={habit}
-          onComplete={onComplete}
-          onSkip={onSkip}
+          onToggleComplete={onComplete}
+          onSkipToday={onSkip}
           onDelete={onDelete}
         />
       ))}

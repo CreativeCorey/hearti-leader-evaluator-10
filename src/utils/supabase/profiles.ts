@@ -1,4 +1,3 @@
-
 import { supabase } from '../../integrations/supabase/client';
 import { UserProfile } from '../../types';
 
@@ -43,7 +42,7 @@ export const saveUserProfileToSupabase = async (profile: UserProfile): Promise<b
         name: profile.name || null,
         email: profile.email || null,
         organization_id: profile.organizationId || null,
-        role: profile.role || 'user'
+        role: (profile.role || 'user') as 'user' | 'admin'
       });
 
     if (error) {

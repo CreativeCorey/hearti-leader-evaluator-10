@@ -1,4 +1,3 @@
-
 export interface HEARTIQuestion {
   id: string;
   text: string;
@@ -18,6 +17,7 @@ export interface DimensionScores {
   resiliency: number;
   transparency: number;
   inclusivity: number;
+  [key: string]: number; // Add index signature for string keys
 }
 
 export interface HEARTIAssessment {
@@ -34,7 +34,7 @@ export interface HEARTIAssessment {
 
 export interface UserProfile {
   id: string;
-  email: string;
+  email?: string;
   name?: string;
   organization?: string;
   organizationId?: string;
@@ -46,6 +46,7 @@ export interface UserProfile {
 export interface Organization {
   id: string;
   name: string;
+  description?: string;
   created_at: string;
 }
 
@@ -139,6 +140,8 @@ export interface ReportTabContentProps {
 
 export interface DevelopmentTabContentProps {
   assessments: HEARTIAssessment[];
+  topDevelopmentArea: HEARTIDimension;
+  dimensionScores?: Record<HEARTIDimension, number>;
 }
 
 export interface HabitTabContentProps {
@@ -149,7 +152,9 @@ export interface HabitTabContentProps {
 export interface ResultsDisplayProps {
   assessment: HEARTIAssessment;
   allAssessments: HEARTIAssessment[];
-  activeTab: AssessmentTab;
-  onTabChange: (tab: AssessmentTab) => void;
+  activeTab?: AssessmentTab;
+  onTabChange?: (tab: AssessmentTab) => void;
   onRefreshAssessments?: () => void;
+  loading?: boolean;
+  className?: string;
 }

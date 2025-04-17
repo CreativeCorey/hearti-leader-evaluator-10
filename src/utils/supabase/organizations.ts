@@ -39,7 +39,7 @@ export const getOrganizationsFromSupabase = async (): Promise<Organization[]> =>
     // Transform the data structure from Supabase format to application format
     return data.map(item => ({
       id: item.id,
-      createdAt: item.created_at,
+      created_at: item.created_at,
       name: item.name,
       description: item.description || undefined
     }));
@@ -67,7 +67,7 @@ export const getOrganizationByIdFromSupabase = async (organizationId: string): P
     // Transform the data structure from Supabase format to application format
     return {
       id: data.id,
-      createdAt: data.created_at,
+      created_at: data.created_at,
       name: data.name,
       description: data.description || undefined
     };

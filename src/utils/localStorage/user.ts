@@ -1,4 +1,3 @@
-
 import { v4 as uuidv4 } from 'uuid';
 import { UserProfile } from '../../types';
 import { ensureUserProfileExists } from '../supabase/profiles';
@@ -78,6 +77,7 @@ export const getUserProfile = async (): Promise<UserProfile | null> => {
     // If no profile exists, create a minimal one
     const minimalProfile: UserProfile = {
       id: userId,
+      email: `anonymous@${userId.substring(0, 8)}.com`,
       createdAt: new Date().toISOString(),
     };
     
