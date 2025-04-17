@@ -56,7 +56,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[240px]">
             <DropdownMenuItem onClick={() => onPayNow('one-time')}>
-              Lifetime Access - One Payment: $54.00
+              Full Access - One Payment: $54.00
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
