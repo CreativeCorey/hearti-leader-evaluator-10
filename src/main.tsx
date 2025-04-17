@@ -1,10 +1,32 @@
 
-import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
-import './styles/index.css'
-import { initializeAnalytics } from './utils/analytics'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import App from './App'
+import '@/styles/index.css'
+import { ThemeProvider } from './hooks/use-theme'
+import { initNotifications } from './services/notificationService'
 
-// Initialize Google Analytics with your measurement ID
-initializeAnalytics('G-BS7VZ4FXK6');
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+})
 
-createRoot(document.getElementById("root")!).render(<App />);
+// Initialize notification service
+if (typeof window !== 'undefined') {
+  initNotifications();
+}
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <ThemeProvider defaultTheme="system" storageKey="hearti-theme">
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    </ThemeProvider>
+  </React.StrictMode>,
+)

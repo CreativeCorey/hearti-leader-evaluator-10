@@ -38,7 +38,8 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
     assessmentComplete,
     completeAssessmentQuestions,
     handleDemographicsComplete,
-    handleSkipDemographics
+    handleSkipDemographics,
+    previousDemographics
   } = useAssessmentCompletion(answers, currentUser, onComplete);
   
   // Load saved progress from localStorage when component initializes
@@ -139,8 +140,9 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
     progressPercentage,
     transition,
     assessmentComplete,
-    processingPayment: false, // No payment processing
+    processingPayment: false, // No payment processing yet
     handleDemographicsComplete,
-    handleSkipDemographics
+    handleSkipDemographics,
+    previousDemographics
   };
 };

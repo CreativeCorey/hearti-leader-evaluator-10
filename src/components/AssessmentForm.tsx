@@ -34,7 +34,8 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     assessmentComplete,
     processingPayment,
     handleDemographicsComplete,
-    handleSkipDemographics
+    handleSkipDemographics,
+    previousDemographics
   } = useAssessmentForm(onComplete);
 
   // Loading state while initializing form
@@ -63,7 +64,8 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     return (
       <DemographicForm 
         onComplete={handleDemographicsComplete} 
-        onSkip={handleSkipDemographics} 
+        onSkip={handleSkipDemographics}
+        existingDemographics={previousDemographics}
       />
     );
   }

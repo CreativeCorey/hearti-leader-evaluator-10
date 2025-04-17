@@ -9,7 +9,7 @@ import {
   Demographics
 } from '@/types';
 import { calculateDimensionScores, calculateOverallScore } from '@/utils/calculations';
-import { saveAssessment } from '@/utils/localStorage';
+import { saveAssessment, getCurrentUserAssessments } from '@/utils/localStorage';
 import { questions } from '@/constants/assessmentQuestions';
 
 export const useAssessmentCompletion = (
@@ -20,8 +20,31 @@ export const useAssessmentCompletion = (
   const { toast } = useToast();
   const [assessmentComplete, setAssessmentComplete] = useState(false);
   const [tempAssessment, setTempAssessment] = useState<HEARTIAssessment | null>(null);
+  const [previousDemographics, setPreviousDemographics] = useState<Demographics | undefined>(undefined);
 
-  const completeAssessmentQuestions = () => {
+  // Load previous demographics if they exist
+  const loadPreviousDemographics = async () => {
+    if (!currentUser) return;
+    
+    try {
+      const assessments = await getCurrentUserAssessments();
+      if (assessments.length > 0) {
+        // Sort by date (newest first)
+        const sortedAssessments = [...assessments].sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+        
+        // Get the most recent demographics
+        if (sortedAssessments[0].demographics) {
+          setPreviousDemographics(sortedAssessments[0].demographics);
+        }
+      }
+    } catch (error) {
+      console.error("Error loading previous demographics:", error);
+    }
+  };
+
+  const completeAssessmentQuestions = async () => {
     if (!currentUser) {
       toast({
         title: "Error",
@@ -40,6 +63,9 @@ export const useAssessmentCompletion = (
       });
       return;
     }
+    
+    // Load previous demographics before showing the form
+    await loadPreviousDemographics();
     
     const finalAnswers = answers.map(answer => {
       const question = questions.find(q => q.id === answer.questionId);
@@ -126,6 +152,7 @@ export const useAssessmentCompletion = (
     assessmentComplete,
     completeAssessmentQuestions,
     handleDemographicsComplete,
-    handleSkipDemographics
+    handleSkipDemographics,
+    previousDemographics
   };
 };

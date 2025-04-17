@@ -6,6 +6,7 @@ import Index from './pages/Index';
 import Auth from './pages/Auth';
 import AuthCallback from './pages/AuthCallback';
 import NotFound from './pages/NotFound';
+import PaymentSuccess from './pages/PaymentSuccess';
 import AuthGuard from './components/AuthGuard';
 import AuthProvider from './contexts/auth/AuthProvider';
 import LanguageProvider from './contexts/language/LanguageProvider';
@@ -22,10 +23,10 @@ function App() {
                 <Route index element={<Index />} />
               </Route>
               <Route path="/auth/callback" element={<AuthCallback />} />
+              <Route path="/payment-success" element={<PaymentSuccess />} />
+              <Route path="/auth" element={<Auth />} />
               <Route path="*" element={<NotFound />} />
             </Route>
-            {/* Auth route doesn't use the Layout wrapper since it includes header in Layout */}
-            <Route path="/auth" element={<Layout><Auth /></Layout>} />
           </Routes>
           <Toaster />
         </Router>
