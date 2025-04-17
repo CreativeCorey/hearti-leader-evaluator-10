@@ -57,7 +57,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[240px]">
             <DropdownMenuItem onClick={() => onPayNow('one-time')}>
-              $54 - Lifetime Access
+              $6.99/month to start your HEARTI:Leader journey today
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
