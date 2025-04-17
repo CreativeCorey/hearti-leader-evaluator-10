@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { HEARTIAssessment } from '@/types';
 import { useAssessmentPayment } from '@/hooks/useAssessmentPayment';
@@ -17,6 +18,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   onPaymentComplete 
 }) => {
   const { user } = useAuth();
+  const [debugInfo, setDebugInfo] = useState<string | null>(null);
   const { 
     processingPayment, 
     checkingPayment,
@@ -25,6 +27,15 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
     redirectToStripePayment,
     refreshPaymentStatus
   } = useAssessmentPayment(onPaymentComplete);
+
+  const handlePayNow = async () => {
+    try {
+      setDebugInfo("Starting payment process...");
+      await redirectToStripePayment(assessment);
+    } catch (err) {
+      setDebugInfo(`Payment process error: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  };
   
   // Show loading state while checking payment status
   if (checkingPayment) {
@@ -139,12 +150,19 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
           <p className="text-2xl font-bold">$49.00</p>
           <p className="text-sm text-muted-foreground">One-time payment, lifetime access</p>
         </div>
+
+        {debugInfo && (
+          <div className="mt-4 p-2 border border-amber-200 bg-amber-50 rounded text-xs">
+            <p className="font-semibold">Debug info:</p>
+            <pre className="whitespace-pre-wrap break-words">{debugInfo}</pre>
+          </div>
+        )}
       </CardContent>
       <CardFooter className="flex flex-col gap-3">
         <Button 
           size="lg" 
           className="w-full"
-          onClick={() => redirectToStripePayment(assessment)}
+          onClick={handlePayNow}
           disabled={processingPayment || !user}
         >
           {processingPayment ? (

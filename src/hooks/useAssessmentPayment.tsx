@@ -24,6 +24,7 @@ export const useAssessmentPayment = (onComplete: (assessment: HEARTIAssessment) 
       setCheckingPayment(true);
       setPaymentError(null);
       
+      console.log("Checking payment status for user:", user.id);
       const { data, error } = await supabase.functions.invoke('check-payment-status');
       
       if (error) {
@@ -121,6 +122,7 @@ export const useAssessmentPayment = (onComplete: (assessment: HEARTIAssessment) 
       
       // Redirect to Stripe checkout
       if (data.url) {
+        console.log("Redirecting to Stripe payment URL:", data.url);
         toast({
           title: "Redirecting to payment",
           description: "You'll be redirected to complete your payment to unlock full results.",
@@ -151,6 +153,7 @@ export const useAssessmentPayment = (onComplete: (assessment: HEARTIAssessment) 
     
     try {
       setPaymentError(null);
+      console.log("Verifying payment for session:", sessionId);
       const { data, error } = await supabase.functions.invoke('verify-payment', {
         body: { sessionId }
       });
