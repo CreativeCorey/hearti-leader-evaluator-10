@@ -39,7 +39,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           ) : (
             <>
               <CreditCard className="mr-2 h-4 w-4" />
-              $6.99/month to start your HEARTI:Leader journey today
+              Start for $6.99/month
             </>
           )}
         </Button>
@@ -92,4 +92,3 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
     </CardFooter>
   );
 };
-
