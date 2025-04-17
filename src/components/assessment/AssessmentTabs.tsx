@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AssessmentTab, HEARTIAssessment } from '@/types';
+import { AssessmentTab, HEARTIAssessment, ResultsDisplayProps } from '@/types';
 import ResultsDisplay from '@/components/ResultsDisplay';
 
 interface AssessmentTabsProps {

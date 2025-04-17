@@ -37,7 +37,16 @@ export interface UserProfile {
   email: string;
   name?: string;
   organization?: string;
+  organizationId?: string;
+  role?: string;
   useSupabase?: boolean;
+  createdAt?: string;
+}
+
+export interface Organization {
+  id: string;
+  name: string;
+  created_at: string;
 }
 
 export interface GoogleConnection {
@@ -68,17 +77,18 @@ export interface Demographics {
   salaryRange?: string;
 }
 
-// Type for chart data
-export interface ChartData {
+// Type for chart data - making it an array type compatible with recharts
+export type ChartData = Array<{
   name: string;
   value: number;
-}
+  fullMark?: number;
+}>;
 
 // Define HEARTIDimension type
 export type HEARTIDimension = 'humility' | 'empathy' | 'accountability' | 'resiliency' | 'transparency' | 'inclusivity';
 
 // Define AssessmentTab type for ResultsDisplay component
-export type AssessmentTab = 'overview' | 'dimensions' | 'dataViz' | 'report' | 'developSkills' | 'buildHabits';
+export type AssessmentTab = 'overview' | 'dimensions' | 'dataViz' | 'report' | 'developSkills' | 'buildHabits' | 'results' | 'take';
 
 // Define types for demographic-related selections
 export type AgeRange = string;
@@ -111,4 +121,35 @@ export interface HabitItemActionsProps {
   onSkipToday: (id: string) => void;
   isCompletedToday: boolean;
   skippedToday: boolean;
+}
+
+// Add the necessary props types for tab content components
+export interface ComparisonTabContentProps {
+  assessment: HEARTIAssessment;
+  assessments: HEARTIAssessment[];
+}
+
+export interface ReportTabContentProps {
+  assessment: HEARTIAssessment;
+  assessments: HEARTIAssessment[];
+  reportRef?: React.RefObject<HTMLDivElement>;
+  onExportPDF: () => void;
+  exportingPdf: boolean;
+}
+
+export interface DevelopmentTabContentProps {
+  assessments: HEARTIAssessment[];
+}
+
+export interface HabitTabContentProps {
+  topDevelopmentArea: HEARTIDimension;
+  onRefreshAssessments?: () => void;
+}
+
+export interface ResultsDisplayProps {
+  assessment: HEARTIAssessment;
+  allAssessments: HEARTIAssessment[];
+  activeTab: AssessmentTab;
+  onTabChange: (tab: AssessmentTab) => void;
+  onRefreshAssessments?: () => void;
 }
