@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { HEARTIAssessment } from '@/types';
@@ -101,7 +100,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
                   onClick={refreshPaymentStatus}
                   className="mt-2"
                 >
-                  Try Again
+                  Refresh Payment Status
                 </Button>
               </div>
             </AlertDescription>
@@ -115,7 +114,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
           <ul className="space-y-2 text-sm">
             <li className="flex items-start gap-2">
               <div className="rounded-full bg-primary h-5 w-5 flex items-center justify-center text-white text-xs mt-0.5">✓</div>
-              <span>Detailed assessment of all 6 leadership dimensions</span>
+              <span>Detailed assessment of all 6 leadership skills</span>
             </li>
             <li className="flex items-start gap-2">
               <div className="rounded-full bg-primary h-5 w-5 flex items-center justify-center text-white text-xs mt-0.5">✓</div>
