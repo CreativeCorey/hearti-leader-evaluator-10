@@ -11,21 +11,30 @@ const corsHeaders = {
   "Expires": "0"
 };
 
+// Helper function for logging to make debugging easier
+const logStep = (message: string, details?: any) => {
+  if (details) {
+    console.log(`[create-payment] ${message}:`, typeof details === 'object' ? JSON.stringify(details) : details);
+  } else {
+    console.log(`[create-payment] ${message}`);
+  }
+};
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
-  console.log("Starting payment creation process");
+  logStep("Starting payment creation process");
 
   // Get any request body 
   let body;
   try {
     body = await req.json();
-    console.log("Request body:", JSON.stringify(body));
+    logStep("Request body", body);
   } catch (e) {
-    console.error("Failed to parse request body:", e);
+    logStep("Failed to parse request body", e);
     body = { timestamp: Date.now() };
   }
 
@@ -46,17 +55,17 @@ serve(async (req) => {
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
     
     if (userError) {
-      console.error("Auth error:", userError.message);
+      logStep("Auth error", userError.message);
       throw new Error(`Authentication error: ${userError.message}`);
     }
     
     const user = userData.user;
     if (!user?.email) {
-      console.error("No user email found");
+      logStep("No user email found");
       throw new Error("User not authenticated or email not available");
     }
     
-    console.log("User authenticated:", user.id);
+    logStep("User authenticated", { id: user.id, email: user.email });
 
     // Use the service role key to create a new client for database operations
     const supabaseAdmin = createClient(
@@ -68,7 +77,7 @@ serve(async (req) => {
     // Check if the payments table exists and if the user has already paid
     let userHasPaid = false;
     try {
-      console.log("Checking existing payments");
+      logStep("Checking existing payments");
       const { data: payments, error: paymentsError } = await supabaseAdmin
         .from('payments')
         .select('*')
@@ -77,7 +86,7 @@ serve(async (req) => {
         .limit(1);
 
       if (paymentsError) {
-        console.error("Database error:", paymentsError.message);
+        logStep("Database error", paymentsError.message);
         // If the table doesn't exist, we'll proceed without checking existing payments
         if (!(paymentsError.message.includes("relation") && paymentsError.message.includes("does not exist"))) {
           throw paymentsError;
@@ -85,7 +94,7 @@ serve(async (req) => {
       }
 
       if (payments && payments.length > 0) {
-        console.log("User has already paid");
+        logStep("User has already paid", payments[0]);
         userHasPaid = true;
         return new Response(JSON.stringify({ 
           paid: true, 
@@ -98,11 +107,11 @@ serve(async (req) => {
       }
     } catch (error) {
       // If there's an error checking payments, log it but continue
-      console.log("Error checking payments, continuing:", error.message);
+      logStep("Error checking payments, continuing", error.message);
     }
 
     // Initialize Stripe
-    console.log("Initializing Stripe");
+    logStep("Initializing Stripe");
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) {
       throw new Error("STRIPE_SECRET_KEY is not configured");
@@ -113,15 +122,15 @@ serve(async (req) => {
     });
 
     // Check if a Stripe customer record exists for this user
-    console.log("Looking up Stripe customer");
+    logStep("Looking up Stripe customer");
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     let customerId;
     if (customers.data.length > 0) {
       customerId = customers.data[0].id;
-      console.log("Found existing customer:", customerId);
+      logStep("Found existing customer", { id: customerId });
     } else {
       // Create a new customer
-      console.log("Creating new customer");
+      logStep("Creating new customer");
       const newCustomer = await stripe.customers.create({
         email: user.email,
         metadata: {
@@ -129,12 +138,12 @@ serve(async (req) => {
         }
       });
       customerId = newCustomer.id;
-      console.log("Created new customer:", customerId);
+      logStep("Created new customer", { id: customerId });
     }
 
     // Get the origin from the request or use the provided one
     const origin = body.origin || req.headers.get("origin") || "http://localhost:3000";
-    console.log("Using origin:", origin);
+    logStep("Using origin", origin);
 
     // Include assessment in the metadata if provided
     const metadata: Record<string, string> = {
@@ -151,12 +160,12 @@ serve(async (req) => {
           metadata.dimension_scores = JSON.stringify(body.assessment.dimensionScores);
         }
       } catch (metadataErr) {
-        console.warn("Could not add assessment data to metadata:", metadataErr);
+        logStep("Could not add assessment data to metadata", metadataErr);
       }
     }
 
     // Create a one-time payment session
-    console.log("Creating checkout session with metadata:", metadata);
+    logStep("Creating checkout session with metadata", metadata);
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       line_items: [
@@ -177,12 +186,12 @@ serve(async (req) => {
       metadata: metadata
     });
     
-    console.log("Checkout session created:", session.id);
-    console.log("Checkout URL:", session.url);
+    logStep("Checkout session created", { id: session.id });
+    logStep("Checkout URL", session.url);
 
     try {
       // Try to create a pending payment record in the database
-      console.log("Creating payment record");
+      logStep("Creating payment record");
       await supabaseAdmin.from('payments').insert({
         user_id: user.id,
         stripe_session_id: session.id,
@@ -192,7 +201,7 @@ serve(async (req) => {
       });
     } catch (dbError) {
       // If there's an error inserting into the payments table, log it but continue
-      console.log("Error creating payment record, continuing:", dbError.message);
+      logStep("Error creating payment record, continuing", dbError.message);
     }
 
     // Return a proper response with the Stripe checkout URL and set cache control headers
@@ -212,7 +221,7 @@ serve(async (req) => {
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error("Payment creation error:", errorMessage);
+    logStep("Payment creation error", errorMessage);
     return new Response(JSON.stringify({ 
       error: errorMessage,
       timestamp: Date.now()

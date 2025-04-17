@@ -1,5 +1,5 @@
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -11,8 +11,10 @@ export const useStripeRedirect = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const redirectTimeoutRef = useRef<number | null>(null);
+  const backupTimeoutRef = useRef<number | null>(null);
+  const lastAttemptRef = useRef<number | null>(null);
   
-  const redirectToStripePayment = async (assessment: HEARTIAssessment) => {
+  const redirectToStripePayment = useCallback(async (assessment: HEARTIAssessment) => {
     if (!user) {
       toast({
         title: "Authentication Required",
@@ -22,10 +24,23 @@ export const useStripeRedirect = () => {
       return false;
     }
     
-    // Clear any existing timeout
+    // Prevent multiple rapid clicks
+    const now = Date.now();
+    if (lastAttemptRef.current && now - lastAttemptRef.current < 3000) {
+      console.log("Throttling repeated payment attempts");
+      return false;
+    }
+    lastAttemptRef.current = now;
+    
+    // Clear any existing timeouts
     if (redirectTimeoutRef.current) {
       window.clearTimeout(redirectTimeoutRef.current);
       redirectTimeoutRef.current = null;
+    }
+    
+    if (backupTimeoutRef.current) {
+      window.clearTimeout(backupTimeoutRef.current);
+      backupTimeoutRef.current = null;
     }
     
     setProcessingPayment(true);
@@ -53,12 +68,14 @@ export const useStripeRedirect = () => {
       if (error) {
         console.error("Create payment error:", error);
         setRedirectError(error.message || "Payment creation failed");
+        setProcessingPayment(false);
         throw error;
       }
       
       if (data.error) {
         console.error("Create payment API error:", data.error);
         setRedirectError(data.error);
+        setProcessingPayment(false);
         throw new Error(data.error);
       }
       
@@ -67,10 +84,12 @@ export const useStripeRedirect = () => {
           title: "Payment Already Completed",
           description: "You've already paid for access to assessment results.",
         });
+        setProcessingPayment(false);
         return true;
       }
       
       if (!data.url) {
+        setProcessingPayment(false);
         throw new Error("No payment URL returned from server");
       }
 
@@ -80,41 +99,44 @@ export const useStripeRedirect = () => {
         description: "You'll be redirected to complete your payment to unlock full results.",
       });
       
-      // Use a timeout to ensure the toast is shown before redirecting
+      // Use a short timeout to ensure the toast is shown before redirecting
       redirectTimeoutRef.current = window.setTimeout(() => {
         try {
           console.log("Executing redirect to:", data.url);
           
-          // Create a backup plan in case direct location change fails
-          const backupTimeout = window.setTimeout(() => {
-            console.log("Trying backup redirect method");
-            const link = document.createElement('a');
-            link.href = data.url;
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
-            link.click();
-          }, 1000);
-          
           // Primary redirect method
           window.location.href = data.url;
           
-          // Set a longer timeout to check if we're still on the same page
-          window.setTimeout(() => {
+          // Create a backup plan in case direct location change fails
+          backupTimeoutRef.current = window.setTimeout(() => {
+            // If we're still on the page after 2 seconds, try alternative methods
             if (document.hasFocus()) {
-              console.error("Redirect may have failed, still on the same page after 5 seconds");
-              setRedirectError("Redirect timeout - please try again or check popup blockers");
-              setProcessingPayment(false);
-              // Clear the backup timeout if we detected an issue
-              window.clearTimeout(backupTimeout);
+              console.log("Trying backup redirect method");
+              const link = document.createElement('a');
+              link.href = data.url;
+              link.target = '_self'; // Open in same tab
+              link.rel = 'noopener noreferrer';
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              
+              // Set a longer timeout to check if we're still on the same page
+              window.setTimeout(() => {
+                if (document.hasFocus()) {
+                  console.error("Redirect may have failed, still on the same page after 5 seconds");
+                  setRedirectError("Redirect timeout - please try again or check popup blockers");
+                  setProcessingPayment(false);
+                }
+              }, 3000);
             }
-          }, 5000);
+          }, 2000);
           
         } catch (redirectErr) {
           console.error("Redirect execution error:", redirectErr);
           setRedirectError("Failed to redirect to payment page");
           setProcessingPayment(false);
         }
-      }, 1000);
+      }, 500);
       
       return false;
     } catch (error) {
@@ -128,7 +150,7 @@ export const useStripeRedirect = () => {
       });
       return false;
     }
-  };
+  }, [user, toast]);
 
   return {
     processingPayment,
