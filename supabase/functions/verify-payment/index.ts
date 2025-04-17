@@ -24,7 +24,14 @@ serve(async (req) => {
 
   try {
     // Get the session ID from the request body
-    const { sessionId } = await req.json();
+    const body = await req.json();
+    const { sessionId } = body;
+    
+    // Log timestamp if provided (for cache busting)
+    if (body.timestamp) {
+      console.log("Request with timestamp:", body.timestamp);
+    }
+    
     if (!sessionId) {
       console.error("No session ID provided");
       throw new Error("Session ID is required");
@@ -102,16 +109,20 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({ 
       paid: session.payment_status === 'paid',
-      status: session.payment_status 
+      status: session.payment_status,
+      timestamp: Date.now() // Return timestamp for cache control
     }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" },
       status: 200,
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error("Payment verification error:", errorMessage);
-    return new Response(JSON.stringify({ error: errorMessage }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    return new Response(JSON.stringify({ 
+      error: errorMessage,
+      timestamp: Date.now() // Return timestamp for cache control
+    }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" },
       status: 500,
     });
   }

@@ -20,6 +20,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   const { user } = useAuth();
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
   const [paymentAttemptCount, setPaymentAttemptCount] = useState(0);
+  const [lastAttemptTime, setLastAttemptTime] = useState<number | null>(null);
   
   const { 
     processingPayment, 
@@ -43,9 +44,32 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
     }
   }, [checkingPayment, processingPayment, hasPaid, user, refreshPaymentStatus]);
 
+  // Rescue from stuck state - if processing for too long, reset state
+  useEffect(() => {
+    if (processingPayment && lastAttemptTime) {
+      const timeoutId = setTimeout(() => {
+        const timeElapsed = Date.now() - lastAttemptTime;
+        if (timeElapsed > 20000) { // 20 seconds
+          console.log("Payment processing may be stuck, triggering refresh");
+          setDebugInfo(prev => `${prev || ""}\nPayment processing timed out after ${Math.round(timeElapsed/1000)}s, refreshing...`);
+          refreshPaymentStatus();
+          
+          // If we've been stuck for a full minute, try to recover completely
+          if (timeElapsed > 60000) {
+            window.location.reload();
+          }
+        }
+      }, 20000); // Check after 20 seconds
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [processingPayment, lastAttemptTime, refreshPaymentStatus]);
+
   const handlePayNow = async () => {
     try {
-      setDebugInfo("Starting payment process...");
+      const now = Date.now();
+      setLastAttemptTime(now);
+      setDebugInfo(`Starting payment process at ${new Date(now).toLocaleTimeString()}...`);
       setPaymentAttemptCount(prev => prev + 1);
       
       // Clear any previous payment error
@@ -54,16 +78,20 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
       // Store assessment before payment
       localStorage.setItem('pending_assessment', JSON.stringify(assessment));
       
-      await redirectToStripePayment(assessment);
+      const result = await redirectToStripePayment(assessment);
+      if (!result) {
+        setDebugInfo(prev => `${prev}\nRedirection initiated, waiting...`);
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
-      setDebugInfo(`Payment process error: ${errorMessage}`);
+      setDebugInfo(prev => `${prev}\nPayment process error: ${errorMessage}`);
       localStorage.setItem('payment_error', errorMessage);
+      refreshPaymentStatus();
     }
   };
   
   const handleRefreshStatus = () => {
-    setDebugInfo("Manually refreshing payment status...");
+    setDebugInfo(prev => `${prev || ""}\nManually refreshing payment status at ${new Date().toLocaleTimeString()}...`);
     refreshPaymentStatus();
   };
   
@@ -181,12 +209,13 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
           <p className="text-sm text-muted-foreground">One-time payment, lifetime access</p>
         </div>
 
-        {(debugInfo || paymentAttemptCount > 0) && (
+        {(debugInfo || paymentAttemptCount > 0 || lastAttemptTime) && (
           <div className="mt-4 p-2 border border-amber-200 bg-amber-50 rounded text-xs">
             <p className="font-semibold">Debug info:</p>
             <pre className="whitespace-pre-wrap break-words">
               {debugInfo || "No additional debug info"}
               {paymentAttemptCount > 0 && `\nPayment attempts: ${paymentAttemptCount}`}
+              {lastAttemptTime && `\nLast attempt: ${new Date(lastAttemptTime).toLocaleString()}`}
               {localStorage.getItem('payment_error') && 
                 `\nLast error: ${localStorage.getItem('payment_error')}`}
             </pre>
@@ -198,7 +227,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
           size="lg" 
           className="w-full"
           onClick={handlePayNow}
-          disabled={processingPayment || !user}
+          disabled={processingPayment || !user || lastAttemptTime && (Date.now() - lastAttemptTime < 3000)}
         >
           {processingPayment ? (
             <>

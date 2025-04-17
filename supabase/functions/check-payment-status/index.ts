@@ -22,6 +22,18 @@ serve(async (req) => {
   try {
     console.log("Starting payment status check");
     
+    // Get any request body (might contain cache-busting timestamp)
+    let body;
+    try {
+      body = await req.json();
+      if (body.timestamp) {
+        console.log("Request with timestamp:", body.timestamp);
+      }
+    } catch (e) {
+      // No request body or invalid JSON
+      body = {};
+    }
+    
     // Authenticate the user
     const authHeader = req.headers.get("Authorization")!;
     const token = authHeader.replace("Bearer ", "");
@@ -67,9 +79,10 @@ serve(async (req) => {
             hasPaid: false,
             paymentDetails: null,
             tableExists: false,
-            error: "Payments table not set up"
+            error: "Payments table not set up",
+            timestamp: Date.now() // Return timestamp for cache control
           }), {
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
+            headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" },
             status: 200,
           });
         }
@@ -83,9 +96,10 @@ serve(async (req) => {
       return new Response(JSON.stringify({ 
         hasPaid: payments && payments.length > 0,
         paymentDetails: payments && payments.length > 0 ? payments[0] : null,
-        tableExists: true
+        tableExists: true,
+        timestamp: Date.now() // Return timestamp for cache control
       }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" },
         status: 200,
       });
     } catch (dbError) {
@@ -97,9 +111,10 @@ serve(async (req) => {
           hasPaid: false,
           paymentDetails: null,
           tableExists: false,
-          error: "Payments table not set up"
+          error: "Payments table not set up",
+          timestamp: Date.now() // Return timestamp for cache control
         }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" },
           status: 200,
         });
       }
@@ -110,9 +125,10 @@ serve(async (req) => {
     return new Response(JSON.stringify({ 
       error: error.message,
       hasPaid: false,
-      paymentDetails: null
+      paymentDetails: null,
+      timestamp: Date.now() // Return timestamp for cache control
     }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" },
       status: 500,
     });
   }

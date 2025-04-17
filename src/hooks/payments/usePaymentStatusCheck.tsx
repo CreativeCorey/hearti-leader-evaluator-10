@@ -13,6 +13,7 @@ export const usePaymentStatusCheck = () => {
 
   const checkPaymentStatus = useCallback(async () => {
     if (!user) {
+      console.log("No user found, skipping payment status check");
       setCheckingPayment(false);
       return;
     }
@@ -22,7 +23,9 @@ export const usePaymentStatusCheck = () => {
       setPaymentError(null);
       
       console.log("Checking payment status for user:", user.id);
-      const { data, error } = await supabase.functions.invoke('check-payment-status');
+      const { data, error } = await supabase.functions.invoke('check-payment-status', {
+        body: { timestamp: Date.now() } // Add timestamp to prevent caching issues
+      });
       
       if (error) {
         console.error("Payment status check failed:", error);

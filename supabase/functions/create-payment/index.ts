@@ -16,6 +16,18 @@ serve(async (req) => {
 
   console.log("Starting payment creation process");
 
+  // Get any request body (might contain cache-busting timestamp)
+  let body;
+  try {
+    body = await req.json();
+    if (body.timestamp) {
+      console.log("Request with timestamp:", body.timestamp);
+    }
+  } catch (e) {
+    // No request body or invalid JSON
+    body = {};
+  }
+
   // Create Supabase client using the anon key for user authentication.
   const supabaseClient = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
@@ -72,9 +84,10 @@ serve(async (req) => {
         userHasPaid = true;
         return new Response(JSON.stringify({ 
           paid: true, 
-          message: "User has already paid for assessment results" 
+          message: "User has already paid for assessment results",
+          timestamp: Date.now()
         }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" },
           status: 200,
         });
       }
@@ -157,15 +170,18 @@ serve(async (req) => {
       console.log("Error creating payment record, continuing:", dbError.message);
     }
 
-    return new Response(JSON.stringify({ url: session.url }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    return new Response(JSON.stringify({ url: session.url, timestamp: Date.now() }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" },
       status: 200,
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error("Payment creation error:", errorMessage);
-    return new Response(JSON.stringify({ error: errorMessage }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    return new Response(JSON.stringify({ 
+      error: errorMessage,
+      timestamp: Date.now()
+    }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" },
       status: 500,
     });
   }
