@@ -131,7 +131,7 @@ export const useAssessmentPayment = (onComplete: (assessment: HEARTIAssessment) 
         // Small delay before redirecting to ensure toast is visible
         setTimeout(() => {
           window.location.href = data.url;
-        }, 1000);
+        }, 1500); // Increased timeout for more visibility
       } else {
         throw new Error("No payment URL returned from server");
       }
@@ -205,7 +205,6 @@ export const useAssessmentPayment = (onComplete: (assessment: HEARTIAssessment) 
     paymentError,
     redirectToStripePayment,
     verifyPayment,
-    // Add a manual refresh function
     refreshPaymentStatus: checkPaymentStatus
   };
 };

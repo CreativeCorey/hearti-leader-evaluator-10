@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { HEARTIAssessment } from '@/types';
 import { useAssessmentPayment } from '@/hooks/useAssessmentPayment';
@@ -19,6 +19,8 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
 }) => {
   const { user } = useAuth();
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
+  const [paymentAttemptCount, setPaymentAttemptCount] = useState(0);
+  
   const { 
     processingPayment, 
     checkingPayment,
@@ -28,13 +30,41 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
     refreshPaymentStatus
   } = useAssessmentPayment(onPaymentComplete);
 
+  // Add effect to periodically refresh payment status
+  useEffect(() => {
+    // Only do periodic refresh if we're not already checking and there's no payment in progress
+    if (!checkingPayment && !processingPayment && !hasPaid && user) {
+      const intervalId = setInterval(() => {
+        console.log("Auto-refreshing payment status");
+        refreshPaymentStatus();
+      }, 30000); // Check every 30 seconds
+      
+      return () => clearInterval(intervalId);
+    }
+  }, [checkingPayment, processingPayment, hasPaid, user, refreshPaymentStatus]);
+
   const handlePayNow = async () => {
     try {
       setDebugInfo("Starting payment process...");
+      setPaymentAttemptCount(prev => prev + 1);
+      
+      // Clear any previous payment error
+      localStorage.removeItem('payment_error');
+      
+      // Store assessment before payment
+      localStorage.setItem('pending_assessment', JSON.stringify(assessment));
+      
       await redirectToStripePayment(assessment);
     } catch (err) {
-      setDebugInfo(`Payment process error: ${err instanceof Error ? err.message : String(err)}`);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      setDebugInfo(`Payment process error: ${errorMessage}`);
+      localStorage.setItem('payment_error', errorMessage);
     }
+  };
+  
+  const handleRefreshStatus = () => {
+    setDebugInfo("Manually refreshing payment status...");
+    refreshPaymentStatus();
   };
   
   // Show loading state while checking payment status
@@ -81,7 +111,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={refreshPaymentStatus} 
+            onClick={handleRefreshStatus} 
             title="Refresh payment status"
             disabled={checkingPayment}
           >
@@ -108,7 +138,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  onClick={refreshPaymentStatus}
+                  onClick={handleRefreshStatus}
                   className="mt-2"
                 >
                   Refresh Payment Status
@@ -151,10 +181,15 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
           <p className="text-sm text-muted-foreground">One-time payment, lifetime access</p>
         </div>
 
-        {debugInfo && (
+        {(debugInfo || paymentAttemptCount > 0) && (
           <div className="mt-4 p-2 border border-amber-200 bg-amber-50 rounded text-xs">
             <p className="font-semibold">Debug info:</p>
-            <pre className="whitespace-pre-wrap break-words">{debugInfo}</pre>
+            <pre className="whitespace-pre-wrap break-words">
+              {debugInfo || "No additional debug info"}
+              {paymentAttemptCount > 0 && `\nPayment attempts: ${paymentAttemptCount}`}
+              {localStorage.getItem('payment_error') && 
+                `\nLast error: ${localStorage.getItem('payment_error')}`}
+            </pre>
           </div>
         )}
       </CardContent>
