@@ -71,7 +71,7 @@ export const createCheckoutSession = async (
             name: "HEARTI™ Leadership Assessment Results",
             description: "Lifetime Access"
           },
-          unit_amount: 4900, // $49.00
+          unit_amount: 5400, // $54.00
         },
         quantity: 1,
       }],
@@ -89,7 +89,7 @@ export const createCheckoutSession = async (
             name: "HEARTI™ Leadership Assessment Results",
             description: "Monthly Subscription"
           },
-          unit_amount: 799, // $7.99
+          unit_amount: 699, // $6.99
           recurring: {
             interval: "month"
           }
@@ -101,3 +101,4 @@ export const createCheckoutSession = async (
     return session;
   }
 };
+

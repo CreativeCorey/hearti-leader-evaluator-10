@@ -9,7 +9,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
 interface PaymentFooterProps {
@@ -40,7 +39,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           ) : (
             <>
               <CreditCard className="mr-2 h-4 w-4" />
-              Start for $7.99/month
+              $6.99/month to start your HEARTI:Leader journey today
             </>
           )}
         </Button>
@@ -58,7 +57,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[240px]">
             <DropdownMenuItem onClick={() => onPayNow('one-time')}>
-              $49 - Lifetime Access
+              $54 - Lifetime Access
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -93,3 +92,4 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
     </CardFooter>
   );
 };
+
