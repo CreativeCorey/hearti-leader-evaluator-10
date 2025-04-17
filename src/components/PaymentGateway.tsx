@@ -1,12 +1,18 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { HEARTIAssessment } from '@/types';
 import { useAssessmentPayment } from '@/hooks/useAssessmentPayment';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardHeader, CardDescription, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, Lock, CreditCard, RefreshCw, AlertTriangle } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { RefreshCw, Loader2 } from 'lucide-react';
+
+import { LoadingState } from './payment/LoadingState';
+import { PaymentSuccess } from './payment/PaymentSuccess';
+import { PaymentError } from './payment/PaymentError';
+import { FeaturesList } from './payment/FeaturesList';
+import { DebugInfo } from './payment/DebugInfo';
+import { PaymentFooter } from './payment/PaymentFooter';
 
 interface PaymentGatewayProps {
   assessment: HEARTIAssessment;
@@ -31,40 +37,6 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
     refreshPaymentStatus
   } = useAssessmentPayment(onPaymentComplete);
 
-  // Add effect to periodically refresh payment status
-  useEffect(() => {
-    // Only do periodic refresh if we're not already checking and there's no payment in progress
-    if (!checkingPayment && !processingPayment && !hasPaid && user) {
-      const intervalId = setInterval(() => {
-        console.log("Auto-refreshing payment status");
-        refreshPaymentStatus();
-      }, 30000); // Check every 30 seconds
-      
-      return () => clearInterval(intervalId);
-    }
-  }, [checkingPayment, processingPayment, hasPaid, user, refreshPaymentStatus]);
-
-  // Rescue from stuck state - if processing for too long, reset state
-  useEffect(() => {
-    if (processingPayment && lastAttemptTime) {
-      const timeoutId = setTimeout(() => {
-        const timeElapsed = Date.now() - lastAttemptTime;
-        if (timeElapsed > 20000) { // 20 seconds
-          console.log("Payment processing may be stuck, triggering refresh");
-          setDebugInfo(prev => `${prev || ""}\nPayment processing timed out after ${Math.round(timeElapsed/1000)}s, refreshing...`);
-          refreshPaymentStatus();
-          
-          // If we've been stuck for a full minute, try to recover completely
-          if (timeElapsed > 60000) {
-            window.location.reload();
-          }
-        }
-      }, 20000); // Check after 20 seconds
-      
-      return () => clearTimeout(timeoutId);
-    }
-  }, [processingPayment, lastAttemptTime, refreshPaymentStatus]);
-
   const handlePayNow = async () => {
     try {
       const now = Date.now();
@@ -72,10 +44,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
       setDebugInfo(`Starting payment process at ${new Date(now).toLocaleTimeString()}...`);
       setPaymentAttemptCount(prev => prev + 1);
       
-      // Clear any previous payment error
       localStorage.removeItem('payment_error');
-      
-      // Store assessment before payment
       localStorage.setItem('pending_assessment', JSON.stringify(assessment));
       
       const result = await redirectToStripePayment(assessment);
@@ -95,42 +64,14 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
     refreshPaymentStatus();
   };
   
-  // Show loading state while checking payment status
   if (checkingPayment) {
-    return (
-      <Card className="w-full max-w-md mx-auto">
-        <CardHeader className="text-center">
-          <CardTitle>Checking Payment Status</CardTitle>
-          <CardDescription>Please wait while we check your payment status...</CardDescription>
-        </CardHeader>
-        <CardContent className="flex justify-center py-8">
-          <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        </CardContent>
-      </Card>
-    );
+    return <LoadingState />;
   }
   
-  // If user has already paid, show a success message
   if (hasPaid) {
-    return (
-      <Card className="w-full max-w-md mx-auto border-green-200">
-        <CardHeader className="text-center">
-          <CardTitle className="text-green-600">Payment Complete</CardTitle>
-          <CardDescription>You already have access to your assessment results</CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col items-center py-4">
-          <div className="bg-green-50 text-green-600 p-3 rounded-full mb-4">
-            <Lock className="h-8 w-8" />
-          </div>
-          <p className="text-center">
-            Thank you for your purchase! You have full access to your assessment results.
-          </p>
-        </CardContent>
-      </Card>
-    );
+    return <PaymentSuccess />;
   }
   
-  // Otherwise, show the payment gateway
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
@@ -156,101 +97,26 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
       </CardHeader>
       
       {paymentError && (
-        <CardContent className="pt-0 pb-4">
-          <Alert variant="destructive">
-            <AlertTriangle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>
-              {paymentError}
-              <div className="mt-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={handleRefreshStatus}
-                  className="mt-2"
-                >
-                  Refresh Payment Status
-                </Button>
-              </div>
-            </AlertDescription>
-          </Alert>
-        </CardContent>
+        <PaymentError 
+          error={paymentError} 
+          onRefresh={handleRefreshStatus} 
+        />
       )}
       
-      <CardContent className="space-y-4">
-        <div className="bg-muted p-4 rounded-lg">
-          <h3 className="font-semibold mb-2">What's included:</h3>
-          <ul className="space-y-2 text-sm">
-            <li className="flex items-start gap-2">
-              <div className="rounded-full bg-primary h-5 w-5 flex items-center justify-center text-white text-xs mt-0.5">✓</div>
-              <span>Detailed assessment of all 6 leadership skills</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <div className="rounded-full bg-primary h-5 w-5 flex items-center justify-center text-white text-xs mt-0.5">✓</div>
-              <span>Personalized development activities</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <div className="rounded-full bg-primary h-5 w-5 flex items-center justify-center text-white text-xs mt-0.5">✓</div>
-              <span>Progress tracking and habit builder tools</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <div className="rounded-full bg-primary h-5 w-5 flex items-center justify-center text-white text-xs mt-0.5">✓</div>
-              <span>Compare your scores with industry benchmarks</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <div className="rounded-full bg-primary h-5 w-5 flex items-center justify-center text-white text-xs mt-0.5">✓</div>
-              <span>Export your results and share with your team</span>
-            </li>
-          </ul>
-        </div>
-        
-        <div className="text-center pt-4">
-          <p className="text-2xl font-bold">$49.00</p>
-          <p className="text-sm text-muted-foreground">One-time payment, lifetime access</p>
-        </div>
-
-        {(debugInfo || paymentAttemptCount > 0 || lastAttemptTime) && (
-          <div className="mt-4 p-2 border border-amber-200 bg-amber-50 rounded text-xs">
-            <p className="font-semibold">Debug info:</p>
-            <pre className="whitespace-pre-wrap break-words">
-              {debugInfo || "No additional debug info"}
-              {paymentAttemptCount > 0 && `\nPayment attempts: ${paymentAttemptCount}`}
-              {lastAttemptTime && `\nLast attempt: ${new Date(lastAttemptTime).toLocaleString()}`}
-              {localStorage.getItem('payment_error') && 
-                `\nLast error: ${localStorage.getItem('payment_error')}`}
-            </pre>
-          </div>
-        )}
-      </CardContent>
-      <CardFooter className="flex flex-col gap-3">
-        <Button 
-          size="lg" 
-          className="w-full"
-          onClick={handlePayNow}
-          disabled={processingPayment || !user || lastAttemptTime && (Date.now() - lastAttemptTime < 3000)}
-        >
-          {processingPayment ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Processing...
-            </>
-          ) : (
-            <>
-              <CreditCard className="mr-2 h-4 w-4" />
-              Pay Now
-            </>
-          )}
-        </Button>
-        
-        {!user && (
-          <p className="text-sm text-destructive">
-            You need to be signed in to make a payment. 
-            <Button variant="link" className="p-0 h-auto text-sm" onClick={() => window.location.href = '/auth'}>
-              Sign in
-            </Button>
-          </p>
-        )}
-      </CardFooter>
+      <FeaturesList />
+      
+      <DebugInfo 
+        debugInfo={debugInfo}
+        paymentAttemptCount={paymentAttemptCount}
+        lastAttemptTime={lastAttemptTime}
+      />
+      
+      <PaymentFooter 
+        processingPayment={processingPayment}
+        user={user}
+        lastAttemptTime={lastAttemptTime}
+        onPayNow={handlePayNow}
+      />
     </Card>
   );
 };
