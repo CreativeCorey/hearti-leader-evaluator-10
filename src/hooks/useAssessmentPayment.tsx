@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { HEARTIAssessment } from '@/types';
 import { useToast } from '@/hooks/use-toast';
@@ -9,52 +9,73 @@ export const useAssessmentPayment = (onComplete: (assessment: HEARTIAssessment) 
   const [processingPayment, setProcessingPayment] = useState(false);
   const [hasPaid, setHasPaid] = useState(false);
   const [checkingPayment, setCheckingPayment] = useState(true);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
   
   // Check if the user has already paid
-  useEffect(() => {
-    const checkPaymentStatus = async () => {
-      if (!user) {
-        setCheckingPayment(false);
-        return;
-      }
+  const checkPaymentStatus = useCallback(async () => {
+    if (!user) {
+      setCheckingPayment(false);
+      return;
+    }
+    
+    try {
+      setCheckingPayment(true);
+      setPaymentError(null);
       
-      try {
-        setCheckingPayment(true);
-        const { data, error } = await supabase.functions.invoke('check-payment-status');
-        
-        if (error) {
-          console.error("Payment status check failed:", error);
-          toast({
-            title: "Error",
-            description: "Failed to check payment status. Please try again.",
-            variant: "destructive"
-          });
-          setHasPaid(false); // Default to not paid on error
-        } else {
-          setHasPaid(data.hasPaid);
-          console.log("Payment status:", data.hasPaid ? "Paid" : "Not paid", data);
-        }
-      } catch (error) {
-        console.error("Payment status check error:", error);
+      const { data, error } = await supabase.functions.invoke('check-payment-status');
+      
+      if (error) {
+        console.error("Payment status check failed:", error);
+        setPaymentError("Failed to check payment status");
         toast({
           title: "Error",
           description: "Failed to check payment status. Please try again.",
           variant: "destructive"
         });
         setHasPaid(false); // Default to not paid on error
-      } finally {
-        setCheckingPayment(false);
+      } else if (data.error) {
+        console.error("Payment status error:", data.error);
+        setPaymentError(data.error);
+        toast({
+          title: "Error",
+          description: data.error || "Failed to check payment status",
+          variant: "destructive"
+        });
+        setHasPaid(false); // Default to not paid on error
+      } else {
+        setHasPaid(data.hasPaid);
+        console.log("Payment status:", data.hasPaid ? "Paid" : "Not paid", data);
+        
+        // Check if table exists
+        if (data.tableExists === false) {
+          console.log("Payments table does not exist yet");
+          setPaymentError("Payment system is being set up. Please try again later.");
+        }
       }
-    };
-    
+    } catch (error) {
+      console.error("Payment status check error:", error);
+      setPaymentError("Failed to connect to payment service");
+      toast({
+        title: "Error",
+        description: "Failed to check payment status. Please try again.",
+        variant: "destructive"
+      });
+      setHasPaid(false); // Default to not paid on error
+    } finally {
+      setCheckingPayment(false);
+    }
+  }, [user, toast]);
+  
+  // Check payment status when user changes
+  useEffect(() => {
     if (user) {
       checkPaymentStatus();
     } else {
       setCheckingPayment(false);
     }
-  }, [user, toast]);
+  }, [user, checkPaymentStatus]);
   
   const redirectToStripePayment = async (assessment: HEARTIAssessment) => {
     if (!user) {
@@ -67,6 +88,7 @@ export const useAssessmentPayment = (onComplete: (assessment: HEARTIAssessment) 
     }
     
     setProcessingPayment(true);
+    setPaymentError(null);
     
     try {
       // Store the assessment temporarily in localStorage
@@ -79,6 +101,11 @@ export const useAssessmentPayment = (onComplete: (assessment: HEARTIAssessment) 
       if (error) {
         console.error("Create payment error:", error);
         throw error;
+      }
+      
+      if (data.error) {
+        console.error("Create payment API error:", data.error);
+        throw new Error(data.error);
       }
       
       if (data.paid) {
@@ -108,9 +135,10 @@ export const useAssessmentPayment = (onComplete: (assessment: HEARTIAssessment) 
       }
     } catch (error) {
       console.error("Payment error:", error);
+      setPaymentError(error instanceof Error ? error.message : "Failed to start payment process");
       toast({
         title: "Payment Error",
-        description: "Failed to start payment process. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to start payment process. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -122,12 +150,17 @@ export const useAssessmentPayment = (onComplete: (assessment: HEARTIAssessment) 
     if (!user) return false;
     
     try {
+      setPaymentError(null);
       const { data, error } = await supabase.functions.invoke('verify-payment', {
         body: { sessionId }
       });
       
       if (error) {
         throw error;
+      }
+      
+      if (data.error) {
+        throw new Error(data.error);
       }
       
       if (data.paid) {
@@ -152,6 +185,7 @@ export const useAssessmentPayment = (onComplete: (assessment: HEARTIAssessment) 
       return false;
     } catch (error) {
       console.error("Payment verification error:", error);
+      setPaymentError(error instanceof Error ? error.message : "Failed to verify payment");
       toast({
         title: "Verification Error",
         description: "Failed to verify your payment. Please contact support.",
@@ -165,32 +199,10 @@ export const useAssessmentPayment = (onComplete: (assessment: HEARTIAssessment) 
     processingPayment,
     checkingPayment,
     hasPaid,
+    paymentError,
     redirectToStripePayment,
     verifyPayment,
     // Add a manual refresh function
-    refreshPaymentStatus: async () => {
-      if (!user) return;
-      
-      try {
-        setCheckingPayment(true);
-        const { data, error } = await supabase.functions.invoke('check-payment-status');
-        
-        if (error) {
-          console.error("Payment status refresh failed:", error);
-          toast({
-            title: "Error",
-            description: "Failed to refresh payment status. Please try again.",
-            variant: "destructive"
-          });
-        } else {
-          setHasPaid(data.hasPaid);
-          console.log("Refreshed payment status:", data.hasPaid ? "Paid" : "Not paid");
-        }
-      } catch (error) {
-        console.error("Payment status refresh error:", error);
-      } finally {
-        setCheckingPayment(false);
-      }
-    }
+    refreshPaymentStatus: checkPaymentStatus
   };
 };

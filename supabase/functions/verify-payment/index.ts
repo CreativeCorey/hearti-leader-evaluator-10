@@ -74,19 +74,29 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
-    // Update the payment record
+    // Try to update the payment record in the database
     if (session.payment_status === 'paid') {
-      console.log("Updating payment record to paid");
-      const { error: updateError } = await supabaseAdmin
-        .from('payments')
-        .update({
-          status: 'paid',
-          updated_at: new Date().toISOString()
-        })
-        .eq('stripe_session_id', session.id);
-        
-      if (updateError) {
-        console.error("Error updating payment record:", updateError);
+      try {
+        console.log("Updating payment record to paid");
+        const { error: updateError } = await supabaseAdmin
+          .from('payments')
+          .update({
+            status: 'paid',
+            updated_at: new Date().toISOString()
+          })
+          .eq('stripe_session_id', session.id);
+          
+        if (updateError) {
+          // If the table doesn't exist, we'll just log it and continue
+          if (updateError.message.includes("relation") && updateError.message.includes("does not exist")) {
+            console.log("Payments table doesn't exist, skipping update");
+          } else {
+            console.error("Error updating payment record:", updateError);
+          }
+        }
+      } catch (dbError) {
+        // If there's an error updating the payments table, log it but continue
+        console.log("Error updating payment record, continuing:", dbError.message);
       }
     }
 

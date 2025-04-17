@@ -5,7 +5,8 @@ import { HEARTIAssessment } from '@/types';
 import { useAssessmentPayment } from '@/hooks/useAssessmentPayment';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, Lock, CreditCard, RefreshCw } from 'lucide-react';
+import { Loader2, Lock, CreditCard, RefreshCw, AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface PaymentGatewayProps {
   assessment: HEARTIAssessment;
@@ -20,7 +21,8 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   const { 
     processingPayment, 
     checkingPayment,
-    hasPaid, 
+    hasPaid,
+    paymentError,
     redirectToStripePayment,
     refreshPaymentStatus
   } = useAssessmentPayment(onPaymentComplete);
@@ -84,6 +86,29 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
           Complete your payment to access your full HEARTI™ Leadership results and personalized growth plan
         </CardDescription>
       </CardHeader>
+      
+      {paymentError && (
+        <CardContent className="pt-0 pb-4">
+          <Alert variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>
+              {paymentError}
+              <div className="mt-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={refreshPaymentStatus}
+                  className="mt-2"
+                >
+                  Try Again
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
+        </CardContent>
+      )}
+      
       <CardContent className="space-y-4">
         <div className="bg-muted p-4 rounded-lg">
           <h3 className="font-semibold mb-2">What's included:</h3>

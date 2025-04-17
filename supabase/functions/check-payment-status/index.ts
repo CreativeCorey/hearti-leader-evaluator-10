@@ -47,33 +47,71 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
-    // Check if the user has paid
-    console.log("Checking payments for user:", user.id);
-    const { data: payments, error: paymentsError } = await supabaseAdmin
-      .from('payments')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('status', 'paid')
-      .order('created_at', { ascending: false })
-      .limit(1);
+    // Check if payments table exists
+    try {
+      // Check if the user has paid
+      console.log("Checking payments for user:", user.id);
+      const { data: payments, error: paymentsError } = await supabaseAdmin
+        .from('payments')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'paid')
+        .order('created_at', { ascending: false })
+        .limit(1);
 
-    if (paymentsError) {
-      console.error("Database error:", paymentsError.message);
-      throw new Error(`Database error: ${paymentsError.message}`);
+      if (paymentsError) {
+        // Special handling for table not existing
+        if (paymentsError.message.includes("relation") && paymentsError.message.includes("does not exist")) {
+          console.log("Payments table not found. Returning not paid status.");
+          return new Response(JSON.stringify({ 
+            hasPaid: false,
+            paymentDetails: null,
+            tableExists: false,
+            error: "Payments table not set up"
+          }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+            status: 200,
+          });
+        }
+        
+        console.error("Database error:", paymentsError.message);
+        throw new Error(`Database error: ${paymentsError.message}`);
+      }
+      
+      console.log("Payment data retrieved:", payments ? payments.length : 0);
+
+      return new Response(JSON.stringify({ 
+        hasPaid: payments && payments.length > 0,
+        paymentDetails: payments && payments.length > 0 ? payments[0] : null,
+        tableExists: true
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 200,
+      });
+    } catch (dbError) {
+      if (dbError instanceof Error && 
+          dbError.message.includes("Database error") && 
+          dbError.message.includes("does not exist")) {
+        // Return a structured response for table not existing
+        return new Response(JSON.stringify({ 
+          hasPaid: false,
+          paymentDetails: null,
+          tableExists: false,
+          error: "Payments table not set up"
+        }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+      throw dbError; // Re-throw other errors
     }
-    
-    console.log("Payment data retrieved:", payments ? payments.length : 0);
-
-    return new Response(JSON.stringify({ 
-      hasPaid: payments && payments.length > 0,
-      paymentDetails: payments && payments.length > 0 ? payments[0] : null
-    }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
-    });
   } catch (error) {
     console.error("Payment status check error:", error.message);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ 
+      error: error.message,
+      hasPaid: false,
+      paymentDetails: null
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });

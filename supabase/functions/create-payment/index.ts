@@ -48,28 +48,40 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
-    // Check if the user has already paid
-    console.log("Checking existing payments");
-    const { data: payments, error: paymentsError } = await supabaseAdmin
-      .from('payments')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('status', 'paid')
-      .limit(1);
+    // Check if the payments table exists and if the user has already paid
+    let userHasPaid = false;
+    try {
+      console.log("Checking existing payments");
+      const { data: payments, error: paymentsError } = await supabaseAdmin
+        .from('payments')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'paid')
+        .limit(1);
 
-    if (paymentsError) {
-      console.error("Database error:", paymentsError.message);
-    }
+      if (paymentsError) {
+        console.error("Database error:", paymentsError.message);
+        // If the table doesn't exist, we'll proceed without checking existing payments
+        if (!(paymentsError.message.includes("relation") && paymentsError.message.includes("does not exist"))) {
+          throw paymentsError;
+        }
+      }
 
-    if (payments && payments.length > 0) {
-      console.log("User has already paid");
-      return new Response(JSON.stringify({ 
-        paid: true, 
-        message: "User has already paid for assessment results" 
-      }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      });
+      if (payments && payments.length > 0) {
+        console.log("User has already paid");
+        userHasPaid = true;
+        return new Response(JSON.stringify({ 
+          paid: true, 
+          message: "User has already paid for assessment results" 
+        }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+    } catch (error) {
+      // If there's an error checking payments, log it but continue
+      // This handles cases where the payments table doesn't exist yet
+      console.log("Error checking payments, continuing:", error.message);
     }
 
     // Initialize Stripe
@@ -129,15 +141,21 @@ serve(async (req) => {
     
     console.log("Checkout session created:", session.id);
 
-    // Create a pending payment record in the database
-    console.log("Creating payment record");
-    await supabaseAdmin.from('payments').insert({
-      user_id: user.id,
-      stripe_session_id: session.id,
-      amount: 4900,
-      status: 'pending',
-      created_at: new Date().toISOString()
-    });
+    try {
+      // Try to create a pending payment record in the database
+      // This might fail if the table doesn't exist, but we'll handle it gracefully
+      console.log("Creating payment record");
+      await supabaseAdmin.from('payments').insert({
+        user_id: user.id,
+        stripe_session_id: session.id,
+        amount: 4900,
+        status: 'pending',
+        created_at: new Date().toISOString()
+      });
+    } catch (dbError) {
+      // If there's an error inserting into the payments table, log it but continue
+      console.log("Error creating payment record, continuing:", dbError.message);
+    }
 
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
