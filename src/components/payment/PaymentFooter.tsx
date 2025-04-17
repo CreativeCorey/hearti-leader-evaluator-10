@@ -2,7 +2,7 @@
 import React from 'react';
 import { CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, CreditCard } from 'lucide-react';
+import { Loader2, CreditCard, ExternalLink } from 'lucide-react';
 import { User } from '@supabase/supabase-js';
 
 interface PaymentFooterProps {
@@ -15,14 +15,15 @@ interface PaymentFooterProps {
 export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayNow }: PaymentFooterProps) => {
   // Calculate if the button should be disabled due to a recent payment attempt
   const recentAttempt = lastAttemptTime && (Date.now() - lastAttemptTime < 3000);
+  const buttonDisabled = processingPayment || !user || recentAttempt;
   
   return (
     <CardFooter className="flex flex-col gap-3">
       <Button 
         size="lg" 
-        className="w-full"
+        className={`w-full ${processingPayment ? 'bg-primary/80 hover:bg-primary/80' : ''}`}
         onClick={onPayNow}
-        disabled={processingPayment || !user || recentAttempt}
+        disabled={buttonDisabled}
       >
         {processingPayment ? (
           <>
@@ -32,7 +33,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
         ) : (
           <>
             <CreditCard className="mr-2 h-4 w-4" />
-            Pay Now
+            Pay Now {lastAttemptTime ? `(Last Attempt: ${new Date(lastAttemptTime).toLocaleTimeString()})` : ''}
           </>
         )}
       </Button>
@@ -47,9 +48,20 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
       )}
       
       {processingPayment && (
-        <p className="text-xs text-muted-foreground mt-2 text-center">
-          You will be redirected to Stripe's secure payment page.
-          If redirection doesn't happen automatically, check your browser's popup settings.
+        <div className="text-xs text-muted-foreground mt-2 text-center space-y-2">
+          <p>
+            You will be redirected to Stripe's secure payment page.
+          </p>
+          <p className="flex items-center justify-center">
+            <ExternalLink className="h-3 w-3 mr-1" />
+            If redirection doesn't happen automatically, check your browser's popup settings.
+          </p>
+        </div>
+      )}
+      
+      {recentAttempt && !processingPayment && (
+        <p className="text-xs text-amber-600">
+          Please wait a moment before trying again.
         </p>
       )}
     </CardFooter>

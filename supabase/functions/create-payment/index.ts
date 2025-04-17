@@ -136,8 +136,27 @@ serve(async (req) => {
     const origin = body.origin || req.headers.get("origin") || "http://localhost:3000";
     console.log("Using origin:", origin);
 
+    // Include assessment in the metadata if provided
+    const metadata: Record<string, string> = {
+      user_id: user.id
+    };
+    
+    if (body.assessment) {
+      try {
+        metadata.assessment_id = body.assessment.id || 'unknown';
+        metadata.assessment_date = body.assessment.date || new Date().toISOString();
+        
+        // Convert dimension scores to a string
+        if (body.assessment.dimensionScores) {
+          metadata.dimension_scores = JSON.stringify(body.assessment.dimensionScores);
+        }
+      } catch (metadataErr) {
+        console.warn("Could not add assessment data to metadata:", metadataErr);
+      }
+    }
+
     // Create a one-time payment session
-    console.log("Creating checkout session");
+    console.log("Creating checkout session with metadata:", metadata);
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       line_items: [
@@ -155,9 +174,7 @@ serve(async (req) => {
       mode: "payment",
       success_url: `${origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/`,
-      metadata: {
-        user_id: user.id
-      }
+      metadata: metadata
     });
     
     console.log("Checkout session created:", session.id);

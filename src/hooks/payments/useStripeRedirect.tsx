@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -10,6 +10,7 @@ export const useStripeRedirect = () => {
   const [redirectError, setRedirectError] = useState<string | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
+  const redirectTimeoutRef = useRef<number | null>(null);
   
   const redirectToStripePayment = async (assessment: HEARTIAssessment) => {
     if (!user) {
@@ -19,6 +20,12 @@ export const useStripeRedirect = () => {
         variant: "destructive"
       });
       return false;
+    }
+    
+    // Clear any existing timeout
+    if (redirectTimeoutRef.current) {
+      window.clearTimeout(redirectTimeoutRef.current);
+      redirectTimeoutRef.current = null;
     }
     
     setProcessingPayment(true);
@@ -34,7 +41,12 @@ export const useStripeRedirect = () => {
           timestamp: Date.now(),
           userId: user.id,
           userEmail: user.email,
-          origin: window.location.origin
+          origin: window.location.origin,
+          assessment: {
+            id: assessment.id,
+            date: assessment.date,
+            dimensionScores: assessment.dimensionScores
+          }
         }
       });
       
@@ -62,25 +74,38 @@ export const useStripeRedirect = () => {
         throw new Error("No payment URL returned from server");
       }
 
-      console.log("Redirecting to Stripe payment URL:", data.url);
+      console.log("Received Stripe payment URL:", data.url);
       toast({
         title: "Redirecting to payment",
         description: "You'll be redirected to complete your payment to unlock full results.",
       });
       
       // Use a timeout to ensure the toast is shown before redirecting
-      setTimeout(() => {
+      redirectTimeoutRef.current = window.setTimeout(() => {
         try {
           console.log("Executing redirect to:", data.url);
-          // Force redirect using direct assignment to avoid any interference
+          
+          // Create a backup plan in case direct location change fails
+          const backupTimeout = window.setTimeout(() => {
+            console.log("Trying backup redirect method");
+            const link = document.createElement('a');
+            link.href = data.url;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.click();
+          }, 1000);
+          
+          // Primary redirect method
           window.location.href = data.url;
           
-          // If we're still here after 5 seconds, something went wrong
-          setTimeout(() => {
+          // Set a longer timeout to check if we're still on the same page
+          window.setTimeout(() => {
             if (document.hasFocus()) {
               console.error("Redirect may have failed, still on the same page after 5 seconds");
-              setRedirectError("Redirect timeout - please try again");
+              setRedirectError("Redirect timeout - please try again or check popup blockers");
               setProcessingPayment(false);
+              // Clear the backup timeout if we detected an issue
+              window.clearTimeout(backupTimeout);
             }
           }, 5000);
           
