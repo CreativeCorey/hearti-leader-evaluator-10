@@ -6,22 +6,35 @@ import EmptyHabitState from './EmptyHabitState';
 
 interface HabitListProps {
   habits: Habit[];
-  isLoading: boolean;
-  onComplete: (habitId: string) => void;
-  onSkip: (habitId: string) => void;
+  isLoading?: boolean;
+  onComplete?: (habitId: string) => void;
+  onSkip?: (habitId: string) => void;
   onDelete: (habitId: string) => void;
   filter?: 'all' | 'daily' | 'weekly' | 'monthly';
   showCompleted?: boolean;
+  
+  // Additional props for HabitTrackerContent
+  weekDates?: Date[];
+  onToggleHabit?: (habitId: string, date: Date) => void;
+  onDeleteHabit?: (habitId: string) => void;
+  calculateStreaks?: (habit: any) => any;
+  completionTargets?: Record<string, number>;
 }
 
 const HabitList: React.FC<HabitListProps> = ({
   habits,
-  isLoading,
+  isLoading = false,
   onComplete,
   onSkip,
   onDelete,
   filter = 'all',
-  showCompleted = true
+  showCompleted = true,
+  // Support for additional props
+  weekDates,
+  onToggleHabit,
+  onDeleteHabit,
+  calculateStreaks,
+  completionTargets
 }) => {
   if (isLoading) {
     return <div className="py-4 flex justify-center">Loading habits...</div>;
@@ -61,15 +74,19 @@ const HabitList: React.FC<HabitListProps> = ({
     );
   }
 
+  // Handle both API patterns - HabitTrackerContent or regular usage
+  const handleComplete = onComplete || (onToggleHabit ? (id: string) => onToggleHabit(id, new Date()) : () => {});
+  const handleDelete = onDelete || (onDeleteHabit ? onDeleteHabit : () => {});
+
   return (
     <div className="space-y-4">
       {filteredHabits.map((habit) => (
         <HabitItem
           key={habit.id}
           habit={habit}
-          onToggleComplete={onComplete}
-          onSkipToday={onSkip}
-          onDelete={onDelete}
+          onToggleComplete={handleComplete}
+          onSkipToday={onSkip || (() => {})}
+          onDelete={handleDelete}
         />
       ))}
     </div>

@@ -6,12 +6,16 @@ import HabitTrackerContent from './HabitTrackerContent';
 
 interface HabitTrackerCoreProps {
   focusDimension?: HEARTIDimension;
+  onRefreshAssessments?: () => void;
 }
 
-const HabitTrackerCore: React.FC<HabitTrackerCoreProps> = ({ focusDimension }) => {
+const HabitTrackerCore: React.FC<HabitTrackerCoreProps> = ({ 
+  focusDimension,
+  onRefreshAssessments
+}) => {
   return (
     <HabitTrackerProvider focusDimension={focusDimension}>
-      <HabitTrackerContent />
+      <HabitTrackerContent onRefreshAssessments={onRefreshAssessments} />
     </HabitTrackerProvider>
   );
 };

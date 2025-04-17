@@ -6,9 +6,10 @@ import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface HabitTabProps {
   focusDimension: HEARTIDimension;
+  onRefreshAssessments?: () => void;
 }
 
-const HabitTab: React.FC<HabitTabProps> = ({ focusDimension }) => {
+const HabitTab: React.FC<HabitTabProps> = ({ focusDimension, onRefreshAssessments }) => {
   const { t } = useLanguage();
   
   const title = t('results.habits.trackerTitle', {
@@ -40,7 +41,7 @@ const HabitTab: React.FC<HabitTabProps> = ({ focusDimension }) => {
         
         <p className="text-sm text-muted-foreground mb-6">{addBehaviorsInstructions}</p>
         
-        <HabitTrackerCore focusDimension={focusDimension} />
+        <HabitTrackerCore focusDimension={focusDimension} onRefreshAssessments={onRefreshAssessments} />
       </div>
     </div>
   );

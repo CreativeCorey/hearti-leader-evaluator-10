@@ -16,7 +16,11 @@ import { CalendarDays, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-const HabitTrackerContent: React.FC = () => {
+interface HabitTrackerContentProps {
+  onRefreshAssessments?: () => void;
+}
+
+const HabitTrackerContent: React.FC<HabitTrackerContentProps> = ({ onRefreshAssessments }) => {
   const { 
     habits, 
     loading, 
@@ -53,6 +57,11 @@ const HabitTrackerContent: React.FC = () => {
       resetForm(activeDimension);
       setActiveTab("all");
       setAddingHabit(false);
+      
+      // Call the refresh function if provided
+      if (onRefreshAssessments) {
+        onRefreshAssessments();
+      }
     }
   };
   
@@ -111,6 +120,7 @@ const HabitTrackerContent: React.FC = () => {
                   onDeleteHabit={deleteHabit}
                   calculateStreaks={calculateStreaks}
                   completionTargets={completionGoals}
+                  onDelete={deleteHabit} // Added for compatibility
                 />
               )}
             </TabsContent>

@@ -1,14 +1,13 @@
 
 import React from 'react';
-import { HEARTIDimension } from '@/types';
+import { HEARTIDimension, HabitTabContentProps } from '@/types';
 import HabitTab from '../HabitTab';
 
-interface HabitTabContentProps {
-  topDevelopmentArea: HEARTIDimension;
-}
-
-const HabitTabContent: React.FC<HabitTabContentProps> = ({ topDevelopmentArea }) => {
-  return <HabitTab focusDimension={topDevelopmentArea} />;
+const HabitTabContent: React.FC<HabitTabContentProps> = ({ 
+  topDevelopmentArea,
+  onRefreshAssessments 
+}) => {
+  return <HabitTab focusDimension={topDevelopmentArea} onRefreshAssessments={onRefreshAssessments} />;
 };
 
 export default HabitTabContent;
