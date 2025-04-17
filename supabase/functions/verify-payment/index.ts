@@ -14,6 +14,8 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  console.log("Starting payment verification");
+
   // Create Supabase client using the anon key for user authentication
   const supabaseClient = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
@@ -24,8 +26,10 @@ serve(async (req) => {
     // Get the session ID from the request body
     const { sessionId } = await req.json();
     if (!sessionId) {
+      console.error("No session ID provided");
       throw new Error("Session ID is required");
     }
+    console.log("Verifying session ID:", sessionId);
 
     // Authenticate the user
     const authHeader = req.headers.get("Authorization")!;
@@ -33,24 +37,35 @@ serve(async (req) => {
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
     
     if (userError) {
+      console.error("Auth error:", userError.message);
       throw new Error(`Authentication error: ${userError.message}`);
     }
     
     const user = userData.user;
     if (!user?.id) {
+      console.error("No user found");
       throw new Error("User not authenticated");
     }
+    console.log("User authenticated:", user.id);
 
     // Initialize Stripe
-    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    if (!stripeKey) {
+      throw new Error("STRIPE_SECRET_KEY is not configured");
+    }
+    
+    const stripe = new Stripe(stripeKey, {
       apiVersion: "2023-10-16",
     });
 
     // Retrieve the session from Stripe
+    console.log("Retrieving Stripe session");
     const session = await stripe.checkout.sessions.retrieve(sessionId);
     if (!session) {
+      console.error("Session not found");
       throw new Error("Session not found");
     }
+    console.log("Session retrieved, status:", session.payment_status);
 
     // Use the service role key to create a new client for database operations
     const supabaseAdmin = createClient(
@@ -61,13 +76,18 @@ serve(async (req) => {
 
     // Update the payment record
     if (session.payment_status === 'paid') {
-      await supabaseAdmin
+      console.log("Updating payment record to paid");
+      const { error: updateError } = await supabaseAdmin
         .from('payments')
         .update({
           status: 'paid',
           updated_at: new Date().toISOString()
         })
         .eq('stripe_session_id', session.id);
+        
+      if (updateError) {
+        console.error("Error updating payment record:", updateError);
+      }
     }
 
     return new Response(JSON.stringify({ 
@@ -78,8 +98,9 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    console.error("Payment verification error:", error.message);
-    return new Response(JSON.stringify({ error: error.message }), {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Payment verification error:", errorMessage);
+    return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });

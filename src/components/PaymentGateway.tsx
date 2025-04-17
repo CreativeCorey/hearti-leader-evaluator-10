@@ -1,10 +1,11 @@
+
 import React from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { HEARTIAssessment } from '@/types';
 import { useAssessmentPayment } from '@/hooks/useAssessmentPayment';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, Lock, CreditCard } from 'lucide-react';
+import { Loader2, Lock, CreditCard, RefreshCw } from 'lucide-react';
 
 interface PaymentGatewayProps {
   assessment: HEARTIAssessment;
@@ -20,7 +21,8 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
     processingPayment, 
     checkingPayment,
     hasPaid, 
-    redirectToStripePayment 
+    redirectToStripePayment,
+    refreshPaymentStatus
   } = useAssessmentPayment(onPaymentComplete);
   
   // Show loading state while checking payment status
@@ -62,7 +64,22 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader className="text-center">
-        <CardTitle>Unlock Your Assessment Results</CardTitle>
+        <div className="flex justify-between items-center">
+          <CardTitle>Unlock Your Assessment Results</CardTitle>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={refreshPaymentStatus} 
+            title="Refresh payment status"
+            disabled={checkingPayment}
+          >
+            {checkingPayment ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <RefreshCw className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
         <CardDescription>
           Complete your payment to access your full HEARTI™ Leadership results and personalized growth plan
         </CardDescription>
@@ -99,7 +116,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
           <p className="text-sm text-muted-foreground">One-time payment, lifetime access</p>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-center">
+      <CardFooter className="flex flex-col gap-3">
         <Button 
           size="lg" 
           className="w-full"
@@ -118,17 +135,16 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
             </>
           )}
         </Button>
-      </CardFooter>
-      {!user && (
-        <div className="px-6 pb-6 text-center">
+        
+        {!user && (
           <p className="text-sm text-destructive">
             You need to be signed in to make a payment. 
             <Button variant="link" className="p-0 h-auto text-sm" onClick={() => window.location.href = '/auth'}>
               Sign in
             </Button>
           </p>
-        </div>
-      )}
+        )}
+      </CardFooter>
     </Card>
   );
 };

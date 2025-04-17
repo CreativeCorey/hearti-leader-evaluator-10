@@ -20,19 +20,25 @@ serve(async (req) => {
   );
 
   try {
+    console.log("Starting payment status check");
+    
     // Authenticate the user
     const authHeader = req.headers.get("Authorization")!;
     const token = authHeader.replace("Bearer ", "");
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
     
     if (userError) {
+      console.error("Auth error:", userError.message);
       throw new Error(`Authentication error: ${userError.message}`);
     }
     
     const user = userData.user;
     if (!user?.id) {
+      console.error("No user found");
       throw new Error("User not authenticated");
     }
+    
+    console.log("User authenticated:", user.id);
 
     // Use the service role key to create a new client for database operations
     const supabaseAdmin = createClient(
@@ -42,6 +48,7 @@ serve(async (req) => {
     );
 
     // Check if the user has paid
+    console.log("Checking payments for user:", user.id);
     const { data: payments, error: paymentsError } = await supabaseAdmin
       .from('payments')
       .select('*')
@@ -51,8 +58,11 @@ serve(async (req) => {
       .limit(1);
 
     if (paymentsError) {
+      console.error("Database error:", paymentsError.message);
       throw new Error(`Database error: ${paymentsError.message}`);
     }
+    
+    console.log("Payment data retrieved:", payments ? payments.length : 0);
 
     return new Response(JSON.stringify({ 
       hasPaid: payments && payments.length > 0,

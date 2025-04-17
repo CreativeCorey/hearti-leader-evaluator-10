@@ -31,18 +31,29 @@ export const useAssessmentPayment = (onComplete: (assessment: HEARTIAssessment) 
             description: "Failed to check payment status. Please try again.",
             variant: "destructive"
           });
+          setHasPaid(false); // Default to not paid on error
         } else {
           setHasPaid(data.hasPaid);
-          console.log("Payment status:", data.hasPaid ? "Paid" : "Not paid");
+          console.log("Payment status:", data.hasPaid ? "Paid" : "Not paid", data);
         }
       } catch (error) {
         console.error("Payment status check error:", error);
+        toast({
+          title: "Error",
+          description: "Failed to check payment status. Please try again.",
+          variant: "destructive"
+        });
+        setHasPaid(false); // Default to not paid on error
       } finally {
         setCheckingPayment(false);
       }
     };
     
-    checkPaymentStatus();
+    if (user) {
+      checkPaymentStatus();
+    } else {
+      setCheckingPayment(false);
+    }
   }, [user, toast]);
   
   const redirectToStripePayment = async (assessment: HEARTIAssessment) => {
@@ -62,9 +73,11 @@ export const useAssessmentPayment = (onComplete: (assessment: HEARTIAssessment) 
       localStorage.setItem('pending_assessment', JSON.stringify(assessment));
       
       // Create a payment session using the Stripe edge function
+      console.log("Invoking create-payment function");
       const { data, error } = await supabase.functions.invoke('create-payment');
       
       if (error) {
+        console.error("Create payment error:", error);
         throw error;
       }
       
@@ -86,7 +99,10 @@ export const useAssessmentPayment = (onComplete: (assessment: HEARTIAssessment) 
           description: "You'll be redirected to complete your payment to unlock full results.",
         });
         
-        window.location.href = data.url;
+        // Small delay before redirecting to ensure toast is visible
+        setTimeout(() => {
+          window.location.href = data.url;
+        }, 1000);
       } else {
         throw new Error("No payment URL returned from server");
       }
@@ -150,6 +166,31 @@ export const useAssessmentPayment = (onComplete: (assessment: HEARTIAssessment) 
     checkingPayment,
     hasPaid,
     redirectToStripePayment,
-    verifyPayment
+    verifyPayment,
+    // Add a manual refresh function
+    refreshPaymentStatus: async () => {
+      if (!user) return;
+      
+      try {
+        setCheckingPayment(true);
+        const { data, error } = await supabase.functions.invoke('check-payment-status');
+        
+        if (error) {
+          console.error("Payment status refresh failed:", error);
+          toast({
+            title: "Error",
+            description: "Failed to refresh payment status. Please try again.",
+            variant: "destructive"
+          });
+        } else {
+          setHasPaid(data.hasPaid);
+          console.log("Refreshed payment status:", data.hasPaid ? "Paid" : "Not paid");
+        }
+      } catch (error) {
+        console.error("Payment status refresh error:", error);
+      } finally {
+        setCheckingPayment(false);
+      }
+    }
   };
 };

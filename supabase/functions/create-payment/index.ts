@@ -14,6 +14,8 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  console.log("Starting payment creation process");
+
   // Create Supabase client using the anon key for user authentication.
   const supabaseClient = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
@@ -27,13 +29,17 @@ serve(async (req) => {
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
     
     if (userError) {
+      console.error("Auth error:", userError.message);
       throw new Error(`Authentication error: ${userError.message}`);
     }
     
     const user = userData.user;
     if (!user?.email) {
+      console.error("No user email found");
       throw new Error("User not authenticated or email not available");
     }
+    
+    console.log("User authenticated:", user.id);
 
     // Use the service role key to create a new client for database operations
     const supabaseAdmin = createClient(
@@ -43,6 +49,7 @@ serve(async (req) => {
     );
 
     // Check if the user has already paid
+    console.log("Checking existing payments");
     const { data: payments, error: paymentsError } = await supabaseAdmin
       .from('payments')
       .select('*')
@@ -51,10 +58,11 @@ serve(async (req) => {
       .limit(1);
 
     if (paymentsError) {
-      console.error("Error checking payment status:", paymentsError);
+      console.error("Database error:", paymentsError.message);
     }
 
     if (payments && payments.length > 0) {
+      console.log("User has already paid");
       return new Response(JSON.stringify({ 
         paid: true, 
         message: "User has already paid for assessment results" 
@@ -65,17 +73,26 @@ serve(async (req) => {
     }
 
     // Initialize Stripe
-    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
+    console.log("Initializing Stripe");
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
+    if (!stripeKey) {
+      throw new Error("STRIPE_SECRET_KEY is not configured");
+    }
+    
+    const stripe = new Stripe(stripeKey, {
       apiVersion: "2023-10-16",
     });
 
     // Check if a Stripe customer record exists for this user
+    console.log("Looking up Stripe customer");
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     let customerId;
     if (customers.data.length > 0) {
       customerId = customers.data[0].id;
+      console.log("Found existing customer:", customerId);
     } else {
       // Create a new customer
+      console.log("Creating new customer");
       const newCustomer = await stripe.customers.create({
         email: user.email,
         metadata: {
@@ -83,9 +100,11 @@ serve(async (req) => {
         }
       });
       customerId = newCustomer.id;
+      console.log("Created new customer:", customerId);
     }
 
     // Create a one-time payment session
+    console.log("Creating checkout session");
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       line_items: [
@@ -107,8 +126,11 @@ serve(async (req) => {
         user_id: user.id
       }
     });
+    
+    console.log("Checkout session created:", session.id);
 
     // Create a pending payment record in the database
+    console.log("Creating payment record");
     await supabaseAdmin.from('payments').insert({
       user_id: user.id,
       stripe_session_id: session.id,
@@ -122,8 +144,9 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    console.error("Payment creation error:", error.message);
-    return new Response(JSON.stringify({ error: error.message }), {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Payment creation error:", errorMessage);
+    return new Response(JSON.stringify({ error: errorMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
