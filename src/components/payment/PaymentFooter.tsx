@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -57,7 +56,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[240px]">
             <DropdownMenuItem onClick={() => onPayNow('one-time')}>
-              $6.99/month to start your HEARTI:Leader journey today
+              Lifetime access $54.00
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
