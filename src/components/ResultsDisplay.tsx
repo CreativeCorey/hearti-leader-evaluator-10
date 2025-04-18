@@ -46,26 +46,22 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
     }
   });
 
-  // Set isClient to true when component mounts in client environment
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Safeguard against SSR issues
   if (!isClient) {
     return <div className="min-h-[400px] flex items-center justify-center">
       <Loader2 className="h-8 w-8 animate-spin" />
     </div>;
   }
 
-  // While loading
   if (loading || viewTransitioning) {
     return <div className="min-h-[400px] flex items-center justify-center">
       <Loader2 className="h-8 w-8 animate-spin" />
     </div>;
   }
 
-  // If payment status is still checking, show a loading state
   if (checkingPayment) {
     return <div className="min-h-[400px] flex items-center justify-center">
       <Loader2 className="h-8 w-8 animate-spin" />
@@ -73,8 +69,8 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
     </div>;
   }
 
-  // If user hasn't paid, show the payment gateway
-  if (!hasPaid) {
+  // Show only Overview tab for unpaid users
+  if (!hasPaid && activeTab !== 'overview') {
     return <PaymentGateway 
       assessment={assessment} 
       onPaymentComplete={(updatedAssessment) => {
@@ -86,48 +82,38 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
     />;
   }
 
-  // Adjusted tab labels for mobile and desktop
-  const getTabLabel = (key: string, mobileKey?: string) => {
-    if (isMobile && mobileKey) {
-      return t(`tabs.${mobileKey}`, { fallback: key });
-    }
-    return t(`tabs.${key}`, { fallback: key });
-  };
-
-  // Define the possible tab values
-  const tabValues: AssessmentTab[] = ['overview', 'dimensions', 'dataViz', 'report', 'developSkills', 'buildHabits'];
-
-  // Safeguard against invalid activeTab
-  const currentTab = tabValues.includes(activeTab) ? activeTab : 'overview';
-
   return (
     <Card className={`overflow-hidden rounded-lg border ${className}`}>
       <Tabs
         defaultValue={currentTab}
-        value={currentTab}
+        value={activeTab}
         onValueChange={(value) => onTabChange?.(value as AssessmentTab)}
         className="w-full"
       >
         <div className="px-1 pt-1 border-b overflow-x-auto scrollbar-hide">
           <TabsList className="grid grid-flow-col auto-cols-max gap-2 justify-start p-1">
             <TabsTrigger value="overview" className="text-xs sm:text-sm capitalize px-2 sm:px-3">
-              {getTabLabel('summary')}
+              {t('tabs.summary')}
             </TabsTrigger>
-            <TabsTrigger value="dimensions" className="text-xs sm:text-sm capitalize px-2 sm:px-3">
-              {getTabLabel('dimensions')}
-            </TabsTrigger>
-            <TabsTrigger value="dataViz" className="text-xs sm:text-sm capitalize px-2 sm:px-3">
-              {getTabLabel('dataViz', 'dataViz.mobile')}
-            </TabsTrigger>
-            <TabsTrigger value="report" className="text-xs sm:text-sm capitalize px-2 sm:px-3">
-              {getTabLabel('report')}
-            </TabsTrigger>
-            <TabsTrigger value="developSkills" className="text-xs sm:text-sm capitalize px-2 sm:px-3">
-              {getTabLabel('developSkills')}
-            </TabsTrigger>
-            <TabsTrigger value="buildHabits" className="text-xs sm:text-sm capitalize px-2 sm:px-3">
-              {getTabLabel('buildHabits')}
-            </TabsTrigger>
+            {hasPaid && (
+              <>
+                <TabsTrigger value="dimensions" className="text-xs sm:text-sm capitalize px-2 sm:px-3">
+                  {t('tabs.dimensions')}
+                </TabsTrigger>
+                <TabsTrigger value="dataViz" className="text-xs sm:text-sm capitalize px-2 sm:px-3">
+                  {t('tabs.dataViz', 'dataViz.mobile')}
+                </TabsTrigger>
+                <TabsTrigger value="report" className="text-xs sm:text-sm capitalize px-2 sm:px-3">
+                  {t('tabs.report')}
+                </TabsTrigger>
+                <TabsTrigger value="developSkills" className="text-xs sm:text-sm capitalize px-2 sm:px-3">
+                  {t('tabs.developSkills')}
+                </TabsTrigger>
+                <TabsTrigger value="buildHabits" className="text-xs sm:text-sm capitalize px-2 sm:px-3">
+                  {t('tabs.buildHabits')}
+                </TabsTrigger>
+              </>
+            )}
           </TabsList>
         </div>
 
@@ -135,39 +121,43 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
           <OverviewTabContent assessment={assessment} />
         </TabsContent>
 
-        <TabsContent value="dimensions" className="p-0 m-0">
-          <DimensionsTabContent assessment={assessment} />
-        </TabsContent>
+        {hasPaid && (
+          <>
+            <TabsContent value="dimensions" className="p-0 m-0">
+              <DimensionsTabContent assessment={assessment} />
+            </TabsContent>
 
-        <TabsContent value="dataViz" className="p-0 m-0">
-          <ComparisonTabContent assessment={assessment} assessments={allAssessments} />
-        </TabsContent>
+            <TabsContent value="dataViz" className="p-0 m-0">
+              <ComparisonTabContent assessment={assessment} assessments={allAssessments} />
+            </TabsContent>
 
-        <TabsContent value="report" className="p-0 m-0">
-          <ReportTabContent 
-            assessment={assessment} 
-            assessments={allAssessments} 
-            reportRef={React.createRef()} 
-            onExportPDF={async () => {}} 
-            exportingPdf={false}
-          />
-        </TabsContent>
+            <TabsContent value="report" className="p-0 m-0">
+              <ReportTabContent 
+                assessment={assessment} 
+                assessments={allAssessments} 
+                reportRef={React.createRef()} 
+                onExportPDF={async () => {}} 
+                exportingPdf={false}
+              />
+            </TabsContent>
 
-        <TabsContent value="developSkills" className="p-0 m-0">
-          <DevelopmentTabContent 
-            assessments={[assessment]} 
-            topDevelopmentArea={Object.entries(assessment.dimensionScores)
-              .sort(([, a], [, b]) => a - b)[0][0] as 'humility' | 'empathy' | 'accountability' | 'resiliency' | 'transparency' | 'inclusivity'}
-          />
-        </TabsContent>
+            <TabsContent value="developSkills" className="p-0 m-0">
+              <DevelopmentTabContent 
+                assessments={[assessment]} 
+                topDevelopmentArea={Object.entries(assessment.dimensionScores)
+                  .sort(([, a], [, b]) => a - b)[0][0] as 'humility' | 'empathy' | 'accountability' | 'resiliency' | 'transparency' | 'inclusivity'}
+              />
+            </TabsContent>
 
-        <TabsContent value="buildHabits" className="p-0 m-0">
-          <HabitTabContent 
-            topDevelopmentArea={Object.entries(assessment.dimensionScores)
-              .sort(([, a], [, b]) => a - b)[0][0] as 'humility' | 'empathy' | 'accountability' | 'resiliency' | 'transparency' | 'inclusivity'} 
-            onRefreshAssessments={onRefreshAssessments}
-          />
-        </TabsContent>
+            <TabsContent value="buildHabits" className="p-0 m-0">
+              <HabitTabContent 
+                topDevelopmentArea={Object.entries(assessment.dimensionScores)
+                  .sort(([, a], [, b]) => a - b)[0][0] as 'humility' | 'empathy' | 'accountability' | 'resiliency' | 'transparency' | 'inclusivity'} 
+                onRefreshAssessments={onRefreshAssessments}
+              />
+            </TabsContent>
+          </>
+        )}
       </Tabs>
     </Card>
   );
