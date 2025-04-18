@@ -24,6 +24,17 @@
   .score-pill:hover {
     transform: scale(1.05);
   }
+  
+  /* Dark mode transition */
+  :root {
+    --transition-duration: 0.3s;
+  }
+  
+  body, .bg-white, .bg-background, .text-foreground, .border-gray-300, .border-gray-800 {
+    transition: background-color var(--transition-duration) ease, 
+                color var(--transition-duration) ease,
+                border-color var(--transition-duration) ease;
+  }
 }
 
 @keyframes appear {

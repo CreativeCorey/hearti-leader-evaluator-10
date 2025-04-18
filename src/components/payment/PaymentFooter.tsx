@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -84,7 +85,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
       )}
       
       {recentAttempt && !processingPayment && (
-        <p className="text-xs text-amber-600">
+        <p className="text-xs text-amber-600 dark:text-amber-400">
           Please wait a moment before trying again.
         </p>
       )}

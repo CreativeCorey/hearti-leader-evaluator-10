@@ -30,8 +30,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
       </main>
       
-      {/* Footer - fixed at the bottom */}
-      <footer className="py-2 px-4 text-center text-xs text-gray-500 border-t bg-white w-full">
+      {/* Footer - respects dark mode */}
+      <footer className="py-2 px-4 text-center text-xs text-gray-500 dark:text-gray-400 border-t bg-white dark:bg-background dark:border-gray-800 w-full">
         {t('common.copyright')}
       </footer>
     </div>

@@ -1,3 +1,4 @@
+
 import { useState, useRef, useCallback } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
@@ -13,7 +14,7 @@ export const useStripeRedirect = () => {
   const backupTimeoutRef = useRef<number | null>(null);
   const lastAttemptRef = useRef<number | null>(null);
   
-  const redirectToStripePayment = useCallback(async (assessment: HEARTIAssessment, paymentType: 'one-time' | 'subscription' = 'one-time') => {
+  const redirectToStripePayment = useCallback(async (assessment: HEARTIAssessment, paymentType: 'one-time' | 'subscription' = 'subscription') => {
     if (!user) {
       toast({
         title: "Authentication Required",
@@ -30,6 +31,7 @@ export const useStripeRedirect = () => {
     }
     lastAttemptRef.current = now;
     
+    // Clear any existing timeouts
     if (redirectTimeoutRef.current) {
       window.clearTimeout(redirectTimeoutRef.current);
       redirectTimeoutRef.current = null;
@@ -96,15 +98,16 @@ export const useStripeRedirect = () => {
         description: "You'll be redirected to complete your payment to unlock full results.",
       });
       
-      redirectTimeoutRef.current = window.setTimeout(() => {
+      // Create a direct link and click it immediately rather than using timeouts
+      const performRedirect = () => {
         try {
-          console.log("Executing redirect to:", data.url);
-          
+          // Direct navigation - most reliable method
           window.location.href = data.url;
           
+          // Backup method - in case the direct method fails
           backupTimeoutRef.current = window.setTimeout(() => {
             if (document.hasFocus()) {
-              console.log("Trying backup redirect method");
+              console.log("Using backup redirect method");
               const link = document.createElement('a');
               link.href = data.url;
               link.target = '_self';
@@ -113,22 +116,21 @@ export const useStripeRedirect = () => {
               link.click();
               document.body.removeChild(link);
               
+              // Final check if still on page
               window.setTimeout(() => {
-                if (document.hasFocus()) {
-                  console.error("Redirect may have failed, still on the same page after 5 seconds");
-                  setRedirectError("Redirect timeout - please try again or check popup blockers");
-                  setProcessingPayment(false);
-                }
-              }, 3000);
+                setProcessingPayment(false);
+              }, 5000);
             }
-          }, 2000);
-          
+          }, 1500);
         } catch (redirectErr) {
           console.error("Redirect execution error:", redirectErr);
           setRedirectError("Failed to redirect to payment page");
           setProcessingPayment(false);
         }
-      }, 500);
+      };
+      
+      // Small delay to allow the toast to appear
+      redirectTimeoutRef.current = window.setTimeout(performRedirect, 300);
       
       return false;
     } catch (error) {

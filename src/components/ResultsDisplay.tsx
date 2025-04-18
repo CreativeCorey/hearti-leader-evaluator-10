@@ -85,7 +85,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   return (
     <Card className={`overflow-hidden rounded-lg border ${className}`}>
       <Tabs
-        defaultValue={currentTab}
+        defaultValue={activeTab}
         value={activeTab}
         onValueChange={(value) => onTabChange?.(value as AssessmentTab)}
         className="w-full"
@@ -101,7 +101,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                   {t('tabs.dimensions')}
                 </TabsTrigger>
                 <TabsTrigger value="dataViz" className="text-xs sm:text-sm capitalize px-2 sm:px-3">
-                  {t('tabs.dataViz', 'dataViz.mobile')}
+                  {isMobile ? t('tabs.dataViz.mobile') : t('tabs.dataViz.desktop')}
                 </TabsTrigger>
                 <TabsTrigger value="report" className="text-xs sm:text-sm capitalize px-2 sm:px-3">
                   {t('tabs.report')}
