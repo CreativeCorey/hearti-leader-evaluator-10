@@ -98,45 +98,47 @@ export const useStripeRedirect = () => {
         description: "You'll be redirected to complete your payment to unlock full results.",
       });
       
-      // Direct navigation approach - most reliable method
-      try {
-        // Short delay to allow toast to display
-        redirectTimeoutRef.current = window.setTimeout(() => {
-          // Force navigation to Stripe - most reliable approach
+      // IMPROVED REDIRECTION: Using simple window.location.href approach first
+      // with a very small timeout to allow the UI to update first
+      setTimeout(() => {
+        try {
+          // Force direct navigation - most reliable approach
           window.location.href = data.url;
           
-          // Add a backup for cases where direct navigation might be blocked
-          backupTimeoutRef.current = window.setTimeout(() => {
+          // Set a backup timeout to check if we're still on the page
+          // This would indicate the redirect didn't happen
+          setTimeout(() => {
             if (document.hasFocus()) {
-              console.log("Using backup redirect method");
-              window.open(data.url, '_self');
+              console.log("Primary redirect may have failed, trying window.open");
               
-              // Final backup - if still on page, reset state
-              window.setTimeout(() => {
-                if (document.hasFocus()) {
+              try {
+                // Try a different approach as backup
+                const newWindow = window.open(data.url, '_self');
+                
+                // If even this fails, reset the processing state
+                if (!newWindow) {
+                  console.error("Both redirect methods failed");
                   setProcessingPayment(false);
                   toast({
-                    title: "Redirection Issue",
-                    description: "Please try again or click the payment button manually.",
+                    title: "Redirection Failed",
+                    description: "Please try again or copy the payment link manually.",
                     variant: "destructive"
                   });
                 }
-              }, 5000);
+              } catch (backupError) {
+                console.error("Backup redirect failed:", backupError);
+                setProcessingPayment(false);
+              }
             }
           }, 2000);
-        }, 300);
-      } catch (redirectErr) {
-        console.error("Redirect execution error:", redirectErr);
-        setRedirectError("Failed to redirect to payment page");
-        setProcessingPayment(false);
-        toast({
-          title: "Redirection Error",
-          description: "Unable to open Stripe payment page. Please try again.",
-          variant: "destructive"
-        });
-      }
+        } catch (redirectErr) {
+          console.error("Redirect execution error:", redirectErr);
+          setRedirectError("Failed to redirect to payment page");
+          setProcessingPayment(false);
+        }
+      }, 300);
       
-      return false;
+      return true;
     } catch (error) {
       console.error("Payment error:", error);
       setRedirectError(error instanceof Error ? error.message : String(error));

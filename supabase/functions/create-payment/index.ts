@@ -63,7 +63,7 @@ serve(async (req) => {
       }
     }
 
-    const paymentType = body.paymentType || 'one-time';
+    const paymentType = body.paymentType || 'subscription';
     const session = await createCheckoutSession(stripe, {
       customerId,
       origin,
@@ -74,7 +74,7 @@ serve(async (req) => {
     await createPaymentRecord({
       userId: user.id,
       sessionId: session.id,
-      amount: paymentType === 'one-time' ? 4900 : 799,
+      amount: paymentType === 'one-time' ? 5400 : 699,
       type: paymentType
     });
 
