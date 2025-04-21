@@ -71,13 +71,19 @@ serve(async (req) => {
       paymentType
     });
 
-    await createPaymentRecord({
-      userId: user.id,
-      sessionId: session.id,
-      amount: paymentType === 'one-time' ? 5400 : 699,
-      type: paymentType
-    });
+    try {
+      await createPaymentRecord({
+        userId: user.id,
+        sessionId: session.id,
+        amount: paymentType === 'one-time' ? 5400 : 699,
+        type: paymentType
+      });
+    } catch (dbError) {
+      // Log but don't fail if the database record creation fails
+      logStep("Error creating payment record", dbError);
+    }
 
+    // Add cache control headers to ensure fresh responses
     return new Response(JSON.stringify({ 
       url: session.url, 
       sessionId: session.id,
@@ -85,7 +91,10 @@ serve(async (req) => {
     }), {
       headers: { 
         ...corsHeaders, 
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0"
       },
       status: 200,
     });

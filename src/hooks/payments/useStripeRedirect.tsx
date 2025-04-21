@@ -98,45 +98,59 @@ export const useStripeRedirect = () => {
         description: "You'll be redirected to complete your payment to unlock full results.",
       });
       
-      // IMPROVED REDIRECTION: Using simple window.location.href approach first
-      // with a very small timeout to allow the UI to update first
-      setTimeout(() => {
-        try {
-          // Force direct navigation - most reliable approach
-          window.location.href = data.url;
+      // Store the URL in localStorage for manual recovery if needed
+      localStorage.setItem('stripe_payment_url', data.url);
+      
+      // COMPLETELY REVAMPED REDIRECTION LOGIC
+      // Directly attempt window.location.href first as the most reliable method
+      window.location.href = data.url;
+      
+      // Set a fallback for browsers that might not navigate immediately
+      redirectTimeoutRef.current = window.setTimeout(() => {
+        // Check if we're still on the page after the redirect attempt
+        console.log("Checking if redirect worked...");
+        if (document.hasFocus()) {
+          console.log("Still on page, trying backup redirect method");
           
-          // Set a backup timeout to check if we're still on the page
-          // This would indicate the redirect didn't happen
-          setTimeout(() => {
-            if (document.hasFocus()) {
-              console.log("Primary redirect may have failed, trying window.open");
+          try {
+            // Try opening in a new window/tab as a backup
+            const newWindow = window.open(data.url, '_blank');
+            
+            // If window.open fails or is blocked, show manual copy option
+            if (!newWindow) {
+              toast({
+                title: "Redirect Blocked",
+                description: "Please click the payment button again or copy the payment URL manually.",
+                variant: "destructive"
+              });
               
-              try {
-                // Try a different approach as backup
-                const newWindow = window.open(data.url, '_self');
-                
-                // If even this fails, reset the processing state
-                if (!newWindow) {
-                  console.error("Both redirect methods failed");
-                  setProcessingPayment(false);
-                  toast({
-                    title: "Redirection Failed",
-                    description: "Please try again or copy the payment link manually.",
-                    variant: "destructive"
-                  });
-                }
-              } catch (backupError) {
-                console.error("Backup redirect failed:", backupError);
-                setProcessingPayment(false);
-              }
+              // Create a button that users can click to try again
+              const paymentElement = document.createElement('div');
+              paymentElement.innerHTML = `
+                <div style="position:fixed;top:20px;right:20px;background:white;padding:15px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:9999;">
+                  <p style="margin:0 0 10px;font-weight:bold;">Payment Redirect Failed</p>
+                  <p style="margin:0 0 10px;">Click the button below to try again:</p>
+                  <button id="manual-redirect" style="background:#4f46e5;color:white;border:none;padding:8px 12px;border-radius:4px;cursor:pointer;">Open Payment Page</button>
+                </div>
+              `;
+              document.body.appendChild(paymentElement);
+              
+              document.getElementById('manual-redirect')?.addEventListener('click', () => {
+                window.open(data.url, '_blank');
+                paymentElement.remove();
+              });
+              
+              // Auto-remove after 15 seconds
+              setTimeout(() => paymentElement.remove(), 15000);
             }
-          }, 2000);
-        } catch (redirectErr) {
-          console.error("Redirect execution error:", redirectErr);
-          setRedirectError("Failed to redirect to payment page");
+          } catch (backupError) {
+            console.error("Backup redirect also failed:", backupError);
+          }
+          
+          // Reset state so user can try again
           setProcessingPayment(false);
         }
-      }, 300);
+      }, 2500);
       
       return true;
     } catch (error) {

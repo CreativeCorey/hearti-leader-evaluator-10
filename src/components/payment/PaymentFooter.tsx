@@ -2,7 +2,7 @@
 import React from 'react';
 import { CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, CreditCard, ExternalLink } from 'lucide-react';
+import { Loader2, CreditCard, ExternalLink, AlertCircle } from 'lucide-react';
 import { User } from '@supabase/supabase-js';
 import {
   DropdownMenu,
@@ -21,6 +21,15 @@ interface PaymentFooterProps {
 export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayNow }: PaymentFooterProps) => {
   const recentAttempt = lastAttemptTime && (Date.now() - lastAttemptTime < 3000);
   const buttonDisabled = processingPayment || !user || recentAttempt;
+  
+  // Check if there's a stored payment URL from a previous attempt
+  const storedPaymentUrl = typeof window !== 'undefined' ? localStorage.getItem('stripe_payment_url') : null;
+  
+  const handleManualRedirect = () => {
+    if (storedPaymentUrl) {
+      window.open(storedPaymentUrl, '_blank');
+    }
+  };
   
   return (
     <CardFooter className="flex flex-col gap-3">
@@ -43,6 +52,18 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
             </>
           )}
         </Button>
+        
+        {storedPaymentUrl && !processingPayment && (
+          <Button 
+            variant="outline" 
+            size="lg"
+            className="w-full text-amber-600 border-amber-400 hover:bg-amber-50"
+            onClick={handleManualRedirect}
+          >
+            <AlertCircle className="mr-2 h-4 w-4" />
+            Try Manual Redirect
+          </Button>
+        )}
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

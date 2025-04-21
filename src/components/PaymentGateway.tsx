@@ -28,6 +28,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   const [paymentAttemptCount, setPaymentAttemptCount] = useState(0);
   const [lastAttemptTime, setLastAttemptTime] = useState<number | null>(null);
   const [initialCheckDone, setInitialCheckDone] = useState(false);
+  const [manualPaymentUrl, setManualPaymentUrl] = useState<string | null>(null);
   
   const { 
     processingPayment, 
@@ -46,6 +47,14 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
     }
   }, [initialCheckDone, user, refreshPaymentStatus]);
 
+  // Check for stored payment URL
+  useEffect(() => {
+    const storedUrl = localStorage.getItem('stripe_payment_url');
+    if (storedUrl) {
+      setManualPaymentUrl(storedUrl);
+    }
+  }, []);
+
   const handlePayNow = async (paymentType: 'one-time' | 'subscription') => {
     try {
       const now = Date.now();
@@ -56,7 +65,10 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
       localStorage.removeItem('payment_error');
       localStorage.setItem('pending_assessment', JSON.stringify(assessment));
       
-      await redirectToStripePayment(assessment, paymentType);
+      const redirectSuccess = await redirectToStripePayment(assessment, paymentType);
+      if (!redirectSuccess) {
+        setDebugInfo(prev => `${prev || ""}\nRedirect was not successful. Please try again.`);
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
       setDebugInfo(prev => `${prev || ""}\nPayment process error: ${errorMessage}`);
@@ -68,6 +80,13 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   const handleRefreshStatus = () => {
     setDebugInfo(prev => `${prev || ""}\nManually refreshing payment status at ${new Date().toLocaleTimeString()}...`);
     refreshPaymentStatus();
+  };
+  
+  const handleManualRedirect = () => {
+    if (manualPaymentUrl) {
+      window.open(manualPaymentUrl, '_blank');
+      setDebugInfo(prev => `${prev || ""}\nTried manual redirect at ${new Date().toLocaleTimeString()}`);
+    }
   };
   
   if (checkingPayment) {
@@ -107,6 +126,20 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
           error={paymentError} 
           onRefresh={handleRefreshStatus} 
         />
+      )}
+      
+      {manualPaymentUrl && !processingPayment && (
+        <div className="px-6 py-2 mx-6 mb-4 text-sm bg-amber-50 border border-amber-200 rounded-md text-amber-700">
+          <p>If automatic redirection fails, you can:</p>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-2 w-full border-amber-400 text-amber-700 hover:bg-amber-100"
+            onClick={handleManualRedirect}
+          >
+            Try Manual Redirect
+          </Button>
+        </div>
       )}
       
       <FeaturesList />
