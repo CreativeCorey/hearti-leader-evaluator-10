@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { HEARTIAssessment } from '@/types';
 import { useAssessmentPayment } from '@/hooks/useAssessmentPayment';
@@ -27,6 +27,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
   const [paymentAttemptCount, setPaymentAttemptCount] = useState(0);
   const [lastAttemptTime, setLastAttemptTime] = useState<number | null>(null);
+  const [initialCheckDone, setInitialCheckDone] = useState(false);
   
   const { 
     processingPayment, 
@@ -37,23 +38,28 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
     refreshPaymentStatus
   } = useAssessmentPayment(onPaymentComplete);
 
-  const handlePayNow = async () => {
+  // Add an initial payment status check
+  useEffect(() => {
+    if (!initialCheckDone && user) {
+      refreshPaymentStatus();
+      setInitialCheckDone(true);
+    }
+  }, [initialCheckDone, user, refreshPaymentStatus]);
+
+  const handlePayNow = async (paymentType: 'one-time' | 'subscription') => {
     try {
       const now = Date.now();
       setLastAttemptTime(now);
-      setDebugInfo(`Starting payment process at ${new Date(now).toLocaleTimeString()}...`);
+      setDebugInfo(`Starting ${paymentType} payment process at ${new Date(now).toLocaleTimeString()}...`);
       setPaymentAttemptCount(prev => prev + 1);
       
       localStorage.removeItem('payment_error');
       localStorage.setItem('pending_assessment', JSON.stringify(assessment));
       
-      const result = await redirectToStripePayment(assessment);
-      if (!result) {
-        setDebugInfo(prev => `${prev}\nRedirection initiated, waiting...`);
-      }
+      await redirectToStripePayment(assessment, paymentType);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
-      setDebugInfo(prev => `${prev}\nPayment process error: ${errorMessage}`);
+      setDebugInfo(prev => `${prev || ""}\nPayment process error: ${errorMessage}`);
       localStorage.setItem('payment_error', errorMessage);
       refreshPaymentStatus();
     }

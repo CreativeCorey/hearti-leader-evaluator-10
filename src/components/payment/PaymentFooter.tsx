@@ -34,7 +34,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           {processingPayment ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Processing Payment...
+              {recentAttempt ? 'Preparing Payment...' : 'Redirecting to Stripe...'}
             </>
           ) : (
             <>
@@ -79,7 +79,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           </p>
           <p className="flex items-center justify-center">
             <ExternalLink className="h-3 w-3 mr-1" />
-            If redirection doesn't happen automatically within 5 seconds, click the button again.
+            If redirection doesn't happen automatically, please wait a moment.
           </p>
         </div>
       )}

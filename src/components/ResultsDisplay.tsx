@@ -164,4 +164,3 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
 };
 
 export default ResultsDisplay;
-
