@@ -85,7 +85,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   return (
     <Card className={`overflow-hidden rounded-lg border ${className}`}>
       <Tabs
-        defaultValue={activeTab}
+        defaultValue="overview"
         value={activeTab}
         onValueChange={(value) => onTabChange?.(value as AssessmentTab)}
         className="w-full"
@@ -164,3 +164,4 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
 };
 
 export default ResultsDisplay;
+
