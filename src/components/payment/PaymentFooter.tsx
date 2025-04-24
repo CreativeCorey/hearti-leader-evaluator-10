@@ -27,6 +27,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
   
   const handleManualRedirect = () => {
     if (storedPaymentUrl) {
+      // Using _blank for manual redirect for better compatibility
       window.open(storedPaymentUrl, '_blank');
     }
   };
@@ -57,11 +58,11 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           <Button 
             variant="outline" 
             size="lg"
-            className="w-full text-amber-600 border-amber-400 hover:bg-amber-50"
+            className="w-full bg-amber-50 text-amber-600 border-amber-400 hover:bg-amber-100"
             onClick={handleManualRedirect}
           >
-            <AlertCircle className="mr-2 h-4 w-4" />
-            Try Manual Redirect
+            <ExternalLink className="mr-2 h-4 w-4" />
+            Open Payment Page Manually
           </Button>
         )}
         
@@ -100,7 +101,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           </p>
           <p className="flex items-center justify-center">
             <ExternalLink className="h-3 w-3 mr-1" />
-            If redirection doesn't happen automatically, please wait a moment.
+            If redirection doesn't happen automatically, please use the manual redirect button that will appear.
           </p>
         </div>
       )}
