@@ -27,8 +27,8 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
   
   const handleManualRedirect = () => {
     if (storedPaymentUrl) {
-      // Using _self for manual redirect to ensure it replaces the current page
-      window.open(storedPaymentUrl, '_self');
+      // Use window.location.href for the most reliable redirect
+      window.location.href = storedPaymentUrl;
     }
   };
   
@@ -40,6 +40,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           className={`w-full ${processingPayment ? 'bg-primary/80 hover:bg-primary/80' : ''}`}
           disabled={buttonDisabled}
           onClick={() => onPayNow('subscription')}
+          aria-label="Start monthly subscription for $6.99"
         >
           {processingPayment ? (
             <>
@@ -60,6 +61,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
             size="lg"
             className="w-full bg-amber-500 hover:bg-amber-600 text-white border-amber-400"
             onClick={handleManualRedirect}
+            aria-label="Open payment page directly"
           >
             <ExternalLink className="mr-2 h-4 w-4" />
             Open Payment Page Now

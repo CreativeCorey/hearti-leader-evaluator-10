@@ -86,11 +86,22 @@ export const createCheckoutSession = async (
       logStep("Created one-time payment session", { id: session.id, url: session.url });
       return session;
     } else {
+      // Create subscription with a direct price creation instead of using a predefined price ID
       const session = await stripe.checkout.sessions.create({
         ...baseSessionConfig,
         mode: "subscription",
         line_items: [{
-          price: "pmc_1RHZXPCCli0zGv17wAeEl1At", // Updated price ID
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: "HEARTI™ Leadership Assessment Monthly",
+              description: "Monthly Access"
+            },
+            unit_amount: 699, // $6.99
+            recurring: {
+              interval: "month"
+            }
+          },
           quantity: 1,
         }],
       });

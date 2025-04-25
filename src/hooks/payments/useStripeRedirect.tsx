@@ -75,6 +75,12 @@ export const useStripeRedirect = () => {
         console.error("Create payment error:", error);
         setRedirectError(error.message || "Payment creation failed");
         setProcessingPayment(false);
+        
+        toast({
+          title: "Payment Error",
+          description: "Failed to create payment session. Please try again or use the manual redirect.",
+          variant: "destructive"
+        });
         throw error;
       }
       
@@ -82,6 +88,12 @@ export const useStripeRedirect = () => {
         console.error("Create payment API error:", data?.error || "No data returned");
         setRedirectError(data?.error || "Payment creation failed");
         setProcessingPayment(false);
+        
+        toast({
+          title: "Payment Error",
+          description: data?.error || "Failed to create payment session. Please try the manual redirect.",
+          variant: "destructive"
+        });
         throw new Error(data?.error || "No payment URL returned from server");
       }
       
@@ -96,6 +108,11 @@ export const useStripeRedirect = () => {
       
       if (!data.url) {
         setProcessingPayment(false);
+        toast({
+          title: "Payment Error",
+          description: "No payment URL was returned. Please try the manual redirect.",
+          variant: "destructive"
+        });
         throw new Error("No payment URL returned from server");
       }
 
@@ -109,35 +126,25 @@ export const useStripeRedirect = () => {
         description: "You'll be redirected to complete your payment to unlock full results.",
       });
       
-      // MULTI-STRATEGY REDIRECT APPROACH:
+      // COMPREHENSIVE MULTI-STRATEGY REDIRECT APPROACH:
       
-      // 1. Try a direct window.open first (works best in most modern browsers)
-      const newWindow = window.open(data.url, '_self');
+      // Strategy 1: Direct location change (most reliable but may be blocked)
+      window.location.href = data.url;
       
-      // 2. If that fails, try a form-based POST redirect
+      // Strategy 2: Use a form submission as backup (happens after a short delay)
       setTimeout(() => {
-        if (!newWindow || newWindow.closed || newWindow.closed === undefined) {
-          try {
-            // Use a form submission for the most reliable cross-domain redirect
-            const form = document.createElement('form');
-            form.method = 'GET';
-            form.action = data.url;
-            form.target = '_self'; // Load in the current window
-            form.style.display = 'none';
-            document.body.appendChild(form);
-            redirectFormRef.current = form;
-            form.submit();
-          } catch (redirectError) {
-            console.error("Form redirect failed:", redirectError);
-            // Last resort - direct location change
-            window.location.href = data.url;
-          }
+        try {
+          // Create a form element to submit
+          const form = document.createElement('form');
+          form.method = 'GET';
+          form.action = data.url;
+          form.style.display = 'none';
+          document.body.appendChild(form);
+          redirectFormRef.current = form;
+          form.submit();
+        } catch (redirectError) {
+          console.error("Form redirect failed:", redirectError);
         }
-      }, 100);
-      
-      // 3. Final fallback - direct location change
-      setTimeout(() => {
-        window.location.href = data.url;
       }, 500);
       
       // Set a timeout to check if we're still here after all redirect attempts
