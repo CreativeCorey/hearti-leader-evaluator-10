@@ -27,20 +27,19 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
   
   const handleManualRedirect = () => {
     if (storedPaymentUrl) {
-      // Use window.location.href for the most reliable redirect
-      window.location.href = storedPaymentUrl;
+      // Using _blank for manual redirect for better compatibility
+      window.open(storedPaymentUrl, '_blank');
     }
   };
   
   return (
     <CardFooter className="flex flex-col gap-3">
-      <div className="space-y-3 w-full">
+      <div className="space-y-2 w-full">
         <Button 
           size="lg" 
           className={`w-full ${processingPayment ? 'bg-primary/80 hover:bg-primary/80' : ''}`}
           disabled={buttonDisabled}
           onClick={() => onPayNow('subscription')}
-          aria-label="Start monthly subscription for $6.99"
         >
           {processingPayment ? (
             <>
@@ -55,16 +54,15 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           )}
         </Button>
         
-        {storedPaymentUrl && (
+        {storedPaymentUrl && !processingPayment && (
           <Button 
-            variant="default" 
+            variant="outline" 
             size="lg"
-            className="w-full bg-amber-500 hover:bg-amber-600 text-white border-amber-400"
+            className="w-full bg-amber-50 text-amber-600 border-amber-400 hover:bg-amber-100"
             onClick={handleManualRedirect}
-            aria-label="Open payment page directly"
           >
             <ExternalLink className="mr-2 h-4 w-4" />
-            Open Payment Page Now
+            Open Payment Page Manually
           </Button>
         )}
         
@@ -88,8 +86,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
       </div>
       
       {!user && (
-        <p className="text-sm text-destructive flex items-center">
-          <AlertCircle className="h-4 w-4 mr-1" />
+        <p className="text-sm text-destructive">
           You need to be signed in to make a payment. 
           <Button variant="link" className="p-0 h-auto text-sm ml-1" onClick={() => window.location.href = '/auth'}>
             Sign in
@@ -104,14 +101,13 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           </p>
           <p className="flex items-center justify-center">
             <ExternalLink className="h-3 w-3 mr-1" />
-            If redirection doesn't happen automatically, please use the orange button above.
+            If redirection doesn't happen automatically, please use the manual redirect button that will appear.
           </p>
         </div>
       )}
       
       {recentAttempt && !processingPayment && (
-        <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center justify-center">
-          <AlertCircle className="h-3 w-3 mr-1" />
+        <p className="text-xs text-amber-600 dark:text-amber-400">
           Please wait a moment before trying again.
         </p>
       )}

@@ -1,5 +1,5 @@
 
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -12,17 +12,6 @@ export const useStripeRedirect = () => {
   const { toast } = useToast();
   const redirectTimeoutRef = useRef<number | null>(null);
   const lastAttemptRef = useRef<number | null>(null);
-  const redirectFormRef = useRef<HTMLFormElement | null>(null);
-  
-  // Clean up any previous redirect form
-  useEffect(() => {
-    return () => {
-      if (redirectFormRef.current && redirectFormRef.current.parentNode) {
-        redirectFormRef.current.parentNode.removeChild(redirectFormRef.current);
-        redirectFormRef.current = null;
-      }
-    };
-  }, []);
   
   const redirectToStripePayment = useCallback(async (assessment: HEARTIAssessment, paymentType: 'one-time' | 'subscription' = 'subscription') => {
     if (!user) {
@@ -54,7 +43,7 @@ export const useStripeRedirect = () => {
       localStorage.setItem('pending_assessment', JSON.stringify(assessment));
       
       console.log("Invoking create-payment function with timestamp:", Date.now());
-      const response = await supabase.functions.invoke('create-payment', {
+      const { data, error } = await supabase.functions.invoke('create-payment', {
         body: { 
           timestamp: Date.now(),
           userId: user.id,
@@ -69,32 +58,18 @@ export const useStripeRedirect = () => {
         }
       });
       
-      const { data, error } = response;
-      
       if (error) {
         console.error("Create payment error:", error);
         setRedirectError(error.message || "Payment creation failed");
         setProcessingPayment(false);
-        
-        toast({
-          title: "Payment Error",
-          description: "Failed to create payment session. Please try again or use the manual redirect.",
-          variant: "destructive"
-        });
         throw error;
       }
       
-      if (!data || data.error) {
-        console.error("Create payment API error:", data?.error || "No data returned");
-        setRedirectError(data?.error || "Payment creation failed");
+      if (data.error) {
+        console.error("Create payment API error:", data.error);
+        setRedirectError(data.error);
         setProcessingPayment(false);
-        
-        toast({
-          title: "Payment Error",
-          description: data?.error || "Failed to create payment session. Please try the manual redirect.",
-          variant: "destructive"
-        });
-        throw new Error(data?.error || "No payment URL returned from server");
+        throw new Error(data.error);
       }
       
       if (data.paid) {
@@ -108,11 +83,6 @@ export const useStripeRedirect = () => {
       
       if (!data.url) {
         setProcessingPayment(false);
-        toast({
-          title: "Payment Error",
-          description: "No payment URL was returned. Please try the manual redirect.",
-          variant: "destructive"
-        });
         throw new Error("No payment URL returned from server");
       }
 
@@ -126,39 +96,34 @@ export const useStripeRedirect = () => {
         description: "You'll be redirected to complete your payment to unlock full results.",
       });
       
-      // COMPREHENSIVE MULTI-STRATEGY REDIRECT APPROACH:
-      
-      // Strategy 1: Direct location change (most reliable but may be blocked)
-      window.location.href = data.url;
-      
-      // Strategy 2: Use a form submission as backup (happens after a short delay)
-      setTimeout(() => {
-        try {
-          // Create a form element to submit
-          const form = document.createElement('form');
-          form.method = 'GET';
-          form.action = data.url;
-          form.style.display = 'none';
-          document.body.appendChild(form);
-          redirectFormRef.current = form;
-          form.submit();
-        } catch (redirectError) {
-          console.error("Form redirect failed:", redirectError);
+      // SIMPLIFIED REDIRECT APPROACH:
+      // 1. Try with window.open first (most compatible with popup blockers)
+      try {
+        const newWindow = window.open(data.url, '_self');
+        
+        if (!newWindow) {
+          console.log("Window.open failed, falling back to location.href");
+          // 2. Fall back to direct location change
+          window.location.href = data.url;
         }
-      }, 500);
-      
-      // Set a timeout to check if we're still here after all redirect attempts
-      redirectTimeoutRef.current = window.setTimeout(() => {
-        console.log("Checking if redirect worked...");
-        if (document.hasFocus()) {
-          toast({
-            title: "Automatic Redirect Failed",
-            description: "Please use the manual redirect button below.",
-            variant: "destructive"
-          });
-        }
-        setProcessingPayment(false);
-      }, 2000);
+      } catch (redirectError) {
+        console.error("Primary redirect methods failed:", redirectError);
+        // 3. Last resort - create a clickable element
+        window.location.href = data.url;
+        
+        // Set a timeout to check if we're still here after the redirect attempt
+        redirectTimeoutRef.current = window.setTimeout(() => {
+          console.log("Checking if redirect worked...");
+          if (document.hasFocus()) {
+            toast({
+              title: "Redirect Failed",
+              description: "Please use the manual redirect button below.",
+              variant: "destructive"
+            });
+          }
+          setProcessingPayment(false);
+        }, 3000);
+      }
       
       return true;
     } catch (error) {

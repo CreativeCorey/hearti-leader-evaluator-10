@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { HEARTIAssessment } from '@/types';
 import { useAssessmentPayment } from '@/hooks/useAssessmentPayment';
 import { Card, CardHeader, CardDescription, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { RefreshCw, Loader2, ExternalLink } from 'lucide-react';
+import { RefreshCw, Loader2 } from 'lucide-react';
 
 import { LoadingState } from './payment/LoadingState';
 import { PaymentSuccess } from './payment/PaymentSuccess';
@@ -48,18 +49,10 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
 
   // Check for stored payment URL
   useEffect(() => {
-    const checkPaymentUrl = () => {
-      const storedUrl = localStorage.getItem('stripe_payment_url');
-      if (storedUrl) {
-        setManualPaymentUrl(storedUrl);
-      }
-    };
-    
-    // Check initially and set up an interval to keep checking
-    checkPaymentUrl();
-    const intervalId = setInterval(checkPaymentUrl, 1000);
-    
-    return () => clearInterval(intervalId);
+    const storedUrl = localStorage.getItem('stripe_payment_url');
+    if (storedUrl) {
+      setManualPaymentUrl(storedUrl);
+    }
   }, []);
 
   const handlePayNow = async (paymentType: 'one-time' | 'subscription') => {
@@ -74,7 +67,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
       
       const redirectSuccess = await redirectToStripePayment(assessment, paymentType);
       if (!redirectSuccess) {
-        setDebugInfo(prev => `${prev || ""}\nRedirect was not successful. Please try the manual redirect button.`);
+        setDebugInfo(prev => `${prev || ""}\nRedirect was not successful. Please try again.`);
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
@@ -136,16 +129,15 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
       )}
       
       {manualPaymentUrl && !processingPayment && (
-        <div className="px-6 py-3 mx-6 mb-4 bg-amber-50 border border-amber-300 rounded-md text-amber-800 shadow-sm">
-          <p className="font-medium mb-2">Having trouble? Try our alternative payment method:</p>
+        <div className="px-6 py-2 mx-6 mb-4 text-sm bg-amber-50 border border-amber-200 rounded-md text-amber-700">
+          <p>If automatic redirection fails, you can:</p>
           <Button
-            variant="default"
+            variant="outline"
             size="sm"
-            className="w-full bg-amber-500 hover:bg-amber-600 text-white"
+            className="mt-2 w-full border-amber-400 text-amber-700 hover:bg-amber-100"
             onClick={handleManualRedirect}
           >
-            <ExternalLink className="mr-2 h-4 w-4" />
-            Open Payment Page Directly
+            Try Manual Redirect
           </Button>
         </div>
       )}
