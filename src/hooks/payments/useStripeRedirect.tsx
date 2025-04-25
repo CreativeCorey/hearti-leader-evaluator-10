@@ -96,33 +96,35 @@ export const useStripeRedirect = () => {
         description: "You'll be redirected to complete your payment to unlock full results.",
       });
       
-      // SIMPLIFIED REDIRECT APPROACH:
-      // 1. Try with window.open first (most compatible with popup blockers)
+      // IMPROVED MULTI-STRATEGY REDIRECT:
+      
+      // Strategy 1: Use form-based redirect (most reliable)
+      const form = document.createElement('form');
+      form.method = 'GET';
+      form.action = data.url;
+      form.style.display = 'none';
+      document.body.appendChild(form);
+      
       try {
-        const newWindow = window.open(data.url, '_self');
-        
-        if (!newWindow) {
-          console.log("Window.open failed, falling back to location.href");
-          // 2. Fall back to direct location change
-          window.location.href = data.url;
-        }
-      } catch (redirectError) {
-        console.error("Primary redirect methods failed:", redirectError);
-        // 3. Last resort - create a clickable element
-        window.location.href = data.url;
+        form.submit();
+        console.log("Form-based redirect initiated");
         
         // Set a timeout to check if we're still here after the redirect attempt
         redirectTimeoutRef.current = window.setTimeout(() => {
-          console.log("Checking if redirect worked...");
-          if (document.hasFocus()) {
-            toast({
-              title: "Redirect Failed",
-              description: "Please use the manual redirect button below.",
-              variant: "destructive"
-            });
-          }
-          setProcessingPayment(false);
-        }, 3000);
+          console.log("Form redirect may have failed, trying window.location.href");
+          // Strategy 2: Direct location change
+          window.location.href = data.url;
+          
+          // Set another timeout for the final fallback
+          redirectTimeoutRef.current = window.setTimeout(() => {
+            console.log("All automatic redirects failed");
+            setProcessingPayment(false);
+          }, 2000);
+        }, 1500);
+      } catch (redirectError) {
+        console.error("Form redirect failed, using window.location:", redirectError);
+        // Strategy 3: window.location as fallback
+        window.location.href = data.url;
       }
       
       return true;
@@ -142,6 +144,7 @@ export const useStripeRedirect = () => {
   return {
     processingPayment,
     redirectError,
-    redirectToStripePayment
+    redirectToStripePayment,
+    lastAttemptTime: lastAttemptRef.current
   };
 };

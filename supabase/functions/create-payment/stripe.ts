@@ -61,6 +61,9 @@ export const createCheckoutSession = async (
   };
 
   if (params.paymentType === 'one-time') {
+    // Create or get one-time price
+    logStep("Creating one-time payment session");
+    
     const session = await stripe.checkout.sessions.create({
       ...baseSessionConfig,
       mode: "payment",
@@ -79,26 +82,47 @@ export const createCheckoutSession = async (
     logStep("Created one-time payment session", { id: session.id });
     return session;
   } else {
-    const session = await stripe.checkout.sessions.create({
-      ...baseSessionConfig,
-      mode: "subscription",
-      line_items: [{
-        price_data: {
-          currency: "usd",
-          product_data: { 
-            name: "HEARTI™ Leadership Assessment Results",
-            description: "Monthly Subscription"
+    // Subscription payment
+    logStep("Creating subscription session");
+    
+    // Use the Stripe price ID directly from the configuration
+    const priceId = "pmc_1RHZXPCCli0zGv17wAeEl1At"; 
+    
+    try {
+      const session = await stripe.checkout.sessions.create({
+        ...baseSessionConfig,
+        mode: "subscription",
+        line_items: [{
+          price: priceId,
+          quantity: 1,
+        }],
+      });
+      logStep("Created subscription session", { id: session.id });
+      return session;
+    } catch (error) {
+      logStep("Error creating subscription with price ID", { error, priceId });
+      
+      // Fallback to creating price dynamically if the configured price ID fails
+      const session = await stripe.checkout.sessions.create({
+        ...baseSessionConfig,
+        mode: "subscription",
+        line_items: [{
+          price_data: {
+            currency: "usd",
+            product_data: { 
+              name: "HEARTI™ Leadership Assessment Results",
+              description: "Monthly Subscription"
+            },
+            unit_amount: 699, // $6.99
+            recurring: {
+              interval: "month"
+            }
           },
-          unit_amount: 699, // $6.99
-          recurring: {
-            interval: "month"
-          }
-        },
-        quantity: 1,
-      }],
-    });
-    logStep("Created subscription session", { id: session.id });
-    return session;
+          quantity: 1,
+        }],
+      });
+      logStep("Created fallback subscription session", { id: session.id });
+      return session;
+    }
   }
 };
-

@@ -25,10 +25,19 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
   // Check if there's a stored payment URL from a previous attempt
   const storedPaymentUrl = typeof window !== 'undefined' ? localStorage.getItem('stripe_payment_url') : null;
   
+  const handleMainAction = (type: 'subscription' | 'one-time') => {
+    // If a manual URL is available and we're not processing, prefer direct redirect
+    if (storedPaymentUrl && !processingPayment) {
+      window.location.href = storedPaymentUrl;
+    } else {
+      onPayNow(type);
+    }
+  };
+  
   const handleManualRedirect = () => {
     if (storedPaymentUrl) {
-      // Using _blank for manual redirect for better compatibility
-      window.open(storedPaymentUrl, '_blank');
+      // Open in same tab to ensure consistent behavior
+      window.location.href = storedPaymentUrl;
     }
   };
   
@@ -39,7 +48,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           size="lg" 
           className={`w-full ${processingPayment ? 'bg-primary/80 hover:bg-primary/80' : ''}`}
           disabled={buttonDisabled}
-          onClick={() => onPayNow('subscription')}
+          onClick={() => handleMainAction('subscription')}
         >
           {processingPayment ? (
             <>
@@ -58,11 +67,11 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           <Button 
             variant="outline" 
             size="lg"
-            className="w-full bg-amber-50 text-amber-600 border-amber-400 hover:bg-amber-100"
+            className="w-full bg-amber-50 text-amber-600 border-amber-400 hover:bg-amber-100 font-bold"
             onClick={handleManualRedirect}
           >
             <ExternalLink className="mr-2 h-4 w-4" />
-            Open Payment Page Manually
+            Go To Payment Page Now
           </Button>
         )}
         
@@ -101,7 +110,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           </p>
           <p className="flex items-center justify-center">
             <ExternalLink className="h-3 w-3 mr-1" />
-            If redirection doesn't happen automatically, please use the manual redirect button that will appear.
+            If redirection doesn't happen automatically, please use the manual redirect button when it appears.
           </p>
         </div>
       )}
