@@ -23,23 +23,29 @@ export const initializeStripe = () => {
 
 export const getOrCreateStripeCustomer = async (stripe: Stripe, user: User) => {
   logStep("Looking up Stripe customer");
-  const customers = await stripe.customers.list({ email: user.email, limit: 1 });
   
-  if (customers.data.length > 0) {
-    const customerId = customers.data[0].id;
-    logStep("Found existing customer", { id: customerId });
-    return customerId;
-  }
-  
-  logStep("Creating new customer");
-  const newCustomer = await stripe.customers.create({
-    email: user.email,
-    metadata: {
-      supabase_id: user.id
+  try {
+    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
+    
+    if (customers.data.length > 0) {
+      const customerId = customers.data[0].id;
+      logStep("Found existing customer", { id: customerId });
+      return customerId;
     }
-  });
-  logStep("Created new customer", { id: newCustomer.id });
-  return newCustomer.id;
+    
+    logStep("Creating new customer");
+    const newCustomer = await stripe.customers.create({
+      email: user.email,
+      metadata: {
+        supabase_id: user.id
+      }
+    });
+    logStep("Created new customer", { id: newCustomer.id });
+    return newCustomer.id;
+  } catch (error) {
+    logStep("Error handling Stripe customer", { error: error.message || String(error) });
+    throw error;
+  }
 };
 
 export const createCheckoutSession = async (
@@ -53,41 +59,46 @@ export const createCheckoutSession = async (
 ) => {
   logStep("Creating checkout session", { paymentType: params.paymentType, metadata: params.metadata });
   
-  const baseSessionConfig = {
-    customer: params.customerId,
-    success_url: `${params.origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${params.origin}/`,
-    metadata: params.metadata
-  };
+  try {
+    const baseSessionConfig = {
+      customer: params.customerId,
+      success_url: `${params.origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${params.origin}/`,
+      metadata: params.metadata
+    };
 
-  if (params.paymentType === 'one-time') {
-    const session = await stripe.checkout.sessions.create({
-      ...baseSessionConfig,
-      mode: "payment",
-      line_items: [{
-        price_data: {
-          currency: "usd",
-          product_data: { 
-            name: "HEARTI™ Leadership Assessment Results",
-            description: "Lifetime Access"
+    if (params.paymentType === 'one-time') {
+      const session = await stripe.checkout.sessions.create({
+        ...baseSessionConfig,
+        mode: "payment",
+        line_items: [{
+          price_data: {
+            currency: "usd",
+            product_data: { 
+              name: "HEARTI™ Leadership Assessment Results",
+              description: "Lifetime Access"
+            },
+            unit_amount: 5400, // $54.00
           },
-          unit_amount: 5400, // $54.00
-        },
-        quantity: 1,
-      }],
-    });
-    logStep("Created one-time payment session", { id: session.id });
-    return session;
-  } else {
-    const session = await stripe.checkout.sessions.create({
-      ...baseSessionConfig,
-      mode: "subscription",
-      line_items: [{
-        price: "pmc_1RHZXPCCli0zGv17wAeEl1At", // Updated price ID
-        quantity: 1,
-      }],
-    });
-    logStep("Created subscription session", { id: session.id });
-    return session;
+          quantity: 1,
+        }],
+      });
+      logStep("Created one-time payment session", { id: session.id, url: session.url });
+      return session;
+    } else {
+      const session = await stripe.checkout.sessions.create({
+        ...baseSessionConfig,
+        mode: "subscription",
+        line_items: [{
+          price: "pmc_1RHZXPCCli0zGv17wAeEl1At", // Updated price ID
+          quantity: 1,
+        }],
+      });
+      logStep("Created subscription session", { id: session.id, url: session.url });
+      return session;
+    }
+  } catch (error) {
+    logStep("Error creating Stripe checkout session", { error: error.message || String(error) });
+    throw error;
   }
 };

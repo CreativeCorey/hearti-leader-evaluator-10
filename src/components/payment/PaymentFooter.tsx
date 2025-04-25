@@ -27,14 +27,14 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
   
   const handleManualRedirect = () => {
     if (storedPaymentUrl) {
-      // Using _blank for manual redirect to ensure a fresh context
-      window.open(storedPaymentUrl, '_blank');
+      // Using _self for manual redirect to ensure it replaces the current page
+      window.open(storedPaymentUrl, '_self');
     }
   };
   
   return (
     <CardFooter className="flex flex-col gap-3">
-      <div className="space-y-2 w-full">
+      <div className="space-y-3 w-full">
         <Button 
           size="lg" 
           className={`w-full ${processingPayment ? 'bg-primary/80 hover:bg-primary/80' : ''}`}
@@ -86,7 +86,8 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
       </div>
       
       {!user && (
-        <p className="text-sm text-destructive">
+        <p className="text-sm text-destructive flex items-center">
+          <AlertCircle className="h-4 w-4 mr-1" />
           You need to be signed in to make a payment. 
           <Button variant="link" className="p-0 h-auto text-sm ml-1" onClick={() => window.location.href = '/auth'}>
             Sign in
@@ -107,7 +108,8 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
       )}
       
       {recentAttempt && !processingPayment && (
-        <p className="text-xs text-amber-600 dark:text-amber-400">
+        <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center justify-center">
+          <AlertCircle className="h-3 w-3 mr-1" />
           Please wait a moment before trying again.
         </p>
       )}

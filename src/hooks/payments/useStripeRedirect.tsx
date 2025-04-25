@@ -54,7 +54,7 @@ export const useStripeRedirect = () => {
       localStorage.setItem('pending_assessment', JSON.stringify(assessment));
       
       console.log("Invoking create-payment function with timestamp:", Date.now());
-      const { data, error } = await supabase.functions.invoke('create-payment', {
+      const response = await supabase.functions.invoke('create-payment', {
         body: { 
           timestamp: Date.now(),
           userId: user.id,
@@ -69,6 +69,8 @@ export const useStripeRedirect = () => {
         }
       });
       
+      const { data, error } = response;
+      
       if (error) {
         console.error("Create payment error:", error);
         setRedirectError(error.message || "Payment creation failed");
@@ -76,11 +78,11 @@ export const useStripeRedirect = () => {
         throw error;
       }
       
-      if (data.error) {
-        console.error("Create payment API error:", data.error);
-        setRedirectError(data.error);
+      if (!data || data.error) {
+        console.error("Create payment API error:", data?.error || "No data returned");
+        setRedirectError(data?.error || "Payment creation failed");
         setProcessingPayment(false);
-        throw new Error(data.error);
+        throw new Error(data?.error || "No payment URL returned from server");
       }
       
       if (data.paid) {
@@ -109,26 +111,34 @@ export const useStripeRedirect = () => {
       
       // MULTI-STRATEGY REDIRECT APPROACH:
       
-      // 1. Create a hidden form and submit it (most reliable for cross-origin redirects)
-      try {
-        const form = document.createElement('form');
-        form.method = 'GET';
-        form.action = data.url;
-        form.style.display = 'none';
-        document.body.appendChild(form);
-        redirectFormRef.current = form;
-        form.submit();
-        
-        // Set a short timeout to try other methods if the form submission doesn't navigate
-        setTimeout(() => {
-          // 2. Direct location change as fallback
-          window.location.href = data.url;
-        }, 500);
-      } catch (redirectError) {
-        console.error("Form redirect failed:", redirectError);
-        // Fall back to direct location change
+      // 1. Try a direct window.open first (works best in most modern browsers)
+      const newWindow = window.open(data.url, '_self');
+      
+      // 2. If that fails, try a form-based POST redirect
+      setTimeout(() => {
+        if (!newWindow || newWindow.closed || newWindow.closed === undefined) {
+          try {
+            // Use a form submission for the most reliable cross-domain redirect
+            const form = document.createElement('form');
+            form.method = 'GET';
+            form.action = data.url;
+            form.target = '_self'; // Load in the current window
+            form.style.display = 'none';
+            document.body.appendChild(form);
+            redirectFormRef.current = form;
+            form.submit();
+          } catch (redirectError) {
+            console.error("Form redirect failed:", redirectError);
+            // Last resort - direct location change
+            window.location.href = data.url;
+          }
+        }
+      }, 100);
+      
+      // 3. Final fallback - direct location change
+      setTimeout(() => {
         window.location.href = data.url;
-      }
+      }, 500);
       
       // Set a timeout to check if we're still here after all redirect attempts
       redirectTimeoutRef.current = window.setTimeout(() => {
@@ -141,7 +151,7 @@ export const useStripeRedirect = () => {
           });
         }
         setProcessingPayment(false);
-      }, 3000);
+      }, 2000);
       
       return true;
     } catch (error) {
