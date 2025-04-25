@@ -83,17 +83,7 @@ export const createCheckoutSession = async (
       ...baseSessionConfig,
       mode: "subscription",
       line_items: [{
-        price_data: {
-          currency: "usd",
-          product_data: { 
-            name: "HEARTI™ Leadership Assessment Results",
-            description: "Monthly Subscription"
-          },
-          unit_amount: 699, // $6.99
-          recurring: {
-            interval: "month"
-          }
-        },
+        price: "pmc_1RHZXPCCli0zGv17wAeEl1At", // Updated price ID
         quantity: 1,
       }],
     });
@@ -101,4 +91,3 @@ export const createCheckoutSession = async (
     return session;
   }
 };
-

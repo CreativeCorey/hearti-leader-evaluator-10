@@ -1,5 +1,5 @@
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -12,6 +12,17 @@ export const useStripeRedirect = () => {
   const { toast } = useToast();
   const redirectTimeoutRef = useRef<number | null>(null);
   const lastAttemptRef = useRef<number | null>(null);
+  const redirectFormRef = useRef<HTMLFormElement | null>(null);
+  
+  // Clean up any previous redirect form
+  useEffect(() => {
+    return () => {
+      if (redirectFormRef.current && redirectFormRef.current.parentNode) {
+        redirectFormRef.current.parentNode.removeChild(redirectFormRef.current);
+        redirectFormRef.current = null;
+      }
+    };
+  }, []);
   
   const redirectToStripePayment = useCallback(async (assessment: HEARTIAssessment, paymentType: 'one-time' | 'subscription' = 'subscription') => {
     if (!user) {
@@ -96,34 +107,41 @@ export const useStripeRedirect = () => {
         description: "You'll be redirected to complete your payment to unlock full results.",
       });
       
-      // SIMPLIFIED REDIRECT APPROACH:
-      // 1. Try with window.open first (most compatible with popup blockers)
+      // MULTI-STRATEGY REDIRECT APPROACH:
+      
+      // 1. Create a hidden form and submit it (most reliable for cross-origin redirects)
       try {
-        const newWindow = window.open(data.url, '_self');
+        const form = document.createElement('form');
+        form.method = 'GET';
+        form.action = data.url;
+        form.style.display = 'none';
+        document.body.appendChild(form);
+        redirectFormRef.current = form;
+        form.submit();
         
-        if (!newWindow) {
-          console.log("Window.open failed, falling back to location.href");
-          // 2. Fall back to direct location change
+        // Set a short timeout to try other methods if the form submission doesn't navigate
+        setTimeout(() => {
+          // 2. Direct location change as fallback
           window.location.href = data.url;
-        }
+        }, 500);
       } catch (redirectError) {
-        console.error("Primary redirect methods failed:", redirectError);
-        // 3. Last resort - create a clickable element
+        console.error("Form redirect failed:", redirectError);
+        // Fall back to direct location change
         window.location.href = data.url;
-        
-        // Set a timeout to check if we're still here after the redirect attempt
-        redirectTimeoutRef.current = window.setTimeout(() => {
-          console.log("Checking if redirect worked...");
-          if (document.hasFocus()) {
-            toast({
-              title: "Redirect Failed",
-              description: "Please use the manual redirect button below.",
-              variant: "destructive"
-            });
-          }
-          setProcessingPayment(false);
-        }, 3000);
       }
+      
+      // Set a timeout to check if we're still here after all redirect attempts
+      redirectTimeoutRef.current = window.setTimeout(() => {
+        console.log("Checking if redirect worked...");
+        if (document.hasFocus()) {
+          toast({
+            title: "Automatic Redirect Failed",
+            description: "Please use the manual redirect button below.",
+            variant: "destructive"
+          });
+        }
+        setProcessingPayment(false);
+      }, 3000);
       
       return true;
     } catch (error) {
