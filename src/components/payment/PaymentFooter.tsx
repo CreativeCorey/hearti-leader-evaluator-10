@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from '@/hooks/use-toast';
 
 interface PaymentFooterProps {
   processingPayment: boolean;
@@ -23,21 +24,46 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
   const buttonDisabled = processingPayment || !user || recentAttempt;
   
   // Check if there's a stored payment URL from a previous attempt
-  const storedPaymentUrl = typeof window !== 'undefined' ? localStorage.getItem('stripe_payment_url') : null;
+  const [storedPaymentUrl, setStoredPaymentUrl] = React.useState<string | null>(null);
+  
+  React.useEffect(() => {
+    // Check on component mount and whenever processing status changes
+    const checkStoredUrl = () => {
+      const url = typeof window !== 'undefined' ? localStorage.getItem('stripe_payment_url') : null;
+      setStoredPaymentUrl(url);
+    };
+    
+    checkStoredUrl();
+    
+    // Also set up an interval to check regularly
+    const intervalId = setInterval(checkStoredUrl, 1000);
+    return () => clearInterval(intervalId);
+  }, [processingPayment]);
   
   const handleMainAction = (type: 'subscription' | 'one-time') => {
-    // If a manual URL is available and we're not processing, prefer direct redirect
+    // If we are not processing and a manual URL is available, show a toast suggesting manual redirect
     if (storedPaymentUrl && !processingPayment) {
-      window.location.href = storedPaymentUrl;
-    } else {
-      onPayNow(type);
+      toast({
+        title: "Payment URL Available",
+        description: "You can use the manual redirect button below if automatic redirect doesn't work.",
+      });
     }
+    
+    onPayNow(type);
   };
   
   const handleManualRedirect = () => {
     if (storedPaymentUrl) {
-      // Open in same tab to ensure consistent behavior
+      console.log("Manual redirect to:", storedPaymentUrl);
+      
+      // Try opening in same tab first
       window.location.href = storedPaymentUrl;
+      
+      // Show confirmation toast
+      toast({
+        title: "Redirecting to Stripe",
+        description: "You're being redirected to complete your payment.",
+      });
     }
   };
   
@@ -63,7 +89,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           )}
         </Button>
         
-        {storedPaymentUrl && !processingPayment && (
+        {storedPaymentUrl && (
           <Button 
             variant="outline" 
             size="lg"
@@ -110,7 +136,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           </p>
           <p className="flex items-center justify-center">
             <ExternalLink className="h-3 w-3 mr-1" />
-            If redirection doesn't happen automatically, please use the manual redirect button when it appears.
+            If redirection doesn't happen automatically, please use the manual redirect button.
           </p>
         </div>
       )}

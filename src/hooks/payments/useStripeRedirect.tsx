@@ -96,35 +96,30 @@ export const useStripeRedirect = () => {
         description: "You'll be redirected to complete your payment to unlock full results.",
       });
       
-      // IMPROVED MULTI-STRATEGY REDIRECT:
+      // SIMPLIFIED REDIRECT APPROACH:
       
-      // Strategy 1: Use form-based redirect (most reliable)
-      const form = document.createElement('form');
-      form.method = 'GET';
-      form.action = data.url;
-      form.style.display = 'none';
-      document.body.appendChild(form);
-      
+      // First attempt: Direct window.location change
       try {
-        form.submit();
-        console.log("Form-based redirect initiated");
-        
-        // Set a timeout to check if we're still here after the redirect attempt
-        redirectTimeoutRef.current = window.setTimeout(() => {
-          console.log("Form redirect may have failed, trying window.location.href");
-          // Strategy 2: Direct location change
-          window.location.href = data.url;
-          
-          // Set another timeout for the final fallback
-          redirectTimeoutRef.current = window.setTimeout(() => {
-            console.log("All automatic redirects failed");
-            setProcessingPayment(false);
-          }, 2000);
-        }, 1500);
-      } catch (redirectError) {
-        console.error("Form redirect failed, using window.location:", redirectError);
-        // Strategy 3: window.location as fallback
+        console.log("Redirecting to Stripe via window.location");
         window.location.href = data.url;
+        
+        // Set a timeout as a fallback - if we're still here after 2s, show manual button
+        redirectTimeoutRef.current = window.setTimeout(() => {
+          console.log("Direct location redirect may have failed");
+          setProcessingPayment(false);
+          
+          // Show a toast notifying the user to use the manual button
+          toast({
+            title: "Automatic Redirect Failed",
+            description: "Please use the 'Go To Payment Page Now' button to continue.",
+            variant: "destructive"
+          });
+          
+        }, 2000);
+        
+      } catch (redirectError) {
+        console.error("Redirect failed, showing manual option:", redirectError);
+        setProcessingPayment(false);
       }
       
       return true;

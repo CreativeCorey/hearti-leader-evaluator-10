@@ -64,40 +64,52 @@ serve(async (req) => {
     }
 
     const paymentType = body.paymentType || 'subscription';
-    const session = await createCheckoutSession(stripe, {
-      customerId,
-      origin,
-      metadata,
-      paymentType
-    });
-
+    
     try {
-      await createPaymentRecord({
-        userId: user.id,
-        sessionId: session.id,
-        amount: paymentType === 'one-time' ? 5400 : 699,
-        type: paymentType
+      const session = await createCheckoutSession(stripe, {
+        customerId,
+        origin,
+        metadata,
+        paymentType
       });
-    } catch (dbError) {
-      // Log but don't fail if the database record creation fails
-      logStep("Error creating payment record", dbError);
-    }
 
-    // Add cache control headers to ensure fresh responses
-    return new Response(JSON.stringify({ 
-      url: session.url, 
-      sessionId: session.id,
-      timestamp: Date.now() 
-    }), {
-      headers: { 
-        ...corsHeaders, 
-        "Content-Type": "application/json",
-        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-        "Pragma": "no-cache",
-        "Expires": "0"
-      },
-      status: 200,
-    });
+      try {
+        await createPaymentRecord({
+          userId: user.id,
+          sessionId: session.id,
+          amount: paymentType === 'one-time' ? 5400 : 699,
+          type: paymentType
+        });
+      } catch (dbError) {
+        // Log but don't fail if the database record creation fails
+        logStep("Error creating payment record", dbError);
+      }
+
+      logStep("Successfully created checkout session", { 
+        url: session.url, 
+        id: session.id,
+        timestamp: Date.now() 
+      });
+
+      // Add cache control headers to ensure fresh responses
+      return new Response(JSON.stringify({ 
+        url: session.url, 
+        sessionId: session.id,
+        timestamp: Date.now() 
+      }), {
+        headers: { 
+          ...corsHeaders, 
+          "Content-Type": "application/json",
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+          "Pragma": "no-cache",
+          "Expires": "0"
+        },
+        status: 200,
+      });
+    } catch (stripeError) {
+      logStep("Stripe checkout creation error", stripeError);
+      throw stripeError;
+    }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("Payment creation error", errorMessage);

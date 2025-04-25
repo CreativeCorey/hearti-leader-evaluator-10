@@ -61,7 +61,7 @@ export const createCheckoutSession = async (
   };
 
   if (params.paymentType === 'one-time') {
-    // Create or get one-time price
+    // Create one-time payment session
     logStep("Creating one-time payment session");
     
     const session = await stripe.checkout.sessions.create({
@@ -82,27 +82,11 @@ export const createCheckoutSession = async (
     logStep("Created one-time payment session", { id: session.id });
     return session;
   } else {
-    // Subscription payment
+    // Create subscription session
     logStep("Creating subscription session");
     
-    // Use the Stripe price ID directly from the configuration
-    const priceId = "pmc_1RHZXPCCli0zGv17wAeEl1At"; 
-    
     try {
-      const session = await stripe.checkout.sessions.create({
-        ...baseSessionConfig,
-        mode: "subscription",
-        line_items: [{
-          price: priceId,
-          quantity: 1,
-        }],
-      });
-      logStep("Created subscription session", { id: session.id });
-      return session;
-    } catch (error) {
-      logStep("Error creating subscription with price ID", { error, priceId });
-      
-      // Fallback to creating price dynamically if the configured price ID fails
+      // First try to create a subscription directly with a price ID
       const session = await stripe.checkout.sessions.create({
         ...baseSessionConfig,
         mode: "subscription",
@@ -111,6 +95,30 @@ export const createCheckoutSession = async (
             currency: "usd",
             product_data: { 
               name: "HEARTI™ Leadership Assessment Results",
+              description: "Monthly Subscription"
+            },
+            unit_amount: 699, // $6.99
+            recurring: {
+              interval: "month"
+            }
+          },
+          quantity: 1,
+        }],
+      });
+      logStep("Created subscription session", { id: session.id });
+      return session;
+    } catch (error) {
+      logStep("Error creating subscription", { error });
+      
+      // If that fails, try a different approach
+      const session = await stripe.checkout.sessions.create({
+        ...baseSessionConfig,
+        mode: "subscription",
+        line_items: [{
+          price_data: {
+            currency: "usd",
+            product_data: { 
+              name: "HEARTI™ Monthly Access",
               description: "Monthly Subscription"
             },
             unit_amount: 699, // $6.99
