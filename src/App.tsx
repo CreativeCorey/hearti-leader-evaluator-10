@@ -7,6 +7,7 @@ import Auth from './pages/Auth';
 import AuthCallback from './pages/AuthCallback';
 import NotFound from './pages/NotFound';
 import PaymentSuccess from './pages/PaymentSuccess';
+import Profile from './pages/Profile';
 import AuthGuard from './components/AuthGuard';
 import AuthProvider from './contexts/auth/AuthProvider';
 import LanguageProvider from './contexts/language/LanguageProvider';
@@ -21,6 +22,7 @@ function App() {
             <Route element={<Layout><Outlet /></Layout>}>
               <Route element={<AuthGuard />}>
                 <Route index element={<Index />} />
+                <Route path="/profile" element={<Profile />} />
               </Route>
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/payment-success" element={<PaymentSuccess />} />
