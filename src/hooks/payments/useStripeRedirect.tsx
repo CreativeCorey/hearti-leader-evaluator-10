@@ -96,12 +96,9 @@ export const useStripeRedirect = () => {
         description: "You'll be redirected to complete your payment to unlock full results.",
       });
       
-      // SIMPLIFIED REDIRECT APPROACH:
-      
-      // First attempt: Direct window.location change
+      // Direct window.location change
       try {
         console.log("Redirecting to Stripe via window.location");
-        window.location.href = data.url;
         
         // Set a timeout as a fallback - if we're still here after 2s, show manual button
         redirectTimeoutRef.current = window.setTimeout(() => {
@@ -111,15 +108,21 @@ export const useStripeRedirect = () => {
           // Show a toast notifying the user to use the manual button
           toast({
             title: "Automatic Redirect Failed",
-            description: "Please use the 'Go To Payment Page Now' button to continue.",
+            description: "Please use the manual redirect button to continue to payment.",
             variant: "destructive"
           });
-          
         }, 2000);
         
+        // Actually perform the redirect
+        window.location.href = data.url;
       } catch (redirectError) {
         console.error("Redirect failed, showing manual option:", redirectError);
         setProcessingPayment(false);
+        toast({
+          title: "Redirect Failed",
+          description: "Please use the manual redirect button to continue to payment.",
+          variant: "destructive"
+        });
       }
       
       return true;

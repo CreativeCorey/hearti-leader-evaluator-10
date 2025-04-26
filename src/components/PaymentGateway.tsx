@@ -6,6 +6,7 @@ import { useAssessmentPayment } from '@/hooks/useAssessmentPayment';
 import { Card, CardHeader, CardDescription, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, Loader2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 import { LoadingState } from './payment/LoadingState';
 import { PaymentSuccess } from './payment/PaymentSuccess';
@@ -24,6 +25,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   onPaymentComplete 
 }) => {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
   const [paymentAttemptCount, setPaymentAttemptCount] = useState(0);
   const [lastAttemptTime, setLastAttemptTime] = useState<number | null>(null);
@@ -65,28 +67,36 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
       localStorage.removeItem('payment_error');
       localStorage.setItem('pending_assessment', JSON.stringify(assessment));
       
+      // Attempt to redirect to Stripe payment
       const redirectSuccess = await redirectToStripePayment(assessment, paymentType);
       if (!redirectSuccess) {
         setDebugInfo(prev => `${prev || ""}\nRedirect was not successful. Please try again.`);
+        toast({
+          title: "Redirect Failed",
+          description: "Could not start the payment process. Please try again or use manual redirect if available.",
+          variant: "destructive"
+        });
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
       setDebugInfo(prev => `${prev || ""}\nPayment process error: ${errorMessage}`);
       localStorage.setItem('payment_error', errorMessage);
       refreshPaymentStatus();
+      toast({
+        title: "Payment Error",
+        description: "There was a problem starting the payment process. Please try again.",
+        variant: "destructive"
+      });
     }
   };
   
   const handleRefreshStatus = () => {
     setDebugInfo(prev => `${prev || ""}\nManually refreshing payment status at ${new Date().toLocaleTimeString()}...`);
     refreshPaymentStatus();
-  };
-  
-  const handleManualRedirect = () => {
-    if (manualPaymentUrl) {
-      window.open(manualPaymentUrl, '_blank');
-      setDebugInfo(prev => `${prev || ""}\nTried manual redirect at ${new Date().toLocaleTimeString()}`);
-    }
+    toast({
+      title: "Refreshing",
+      description: "Checking your payment status..."
+    });
   };
   
   if (checkingPayment) {
@@ -135,7 +145,18 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
             variant="outline"
             size="sm"
             className="mt-2 w-full border-amber-400 text-amber-700 hover:bg-amber-100"
-            onClick={handleManualRedirect}
+            onClick={() => {
+              try {
+                window.location.href = manualPaymentUrl;
+              } catch (e) {
+                console.error("Manual redirect error:", e);
+                toast({
+                  title: "Redirect Failed",
+                  description: "Could not navigate to payment page. Please try again.",
+                  variant: "destructive"
+                });
+              }
+            }}
           >
             Try Manual Redirect
           </Button>

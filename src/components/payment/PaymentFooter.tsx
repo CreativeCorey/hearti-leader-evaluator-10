@@ -2,7 +2,7 @@
 import React from 'react';
 import { CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, CreditCard, ExternalLink, AlertCircle } from 'lucide-react';
+import { Loader2, CreditCard, ExternalLink } from 'lucide-react';
 import { User } from '@supabase/supabase-js';
 import {
   DropdownMenu,
@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 interface PaymentFooterProps {
   processingPayment: boolean;
@@ -20,6 +20,7 @@ interface PaymentFooterProps {
 }
 
 export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayNow }: PaymentFooterProps) => {
+  const { toast } = useToast();
   const recentAttempt = lastAttemptTime && (Date.now() - lastAttemptTime < 3000);
   const buttonDisabled = processingPayment || !user || recentAttempt;
   
@@ -56,13 +57,28 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
     if (storedPaymentUrl) {
       console.log("Manual redirect to:", storedPaymentUrl);
       
-      // Try opening in same tab first
-      window.location.href = storedPaymentUrl;
-      
-      // Show confirmation toast
+      // Try opening in same tab with direct location change
+      try {
+        window.location.href = storedPaymentUrl;
+        
+        // Show confirmation toast
+        toast({
+          title: "Redirecting to Stripe",
+          description: "You're being redirected to complete your payment.",
+        });
+      } catch (e) {
+        console.error("Redirect error:", e);
+        toast({
+          title: "Redirect Failed",
+          description: "Could not navigate to payment page automatically. Try copying the URL manually.",
+          variant: "destructive"
+        });
+      }
+    } else {
       toast({
-        title: "Redirecting to Stripe",
-        description: "You're being redirected to complete your payment.",
+        title: "No Payment URL Available",
+        description: "Please click the main payment button first to generate a payment link.",
+        variant: "destructive"
       });
     }
   };
