@@ -52,8 +52,34 @@ serve(async (req) => {
     const customerId = customers.data[0].id;
     logStep("Found customer", { id: customerId });
 
-    // Parse the body to get the origin
-    const { origin } = await req.json();
+    // Parse the request body to get the origin
+    let origin = "https://lovable.dev"; // Fallback default
+    try {
+      const body = await req.json();
+      if (body && body.origin) {
+        origin = body.origin;
+        logStep("Using origin from request body", { origin });
+      } else {
+        // Try to get origin from headers if not in body
+        const headerOrigin = req.headers.get("origin");
+        if (headerOrigin) {
+          origin = headerOrigin;
+          logStep("Using origin from headers", { origin });
+        } else {
+          logStep("Using default origin", { origin });
+        }
+      }
+    } catch (error) {
+      // If parsing fails, try to use the Origin header
+      const headerOrigin = req.headers.get("origin");
+      if (headerOrigin) {
+        origin = headerOrigin;
+        logStep("Using origin from headers after JSON parse failure", { origin });
+      } else {
+        logStep("Using default origin after parsing error", { origin, error: error.message });
+      }
+    }
+
     const session = await stripe.billingPortal.sessions.create({
       customer: customerId,
       return_url: `${origin}/profile`,

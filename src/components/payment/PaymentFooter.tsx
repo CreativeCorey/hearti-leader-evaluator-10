@@ -28,7 +28,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
   const [storedPaymentUrl, setStoredPaymentUrl] = React.useState<string | null>(null);
   
   React.useEffect(() => {
-    // Check on component mount and whenever processing status changes
+    // Check on mount and whenever processing status changes
     const checkStoredUrl = () => {
       const url = typeof window !== 'undefined' ? localStorage.getItem('stripe_payment_url') : null;
       setStoredPaymentUrl(url);
@@ -57,22 +57,32 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
     if (storedPaymentUrl) {
       console.log("Manual redirect to:", storedPaymentUrl);
       
-      // Try opening in same tab with direct location change
       try {
+        // Direct location change for reliable navigation
         window.location.href = storedPaymentUrl;
         
-        // Show confirmation toast
         toast({
           title: "Redirecting to Stripe",
           description: "You're being redirected to complete your payment.",
         });
       } catch (e) {
         console.error("Redirect error:", e);
-        toast({
-          title: "Redirect Failed",
-          description: "Could not navigate to payment page automatically. Try copying the URL manually.",
-          variant: "destructive"
-        });
+        
+        // Fallback: copy URL to clipboard if navigation fails
+        try {
+          navigator.clipboard.writeText(storedPaymentUrl);
+          toast({
+            title: "Redirect Failed",
+            description: "Payment URL copied to clipboard. Please paste it in your browser address bar.",
+            variant: "destructive"
+          });
+        } catch (clipboardError) {
+          toast({
+            title: "Redirect Failed",
+            description: "Could not navigate to payment page. Please try again later.",
+            variant: "destructive"
+          });
+        }
       }
     } else {
       toast({
