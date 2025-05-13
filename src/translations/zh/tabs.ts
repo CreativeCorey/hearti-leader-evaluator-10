@@ -8,7 +8,7 @@ export const tabs = {
       mobile: "数据"
     },
     report: "报告",
-    developSkills: "技能",
+    developSkills: "HEARTI Coach",
     buildHabits: "习惯",
   }
 };

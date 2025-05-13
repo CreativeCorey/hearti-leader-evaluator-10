@@ -150,7 +150,7 @@ export const en = {
       mobile: "Spectra"
     },
     report: "Report",
-    developSkills: "Develop Skills",
+    developSkills: "HEARTI Coach",
     buildHabits: "Build Habits",
   },
   results: {

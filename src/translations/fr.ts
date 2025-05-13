@@ -123,7 +123,7 @@ export const fr = {
       mobile: "Spectra"
     },
     report: "Rapport",
-    developSkills: "Développer des compétences",
+    developSkills: "HEARTI Coach",
     buildHabits: "Créer des habitudes",
   },
   results: {

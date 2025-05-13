@@ -112,7 +112,7 @@ export const ar = {
       mobile: "Spectra"
     },
     report: "تقرير",
-    developSkills: "تطوير المهارات",
+    developSkills: "HEARTI Coach",
     buildHabits: "بناء العادات",
   },
   results: {

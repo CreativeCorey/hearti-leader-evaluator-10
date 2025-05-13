@@ -42,14 +42,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
   }, [processingPayment]);
   
   const handleMainAction = (type: 'subscription' | 'one-time') => {
-    // If we are not processing and a manual URL is available, show a toast suggesting manual redirect
-    if (storedPaymentUrl && !processingPayment) {
-      toast({
-        title: "Payment URL Available",
-        description: "You can use the manual redirect button below if automatic redirect doesn't work.",
-      });
-    }
-    
+    // Just prepare the payment, no automatic redirect
     onPayNow(type);
   };
   
@@ -98,14 +91,14 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
       <div className="space-y-2 w-full">
         <Button 
           size="lg" 
-          className={`w-full ${processingPayment ? 'bg-primary/80 hover:bg-primary/80' : ''}`}
+          className="w-full"
           disabled={buttonDisabled}
           onClick={() => handleMainAction('subscription')}
         >
           {processingPayment ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {recentAttempt ? 'Preparing Payment...' : 'Redirecting to Stripe...'}
+              {recentAttempt ? 'Preparing Payment...' : 'Preparing Payment...'}
             </>
           ) : (
             <>
@@ -158,11 +151,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
       {processingPayment && (
         <div className="text-xs text-muted-foreground mt-2 text-center space-y-2">
           <p>
-            You will be redirected to Stripe's secure payment page.
-          </p>
-          <p className="flex items-center justify-center">
-            <ExternalLink className="h-3 w-3 mr-1" />
-            If redirection doesn't happen automatically, please use the manual redirect button.
+            Payment is being prepared. Click the manual redirect button when it appears.
           </p>
         </div>
       )}

@@ -10,7 +10,6 @@ export const useStripeRedirect = () => {
   const [redirectError, setRedirectError] = useState<string | null>(null);
   const { user } = useAuth();
   const { toast } = useToast();
-  const redirectTimeoutRef = useRef<number | null>(null);
   const lastAttemptRef = useRef<number | null>(null);
   
   const redirectToStripePayment = useCallback(async (assessment: HEARTIAssessment, paymentType: 'one-time' | 'subscription' = 'subscription') => {
@@ -29,12 +28,6 @@ export const useStripeRedirect = () => {
       return false;
     }
     lastAttemptRef.current = now;
-    
-    // Clear any existing timeouts
-    if (redirectTimeoutRef.current) {
-      window.clearTimeout(redirectTimeoutRef.current);
-      redirectTimeoutRef.current = null;
-    }
     
     setProcessingPayment(true);
     setRedirectError(null);
@@ -88,42 +81,16 @@ export const useStripeRedirect = () => {
 
       console.log("Received Stripe payment URL:", data.url);
       
-      // Store the URL in localStorage for manual recovery if needed
+      // Store the URL in localStorage for manual retrieval
       localStorage.setItem('stripe_payment_url', data.url);
       
       toast({
-        title: "Redirecting to payment",
-        description: "You'll be redirected to complete your payment to unlock full results.",
+        title: "Payment Ready",
+        description: "Please use the manual redirect button to continue to payment.",
       });
       
-      // Direct window.location change
-      try {
-        console.log("Redirecting to Stripe via window.location");
-        
-        // Set a timeout as a fallback - if we're still here after 2s, show manual button
-        redirectTimeoutRef.current = window.setTimeout(() => {
-          console.log("Direct location redirect may have failed");
-          setProcessingPayment(false);
-          
-          // Show a toast notifying the user to use the manual button
-          toast({
-            title: "Automatic Redirect Failed",
-            description: "Please use the manual redirect button to continue to payment.",
-            variant: "destructive"
-          });
-        }, 2000);
-        
-        // Actually perform the redirect
-        window.location.href = data.url;
-      } catch (redirectError) {
-        console.error("Redirect failed, showing manual option:", redirectError);
-        setProcessingPayment(false);
-        toast({
-          title: "Redirect Failed",
-          description: "Please use the manual redirect button to continue to payment.",
-          variant: "destructive"
-        });
-      }
+      // No longer perform automatic redirect
+      setProcessingPayment(false);
       
       return true;
     } catch (error) {
