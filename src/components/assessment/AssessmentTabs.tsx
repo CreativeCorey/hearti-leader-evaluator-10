@@ -4,6 +4,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AssessmentTab, HEARTIAssessment, ResultsDisplayProps } from '@/types';
 import ResultsDisplay from '@/components/results/ResultsDisplay';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface AssessmentTabsProps {
   activeTab: AssessmentTab;
@@ -27,6 +28,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
   viewTransitioning
 }) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [showEmptyState, setShowEmptyState] = useState(false);
   
   // Check if assessments are available after a short delay
@@ -49,6 +51,13 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
       });
     }
   }, [showEmptyState, activeTab, setActiveTab, toast]);
+
+  // Handle the take assessment button click
+  const handleTakeAssessment = () => {
+    console.log("Take assessment button clicked");
+    navigate('/?tab=take');
+    setActiveTab('take');
+  };
   
   // If no assessments are available yet, show a prompt to take an assessment
   if (showEmptyState) {
@@ -60,7 +69,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
         </p>
         <button 
           className="px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-          onClick={() => setActiveTab('take')}
+          onClick={handleTakeAssessment}
         >
           Take Assessment
         </button>

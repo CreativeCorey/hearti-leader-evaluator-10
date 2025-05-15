@@ -38,7 +38,16 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     handleDemographicsComplete,
     handleSkipDemographics,
     previousDemographics
-  } = useAssessmentForm(onComplete);
+  } = useAssessmentForm(assessment => {
+    // Wait for loading animation to complete before calling onComplete
+    if (showLoadingState) {
+      setTimeout(() => {
+        onComplete(assessment);
+      }, 500);
+    } else {
+      onComplete(assessment);
+    }
+  });
 
   // Loading state while initializing form
   if (loading) {
@@ -65,7 +74,10 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
   if (showLoadingState) {
     return (
       <AssessmentLoadingState 
-        onComplete={() => setShowLoadingState(false)}
+        onComplete={() => {
+          setShowLoadingState(false);
+          // The onComplete from useAssessmentForm will be called after this
+        }}
       />
     );
   }
@@ -87,8 +99,9 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
   // Handle completing the assessment and showing loading state
   const handleCompleteAssessment = () => {
     if (currentQuestionIndex === totalQuestions - 1) {
-      setShowLoadingState(true);
+      // Save the current answer and then show loading state
       handleNext();
+      setShowLoadingState(true);
     } else {
       handleNext();
     }
