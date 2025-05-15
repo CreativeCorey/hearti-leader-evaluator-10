@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AssessmentTab, HEARTIAssessment, ResultsDisplayProps } from '@/types';
-import ResultsDisplay from '@/components/ResultsDisplay';
+import ResultsDisplay from '@/components/results/ResultsDisplay';
 import { useToast } from '@/hooks/use-toast';
 
 interface AssessmentTabsProps {
@@ -101,12 +101,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
       {latestAssessment && (
         <ResultsDisplay
           assessment={latestAssessment}
-          allAssessments={userAssessments}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          onRefreshAssessments={() => {
-            // Refresh assessments logic would go here
-          }}
+          assessments={userAssessments}
         />
       )}
     </div>

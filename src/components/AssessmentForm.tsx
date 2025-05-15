@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useIsMobile } from "@/hooks/use-mobile";
 import { HEARTIAssessment } from '@/types';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,6 +10,7 @@ import QuestionDisplay from './assessment/QuestionDisplay';
 import DebugTools from './assessment/DebugTools';
 import { useAssessmentForm } from '@/hooks/useAssessmentForm';
 import { useLanguage } from '@/contexts/language/LanguageContext';
+import AssessmentLoadingState from './assessment/AssessmentLoadingState';
 
 interface AssessmentFormProps {
   onComplete: (assessment: HEARTIAssessment) => void;
@@ -19,6 +20,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
   const isMobile = useIsMobile();
   const DEBUG = import.meta.env.DEV;
   const { t } = useLanguage();
+  const [showLoadingState, setShowLoadingState] = useState(false);
   
   const {
     loading,
@@ -59,6 +61,15 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     );
   }
 
+  // Show loading state before demographics
+  if (showLoadingState) {
+    return (
+      <AssessmentLoadingState 
+        onComplete={() => setShowLoadingState(false)}
+      />
+    );
+  }
+
   // Demographics form after assessment completion
   if (assessmentComplete) {
     return (
@@ -72,6 +83,16 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
 
   // Main assessment form
   const currentScore = getCurrentAnswer();
+
+  // Handle completing the assessment and showing loading state
+  const handleCompleteAssessment = () => {
+    if (currentQuestionIndex === totalQuestions - 1) {
+      setShowLoadingState(true);
+      handleNext();
+    } else {
+      handleNext();
+    }
+  };
 
   return (
     <Card className="w-full mx-auto shadow-sm">
@@ -124,7 +145,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
         </div>
         
         <Button 
-          onClick={handleNext}
+          onClick={handleCompleteAssessment}
           className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
           size={isMobile ? "sm" : "default"}
         >

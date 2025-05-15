@@ -91,7 +91,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
           {t('tabs.report')}
         </TabsTrigger>
         <TabsTrigger value="development" className={getTabClasses()}>
-          {t('tabs.developSkills')}
+          {t('tabs.heartiCoach') || "HEARTI Coach"}
         </TabsTrigger>
         <TabsTrigger value="habits" className={getTabClasses()}>
           {t('tabs.buildHabits')}

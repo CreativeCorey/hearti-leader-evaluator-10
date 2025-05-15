@@ -15,6 +15,14 @@ export const assessment = {
     takeAssessment: "参加评估",
     viewResults: "查看结果",
     latestResults: "最新结果",
+    loading: {
+      title: "创建您的 HEARTI™ 领导力档案",
+      analyzing: "分析您的回答...",
+      building: "构建您的 HEARTI 档案...",
+      dimension: "加载 {{dimension}}...",
+      finalizing: "创建您的个性化发展计划...",
+      message: "感谢您的用心回答。我们正在准备您的个性化 HEARTI™ 领导力评估结果。"
+    },
     scoreLabels: {
       "1": "几乎从不",
       "2": "很少",
@@ -96,4 +104,3 @@ export const assessment = {
     }
   }
 };
-
