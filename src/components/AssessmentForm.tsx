@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useIsMobile } from "@/hooks/use-mobile";
 import { HEARTIAssessment } from '@/types';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,6 +21,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
   const DEBUG = import.meta.env.DEV;
   const { t } = useLanguage();
   const [showLoadingState, setShowLoadingState] = useState(false);
+  const [loadingStateComplete, setLoadingStateComplete] = useState(false);
   
   const {
     loading,
@@ -37,24 +38,35 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     processingPayment,
     handleDemographicsComplete,
     handleSkipDemographics,
-    previousDemographics
-  } = useAssessmentForm(assessment => {
-    // Wait for loading animation to complete before calling onComplete
-    if (showLoadingState) {
-      setTimeout(() => {
-        onComplete(assessment);
-      }, 500);
+    previousDemographics,
+    isSubmitting
+  } = useAssessmentForm((assessment) => {
+    // Show loading state only at assessment completion
+    if (currentQuestionIndex === totalQuestions - 1 && !loadingStateComplete) {
+      setShowLoadingState(true);
+      // This will be triggered when loading animation completes
     } else {
       onComplete(assessment);
     }
   });
 
+  // Handle loading state completion
+  useEffect(() => {
+    if (loadingStateComplete && assessmentComplete) {
+      // This ensures we only call onComplete after the loading animation finishes
+      const timer = setTimeout(() => {
+        onComplete(assessment => assessment);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [loadingStateComplete, assessmentComplete, onComplete]);
+
   // Loading state while initializing form
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center p-6 space-y-4">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p>{t('common.loading')}</p>
+      <div className="flex flex-col items-center justify-center p-4 space-y-2">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <p className="text-sm">{t('common.loading')}</p>
       </div>
     );
   }
@@ -63,9 +75,8 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
   if (!currentQuestion) {
     return (
       <div className="flex flex-col items-center justify-center p-6 space-y-4">
-        <Loader2 className="h-8 w-8 animate-spin text-red-500" />
-        <p className="text-red-500">{t('common.loading')}</p>
-        <Button onClick={() => window.location.reload()} className="mt-4">{t('assessment.reload')}</Button>
+        <p className="text-red-500">{t('common.error')}</p>
+        <Button onClick={() => window.location.reload()} className="mt-2">{t('assessment.reload')}</Button>
       </div>
     );
   }
@@ -75,8 +86,8 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     return (
       <AssessmentLoadingState 
         onComplete={() => {
+          setLoadingStateComplete(true);
           setShowLoadingState(false);
-          // The onComplete from useAssessmentForm will be called after this
         }}
       />
     );
@@ -98,10 +109,11 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
 
   // Handle completing the assessment and showing loading state
   const handleCompleteAssessment = () => {
+    if (isSubmitting) return; // Prevent multiple submissions
+    
     if (currentQuestionIndex === totalQuestions - 1) {
       // Save the current answer and then show loading state
       handleNext();
-      setShowLoadingState(true);
     } else {
       handleNext();
     }
@@ -146,7 +158,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
         <Button 
           variant="outline" 
           onClick={handlePrevious}
-          disabled={currentQuestionIndex === 0}
+          disabled={currentQuestionIndex === 0 || isSubmitting}
           className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
           size={isMobile ? "sm" : "default"}
         >
@@ -159,11 +171,21 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
         
         <Button 
           onClick={handleCompleteAssessment}
+          disabled={isSubmitting}
           className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm"
           size={isMobile ? "sm" : "default"}
         >
-          {currentQuestionIndex === totalQuestions - 1 ? t('common.complete') : t('common.next')} 
-          {currentQuestionIndex !== totalQuestions - 1 && <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4" />}
+          {isSubmitting ? (
+            <>
+              <Loader2 className="h-3 w-3 sm:h-4 sm:w-4 animate-spin mr-2" />
+              {t('common.processing')}
+            </>
+          ) : (
+            <>
+              {currentQuestionIndex === totalQuestions - 1 ? t('common.complete') : t('common.next')}
+              {currentQuestionIndex !== totalQuestions - 1 && <ArrowRight className="h-3 w-3 sm:h-4 sm:w-4 ml-1" />}
+            </>
+          )}
         </Button>
       </CardFooter>
       

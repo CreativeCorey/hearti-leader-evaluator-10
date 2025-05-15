@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AssessmentTab, HEARTIAssessment, ResultsDisplayProps } from '@/types';
@@ -31,16 +32,26 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
   const navigate = useNavigate();
   const [showEmptyState, setShowEmptyState] = useState(false);
   const [showAssessmentForm, setShowAssessmentForm] = useState(false);
+  const [isAssessmentInProgress, setIsAssessmentInProgress] = useState(false);
+  
+  // Check for saved progress on component mount
+  useEffect(() => {
+    const savedProgress = localStorage.getItem('assessment_progress');
+    if (savedProgress) {
+      // If there's saved progress, we consider assessment in progress
+      setIsAssessmentInProgress(true);
+    }
+  }, []);
   
   // Check if assessments are available after a short delay
   // This helps avoid the flash of "No assessments available" during initial load
   useEffect(() => {
     const timer = setTimeout(() => {
-      setShowEmptyState(!latestAssessment && userAssessments.length === 0);
-    }, 1000); // Show empty state after 1 second if no assessments
+      setShowEmptyState(!latestAssessment && userAssessments.length === 0 && !isAssessmentInProgress);
+    }, 500); // Reduced from 1000ms to 500ms for faster loading
     
     return () => clearTimeout(timer);
-  }, [latestAssessment, userAssessments]);
+  }, [latestAssessment, userAssessments, isAssessmentInProgress]);
   
   // Redirect to take assessment tab if no assessments available
   useEffect(() => {
@@ -57,19 +68,25 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
   const handleTakeAssessment = () => {
     console.log("Take assessment button clicked");
     setShowAssessmentForm(true);
+    setIsAssessmentInProgress(true);
     // Update the URL without full page reload
     window.history.pushState(null, '', '/?tab=take');
     setActiveTab('take');
   };
   
+  // Handle assessment completion
+  const handleAssessmentComplete = (assessment: HEARTIAssessment) => {
+    setIsAssessmentInProgress(false); // Assessment is no longer in progress
+    onComplete(assessment);
+    setShowAssessmentForm(false);
+    setActiveTab('overview'); // Switch to overview after completion
+  };
+  
   // If showing the assessment form, render it
-  if (showAssessmentForm) {
+  if (showAssessmentForm || activeTab === 'take') {
     return (
       <div className="max-w-3xl mx-auto my-4">
-        <AssessmentForm onComplete={(assessment) => {
-          onComplete(assessment);
-          setShowAssessmentForm(false);
-        }} />
+        <AssessmentForm onComplete={handleAssessmentComplete} />
       </div>
     );
   }
@@ -93,30 +110,15 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
   }
   
   if (!latestAssessment && userAssessments.length === 0) {
-    // Show loading state during the initial check
+    // Show a more lightweight loading state
     return (
-      <div className="flex justify-center p-8">
-        <div className="animate-pulse flex space-x-4 w-full max-w-md">
-          <div className="flex-1 space-y-4 py-1">
+      <div className="flex justify-center p-4">
+        <div className="animate-pulse flex space-x-2 w-full max-w-md">
+          <div className="flex-1 space-y-2 py-1">
             <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-            <div className="space-y-2">
-              <div className="h-4 bg-gray-200 rounded"></div>
-              <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-            </div>
+            <div className="h-4 bg-gray-200 rounded w-5/6"></div>
           </div>
         </div>
-      </div>
-    );
-  }
-  
-  // If activeTab is 'take', show the assessment form
-  if (activeTab === 'take') {
-    return (
-      <div className="max-w-3xl mx-auto my-4">
-        <AssessmentForm onComplete={(assessment) => {
-          onComplete(assessment);
-          setActiveTab('overview'); // Switch to overview tab after completing assessment
-        }} />
       </div>
     );
   }

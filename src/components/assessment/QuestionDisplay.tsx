@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { memo } from 'react';
 import { Slider } from '@/components/ui/slider';
 import { HEARTIQuestion } from '@/types';
 import { getScoreLabel, scoreLabels } from '@/utils/assessmentUtils';
@@ -13,7 +13,8 @@ interface QuestionDisplayProps {
   transition: boolean;
 }
 
-const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
+// Memoize the component to prevent unnecessary re-renders
+const QuestionDisplay: React.FC<QuestionDisplayProps> = memo(({
   question,
   currentScore,
   onAnswerChange,
@@ -24,6 +25,11 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
   
   // Get the translated question text, ensuring it's a string
   const translatedQuestionText = t(`assessment.questions.${question.id}`) || question.text;
+  
+  // Handle direct score selection for better performance
+  const handleScoreClick = (value: number) => {
+    onAnswerChange(value);
+  };
   
   return (
     <div className={`bg-muted/30 p-4 sm:p-6 rounded-lg transition-opacity duration-150 w-full max-w-screen-sm mx-auto ${transition ? 'opacity-0' : 'opacity-100'}`}>
@@ -50,7 +56,7 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
                 className={`text-center text-xs sm:text-sm px-1 sm:px-2 py-1 rounded-lg touch-manipulation hover:bg-primary/5 transition-colors ${
                   currentScore === value ? 'text-primary font-medium bg-primary/10' : ''
                 }`}
-                onClick={() => onAnswerChange(value)}
+                onClick={() => handleScoreClick(value)}
                 aria-label={`Select ${label}`}
                 style={{ width: '20%', textAlign: 'center' }}
               >
@@ -68,6 +74,8 @@ const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
       </div>
     </div>
   );
-};
+});
+
+QuestionDisplay.displayName = 'QuestionDisplay';
 
 export default QuestionDisplay;

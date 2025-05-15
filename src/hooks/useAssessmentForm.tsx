@@ -3,7 +3,7 @@ import { HEARTIAssessment } from '@/types';
 import { useAssessmentQuestions } from './assessment/useAssessmentQuestions';
 import { useUserInitialization } from './assessment/useUserInitialization';
 import { useAssessmentCompletion } from './assessment/useAssessmentCompletion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useToast } from './use-toast';
 
 // LocalStorage key for saving assessment progress
@@ -12,6 +12,7 @@ const ASSESSMENT_PROGRESS_KEY = 'assessment_progress';
 export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => void) => {
   const [initializing, setInitializing] = useState(true);
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Initialize assessment questions and user data
   const {
@@ -42,9 +43,24 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
     previousDemographics
   } = useAssessmentCompletion(answers, currentUser, onComplete);
   
+  // Safe function to save progress to prevent errors
+  const saveProgress = useCallback(() => {
+    if (answers.length > 0 && !assessmentComplete && currentQuestionIndex >= 0) {
+      try {
+        localStorage.setItem(ASSESSMENT_PROGRESS_KEY, JSON.stringify({
+          questionIndex: currentQuestionIndex,
+          savedAnswers: answers
+        }));
+        console.log("Saved assessment progress:", { currentQuestionIndex, answersCount: answers.length });
+      } catch (error) {
+        console.error("Error saving assessment progress:", error);
+      }
+    }
+  }, [answers, currentQuestionIndex, assessmentComplete]);
+  
   // Load saved progress from localStorage when component initializes
   useEffect(() => {
-    if (!userLoading && shuffledQuestions.length > 0 && !assessmentComplete) {
+    if (!userLoading && shuffledQuestions.length > 0 && !assessmentComplete && !isSubmitting) {
       try {
         const savedProgress = localStorage.getItem(ASSESSMENT_PROGRESS_KEY);
         if (savedProgress) {
@@ -55,7 +71,8 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
             Number.isInteger(questionIndex) && 
             questionIndex >= 0 && 
             questionIndex < shuffledQuestions.length &&
-            Array.isArray(savedAnswers)
+            Array.isArray(savedAnswers) &&
+            savedAnswers.length > 0
           ) {
             console.log("Restoring assessment progress:", { questionIndex, answersCount: savedAnswers.length });
             setCurrentQuestionIndex(questionIndex);
@@ -70,22 +87,16 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
     } else if (!userLoading && shuffledQuestions.length > 0) {
       setInitializing(false);
     }
-  }, [userLoading, shuffledQuestions.length, setCurrentQuestionIndex, setAnswers, assessmentComplete]);
+  }, [userLoading, shuffledQuestions.length, setCurrentQuestionIndex, setAnswers, assessmentComplete, isSubmitting]);
 
   // Save progress whenever answers or current question changes
   useEffect(() => {
-    if (answers.length > 0 && !assessmentComplete) {
-      try {
-        localStorage.setItem(ASSESSMENT_PROGRESS_KEY, JSON.stringify({
-          questionIndex: currentQuestionIndex,
-          savedAnswers: answers
-        }));
-        console.log("Saved assessment progress:", { currentQuestionIndex, answersCount: answers.length });
-      } catch (error) {
-        console.error("Error saving assessment progress:", error);
-      }
-    }
-  }, [answers, currentQuestionIndex, assessmentComplete]);
+    const saveTimeout = setTimeout(() => {
+      saveProgress();
+    }, 300); // Debounce to prevent too frequent saves
+    
+    return () => clearTimeout(saveTimeout);
+  }, [answers, currentQuestionIndex, saveProgress]);
 
   // Clear saved progress when assessment is completed
   useEffect(() => {
@@ -105,7 +116,13 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
     if (currentQuestionIndex === totalQuestions - 1) {
       // We're at the last question, so complete the assessment
       console.log("Last question reached, completing assessment");
-      completeAssessmentQuestions();
+      setIsSubmitting(true);
+      
+      // Add a slight delay to prevent infinite loops
+      setTimeout(() => {
+        completeAssessmentQuestions();
+        setIsSubmitting(false);
+      }, 50);
     } else {
       // Not at the last question, just go to the next one
       console.log("Moving to next question");
@@ -124,9 +141,10 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
       currentQuestionIndex,
       totalQuestions,
       answersCount: answers.length,
-      assessmentComplete
+      assessmentComplete,
+      isSubmitting
     });
-  }, [initializing, userLoading, shuffledQuestions.length, currentQuestion, currentQuestionIndex, totalQuestions, answers.length, assessmentComplete]);
+  }, [initializing, userLoading, shuffledQuestions.length, currentQuestion, currentQuestionIndex, totalQuestions, answers.length, assessmentComplete, isSubmitting]);
 
   return {
     loading: initializing || userLoading || shuffledQuestions.length === 0,
@@ -143,6 +161,7 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
     processingPayment: false, // No payment processing yet
     handleDemographicsComplete,
     handleSkipDemographics,
-    previousDemographics
+    previousDemographics,
+    isSubmitting
   };
 };
