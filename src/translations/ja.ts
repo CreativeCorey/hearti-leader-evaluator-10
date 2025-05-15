@@ -1,4 +1,3 @@
-
 export const ja = {
   common: {
     loading: "読み込み中...",
@@ -13,17 +12,19 @@ export const ja = {
     back: "戻る",
     complete: "完了",
     copyright: "© PrismWork, Inc. All rights reserved.",
-    share: "共有"
+    share: "共有",
+    saved: "Saved"
   },
   header: {
     signIn: "サインイン",
     signOut: "サインアウト",
     anonymous: "匿名モード",
     enableAnonymous: "匿名を有効にする",
-    account: "アカウント"
+    account: "アカウント",
+    you: "You"
   },
   assessment: {
-    title: "HEARTI™リーダーシップ評価",
+    title: "HEARTI™リーダーシップ伴侣",
     subtitle: "Humility、Empathy、Accountability、Resiliency、Transparency、Inclusivityにおける成長を測定",
     cloudStorage: "クラウドストレージ",
     localStorage: "ローカルストレージ",
@@ -102,7 +103,8 @@ export const ja = {
       "56": "多様性と包括性に関する挑戦的なトピックについて会話を始めます。",
       "57": "過小評価されているコミュニティの人々を積極的に支援します。",
       "58": "BIPOCとLGBTQ+の同僚に職場環境での経験について尋ねます。",
-      "59": "職場のプログラムとポリシーが包括的であることを確認するために、多様な才能と協力します。"
+      "59": "職場のプログラムとポリシーが包括的であることを確認するために、多様な才能と協力します。",
+      "60": "チームメイトを採用、紹介、昇進させる際には、白人の候補者を検討します。"
     }
   },
   tabs: {
@@ -134,13 +136,39 @@ export const ja = {
       average: "平均",
       progress: "HEARTIの時間経過による進捗",
       progressSubtitle: "リーダーシップ開発の旅を追跡",
-      noProgressData: "時間の経過とともに進捗を確認するには、より多くの評価を完了してください。"
+      noProgressData: "時間の経過とともに進捗を確認するには、より多くの評価を完了してください。",
+      strength: "Strength",
+      vulnerability: "Vulnerability",
+      competent: "Competent",
+      higher: "higher",
+      lower: "lower",
+      overallScore: "Overall Score",
+      dimensions: "Dimensions",
+      score: "Score",
+      date: "Date",
+      clickDataPoint: "Click on any data point to view that assessment's detailed report",
+      scoreComparison: "Your score is {{difference}} {{direction}} than the {{label}} score."
     },
     development: {
       title: "開発活動",
       subtitle: "リーダーシップスキルを成長させるためのパーソナライズされた活動",
       focused: "集中",
       complete: "完全",
+      activities: "Development Activities",
+      recommendation: "We recommend selecting at least 3 behaviors to track - choose ones that address both your strengths and vulnerability areas.",
+      addToHabitTracker: "Add to Tracker",
+      selectFrequency: "Select Frequency:",
+      chooseActivitiesFor: "Choose Activities For",
+      activitiesDescription: "These activities are designed to help you develop your {{dimension}} leadership dimension. Select up to 3 activities to focus on.",
+      maxActivities: "Maximum activities selected",
+      maxActivitiesDescription: "You can only select up to 3 activities. Please remove one before adding more.",
+      activityAdded: "Activity added",
+      activityAddedDescription: "Activity has been added to your {{frequency}} habit tracker",
+      mySavedActivities: "My Saved Activities",
+      noActivitiesSaved: "No saved activities found. Select some activities in the Development tab.",
+      tooManySaved: "Too many activities saved",
+      removeBeforeSaving: "Please remove one before saving another",
+      recommendationsTitle: "HEARTI™ Leadership Development Recommendations"
     },
     dimensions: {
       humility: "謙虚さ",
@@ -149,9 +177,16 @@ export const ja = {
       resiliency: "回復力",
       transparency: "透明性",
       inclusivity: "包括性",
+      score: "Score: {{value}}/5",
+      scoreLabel: "Score",
+      levelsOf: "Levels of",
+      developmentTips: "Development Tips",
+      tipsForIncreasing: "Tips for increasing your",
+      leadership: "leadership"
     },
     habits: {
       title: "あなたの習慣",
+      yourHabits: "Your Habits",
       addHabit: "習慣を追加",
       add: "追加",
       cancel: "キャンセル",
@@ -165,6 +200,86 @@ export const ja = {
       weekly: "毎週",
       monthly: "毎月",
       noHabits: "習慣が見つかりません。「習慣を追加」をクリックして作成してください。",
+      trackerTitle: "HEARTI™ Leadership Habit Tracker",
+      trackerDescription: "Track your progress as you build consistent habits for your chosen behaviors. Complete each behavior 30 times to turn it into a lasting habit.",
+      recommendedFocus: "We recommend focusing on behaviors from your development area:",
+      addBehaviorsInstructions: "Add behaviors to your habit tracker by using the \"Add to Habit Tracker\" button in the Development tab or on your saved activities.",
+      allHabits: "All Habits",
+      dimension: "Dimension",
+      frequency: "Frequency",
+      description: "Description",
+      descriptionPlaceholder: "Enter a description for your habit",
+      saveHabit: "Save Habit"
     },
   },
+  dimensions: {
+    titles: {
+      humility: "謙虚さ",
+      empathy: "共感力",
+      accountability: "責任感",
+      resiliency: "回復力",
+      transparency: "透明性",
+      inclusivity: "包括性"
+    },
+    descriptions: {
+      humility: "The ability to recognize one's limitations and mistakes, and to be open to feedback and growth.",
+      empathy: "The capacity to understand and share the feelings of others, and to respond with compassion.",
+      accountability: "The willingness to take responsibility for one's actions and decisions, and to follow through on commitments.",
+      resiliency: "The ability to recover from setbacks, adapt to change, and keep going in the face of adversity.",
+      transparency: "The practice of being open, honest, and clear in communications and decision-making processes.",
+      inclusivity: "The commitment to creating environments where all people feel welcomed, respected, and valued."
+    },
+    feedback: {
+      "humility.excellent": "Your humility score is excellent. This is a significant strength in your leadership approach.",
+      "humility.good": "Your humility score is good. This is a positive aspect of your leadership with room for further development.",
+      "humility.average": "Your humility score is average. Consider focusing on developing this aspect of your leadership.",
+      "humility.needsImprovement": "Your humility score needs improvement. This area represents an opportunity for significant growth.",
+      
+      "empathy.excellent": "Your empathy score is excellent. This is a significant strength in your leadership approach.",
+      "empathy.good": "Your empathy score is good. This is a positive aspect of your leadership with room for further development.",
+      "empathy.average": "Your empathy score is average. Consider focusing on developing this aspect of your leadership.",
+      "empathy.needsImprovement": "Your empathy score is below average. This area represents an opportunity for significant growth.",
+      
+      "accountability.excellent": "Your accountability score is excellent. This is a significant strength in your leadership approach.",
+      "accountability.good": "Your accountability score is good. This is a positive aspect of your leadership with room for further development.",
+      "accountability.average": "Your accountability score is average. Consider focusing on developing this aspect of your leadership.",
+      "accountability.needsImprovement": "Your accountability score needs improvement. This area represents an opportunity for significant growth.",
+      
+      "resiliency.excellent": "Your resiliency score is excellent. This is a significant strength in your leadership approach.",
+      "resiliency.good": "Your resiliency score is good. This is a positive aspect of your leadership with room for further development.",
+      "resiliency.average": "Your resiliency score is average. Consider focusing on developing this aspect of your leadership.",
+      "resiliency.needsImprovement": "Your resiliency score needs improvement. This area represents an opportunity for significant growth.",
+      
+      "transparency.excellent": "Your transparency score is excellent. This is a significant strength in your leadership approach.",
+      "transparency.good": "Your transparency score is good. This is a positive aspect of your leadership with room for further development.",
+      "transparency.average": "Your transparency score is average. Consider focusing on developing this aspect of your leadership.",
+      "transparency.needsImprovement": "Your transparency score needs improvement. This area represents an opportunity for significant growth.",
+      
+      "inclusivity.excellent": "Your inclusivity score is excellent. This is a significant strength in your leadership approach.",
+      "inclusivity.good": "Your inclusivity score is good. This is a positive aspect of your leadership with room for further development.",
+      "inclusivity.average": "Your inclusivity score is average. Consider focusing on developing this aspect of your leadership.",
+      "inclusivity.needsImprovement": "Your inclusivity score needs improvement. This area represents an opportunity for significant growth."
+    }
+  },
+  activities: {
+    categories: {
+      activelistening: "Active Listening",
+      perspectivetaking: "Perspective Taking",
+      buildingconnections: "Building Connections",
+      selfawareness: "Self Awareness",
+      feedbackseeking: "Feedback Seeking",
+      valuingothers: "Valuing Others",
+      decisionmaking: "Decision Making",
+      communicationstyle: "Communication Style",
+      teammeetings: "Team Meetings",
+      adaptability: "Adaptability",
+      mindfulness: "Mindfulness",
+      confidence: "Confidence",
+      informationsharing: "Information Sharing",
+      conversationquality: "Conversation Quality",
+      socialimpact: "Social Impact",
+      networking: "Networking",
+      teambuilding: "Team Building"
+    }
+  }
 };

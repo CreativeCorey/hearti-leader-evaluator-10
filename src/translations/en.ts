@@ -54,7 +54,7 @@ export const en = {
     privacyPolicy: "Privacy Policy"
   },
   assessment: {
-    title: "HEARTI™ Leadership Assessment",
+    title: "HEARTI™ Leadership Companion",
     subtitle: "Measure your growth in Humility, Empathy, Accountability, Resiliency, Transparency, and Inclusivity",
     cloudStorage: "Cloud Storage",
     localStorage: "Local Storage",

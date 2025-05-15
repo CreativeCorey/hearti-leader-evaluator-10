@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AssessmentTab, HEARTIAssessment, ResultsDisplayProps } from '@/types';
@@ -79,7 +78,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
   if (showEmptyState) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center">
-        <h2 className="text-2xl font-bold mb-4">Welcome to HEARTI™ Leadership Assessment</h2>
+        <h2 className="text-2xl font-bold mb-4">Meet Your HEARTI™ Coach</h2>
         <p className="mb-6 text-muted-foreground max-w-md">
           Start your leadership journey by completing the assessment to see your results.
         </p>

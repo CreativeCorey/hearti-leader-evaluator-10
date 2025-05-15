@@ -1,7 +1,7 @@
 
 export const assessment = {
   assessment: {
-    title: "HEARTI™ 领导力评估",
+    title: "HEARTI™ 领导力伴侣",
     subtitle: "衡量您在Humility、Empathy、Accountability、Resiliency、Transparency和Inclusivity方面的成长",
     cloudStorage: "云存储",
     localStorage: "本地存储",
