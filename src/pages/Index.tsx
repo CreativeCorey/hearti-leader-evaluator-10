@@ -6,9 +6,13 @@ import GoogleIntegrationTools from '@/components/google-integration/GoogleIntegr
 import AssessmentTabs from '@/components/assessment/AssessmentTabs';
 import HeaderSection from '@/components/assessment/HeaderSection';
 import { useToast } from '@/hooks/use-toast';
+import { useSearchParams } from 'react-router-dom';
 
 const Index = () => {
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  
   const {
     loading,
     profile,
@@ -27,6 +31,13 @@ const Index = () => {
     isMobile,
     viewTransitioning
   } = useIndexPage();
+
+  // If URL has tab parameter, update active tab
+  useEffect(() => {
+    if (tabParam && (tabParam === 'take' || tabParam === 'results')) {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam, setActiveTab]);
 
   // If error occurs during load, show error toast
   useEffect(() => {

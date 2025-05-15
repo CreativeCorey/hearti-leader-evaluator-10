@@ -5,6 +5,7 @@ import { AssessmentTab, HEARTIAssessment, ResultsDisplayProps } from '@/types';
 import ResultsDisplay from '@/components/results/ResultsDisplay';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import AssessmentForm from '@/components/AssessmentForm';
 
 interface AssessmentTabsProps {
   activeTab: AssessmentTab;
@@ -30,6 +31,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
   const { toast } = useToast();
   const navigate = useNavigate();
   const [showEmptyState, setShowEmptyState] = useState(false);
+  const [showAssessmentForm, setShowAssessmentForm] = useState(false);
   
   // Check if assessments are available after a short delay
   // This helps avoid the flash of "No assessments available" during initial load
@@ -55,9 +57,23 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
   // Handle the take assessment button click
   const handleTakeAssessment = () => {
     console.log("Take assessment button clicked");
-    navigate('/?tab=take');
+    setShowAssessmentForm(true);
+    // Update the URL without full page reload
+    window.history.pushState(null, '', '/?tab=take');
     setActiveTab('take');
   };
+  
+  // If showing the assessment form, render it
+  if (showAssessmentForm) {
+    return (
+      <div className="max-w-3xl mx-auto my-4">
+        <AssessmentForm onComplete={(assessment) => {
+          onComplete(assessment);
+          setShowAssessmentForm(false);
+        }} />
+      </div>
+    );
+  }
   
   // If no assessments are available yet, show a prompt to take an assessment
   if (showEmptyState) {
@@ -90,6 +106,18 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
             </div>
           </div>
         </div>
+      </div>
+    );
+  }
+  
+  // If activeTab is 'take', show the assessment form
+  if (activeTab === 'take') {
+    return (
+      <div className="max-w-3xl mx-auto my-4">
+        <AssessmentForm onComplete={(assessment) => {
+          onComplete(assessment);
+          setActiveTab('overview'); // Switch to overview tab after completing assessment
+        }} />
       </div>
     );
   }
