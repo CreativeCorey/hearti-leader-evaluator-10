@@ -30,10 +30,17 @@
     --transition-duration: 0.3s;
   }
   
-  body, .bg-white, .bg-background, .text-foreground, .border-gray-300, .border-gray-800 {
+  body, .bg-white, .bg-background, .text-foreground, .border-gray-300, .border-gray-800, footer {
     transition: background-color var(--transition-duration) ease, 
                 color var(--transition-duration) ease,
                 border-color var(--transition-duration) ease;
+  }
+  
+  /* Ensure footer has proper dark mode styling */
+  .dark footer {
+    background-color: hsl(var(--background));
+    border-color: hsl(var(--border));
+    color: hsl(var(--muted-foreground));
   }
 }
 

@@ -30,9 +30,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
       </main>
       
-      {/* Footer - respects dark mode */}
+      {/* Footer with proper dark mode support */}
       <footer className="py-2 px-4 text-center text-xs 
-        bg-white text-gray-500 border-t
+        bg-white border-t border-gray-200
         dark:bg-background dark:text-gray-400 dark:border-gray-800
         w-full transition-colors duration-300">
         {t('common.copyright')}
@@ -42,4 +42,3 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 };
 
 export default Layout;
-

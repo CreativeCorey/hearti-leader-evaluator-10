@@ -56,7 +56,8 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
       // This ensures we only call onComplete after the loading animation finishes
       const timer = setTimeout(() => {
         if (onComplete) {
-          onComplete(assessment => assessment as unknown as HEARTIAssessment);
+          // Pass the assessment directly, not as a function
+          onComplete(assessment as HEARTIAssessment);
         }
       }, 100);
       return () => clearTimeout(timer);
@@ -156,7 +157,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between border-t p-4 sm:p-6 sticky bottom-0 bg-white">
+      <CardFooter className="flex justify-between border-t p-4 sm:p-6 sticky bottom-0 bg-white dark:bg-background dark:border-gray-800">
         <Button 
           variant="outline" 
           onClick={handlePrevious}
