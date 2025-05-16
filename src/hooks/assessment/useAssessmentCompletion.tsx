@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { v4 as uuidv4 } from 'uuid';
@@ -153,6 +152,7 @@ export const useAssessmentCompletion = (
     completeAssessmentQuestions,
     handleDemographicsComplete,
     handleSkipDemographics,
-    previousDemographics
+    previousDemographics,
+    tempAssessment // Export the tempAssessment for access in other components
   };
 };

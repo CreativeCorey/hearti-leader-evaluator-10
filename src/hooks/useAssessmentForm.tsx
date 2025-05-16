@@ -1,4 +1,3 @@
-
 import { HEARTIAssessment } from '@/types';
 import { useAssessmentQuestions } from './assessment/useAssessmentQuestions';
 import { useUserInitialization } from './assessment/useUserInitialization';
@@ -40,7 +39,8 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
     completeAssessmentQuestions,
     handleDemographicsComplete,
     handleSkipDemographics,
-    previousDemographics
+    previousDemographics,
+    tempAssessment // Get access to the tempAssessment from the hook
   } = useAssessmentCompletion(answers, currentUser, onComplete);
   
   // Safe function to save progress to prevent errors
@@ -162,6 +162,7 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
     handleDemographicsComplete,
     handleSkipDemographics,
     previousDemographics,
-    isSubmitting
+    isSubmitting,
+    currentAssessment: tempAssessment // Expose the tempAssessment as currentAssessment
   };
 };

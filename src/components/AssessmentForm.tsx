@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useIsMobile } from "@/hooks/use-mobile";
 import { HEARTIAssessment } from '@/types';
@@ -39,7 +38,8 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     handleDemographicsComplete,
     handleSkipDemographics,
     previousDemographics,
-    isSubmitting
+    isSubmitting,
+    currentAssessment // Get the current assessment from the hook
   } = useAssessmentForm((assessment) => {
     // Show loading state only at assessment completion
     if (currentQuestionIndex === totalQuestions - 1 && !loadingStateComplete) {
@@ -52,17 +52,17 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
 
   // Handle loading state completion
   useEffect(() => {
-    if (loadingStateComplete && assessmentComplete) {
+    if (loadingStateComplete && assessmentComplete && currentAssessment) {
       // This ensures we only call onComplete after the loading animation finishes
       const timer = setTimeout(() => {
         if (onComplete) {
-          // Pass the assessment directly, not as a function
-          onComplete(assessment as HEARTIAssessment);
+          // Pass the assessment directly
+          onComplete(currentAssessment as HEARTIAssessment);
         }
       }, 100);
       return () => clearTimeout(timer);
     }
-  }, [loadingStateComplete, assessmentComplete, onComplete]);
+  }, [loadingStateComplete, assessmentComplete, onComplete, currentAssessment]);
 
   // Loading state while initializing form
   if (loading) {
