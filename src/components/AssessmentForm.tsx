@@ -55,7 +55,9 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     if (loadingStateComplete && assessmentComplete) {
       // This ensures we only call onComplete after the loading animation finishes
       const timer = setTimeout(() => {
-        onComplete(assessment => assessment);
+        if (onComplete) {
+          onComplete(assessment => assessment as unknown as HEARTIAssessment);
+        }
       }, 100);
       return () => clearTimeout(timer);
     }
