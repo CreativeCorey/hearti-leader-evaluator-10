@@ -57,14 +57,14 @@ const AssessmentLoadingState: React.FC<AssessmentLoadingStateProps> = ({ onCompl
   // Message based on progress
   const getMessage = () => {
     if (progress < 15) {
-      return t('assessment.loading.analyzing') || "Analyzing your responses...";
+      return t('assessment.loading.analyzing');
     } else if (progress < 25) {
-      return t('assessment.loading.building') || "Building your HEARTI profile...";
+      return t('assessment.loading.building');
     } else if (progress < 85) {
-      return t('assessment.loading.dimension', { dimension: dimensions[currentDimension] }) || 
-        `Loading ${dimensions[currentDimension]}...`;
+      const dimensionName = t(`dimensions.titles.${dimensions[currentDimension]}`) || dimensions[currentDimension];
+      return t('assessment.loading.dimension', { dimension: dimensionName });
     } else {
-      return t('assessment.loading.finalizing') || "Creating your personalized development program...";
+      return t('assessment.loading.finalizing');
     }
   };
 
@@ -91,7 +91,7 @@ const AssessmentLoadingState: React.FC<AssessmentLoadingStateProps> = ({ onCompl
       </div>
       
       <h2 className="text-2xl font-bold text-center text-purple">
-        {t('assessment.loading.title') || "Creating Your HEARTI™ Profile"}
+        {t('assessment.loading.title')}
       </h2>
       
       <div className="w-full max-w-md space-y-3">
@@ -104,8 +104,7 @@ const AssessmentLoadingState: React.FC<AssessmentLoadingStateProps> = ({ onCompl
       </div>
       
       <p className="text-center text-muted-foreground max-w-md">
-        {t('assessment.loading.message') || 
-          "Thank you for your thoughtful responses. We're preparing your personalized HEARTI™ leadership assessment results."}
+        {t('assessment.loading.message')}
       </p>
     </div>
   );

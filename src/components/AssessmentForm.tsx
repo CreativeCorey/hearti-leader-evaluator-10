@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useIsMobile } from "@/hooks/use-mobile";
 import { HEARTIAssessment } from '@/types';
@@ -39,7 +40,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     handleSkipDemographics,
     previousDemographics,
     isSubmitting,
-    currentAssessment // Get the current assessment from the hook
+    currentAssessment
   } = useAssessmentForm((assessment) => {
     // Show loading state only at assessment completion
     if (currentQuestionIndex === totalQuestions - 1 && !loadingStateComplete) {
@@ -55,9 +56,9 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     if (loadingStateComplete && assessmentComplete && currentAssessment) {
       // This ensures we only call onComplete after the loading animation finishes
       const timer = setTimeout(() => {
-        if (onComplete) {
+        if (onComplete && currentAssessment) {
           // Pass the assessment directly
-          onComplete(currentAssessment as HEARTIAssessment);
+          onComplete(currentAssessment);
         }
       }, 100);
       return () => clearTimeout(timer);
@@ -123,7 +124,7 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
   };
 
   return (
-    <Card className="w-full mx-auto shadow-sm">
+    <Card className="w-full mx-auto shadow-sm dark:border-gray-800">
       <CardHeader className="relative pb-0">
         <div className="h-1 w-full bg-orange/20 absolute top-0 left-0 right-0">
           <div 

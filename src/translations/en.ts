@@ -13,7 +13,8 @@ export const en = {
     complete: "Complete",
     copyright: "© PrismWork, Inc. All rights reserved.",
     share: "Share",
-    saved: "Saved"
+    saved: "Saved",
+    processing: "Processing..."
   },
   header: {
     signIn: "Sign In",
@@ -74,6 +75,14 @@ export const en = {
       "3": "Sometimes",
       "4": "Often",
       "5": "Almost Always"
+    },
+    loading: {
+      title: "Creating Your HEARTI™ Profile",
+      analyzing: "Analyzing your responses...",
+      building: "Building your HEARTI profile...",
+      dimension: "Analyzing {{dimension}} dimension...",
+      finalizing: "Creating your personalized development program...",
+      message: "Thank you for your thoughtful responses. We're preparing your personalized HEARTI™ leadership assessment results."
     },
     questions: {
       "1": "I acknowledge when I don't know the answer.",
