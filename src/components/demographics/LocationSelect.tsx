@@ -41,22 +41,37 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ value, onChange }) => {
         loc.toLowerCase().includes(searchQuery.toLowerCase())
       );
 
+  // Handle location selection
+  const handleLocationSelect = (location: string) => {
+    onChange(location);
+    setOpen(false);
+    setSearchQuery('');
+    setFocusedIndex(-1);
+  };
+
   // Handle keyboard events for accessibility
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && filteredLocations.length > 0 && focusedIndex >= 0) {
-      // Select the focused item when Enter is pressed
-      onChange(filteredLocations[focusedIndex]);
-      setOpen(false);
+    if (e.key === 'Enter' && filteredLocations.length > 0) {
       e.preventDefault();
+      if (focusedIndex >= 0 && focusedIndex < filteredLocations.length) {
+        // Select the focused item when Enter is pressed
+        handleLocationSelect(filteredLocations[focusedIndex]);
+      } else if (filteredLocations.length === 1) {
+        // If only one result, select it
+        handleLocationSelect(filteredLocations[0]);
+      }
     } else if (e.key === 'ArrowDown') {
       // Move focus down
       setFocusedIndex(prev => 
-        prev < filteredLocations.length - 1 ? prev + 1 : prev
+        prev < filteredLocations.length - 1 ? prev + 1 : 0
       );
       e.preventDefault();
     } else if (e.key === 'ArrowUp') {
       // Move focus up
-      setFocusedIndex(prev => prev > 0 ? prev - 1 : 0);
+      setFocusedIndex(prev => prev > 0 ? prev - 1 : filteredLocations.length - 1);
+      e.preventDefault();
+    } else if (e.key === 'Escape') {
+      setOpen(false);
       e.preventDefault();
     }
   };
@@ -78,18 +93,23 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ value, onChange }) => {
           </Button>
         </PopoverTrigger>
         <PopoverContent 
-          className="w-full p-0" 
+          className="w-full p-0 z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700" 
           align="start" 
           sideOffset={5} 
-          side={isMobile ? "bottom" : "right"} 
+          side="bottom"
           alignOffset={0}
-          style={{ width: isMobile ? "calc(100vw - 32px)" : "320px", maxWidth: "100%" }}
+          avoidCollisions={true}
+          style={{ 
+            width: "var(--radix-popover-trigger-width)",
+            maxWidth: isMobile ? "calc(100vw - 32px)" : "400px",
+            maxHeight: isMobile ? "40vh" : "50vh"
+          }}
         >
           <CommandPrimitive 
-            className={`${isMobile ? "max-h-[40vh]" : "max-h-[50vh]"} overflow-auto`}
+            className="overflow-auto"
             onKeyDown={handleKeyDown}
           >
-            <div className="flex items-center border-b px-3">
+            <div className="flex items-center border-b px-3 bg-white dark:bg-gray-800">
               <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
               <CommandPrimitive.Input
                 ref={inputRef}
@@ -99,7 +119,7 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ value, onChange }) => {
                 onValueChange={setSearchQuery}
               />
             </div>
-            <CommandPrimitive.List className="p-2">
+            <CommandPrimitive.List className="p-2 bg-white dark:bg-gray-800">
               <CommandPrimitive.Empty className="py-6 text-center">No location found.</CommandPrimitive.Empty>
               
               {searchQuery.trim() === '' && (
@@ -110,10 +130,7 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ value, onChange }) => {
                         key={location}
                         location={location}
                         selected={value === location}
-                        onSelect={() => {
-                          onChange(location);
-                          setOpen(false);
-                        }}
+                        onSelect={() => handleLocationSelect(location)}
                         isMobile={isMobile}
                       />
                     ))}
@@ -130,10 +147,7 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ value, onChange }) => {
                         key={location}
                         location={location}
                         selected={value === location}
-                        onSelect={() => {
-                          onChange(location);
-                          setOpen(false);
-                        }}
+                        onSelect={() => handleLocationSelect(location)}
                         isMobile={isMobile}
                       />
                     ))}
@@ -152,11 +166,8 @@ const LocationSelect: React.FC<LocationSelectProps> = ({ value, onChange }) => {
                   location={location}
                   selected={value === location}
                   focused={index === focusedIndex}
-                  onSelect={() => {
-                    onChange(location);
-                    setOpen(false);
-                  }}
-                  onFocus={() => setFocusedIndex(index)}
+                  onSelect={() => handleLocationSelect(location)}
+                  onMouseEnter={() => setFocusedIndex(index)}
                   searchQuery={searchQuery}
                   isMobile={isMobile}
                 />
@@ -174,7 +185,7 @@ interface LocationItemProps {
   selected: boolean;
   focused?: boolean;
   onSelect: () => void;
-  onFocus?: () => void;
+  onMouseEnter?: () => void;
   searchQuery?: string;
   isMobile?: boolean;
 }
@@ -184,7 +195,7 @@ const LocationItem: React.FC<LocationItemProps> = ({
   selected, 
   focused,
   onSelect,
-  onFocus,
+  onMouseEnter,
   searchQuery,
   isMobile
 }) => {
@@ -194,11 +205,10 @@ const LocationItem: React.FC<LocationItemProps> = ({
       <CommandPrimitive.Item
         key={location}
         value={location}
-        onSelect={() => onSelect()}
-        onFocus={onFocus}
-        data-focused={focused}
+        onSelect={onSelect}
+        onMouseEnter={onMouseEnter}
         className={cn(
-          `relative flex cursor-default select-none items-center rounded-sm px-3 py-3 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground ${isMobile ? 'text-base' : ''}`,
+          `relative flex cursor-pointer select-none items-center rounded-sm px-3 py-3 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground ${isMobile ? 'text-base' : ''}`,
           focused && "bg-accent text-accent-foreground"
         )}
       >
@@ -225,11 +235,10 @@ const LocationItem: React.FC<LocationItemProps> = ({
     <CommandPrimitive.Item
       key={location}
       value={location}
-      onSelect={() => onSelect()}
-      onFocus={onFocus}
-      data-focused={focused}
+      onSelect={onSelect}
+      onMouseEnter={onMouseEnter}
       className={cn(
-        `relative flex cursor-default select-none items-center rounded-sm px-3 py-3 text-sm outline-none aria-selected:bg-accent aria-selected:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-accent hover:text-accent-foreground ${isMobile ? 'text-base' : ''}`,
+        `relative flex cursor-pointer select-none items-center rounded-sm px-3 py-3 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground ${isMobile ? 'text-base' : ''}`,
         focused && "bg-accent text-accent-foreground"
       )}
     >
@@ -240,7 +249,7 @@ const LocationItem: React.FC<LocationItemProps> = ({
         )}
       />
       {beforeMatch}
-      <span className="bg-yellow-200 text-black font-medium">{match}</span>
+      <span className="bg-yellow-200 dark:bg-yellow-600 text-black dark:text-white font-medium">{match}</span>
       {afterMatch}
     </CommandPrimitive.Item>
   );
