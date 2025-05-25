@@ -50,7 +50,7 @@ const ResultsTabContent: React.FC<ResultsTabContentProps> = ({
         <DimensionsTab assessment={assessment} />
       </TabsContent>
       
-      <TabsContent value="comparison" className="mt-0">
+      <TabsContent value="dataViz" className="mt-0">
         <ComparisonTabContent 
           assessment={assessment} 
           assessments={assessments} 
@@ -67,7 +67,7 @@ const ResultsTabContent: React.FC<ResultsTabContentProps> = ({
         />
       </TabsContent>
       
-      <TabsContent value="development" className="mt-0">
+      <TabsContent value="developSkills" className="mt-0">
         <DevelopmentTabContent 
           topDevelopmentArea={topDevelopmentArea}
           assessments={assessments}
@@ -75,7 +75,7 @@ const ResultsTabContent: React.FC<ResultsTabContentProps> = ({
         />
       </TabsContent>
       
-      <TabsContent value="habits" className="mt-0">
+      <TabsContent value="buildHabits" className="mt-0">
         <HabitTabContent topDevelopmentArea={topDevelopmentArea} />
       </TabsContent>
     </>
