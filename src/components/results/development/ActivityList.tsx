@@ -66,25 +66,26 @@ const ActivityList: React.FC<ActivityListProps> = ({
         {activities.slice(0, 9).map(activity => {
           const isSelected = selectedActivities.includes(activity.id);
           
-          // Always properly format category with Title Case
-          const formattedCategory = formatCategoryName(activity.category);
-          
           // Create proper category key for translation
           const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- &]/g, '')}`;
           // Create proper description key for translation
           const descriptionKey = `activities.descriptions.${activity.id}`;
           
-          // Get translated category and description with fallbacks
-          const translatedCategory = t(categoryKey, { fallback: formattedCategory });
-          const translatedDescription = t(descriptionKey, { fallback: activity.description });
+          // Get translation and check if it's properly translated
+          const translatedCategory = t(categoryKey);
+          const isCategoryTranslated = translatedCategory !== categoryKey;
+          
+          // Use translated category if available, otherwise format the original
+          const displayCategory = isCategoryTranslated ? translatedCategory : formatCategoryName(activity.category);
+          const displayDescription = t(descriptionKey, { fallback: activity.description });
           
           return (
             <ActivityCard
               key={activity.id}
               activity={{
                 ...activity,
-                category: translatedCategory,
-                description: translatedDescription
+                category: displayCategory,
+                description: displayDescription
               }}
               isSelected={isSelected}
               selectedFrequency={selectedFrequency}

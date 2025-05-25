@@ -26,11 +26,12 @@ const ActivityCardHeader: React.FC<ActivityCardHeaderProps> = ({
   const rawCategory = activity.category?.toLowerCase().replace(/[-_\s&]/g, '') || '';
   const translationKey = `activities.categories.${rawCategory}`;
   
-  // First try to get the translated category
-  const translatedCategory = t(translationKey, { fallback: '' });
+  // Get translation and check if it's properly translated
+  const translatedCategory = t(translationKey);
+  const isTranslated = translatedCategory !== translationKey;
   
-  // If no translation is found, use the formatCategoryName utility
-  const displayCategory = translatedCategory || formatCategoryName(activity.category);
+  // Use translated category if available, otherwise format the original
+  const displayCategory = isTranslated ? translatedCategory : formatCategoryName(activity.category);
   
   return (
     <div className="flex items-start justify-between mb-3">

@@ -41,8 +41,12 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
   const categoryKey = `activities.categories.${rawCategory}`;
   const descriptionKey = `activities.descriptions.${activity.id}`;
   
-  // Use translated values if available, otherwise use formatted values
-  const displayCategory = t(categoryKey, { fallback: formatCategoryName(activity.category) });
+  // Get translation and check if it's a proper translation or just the key back
+  const translatedCategory = t(categoryKey);
+  const isTranslated = translatedCategory !== categoryKey;
+  
+  // Use translated category if available and properly translated, otherwise format the original
+  const displayCategory = isTranslated ? translatedCategory : formatCategoryName(activity.category);
   const displayDescription = t(descriptionKey, { fallback: activity.description });
 
   return (
