@@ -21,16 +21,26 @@ const ActivityCardHeader: React.FC<ActivityCardHeaderProps> = ({
 }) => {
   const { t } = useLanguage();
   
+  // Debug logging
+  console.log('ActivityCardHeader - Original category:', activity.category);
+  
   // Format category name properly and check for translations
   const rawCategory = activity.category?.toLowerCase().replace(/[-_\s&]/g, '') || '';
   const translationKey = `activities.categories.${rawCategory}`;
+  
+  console.log('ActivityCardHeader - Translation key:', translationKey);
   
   // Get translation and check if it's properly translated
   const translatedCategory = t(translationKey);
   const isTranslated = translatedCategory !== translationKey;
   
+  console.log('ActivityCardHeader - Translated category:', translatedCategory);
+  console.log('ActivityCardHeader - Is translated:', isTranslated);
+  
   // Use translated category if available, otherwise use the ORIGINAL category from data
   const displayCategory = isTranslated ? translatedCategory : activity.category;
+  
+  console.log('ActivityCardHeader - Final display category:', displayCategory);
   
   return (
     <div className="flex items-start justify-between mb-3">
