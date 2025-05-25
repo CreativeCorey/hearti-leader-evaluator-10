@@ -16,8 +16,8 @@ const DevelopmentTabContent: React.FC<DevelopmentTabContentProps> = ({
   return (
     <div className="space-y-6">
       <div className="bg-white p-6 rounded-lg border">
-        <h2 className="text-xl font-bold mb-4 text-center sm:text-left">HEARTI Coach</h2>
-        <p className="text-muted-foreground leading-relaxed">
+        <h2 className="text-xl font-bold mb-4 text-left">HEARTI Coach</h2>
+        <p className="text-muted-foreground leading-relaxed text-left">
           Welcome to your personal journey in becoming a HEARTI Leader, guided by your dedicated HEARTI Leadership Coach. 
           The HEARTI model empowers you to inspire engaged teams and drive better outcomes. Leveraging insights about your 
           unique strengths and vulnerabilities, your coach will help you translate understanding into actionable steps. 
