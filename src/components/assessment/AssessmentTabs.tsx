@@ -124,23 +124,29 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
   }
   
   return (
-    <div>
-      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as AssessmentTab)}>
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="dimensions">Dimensions</TabsTrigger>
-          <TabsTrigger value="dataViz">Data</TabsTrigger>
-          <TabsTrigger value="report">Report</TabsTrigger>
-          <TabsTrigger value="developSkills">HEARTI Coach</TabsTrigger>
-          <TabsTrigger value="buildHabits">Habits</TabsTrigger>
-        </TabsList>
-      </Tabs>
-      
+    <div className="w-full">
+      {/* Only show tabs if we have assessments */}
       {latestAssessment && (
-        <ResultsDisplay
-          assessment={latestAssessment}
-          assessments={userAssessments}
-        />
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as AssessmentTab)} className="w-full">
+          <TabsList className="grid w-full grid-cols-6">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="dimensions">Dimensions</TabsTrigger>
+            <TabsTrigger value="dataViz">Data</TabsTrigger>
+            <TabsTrigger value="report">Report</TabsTrigger>
+            <TabsTrigger value="developSkills">HEARTI Coach</TabsTrigger>
+            <TabsTrigger value="buildHabits">Habits</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      )}
+      
+      {/* Results display */}
+      {latestAssessment && (
+        <div className="mt-4">
+          <ResultsDisplay
+            assessment={latestAssessment}
+            assessments={userAssessments}
+          />
+        </div>
       )}
     </div>
   );

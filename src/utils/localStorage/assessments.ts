@@ -1,3 +1,4 @@
+
 import { HEARTIAssessment } from '../../types';
 import { saveAssessmentToSupabase, getUserAssessmentsFromSupabase } from '../supabase/assessments';
 import { ensureUserProfileExists } from '../supabase/profiles';
@@ -26,17 +27,23 @@ export const saveAssessment = async (assessment: HEARTIAssessment): Promise<bool
     
     console.log('Saving assessment to localStorage:', assessment.id);
     
-    // Save to localStorage
+    // Save to localStorage first (this always works)
     localStorage.setItem(ASSESSMENTS_KEY, JSON.stringify(existingAssessments));
     
     // If using Supabase, also save there
     if (getUseSupabase()) {
-      console.log('Saving assessment to Supabase:', assessment.id);
-      // Ensure user profile exists first
-      await ensureUserProfileExists(assessment.userId);
-      
-      // Then save the assessment
-      return await saveAssessmentToSupabase(assessment);
+      console.log('Ensuring user profile exists before saving assessment');
+      try {
+        // Ensure user profile exists first
+        await ensureUserProfileExists(assessment.userId);
+        
+        console.log('Saving assessment to Supabase:', assessment.id);
+        // Then save the assessment
+        await saveAssessmentToSupabase(assessment);
+      } catch (supabaseError) {
+        console.error('Failed to save to Supabase, but localStorage save succeeded:', supabaseError);
+        // Don't throw error - assessment is saved locally
+      }
     }
     
     return true;
