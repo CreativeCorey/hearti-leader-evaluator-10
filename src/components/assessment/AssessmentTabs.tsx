@@ -129,24 +129,22 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
       {latestAssessment && (
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as AssessmentTab)} className="w-full">
           <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="overview">Summary</TabsTrigger>
             <TabsTrigger value="dimensions">Dimensions</TabsTrigger>
-            <TabsTrigger value="dataViz">Data</TabsTrigger>
+            <TabsTrigger value="dataViz">HEARTI Spectra</TabsTrigger>
             <TabsTrigger value="report">Report</TabsTrigger>
             <TabsTrigger value="developSkills">HEARTI Coach</TabsTrigger>
-            <TabsTrigger value="buildHabits">Habits</TabsTrigger>
+            <TabsTrigger value="buildHabits">Build Habits</TabsTrigger>
           </TabsList>
+          
+          {/* Results content - pass the activeTab to control which content shows */}
+          <div className="mt-4">
+            <ResultsDisplay
+              assessment={latestAssessment}
+              assessments={userAssessments}
+            />
+          </div>
         </Tabs>
-      )}
-      
-      {/* Results display */}
-      {latestAssessment && (
-        <div className="mt-4">
-          <ResultsDisplay
-            assessment={latestAssessment}
-            assessments={userAssessments}
-          />
-        </div>
       )}
     </div>
   );

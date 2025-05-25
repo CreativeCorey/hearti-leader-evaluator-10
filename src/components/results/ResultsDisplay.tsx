@@ -1,6 +1,5 @@
 
 import React, { useState, useRef } from 'react';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HEARTIAssessment } from '@/types';
 import ResultsTabContent from './ResultsTabContent';
 import { exportToPDF } from './export';
@@ -18,7 +17,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   assessments = [],
   onSelectAssessment
 }) => {
-  const [activeTab, setActiveTab] = useState('overview');
   const [exportingPdf, setExportingPdf] = useState(false);
   const [selectedAssessment, setSelectedAssessment] = useState<HEARTIAssessment>(assessment);
   const reportRef = useRef<HTMLDivElement>(null);
@@ -44,13 +42,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
       setExportingPdf(false);
     }
   };
-  
-  // Use mobile or desktop version of the tab name based on device
-  const getDataVizTabName = () => {
-    return isMobile ? 
-      t('tabs.dataViz.mobile') : 
-      t('tabs.dataViz.desktop');
-  };
 
   // Handle assessment selection (for the progress chart interaction)
   const handleAssessmentSelect = (assessment: HEARTIAssessment) => {
@@ -60,44 +51,8 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
     }
   };
   
-  // Determine tab classes based on screen size and language
-  const getTabClasses = () => {
-    const baseClasses = "whitespace-nowrap overflow-hidden text-ellipsis";
-    
-    // Use smaller text for languages with longer translations like Chinese
-    if (isMobile || ['zh', 'ja', 'de'].includes(currentLanguage)) {
-      return `text-xs ${baseClasses} px-1 py-1 max-w-[70px]`;  // Smaller for challenging languages
-    }
-    return `text-xs md:text-sm ${baseClasses} max-w-[120px]`;  // Limited width on desktop too
-  };
-  
   return (
-    <Tabs 
-      value={activeTab} 
-      onValueChange={setActiveTab}
-      className="space-y-6"
-    >
-      <TabsList className="w-full grid grid-cols-3 md:grid-cols-6 gap-1 p-1 h-auto flex-wrap">
-        <TabsTrigger value="overview" className={getTabClasses()}>
-          {t('tabs.summary')}
-        </TabsTrigger>
-        <TabsTrigger value="dimensions" className={getTabClasses()}>
-          {t('tabs.dimensions')}
-        </TabsTrigger>
-        <TabsTrigger value="comparison" className={getTabClasses()}>
-          {getDataVizTabName()}
-        </TabsTrigger>
-        <TabsTrigger value="report" className={getTabClasses()}>
-          {t('tabs.report')}
-        </TabsTrigger>
-        <TabsTrigger value="development" className={getTabClasses()}>
-          {t('tabs.heartiCoach') || "HEARTI Coach"}
-        </TabsTrigger>
-        <TabsTrigger value="habits" className={getTabClasses()}>
-          {t('tabs.buildHabits')}
-        </TabsTrigger>
-      </TabsList>
-      
+    <div className="space-y-6">
       <ResultsTabContent 
         assessment={selectedAssessment}
         assessments={assessments}
@@ -107,7 +62,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
         topDevelopmentArea={topDevelopmentArea}
         onSelectAssessment={handleAssessmentSelect}
       />
-    </Tabs>
+    </div>
   );
 };
 
