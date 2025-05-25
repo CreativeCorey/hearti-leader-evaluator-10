@@ -6,7 +6,6 @@ import { BarChart, Check, Plus } from 'lucide-react';
 import FrequencySelector from './FrequencySelector';
 import { dimensionIcons } from './DimensionIcons';
 import { useLanguage } from '@/contexts/language/LanguageContext';
-import { formatCategoryName } from '@/utils/formatCategory';
 
 interface ActivityCardProps {
   activity: {
@@ -45,8 +44,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
   const translatedCategory = t(categoryKey);
   const isTranslated = translatedCategory !== categoryKey;
   
-  // Use translated category if available and properly translated, otherwise format the original
-  const displayCategory = isTranslated ? translatedCategory : formatCategoryName(activity.category);
+  // Use translated category if available and properly translated, otherwise use ORIGINAL category from data
+  const displayCategory = isTranslated ? translatedCategory : activity.category;
   const displayDescription = t(descriptionKey, { fallback: activity.description });
 
   return (

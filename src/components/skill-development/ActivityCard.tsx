@@ -7,7 +7,6 @@ import { SkillActivity, SavedActivity } from '@/data/heartActivities';
 import ActivityCardHeader from './ActivityCardHeader';
 import ActivityCardActions from './ActivityCardActions';
 import { useLanguage } from '@/contexts/language/LanguageContext';
-import { formatCategoryName } from '@/utils/formatCategory';
 
 interface ActivityCardProps {
   activity: SkillActivity;
@@ -32,8 +31,8 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
   const translatedCategory = t(categoryKey);
   const isCategoryTranslated = translatedCategory !== categoryKey;
   
-  // Use translated category if available, otherwise format the original
-  const displayCategory = isCategoryTranslated ? translatedCategory : formatCategoryName(activity.category);
+  // Use translated category if available, otherwise use the ORIGINAL category from data
+  const displayCategory = isCategoryTranslated ? translatedCategory : activity.category;
   const displayDescription = t(descriptionKey, { fallback: activity.description });
   
   // Create a properly formatted activity object with translations

@@ -4,7 +4,6 @@ import { HEARTIDimension } from '@/types';
 import { dimensionIcons, dimensionLabels } from './DimensionIcons';
 import ActivityCard from './ActivityCard';
 import { useLanguage } from '@/contexts/language/LanguageContext';
-import { formatCategoryName } from '@/utils/formatCategory';
 
 interface ActivityListProps {
   activeDimension: HEARTIDimension;
@@ -75,8 +74,8 @@ const ActivityList: React.FC<ActivityListProps> = ({
           const translatedCategory = t(categoryKey);
           const isCategoryTranslated = translatedCategory !== categoryKey;
           
-          // Use translated category if available, otherwise format the original
-          const displayCategory = isCategoryTranslated ? translatedCategory : formatCategoryName(activity.category);
+          // Use translated category if available, otherwise use ORIGINAL category from data
+          const displayCategory = isCategoryTranslated ? translatedCategory : activity.category;
           const displayDescription = t(descriptionKey, { fallback: activity.description });
           
           return (
