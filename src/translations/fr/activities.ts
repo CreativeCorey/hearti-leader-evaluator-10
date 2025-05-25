@@ -1,34 +1,33 @@
-
 export const activities = {
   activities: {
     categories: {
       selfassessment: "Auto-évaluation",
-      reflection: "Réflexion",
+      reflection: "Réflexion", 
       feedback: "Rétroaction",
-      activelistening: "Écoute active",
-      selfreflectionawareness: "Auto-réflexion et conscience",
-      acknowledgingothers: "Reconnaissance des autres",
-      perspectivetaking: "Prise de perspective",
-      buildingconnections: "Construction de liens",
-      emotionalawareness: "Conscience émotionnelle",
-      settingclearexpectations: "Définition d'attentes claires",
-      takingownership: "Prise de responsabilité",
-      trackingprogress: "Suivi des progrès",
-      buildingtrust: "Construction de la confiance",
-      continuousimprovement: "Amélioration continue",
-      mindsetshifts: "Changements de mentalité",
-      stressmanagement: "Gestion du stress",
-      problemsolvingskills: "Compétences de résolution de problèmes",
-      emotionalregulation: "Régulation émotionnelle",
-      supportsystemscommunity: "Systèmes de soutien et communauté",
-      opencommunication: "Communication ouverte",
-      sharinginformation: "Partage d'informations",
-      empoweringothers: "Autonomisation des autres",
-      buildingawareness: "Construction de la sensibilisation",
-      creatingsafespaces: "Création d'espaces sécurisés",
-      promotingequity: "Promotion de l'équité",
-      fosteringcollaboration: "Encouragement de la collaboration",
-      leadingbyexample: "Direction par l'exemple"
+      activelistening: "Écoute Active",
+      selfreflectionawareness: "Auto-réflexion et Conscience",
+      acknowledgingothers: "Reconnaissance des Autres",
+      perspectivetaking: "Prise de Perspective",
+      buildingconnections: "Construction de Liens",
+      emotionalawareness: "Conscience Émotionnelle",
+      settingclearexpectations: "Définition d'Attentes Claires",
+      takingownership: "Prise de Responsabilité",
+      trackingprogress: "Suivi des Progrès",
+      buildingtrust: "Construction de la Confiance",
+      continuousimprovement: "Amélioration Continue",
+      mindsetshifts: "Changements de Mentalité",
+      stressmanagement: "Gestion du Stress",
+      problemsolvingskills: "Compétences de Résolution de Problèmes",
+      emotionalregulation: "Régulation Émotionnelle",
+      supportsystemscommunity: "Systèmes de Soutien et Communauté",
+      opencommunication: "Communication Ouverte",
+      sharinginformation: "Partage d'Informations",
+      empoweringothers: "Autonomisation des Autres",
+      buildingawareness: "Construction de la Sensibilisation",
+      creatingsafespaces: "Création d'Espaces Sécurisés",
+      promotingequity: "Promotion de l'Équité",
+      fosteringcollaboration: "Encouragement de la Collaboration",
+      leadingbyexample: "Direction par l'Exemple"
     },
     descriptions: {
       // Humility Activities
@@ -104,9 +103,9 @@ export const activities = {
       i10: "Montrez l'exemple en démontrant un comportement inclusif dans chaque interaction."
     },
     activityTitles: {
-      escuchaActiva: "Écoute active",
-      tomaDePerspectiva: "Prise de perspective",
-      construirConexiones: "Construire des connexions"
+      escuchaActiva: "Écoute Active",
+      tomaDePerspectiva: "Prise de Perspective", 
+      construirConexiones: "Construire des Connexions"
     }
   }
 };

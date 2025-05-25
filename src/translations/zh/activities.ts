@@ -1,4 +1,3 @@
-
 export const activities = {
   activities: {
     categories: {
