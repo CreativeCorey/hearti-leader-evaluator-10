@@ -27,7 +27,7 @@ const DevelopmentTabContent: React.FC<DevelopmentTabContentProps> = ({
         </p>
       </div>
       
-      <DevelopmentTab assessments={assessments} topDevelopmentArea={topDevelopmentArea} />
+      <DevelopmentTab focusDimension={topDevelopmentArea} assessments={assessments} />
     </div>
   );
 };
