@@ -6,14 +6,12 @@
 export function formatCategoryName(category: string): string {
   if (!category) return '';
   
-  // Handle compound words by adding spaces before capital letters (except the first one)
-  // and before common word boundaries
+  // Handle specific compound words commonly found in the activities
   let formatted = category
-    // Add space before capital letters that follow lowercase letters
-    .replace(/([a-z])([A-Z])/g, '$1 $2')
-    // Handle specific compound words commonly found in the activities
-    .replace(/activelistening/gi, 'Active Listening')
+    .toLowerCase()
+    .replace(/selfreflectionawareness/gi, 'Self-Reflection & Awareness')
     .replace(/selfreflection/gi, 'Self-Reflection')
+    .replace(/activelistening/gi, 'Active Listening')
     .replace(/perspectivetaking/gi, 'Perspective-Taking')
     .replace(/buildingconnections/gi, 'Building Connections')
     .replace(/emotionalawareness/gi, 'Emotional Awareness')
@@ -37,11 +35,16 @@ export function formatCategoryName(category: string): string {
     .replace(/fosteringcollaboration/gi, 'Fostering Collaboration')
     .replace(/leadingbyexample/gi, 'Leading by Example');
   
-  // Capitalize the first letter of each word
-  formatted = formatted
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
+  // If no specific replacement was made, try to add spaces before capital letters
+  if (formatted === category.toLowerCase()) {
+    formatted = category
+      // Add space before capital letters that follow lowercase letters
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      // Capitalize the first letter of each word
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  }
   
   return formatted;
 }
