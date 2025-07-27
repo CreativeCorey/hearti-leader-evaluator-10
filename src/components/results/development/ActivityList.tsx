@@ -67,7 +67,7 @@ const ActivityList: React.FC<ActivityListProps> = ({
           const isSelected = selectedActivities.includes(activity.id);
           
           // Create proper category key for translation
-          const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[- &]/g, '')}`;
+          const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[-_\s&]/g, '')}`;
           // Create proper description key for translation
           const descriptionKey = `activities.descriptions.${activity.id}`;
           
