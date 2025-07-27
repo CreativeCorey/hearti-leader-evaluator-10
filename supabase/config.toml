@@ -1,14 +1,1 @@
-
 project_id = "odwkgxdkjyccnkydxvjw"
-
-[functions.sync-assessment-to-sheet]
-verify_jwt = false
-
-[functions.test-google-sheets]
-verify_jwt = false
-
-[functions.identity-token]
-verify_jwt = false
-
-[functions.marketing-subscribe]
-verify_jwt = false
