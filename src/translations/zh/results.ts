@@ -58,7 +58,8 @@ export const results = {
       tooManySaved: "已保存过多活动",
       removeBeforeSaving: "在保存新活动前请移除一些活动",
       recommendationsTitle: "HEARTI™ 领导力发展建议",
-      selectFrequency: "选择频率："
+      selectFrequency: "选择频率：",
+      heartiCoach: "HEARTI 教练"
     },
     habits: {
       title: "您的习惯",

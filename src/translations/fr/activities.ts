@@ -1,3 +1,4 @@
+
 export const activities = {
   activities: {
     categories: {
@@ -27,7 +28,8 @@ export const activities = {
       creatingsafespaces: "Création d'Espaces Sécurisés",
       promotingequity: "Promotion de l'Équité",
       fosteringcollaboration: "Encouragement de la Collaboration",
-      leadingbyexample: "Direction par l'Exemple"
+      leadingbyexample: "Direction par l'Exemple",
+      escuchaactiva: "Écoute Active"
     },
     descriptions: {
       // Humility Activities

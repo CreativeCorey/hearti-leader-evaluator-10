@@ -33,7 +33,9 @@ export function formatCategoryName(category: string): string {
     .replace(/creatingsafespaces/gi, 'Creating Safe Spaces')
     .replace(/promotingequity/gi, 'Promoting Equity')
     .replace(/fosteringcollaboration/gi, 'Fostering Collaboration')
-    .replace(/leadingbyexample/gi, 'Leading by Example');
+    .replace(/leadingbyexample/gi, 'Leading by Example')
+    .replace(/escuchaactiva/gi, 'Escucha Activa')
+    .replace(/escuchaactive/gi, 'Escucha Activa');
   
   // If no specific replacement was made, try to add spaces before capital letters
   if (formatted === category.toLowerCase()) {

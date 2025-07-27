@@ -3,6 +3,7 @@ import React from 'react';
 import { TabsContent } from '@/components/ui/tabs';
 import { HEARTIAssessment, HEARTIDimension } from '@/types';
 import DevelopmentTab from '../DevelopmentTab';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface DevelopmentTabContentProps {
   assessments: HEARTIAssessment[];
@@ -13,10 +14,12 @@ const DevelopmentTabContent: React.FC<DevelopmentTabContentProps> = ({
   assessments, 
   topDevelopmentArea 
 }) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="space-y-6">
       <div className="bg-white p-6 rounded-lg border">
-        <h2 className="text-xl font-bold mb-4 text-left">HEARTI Coach</h2>
+        <h2 className="text-xl font-bold mb-4 text-left">{t('results.development.heartiCoach', { fallback: "HEARTI Coach" })}</h2>
         <p className="text-muted-foreground leading-relaxed text-left">
           Welcome to your personal journey in becoming a HEARTI Leader, guided by your dedicated HEARTI Leadership Coach. 
           The HEARTI model empowers you to inspire engaged teams and drive better outcomes. Leveraging insights about your 
