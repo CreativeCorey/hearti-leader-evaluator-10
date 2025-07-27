@@ -221,6 +221,229 @@ const habitsTranslations = {
   },
 };
 
+// Activity descriptions translations
+const activityDescriptionsTranslations = {
+  en: {
+    // Humility
+    'activities.descriptions.h1': "Write down three things you're grateful for about your team every day.",
+    'activities.descriptions.h2': "Reflect on a recent mistake and identify what you learned from it.",
+    'activities.descriptions.h3': "Keep a journal to track moments when you felt proud or overly confident—analyze why.",
+    'activities.descriptions.h4': "Ask yourself daily: \"Am I listening more than I'm speaking?\"",
+    'activities.descriptions.h5': "Identify one area where you can improve as a leader or colleague.",
+    'activities.descriptions.h6': "Focus fully on the speaker during conversations—no multitasking.",
+    'activities.descriptions.h7': "Paraphrase what someone says before responding to ensure understanding.",
+    'activities.descriptions.h8': "Avoid interrupting others while they're sharing ideas.",
+    'activities.descriptions.h9': "Ask clarifying questions to show genuine interest.",
+    'activities.descriptions.h10': "Publicly recognize a teammate's contribution in a meeting.",
+    
+    // Empathy
+    'activities.descriptions.e1': "Focus entirely on the speaker without distractions.",
+    'activities.descriptions.e2': "Avoid interrupting while someone is sharing their thoughts.",
+    'activities.descriptions.e3': "Paraphrase what someone says to confirm understanding.",
+    'activities.descriptions.e4': "Ask open-ended questions like, \"How did that make you feel?\"",
+    'activities.descriptions.e5': "Imagine yourself in a coworker's situation before reacting.",
+    'activities.descriptions.e6': "Spend a day shadowing someone in a different role to understand their challenges.",
+    'activities.descriptions.e7': "Role-play scenarios from another team member's point of view.",
+    'activities.descriptions.e8': "Schedule regular one-on-one check-ins with team members.",
+    'activities.descriptions.e9': "Share something personal (appropriately) to encourage mutual trust.",
+    'activities.descriptions.e10': "Notice changes in a colleague's mood or energy levels.",
+    
+    // Accountability
+    'activities.descriptions.a1': "Define specific, measurable goals for yourself and your team.",
+    'activities.descriptions.a2': "Break down large projects into smaller, actionable tasks with deadlines.",
+    'activities.descriptions.a3': "Communicate your role and responsibilities clearly to others.",
+    'activities.descriptions.a4': "Admit mistakes immediately and take steps to correct them.",
+    'activities.descriptions.a5': "Avoid blaming others when things go wrong—focus on solutions.",
+    'activities.descriptions.a6': "Own both successes and failures as part of your journey.",
+    'activities.descriptions.a7': "Keep a daily or weekly log of completed tasks and achievements.",
+    'activities.descriptions.a8': "Share updates with your team to maintain transparency.",
+    'activities.descriptions.a9': "Consistently meet or exceed expectations to build credibility.",
+    'activities.descriptions.a10': "Seek feedback regularly from peers, managers, and subordinates.",
+    
+    // Resiliency
+    'activities.descriptions.r1': "Reframe setbacks as opportunities to learn and grow.",
+    'activities.descriptions.r2': "Practice gratitude by writing down three positive things each day.",
+    'activities.descriptions.r3': "Focus on what you can control rather than worrying about external factors.",
+    'activities.descriptions.r4': "Take short breaks throughout the day to recharge.",
+    'activities.descriptions.r5': "Practice deep breathing exercises during stressful moments.",
+    'activities.descriptions.r6': "Incorporate mindfulness or meditation into your daily routine.",
+    'activities.descriptions.r7': "Break overwhelming problems into smaller, manageable steps.",
+    'activities.descriptions.r8': "Brainstorm multiple solutions before deciding on one.",
+    'activities.descriptions.r9': "Label your emotions (e.g., \"I'm feeling frustrated\") to process them better.",
+    'activities.descriptions.r10': "Build strong relationships with coworkers who uplift you.",
+    
+    // Transparency
+    'activities.descriptions.t1': "Share updates regularly with your team, even if there's no major news.",
+    'activities.descriptions.t2': "Hold weekly check-ins to discuss progress, challenges, and goals.",
+    'activities.descriptions.t3': "Use clear, simple language instead of jargon or technical terms.",
+    'activities.descriptions.t4': "Create a shared drive or platform where all relevant documents are accessible.",
+    'activities.descriptions.t5': "Share both successes and setbacks openly with your team.",
+    'activities.descriptions.t6': "Make performance metrics visible to promote accountability.",
+    'activities.descriptions.t7': "Follow through on promises and commitments consistently.",
+    'activities.descriptions.t8': "Apologize sincerely if you make a mistake or miscommunicate.",
+    'activities.descriptions.t9': "Delegate tasks while providing full visibility into expectations.",
+    'activities.descriptions.t10': "Conduct surveys to gauge how transparent employees feel the workplace is.",
+    
+    // Inclusivity
+    'activities.descriptions.i1': "Educate yourself on diversity, equity, and inclusion (DEI) topics through books, articles, or podcasts.",
+    'activities.descriptions.i2': "Attend workshops or training sessions on unconscious bias and microaggressions.",
+    'activities.descriptions.i3': "Reflect on your own biases and how they might influence your behavior.",
+    'activities.descriptions.i4': "Encourage open discussions about inclusion and belonging.",
+    'activities.descriptions.i5': "Establish anonymous feedback channels for employees to voice concerns.",
+    'activities.descriptions.i6': "Host listening sessions to hear diverse perspectives and experiences.",
+    'activities.descriptions.i7': "Review hiring practices to eliminate bias and ensure fairness.",
+    'activities.descriptions.i8': "Offer mentorship programs that connect underrepresented employees with leaders.",
+    'activities.descriptions.i9': "Pair employees from different departments or backgrounds for projects.",
+    'activities.descriptions.i10': "Model inclusive behavior in every interaction."
+  },
+  fr: {
+    // Humility
+    'activities.descriptions.h1': "Écrivez trois choses pour lesquelles vous êtes reconnaissant envers votre équipe chaque jour.",
+    'activities.descriptions.h2': "Réfléchissez sur une erreur récente et identifiez ce que vous en avez appris.",
+    'activities.descriptions.h3': "Tenez un journal pour suivre les moments où vous vous êtes senti fier ou trop confiant—analysez pourquoi.",
+    'activities.descriptions.h4': "Demandez-vous quotidiennement : \"Est-ce que j'écoute plus que je ne parle ?\"",
+    'activities.descriptions.h5': "Identifiez un domaine où vous pouvez vous améliorer en tant que leader ou collègue.",
+    'activities.descriptions.h6': "Concentrez-vous entièrement sur l'orateur pendant les conversations—pas de multitâche.",
+    'activities.descriptions.h7': "Paraphrasez ce que quelqu'un dit avant de répondre pour assurer la compréhension.",
+    'activities.descriptions.h8': "Évitez d'interrompre les autres pendant qu'ils partagent leurs idées.",
+    'activities.descriptions.h9': "Posez des questions de clarification pour montrer un intérêt sincère.",
+    'activities.descriptions.h10': "Reconnaissez publiquement la contribution d'un coéquipier lors d'une réunion.",
+    
+    // Empathy
+    'activities.descriptions.e1': "Concentrez-vous entièrement sur l'orateur sans distractions.",
+    'activities.descriptions.e2': "Évitez d'interrompre pendant que quelqu'un partage ses pensées.",
+    'activities.descriptions.e3': "Paraphrasez ce que quelqu'un dit pour confirmer la compréhension.",
+    'activities.descriptions.e4': "Posez des questions ouvertes comme \"Comment cela vous a-t-il fait ressentir ?\"",
+    'activities.descriptions.e5': "Imaginez-vous dans la situation d'un collègue avant de réagir.",
+    'activities.descriptions.e6': "Passez une journée à observer quelqu'un dans un rôle différent pour comprendre ses défis.",
+    'activities.descriptions.e7': "Jouez des scénarios du point de vue d'un autre membre de l'équipe.",
+    'activities.descriptions.e8': "Planifiez des rencontres individuelles régulières avec les membres de l'équipe.",
+    'activities.descriptions.e9': "Partagez quelque chose de personnel (de manière appropriée) pour encourager la confiance mutuelle.",
+    'activities.descriptions.e10': "Remarquez les changements dans l'humeur ou les niveaux d'énergie d'un collègue.",
+    
+    // Accountability
+    'activities.descriptions.a1': "Définissez des objectifs spécifiques et mesurables pour vous-même et votre équipe.",
+    'activities.descriptions.a2': "Décomposez les grands projets en tâches plus petites et réalisables avec des échéances.",
+    'activities.descriptions.a3': "Communiquez clairement votre rôle et vos responsabilités aux autres.",
+    'activities.descriptions.a4': "Admettez immédiatement les erreurs et prenez des mesures pour les corriger.",
+    'activities.descriptions.a5': "Évitez de blâmer les autres quand les choses vont mal—concentrez-vous sur les solutions.",
+    'activities.descriptions.a6': "Assumez les succès et les échecs comme partie de votre parcours.",
+    'activities.descriptions.a7': "Tenez un journal quotidien ou hebdomadaire des tâches accomplies et des réalisations.",
+    'activities.descriptions.a8': "Partagez les mises à jour avec votre équipe pour maintenir la transparence.",
+    'activities.descriptions.a9': "Respectez ou dépassez constamment les attentes pour établir la crédibilité.",
+    'activities.descriptions.a10': "Sollicitez régulièrement des commentaires de la part des pairs, managers et subordonnés.",
+    
+    // Resiliency
+    'activities.descriptions.r1': "Recadrez les revers comme des opportunités d'apprendre et de grandir.",
+    'activities.descriptions.r2': "Pratiquez la gratitude en écrivant trois choses positives chaque jour.",
+    'activities.descriptions.r3': "Concentrez-vous sur ce que vous pouvez contrôler plutôt que de vous inquiéter des facteurs externes.",
+    'activities.descriptions.r4': "Prenez de courtes pauses tout au long de la journée pour vous ressourcer.",
+    'activities.descriptions.r5': "Pratiquez des exercices de respiration profonde pendant les moments stressants.",
+    'activities.descriptions.r6': "Intégrez la pleine conscience ou la méditation dans votre routine quotidienne.",
+    'activities.descriptions.r7': "Décomposez les problèmes accablants en étapes plus petites et gérables.",
+    'activities.descriptions.r8': "Réfléchissez à plusieurs solutions avant de décider d'une seule.",
+    'activities.descriptions.r9': "Étiquetez vos émotions (par exemple, \"Je me sens frustré\") pour mieux les traiter.",
+    'activities.descriptions.r10': "Construisez des relations solides avec des collègues qui vous élèvent.",
+    
+    // Transparency
+    'activities.descriptions.t1': "Partagez régulièrement les mises à jour avec votre équipe, même s'il n'y a pas de nouvelles majeures.",
+    'activities.descriptions.t2': "Organisez des réunions hebdomadaires pour discuter des progrès, défis et objectifs.",
+    'activities.descriptions.t3': "Utilisez un langage clair et simple au lieu de jargon ou de termes techniques.",
+    'activities.descriptions.t4': "Créez un lecteur partagé ou une plateforme où tous les documents pertinents sont accessibles.",
+    'activities.descriptions.t5': "Partagez ouvertement les succès et les revers avec votre équipe.",
+    'activities.descriptions.t6': "Rendez les métriques de performance visibles pour promouvoir la responsabilité.",
+    'activities.descriptions.t7': "Respectez constamment les promesses et engagements.",
+    'activities.descriptions.t8': "Excusez-vous sincèrement si vous faites une erreur ou communiquez mal.",
+    'activities.descriptions.t9': "Déléguez des tâches tout en fournissant une visibilité complète sur les attentes.",
+    'activities.descriptions.t10': "Menez des sondages pour évaluer à quel point les employés trouvent le lieu de travail transparent.",
+    
+    // Inclusivity
+    'activities.descriptions.i1': "Éduquez-vous sur les sujets de diversité, équité et inclusion (DEI) par le biais de livres, articles ou podcasts.",
+    'activities.descriptions.i2': "Assistez à des ateliers ou sessions de formation sur les biais inconscients et les microagressions.",
+    'activities.descriptions.i3': "Réfléchissez sur vos propres biais et comment ils peuvent influencer votre comportement.",
+    'activities.descriptions.i4': "Encouragez des discussions ouvertes sur l'inclusion et l'appartenance.",
+    'activities.descriptions.i5': "Établissez des canaux de rétroaction anonymes pour que les employés puissent exprimer leurs préoccupations.",
+    'activities.descriptions.i6': "Organisez des sessions d'écoute pour entendre diverses perspectives et expériences.",
+    'activities.descriptions.i7': "Révisez les pratiques d'embauche pour éliminer les biais et assurer l'équité.",
+    'activities.descriptions.i8': "Offrez des programmes de mentorat qui connectent les employés sous-représentés avec les leaders.",
+    'activities.descriptions.i9': "Jumelez des employés de différents départements ou origines pour des projets.",
+    'activities.descriptions.i10': "Modélisez un comportement inclusif dans chaque interaction."
+  },
+  es: {
+    // Humility
+    'activities.descriptions.h1': "Escribe tres cosas por las que estás agradecido sobre tu equipo cada día.",
+    'activities.descriptions.h2': "Reflexiona sobre un error reciente e identifica lo que aprendiste de él.",
+    'activities.descriptions.h3': "Lleva un diario para rastrear momentos cuando te sentiste orgulloso o demasiado confiado—analiza por qué.",
+    'activities.descriptions.h4': "Pregúntate diariamente: \"¿Estoy escuchando más de lo que hablo?\"",
+    'activities.descriptions.h5': "Identifica un área donde puedes mejorar como líder o colega.",
+    'activities.descriptions.h6': "Concéntrate completamente en el hablante durante las conversaciones—sin multitarea.",
+    'activities.descriptions.h7': "Parafrasea lo que alguien dice antes de responder para asegurar comprensión.",
+    'activities.descriptions.h8': "Evita interrumpir a otros mientras comparten sus ideas.",
+    'activities.descriptions.h9': "Haz preguntas aclaratorias para mostrar interés genuino.",
+    'activities.descriptions.h10': "Reconoce públicamente la contribución de un compañero de equipo en una reunión.",
+    
+    // Empathy
+    'activities.descriptions.e1': "Concéntrate completamente en el hablante sin distracciones.",
+    'activities.descriptions.e2': "Evita interrumpir mientras alguien comparte sus pensamientos.",
+    'activities.descriptions.e3': "Parafrasea lo que alguien dice para confirmar comprensión.",
+    'activities.descriptions.e4': "Haz preguntas abiertas como \"¿Cómo te hizo sentir eso?\"",
+    'activities.descriptions.e5': "Imagínate en la situación de un compañero de trabajo antes de reaccionar.",
+    'activities.descriptions.e6': "Pasa un día siguiendo a alguien en un rol diferente para entender sus desafíos.",
+    'activities.descriptions.e7': "Representa escenarios desde el punto de vista de otro miembro del equipo.",
+    'activities.descriptions.e8': "Programa reuniones individuales regulares con miembros del equipo.",
+    'activities.descriptions.e9': "Comparte algo personal (apropiadamente) para fomentar confianza mutua.",
+    'activities.descriptions.e10': "Nota cambios en el estado de ánimo o niveles de energía de un colega.",
+    
+    // Accountability
+    'activities.descriptions.a1': "Define objetivos específicos y medibles para ti y tu equipo.",
+    'activities.descriptions.a2': "Divide proyectos grandes en tareas más pequeñas y accionables con fechas límite.",
+    'activities.descriptions.a3': "Comunica tu rol y responsabilidades claramente a otros.",
+    'activities.descriptions.a4': "Admite errores inmediatamente y toma medidas para corregirlos.",
+    'activities.descriptions.a5': "Evita culpar a otros cuando las cosas van mal—enfócate en soluciones.",
+    'activities.descriptions.a6': "Aprópiate tanto de éxitos como de fracasos como parte de tu jornada.",
+    'activities.descriptions.a7': "Lleva un registro diario o semanal de tareas completadas y logros.",
+    'activities.descriptions.a8': "Comparte actualizaciones con tu equipo para mantener transparencia.",
+    'activities.descriptions.a9': "Cumple o supera consistentemente las expectativas para construir credibilidad.",
+    'activities.descriptions.a10': "Busca retroalimentación regularmente de compañeros, gerentes y subordinados.",
+    
+    // Resiliency
+    'activities.descriptions.r1': "Reenfoca los contratiempos como oportunidades para aprender y crecer.",
+    'activities.descriptions.r2': "Practica gratitud escribiendo tres cosas positivas cada día.",
+    'activities.descriptions.r3': "Enfócate en lo que puedes controlar en lugar de preocuparte por factores externos.",
+    'activities.descriptions.r4': "Toma descansos cortos durante el día para recargar energías.",
+    'activities.descriptions.r5': "Practica ejercicios de respiración profunda durante momentos estresantes.",
+    'activities.descriptions.r6': "Incorpora mindfulness o meditación en tu rutina diaria.",
+    'activities.descriptions.r7': "Divide problemas abrumadores en pasos más pequeños y manejables.",
+    'activities.descriptions.r8': "Piensa en múltiples soluciones antes de decidir una.",
+    'activities.descriptions.r9': "Etiqueta tus emociones (ej., \"Me siento frustrado\") para procesarlas mejor.",
+    'activities.descriptions.r10': "Construye relaciones sólidas con compañeros de trabajo que te eleven.",
+    
+    // Transparency
+    'activities.descriptions.t1': "Comparte actualizaciones regularmente con tu equipo, incluso si no hay noticias importantes.",
+    'activities.descriptions.t2': "Organiza reuniones semanales para discutir progreso, desafíos y objetivos.",
+    'activities.descriptions.t3': "Usa lenguaje claro y simple en lugar de jerga o términos técnicos.",
+    'activities.descriptions.t4': "Crea una unidad compartida o plataforma donde todos los documentos relevantes sean accesibles.",
+    'activities.descriptions.t5': "Comparte tanto éxitos como contratiempos abiertamente con tu equipo.",
+    'activities.descriptions.t6': "Haz visibles las métricas de rendimiento para promover responsabilidad.",
+    'activities.descriptions.t7': "Cumple promesas y compromisos consistentemente.",
+    'activities.descriptions.t8': "Discúlpate sinceramente si cometes un error o comunicas mal.",
+    'activities.descriptions.t9': "Delega tareas mientras proporcionas visibilidad completa de las expectativas.",
+    'activities.descriptions.t10': "Conduce encuestas para evaluar qué tan transparente sienten los empleados que es el lugar de trabajo.",
+    
+    // Inclusivity
+    'activities.descriptions.i1': "Edúcate sobre temas de diversidad, equidad e inclusión (DEI) a través de libros, artículos o podcasts.",
+    'activities.descriptions.i2': "Asiste a talleres o sesiones de entrenamiento sobre sesgo inconsciente y microagresiones.",
+    'activities.descriptions.i3': "Reflexiona sobre tus propios sesgos y cómo pueden influir tu comportamiento.",
+    'activities.descriptions.i4': "Fomenta discusiones abiertas sobre inclusión y pertenencia.",
+    'activities.descriptions.i5': "Establece canales de retroalimentación anónimos para que los empleados expresen preocupaciones.",
+    'activities.descriptions.i6': "Organiza sesiones de escucha para oír diversas perspectivas y experiencias.",
+    'activities.descriptions.i7': "Revisa prácticas de contratación para eliminar sesgo y asegurar equidad.",
+    'activities.descriptions.i8': "Ofrece programas de mentoría que conecten empleados subrepresentados con líderes.",
+    'activities.descriptions.i9': "Empareja empleados de diferentes departamentos o antecedentes para proyectos.",
+    'activities.descriptions.i10': "Modela comportamiento inclusivo en cada interacción."
+  }
+};
+
 // Activity categories translations
 const activityCategoriesTranslations = {
   fr: {
@@ -516,6 +739,16 @@ export const getTranslation = (language: SupportedLanguage, key: string, params?
     // If no direct translation, format the key nicely
     const category = key.replace('activities.categories.', '');
     return formatCategoryName(category);
+  }
+  
+  // Activity descriptions special handling
+  if (key.startsWith('activities.descriptions.')) {
+    if (activityDescriptionsTranslations[language] && activityDescriptionsTranslations[language][key]) {
+      return activityDescriptionsTranslations[language][key];
+    }
+    
+    // If no direct translation found, return the fallback if provided, or the key
+    return params?.fallback || key;
   }
   
   // Handle comparison section labels
