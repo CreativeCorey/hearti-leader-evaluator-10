@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/use-auth';
 import { useLanguage } from '@/contexts/language/LanguageContext';
@@ -14,6 +14,11 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { supabase } from '@/integrations/supabase/client';
+interface UserRole {
+  role?: 'user' | 'admin' | 'coach';
+  organization_id?: string;
+}
 
 const Header = () => {
   const { user, signOut } = useAuth();
@@ -21,6 +26,24 @@ const Header = () => {
   const { theme, setTheme } = useTheme();
   const location = useLocation();
   const isMobile = useIsMobile();
+  const [profile, setProfile] = useState<UserRole | null>(null);
+
+  // Load user profile and role
+  useEffect(() => {
+    const loadProfile = async () => {
+      if (user) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('role, organization_id')
+          .eq('id', user.id)
+          .single();
+        setProfile(data);
+      } else {
+        setProfile(null);
+      }
+    };
+    loadProfile();
+  }, [user]);
 
   return (
     <header className="bg-white dark:bg-gray-950 border-b sticky top-0 z-50">
@@ -38,7 +61,17 @@ const Header = () => {
             <Link to="/" className={`${location.pathname === '/' ? 'text-foreground font-medium' : 'text-muted-foreground'} hover:text-foreground transition-colors`}>
               Assessment
             </Link>
-            {/* Chat link removed */}
+            {/* Conditional navigation links based on user role */}
+            {user && profile?.role && ['coach', 'admin'].includes(profile.role) && (
+              <Link to="/coach" className={`${location.pathname === '/coach' ? 'text-foreground font-medium' : 'text-muted-foreground'} hover:text-foreground transition-colors`}>
+                Coach Dashboard
+              </Link>
+            )}
+            {user && profile?.role === 'admin' && (
+              <Link to="/admin" className={`${location.pathname === '/admin' ? 'text-foreground font-medium' : 'text-muted-foreground'} hover:text-foreground transition-colors`}>
+                Admin Panel
+              </Link>
+            )}
           </nav>
         </div>
         
@@ -103,7 +136,17 @@ const Header = () => {
               <DropdownMenuItem asChild>
                 <Link to="/">Assessment</Link>
               </DropdownMenuItem>
-              {/* Chat link removed from mobile menu */}
+              {/* Conditional mobile navigation links based on user role */}
+              {user && profile?.role && ['coach', 'admin'].includes(profile.role) && (
+                <DropdownMenuItem asChild>
+                  <Link to="/coach">Coach Dashboard</Link>
+                </DropdownMenuItem>
+              )}
+              {user && profile?.role === 'admin' && (
+                <DropdownMenuItem asChild>
+                  <Link to="/admin">Admin Panel</Link>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
                 {theme === "light" ? "Dark Mode" : "Light Mode"}
               </DropdownMenuItem>
