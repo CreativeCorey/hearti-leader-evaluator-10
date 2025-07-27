@@ -24,7 +24,7 @@ const DevelopmentTabContent: React.FC<DevelopmentTabContentProps> = ({
           Welcome to your personal journey in becoming a HEARTI Leader, guided by your dedicated HEARTI Leadership Coach. 
           The HEARTI model empowers you to inspire engaged teams and drive better outcomes. Leveraging insights about your 
           unique strengths and vulnerabilities, your coach will help you translate understanding into actionable steps. 
-          To effectively develop, choose 3-5 daily habits from the cards below related to your HEARTI skills, focusing on 
+          To effectively develop, choose daily habits from the cards below related to your HEARTI skills, focusing on 
           both enhancing strengths and addressing vulnerabilities, and track your progress. Consistent practice will build 
           new patterns, driving your growth and increasing your impact as you apply these powerful leadership competencies.
         </p>

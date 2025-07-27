@@ -94,16 +94,6 @@ export const useHabits = (focusDimension?: HEARTIDimension) => {
   };
   
   const handleAddHabit = async (newHabitForm: NewHabitForm) => {
-    // Check if we've reached the limit of 5 habits
-    if (habits.length >= 5) {
-      toast({
-        title: "Habit limit reached",
-        description: "You can track up to 5 habits at a time. Please delete an existing habit to add a new one.",
-        variant: "destructive",
-      });
-      return false;
-    }
-    
     const habit = await createNewHabit(newHabitForm);
     
     if (!habit) return false;
