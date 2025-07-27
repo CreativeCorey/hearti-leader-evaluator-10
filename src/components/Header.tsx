@@ -32,11 +32,22 @@ const Header = () => {
   useEffect(() => {
     const loadProfile = async () => {
       if (user) {
-        const { data } = await supabase
+        // Check if this is an anonymous user (mock user for testing)
+        if (user.email?.includes('@hearti-app.local')) {
+          // For anonymous users, set a mock profile with admin role for testing
+          setProfile({ role: 'admin', organization_id: 'test-org' });
+          return;
+        }
+        
+        const { data, error } = await supabase
           .from('profiles')
           .select('role, organization_id')
           .eq('id', user.id)
           .single();
+          
+        if (error) {
+          console.error('Error loading profile:', error);
+        }
         setProfile(data);
       } else {
         setProfile(null);
