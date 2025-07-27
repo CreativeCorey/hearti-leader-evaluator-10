@@ -136,7 +136,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
               Annual subscription ($7.99/month, billed yearly)
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => onPayNow('one-time')}>
-              Full Access - One Payment: $99.99
+              Full Access - One Payment: $199.99
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -74,7 +74,7 @@ export const createCheckoutSession = async (
               name: "HEARTI™ Leadership Assessment Results",
               description: "Lifetime Access"
             },
-            unit_amount: 9999, // $99.99
+            unit_amount: 19999, // $199.99
           },
         quantity: 1,
       }],
