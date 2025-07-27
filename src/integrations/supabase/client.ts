@@ -15,3 +15,8 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     autoRefreshToken: true,
   }
 });
+
+// Helper function to get the redirect URL for authentication
+export const getAuthRedirectUrl = (): string => {
+  return window.location.origin + '/auth';
+};
