@@ -7,6 +7,7 @@ import { SkillActivity, SavedActivity } from '@/data/heartActivities';
 import ActivityCardHeader from './ActivityCardHeader';
 import ActivityCardActions from './ActivityCardActions';
 import { useLanguage } from '@/contexts/language/LanguageContext';
+import { formatCategoryName } from '@/utils/formatCategory';
 
 interface ActivityCardProps {
   activity: SkillActivity;
@@ -22,28 +23,18 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, 
   const isSaved = savedActivities.some(saved => saved.activityId === activity.id);
   const maxSavedReached = savedActivities.length >= 3;
   
-  // Debug logging
-  console.log('ActivityCard - Original activity:', activity);
-  
-  // Create translation keys for category and description
+  // Create translation keys for category and description  
   const rawCategory = activity.category?.toLowerCase().replace(/[-_\s&]/g, '') || '';
   const categoryKey = `activities.categories.${rawCategory}`;
   const descriptionKey = `activities.descriptions.${activity.id}`;
-  
-  console.log('ActivityCard - Category key:', categoryKey);
   
   // Get translation and check if it's properly translated
   const translatedCategory = t(categoryKey);
   const isCategoryTranslated = translatedCategory !== categoryKey;
   
-  console.log('ActivityCard - Translated category:', translatedCategory);
-  console.log('ActivityCard - Is category translated:', isCategoryTranslated);
-  
-  // Use translated category if available, otherwise use the ORIGINAL category from data
-  const displayCategory = isCategoryTranslated ? translatedCategory : activity.category;
+  // Use translated category if available, otherwise use formatted category
+  const displayCategory = isCategoryTranslated ? translatedCategory : formatCategoryName(activity.category);
   const displayDescription = t(descriptionKey, { fallback: activity.description });
-  
-  console.log('ActivityCard - Final display category:', displayCategory);
   
   // Create a properly formatted activity object with translations
   const formattedActivity = {
