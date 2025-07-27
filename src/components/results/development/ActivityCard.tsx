@@ -5,8 +5,8 @@ import { Button } from '@/components/ui/button';
 import { BarChart, Check, Plus } from 'lucide-react';
 import FrequencySelector from './FrequencySelector';
 import { dimensionIcons } from './DimensionIcons';
+import { useActivityTranslations } from '@/utils/activityTranslations';
 import { useLanguage } from '@/contexts/language/LanguageContext';
-import { formatCategoryName } from '@/utils/formatCategory';
 
 interface ActivityCardProps {
   activity: {
@@ -31,23 +31,15 @@ const ActivityCard: React.FC<ActivityCardProps> = ({
   onAddToHabitTracker
 }) => {
   const { t } = useLanguage();
+  const { getTranslatedCategory, getTranslatedDescription } = useActivityTranslations();
   
   // Get the appropriate dimension icon or default to Plus
   const dimensionName = activity.dimension || 'humility';
   const DimensionIcon = dimensionIcons[dimensionName] || Plus;
   
-  // Create translation keys for category and description
-  const rawCategory = activity.category?.toLowerCase().replace(/[-_\s&]/g, '') || '';
-  const categoryKey = `activities.categories.${rawCategory}`;
-  const descriptionKey = `activities.descriptions.${activity.id}`;
-  
-  // Get translation and check if it's a proper translation or just the key back
-  const translatedCategory = t(categoryKey);
-  const isTranslated = translatedCategory !== categoryKey;
-  
-  // Use translated category if available, otherwise use formatted category
-  const displayCategory = isTranslated ? translatedCategory : formatCategoryName(activity.category);
-  const displayDescription = t(descriptionKey, { fallback: activity.description });
+  // Get properly translated category and description
+  const displayCategory = getTranslatedCategory(activity.category);
+  const displayDescription = getTranslatedDescription(activity.id, activity.description);
 
   return (
     <Card 

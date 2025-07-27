@@ -16,7 +16,7 @@ interface PaymentFooterProps {
   processingPayment: boolean;
   user: User | null;
   lastAttemptTime: number | null;
-  onPayNow: (type: 'one-time' | 'subscription') => void;
+  onPayNow: (type: 'one-time' | 'subscription' | 'annual-subscription') => void;
 }
 
 export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayNow }: PaymentFooterProps) => {
@@ -103,7 +103,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           ) : (
             <>
               <CreditCard className="mr-2 h-4 w-4" />
-              Start for $6.99/month
+              Start for $9.99/month
             </>
           )}
         </Button>
@@ -132,8 +132,11 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[240px]">
+            <DropdownMenuItem onClick={() => onPayNow('annual-subscription')}>
+              Annual subscription ($7.99/month, billed yearly)
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => onPayNow('one-time')}>
-              Full Access - One Payment: $54.00
+              Full Access - One Payment: $99.99
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

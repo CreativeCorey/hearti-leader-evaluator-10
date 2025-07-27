@@ -2,8 +2,8 @@
 import React from 'react';
 import { SkillActivity } from '@/data/heartActivities';
 import { activityData } from '@/data/heartActivities';
+import { useActivityTranslations } from '@/utils/activityTranslations';
 import { useLanguage } from '@/contexts/language/LanguageContext';
-import { formatCategoryName } from '@/utils/formatCategory';
 
 interface DevelopmentActivitiesProps {
   selectedDimension: string;
@@ -12,6 +12,7 @@ interface DevelopmentActivitiesProps {
 // The custom hook to get translated activities for a dimension
 export const useTranslatedActivities = (selectedDimension: string): SkillActivity[] => {
   const { t } = useLanguage();
+  const { getTranslatedCategory, getTranslatedDescription } = useActivityTranslations();
 
   // Get translated activities for the selected dimension
   const getTranslatedActivities = () => {
@@ -19,22 +20,15 @@ export const useTranslatedActivities = (selectedDimension: string): SkillActivit
       .filter(activity => activity.dimension === selectedDimension)
       .map(activity => {
         // Create translation keys based on activity ID and category
-        const lowerCaseCategory = activity.category?.toLowerCase().replace(/[-_\s&]/g, '') || '';
-        const categoryKey = `activities.categories.${lowerCaseCategory}`;
-        const descriptionKey = `activities.descriptions.${activity.id}`;
+        // Get properly translated category and description
+        const formattedCategory = getTranslatedCategory(activity.category);
+        const formattedDescription = getTranslatedDescription(activity.id, activity.description);
         
-        // Format the category properly
-        const formattedCategory = formatCategoryName(activity.category);
-        
-        // Make sure to include fallbacks
-        const translatedActivity = {
+        return {
           ...activity,
-          description: t(descriptionKey, { fallback: activity.description }),
-          // Use translation if available, otherwise use our formatted category name
-          category: t(categoryKey, { fallback: formattedCategory })
+          category: formattedCategory,
+          description: formattedDescription
         };
-        
-        return translatedActivity;
       });
   };
 

@@ -2,8 +2,7 @@
 import React from 'react';
 import { ChevronDown, ChevronUp, BookmarkCheck } from 'lucide-react';
 import { SkillActivity } from '@/data/heartActivities';
-import { useLanguage } from '@/contexts/language/LanguageContext';
-import { formatCategoryName } from '@/utils/formatCategory';
+import { useActivityTranslations } from '@/utils/activityTranslations';
 
 interface ActivityCardHeaderProps {
   activity: SkillActivity;
@@ -20,18 +19,10 @@ const ActivityCardHeader: React.FC<ActivityCardHeaderProps> = ({
   isSaved = false,
   expanded = false
 }) => {
-  const { t } = useLanguage();
+  const { getTranslatedCategory } = useActivityTranslations();
   
-  // Format category name properly and check for translations
-  const rawCategory = activity.category?.toLowerCase().replace(/[-_\s&]/g, '') || '';
-  const translationKey = `activities.categories.${rawCategory}`;
-  
-  // Get translation and check if it's properly translated
-  const translatedCategory = t(translationKey);
-  const isTranslated = translatedCategory !== translationKey;
-  
-  // Use translated category if available, otherwise use formatted category
-  const displayCategory = isTranslated ? translatedCategory : formatCategoryName(activity.category);
+  // Get properly translated category
+  const displayCategory = getTranslatedCategory(activity.category);
   
   return (
     <div className="flex items-start justify-between mb-3">

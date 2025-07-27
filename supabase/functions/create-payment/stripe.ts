@@ -48,7 +48,7 @@ export const createCheckoutSession = async (
     customerId: string;
     origin: string;
     metadata: Record<string, string>;
-    paymentType: 'one-time' | 'subscription';
+    paymentType: 'one-time' | 'subscription' | 'annual-subscription';
   }
 ) => {
   logStep("Creating checkout session", { paymentType: params.paymentType, metadata: params.metadata });
@@ -68,69 +68,66 @@ export const createCheckoutSession = async (
       ...baseSessionConfig,
       mode: "payment",
       line_items: [{
-        price_data: {
-          currency: "usd",
-          product_data: { 
-            name: "HEARTI™ Leadership Assessment Results",
-            description: "Lifetime Access"
+          price_data: {
+            currency: "usd",
+            product_data: { 
+              name: "HEARTI™ Leadership Assessment Results",
+              description: "Lifetime Access"
+            },
+            unit_amount: 9999, // $99.99
           },
-          unit_amount: 5400, // $54.00
-        },
         quantity: 1,
       }],
     });
     logStep("Created one-time payment session", { id: session.id });
     return session;
-  } else {
-    // Create subscription session
-    logStep("Creating subscription session");
+  } else if (params.paymentType === 'annual-subscription') {
+    // Create annual subscription session
+    logStep("Creating annual subscription session");
     
-    try {
-      // First try to create a subscription directly with a price ID
-      const session = await stripe.checkout.sessions.create({
-        ...baseSessionConfig,
-        mode: "subscription",
-        line_items: [{
-          price_data: {
-            currency: "usd",
-            product_data: { 
-              name: "HEARTI™ Leadership Assessment Results",
-              description: "Monthly Subscription"
-            },
-            unit_amount: 699, // $6.99
-            recurring: {
-              interval: "month"
-            }
+    const session = await stripe.checkout.sessions.create({
+      ...baseSessionConfig,
+      mode: "subscription",
+      line_items: [{
+        price_data: {
+          currency: "usd",
+          product_data: { 
+            name: "HEARTI™ Leadership Assessment Results",
+            description: "Annual Subscription"
           },
-          quantity: 1,
-        }],
-      });
-      logStep("Created subscription session", { id: session.id });
-      return session;
-    } catch (error) {
-      logStep("Error creating subscription", { error });
-      
-      // If that fails, try a different approach
-      const session = await stripe.checkout.sessions.create({
-        ...baseSessionConfig,
-        mode: "subscription",
-        line_items: [{
-          price_data: {
-            currency: "usd",
-            product_data: { 
-              name: "HEARTI™ Monthly Access",
-              description: "Monthly Subscription"
-            },
-            unit_amount: 699, // $6.99
-            recurring: {
-              interval: "month"
-            }
+          unit_amount: 9588, // $95.88 ($7.99 x 12 months)
+          recurring: {
+            interval: "year"
+          }
+        },
+        quantity: 1,
+      }],
+    });
+    logStep("Created annual subscription session", { id: session.id });
+    return session;
+  } else {
+    // Create monthly subscription session
+    logStep("Creating monthly subscription session");
+    
+    const session = await stripe.checkout.sessions.create({
+      ...baseSessionConfig,
+      mode: "subscription",
+      line_items: [{
+        price_data: {
+          currency: "usd",
+          product_data: { 
+            name: "HEARTI™ Leadership Assessment Results",
+            description: "Monthly Subscription"
           },
-          quantity: 1,
-        }],
-      });
-      logStep("Created fallback subscription session", { id: session.id });
-      return session;
-    }
+          unit_amount: 999, // $9.99
+          recurring: {
+            interval: "month"
+          }
+        },
+        quantity: 1,
+      }],
+    });
+    logStep("Created monthly subscription session", { id: session.id });
+    return session;
   }
 };

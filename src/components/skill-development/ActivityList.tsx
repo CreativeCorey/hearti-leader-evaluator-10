@@ -6,8 +6,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Info } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import SwipeInstructions from './SwipeInstructions';
+import { useActivityTranslations } from '@/utils/activityTranslations';
 import { useLanguage } from '@/contexts/language/LanguageContext';
-import { formatCategoryName } from '@/utils/formatCategory';
 
 interface ActivityListProps {
   groupedActivities: Record<string, SkillActivity[]>;
@@ -24,6 +24,7 @@ const ActivityList: React.FC<ActivityListProps> = ({
   const isRecommendationVisible = savedActivitiesCount < 3;
   const isMobile = useIsMobile();
   const { t } = useLanguage();
+  const { getTranslatedCategory } = useActivityTranslations();
 
   if (Object.entries(groupedActivities).length === 0) {
     return (
@@ -37,10 +38,10 @@ const ActivityList: React.FC<ActivityListProps> = ({
   const formattedActivities: Record<string, SkillActivity[]> = {};
   
   Object.entries(groupedActivities).forEach(([category, activities]) => {
-    const formattedCategory = formatCategoryName(category);
+    const formattedCategory = getTranslatedCategory(category);
     formattedActivities[formattedCategory] = activities.map(activity => ({
       ...activity,
-      category: formatCategoryName(activity.category)
+      category: getTranslatedCategory(activity.category)
     }));
   });
 

@@ -6,8 +6,8 @@ import { Plus, Check } from 'lucide-react';
 import { SkillActivity, SavedActivity } from '@/data/heartActivities';
 import ActivityCardHeader from './ActivityCardHeader';
 import ActivityCardActions from './ActivityCardActions';
+import { useActivityTranslations } from '@/utils/activityTranslations';
 import { useLanguage } from '@/contexts/language/LanguageContext';
-import { formatCategoryName } from '@/utils/formatCategory';
 
 interface ActivityCardProps {
   activity: SkillActivity;
@@ -18,23 +18,15 @@ interface ActivityCardProps {
 const ActivityCard: React.FC<ActivityCardProps> = ({ activity, savedActivities, onSave }) => {
   const [expanded, setExpanded] = useState(false);
   const [frequency, setFrequency] = useState<'daily' | 'weekly' | 'monthly'>('daily');
+  const { getTranslatedCategory, getTranslatedDescription } = useActivityTranslations();
   const { t } = useLanguage();
   
   const isSaved = savedActivities.some(saved => saved.activityId === activity.id);
   const maxSavedReached = savedActivities.length >= 3;
   
-  // Create translation keys for category and description  
-  const rawCategory = activity.category?.toLowerCase().replace(/[-_\s&]/g, '') || '';
-  const categoryKey = `activities.categories.${rawCategory}`;
-  const descriptionKey = `activities.descriptions.${activity.id}`;
-  
-  // Get translation and check if it's properly translated
-  const translatedCategory = t(categoryKey);
-  const isCategoryTranslated = translatedCategory !== categoryKey;
-  
-  // Use translated category if available, otherwise use formatted category
-  const displayCategory = isCategoryTranslated ? translatedCategory : formatCategoryName(activity.category);
-  const displayDescription = t(descriptionKey, { fallback: activity.description });
+  // Get properly translated category and description
+  const displayCategory = getTranslatedCategory(activity.category);
+  const displayDescription = getTranslatedDescription(activity.id, activity.description);
   
   // Create a properly formatted activity object with translations
   const formattedActivity = {

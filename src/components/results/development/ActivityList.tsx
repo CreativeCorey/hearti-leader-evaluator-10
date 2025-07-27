@@ -3,8 +3,8 @@ import React from 'react';
 import { HEARTIDimension } from '@/types';
 import { dimensionIcons, dimensionLabels } from './DimensionIcons';
 import ActivityCard from './ActivityCard';
+import { useActivityTranslations } from '@/utils/activityTranslations';
 import { useLanguage } from '@/contexts/language/LanguageContext';
-import { formatCategoryName } from '@/utils/formatCategory';
 
 interface ActivityListProps {
   activeDimension: HEARTIDimension;
@@ -31,6 +31,7 @@ const ActivityList: React.FC<ActivityListProps> = ({
   onAddToHabitTracker
 }) => {
   const { t } = useLanguage();
+  const { getTranslatedCategory, getTranslatedDescription } = useActivityTranslations();
   const DimensionIcon = dimensionIcons[activeDimension] || dimensionIcons.humility;
   
   // Get translated strings with fallbacks
@@ -66,18 +67,9 @@ const ActivityList: React.FC<ActivityListProps> = ({
         {activities.slice(0, 9).map(activity => {
           const isSelected = selectedActivities.includes(activity.id);
           
-          // Create proper category key for translation
-          const categoryKey = `activities.categories.${activity.category.toLowerCase().replace(/[-_\s&]/g, '')}`;
-          // Create proper description key for translation
-          const descriptionKey = `activities.descriptions.${activity.id}`;
-          
-          // Get translation and check if it's properly translated
-          const translatedCategory = t(categoryKey);
-          const isCategoryTranslated = translatedCategory !== categoryKey;
-          
-          // Use translated category if available, otherwise use formatted category
-          const displayCategory = isCategoryTranslated ? translatedCategory : formatCategoryName(activity.category);
-          const displayDescription = t(descriptionKey, { fallback: activity.description });
+          // Get properly translated category and description
+          const displayCategory = getTranslatedCategory(activity.category);
+          const displayDescription = getTranslatedDescription(activity.id, activity.description);
           
           return (
             <ActivityCard

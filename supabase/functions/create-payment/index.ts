@@ -77,7 +77,7 @@ serve(async (req) => {
         await createPaymentRecord({
           userId: user.id,
           sessionId: session.id,
-          amount: paymentType === 'one-time' ? 5400 : 699,
+          amount: paymentType === 'one-time' ? 9999 : paymentType === 'annual-subscription' ? 9588 : 999,
           type: paymentType
         });
       } catch (dbError) {

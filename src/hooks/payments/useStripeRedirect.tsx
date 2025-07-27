@@ -12,7 +12,7 @@ export const useStripeRedirect = () => {
   const { toast } = useToast();
   const lastAttemptRef = useRef<number | null>(null);
   
-  const redirectToStripePayment = useCallback(async (assessment: HEARTIAssessment, paymentType: 'one-time' | 'subscription' = 'subscription') => {
+  const redirectToStripePayment = useCallback(async (assessment: HEARTIAssessment, paymentType: 'one-time' | 'subscription' | 'annual-subscription' = 'subscription') => {
     if (!user) {
       toast({
         title: "Authentication Required",
