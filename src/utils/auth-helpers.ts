@@ -1,6 +1,11 @@
-import { supabase, getAuthRedirectUrl } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
 import { User } from "@supabase/supabase-js";
+
+// Helper function to get the redirect URL for authentication
+export const getAuthRedirectUrl = (): string => {
+  return window.location.origin + '/auth';
+};
 
 // Get or create an anonymous user ID from localStorage
 export const getOrCreateAnonymousId = (): string => {
