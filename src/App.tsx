@@ -8,7 +8,6 @@ import AuthCallback from './pages/AuthCallback';
 import NotFound from './pages/NotFound';
 import PaymentSuccess from './pages/PaymentSuccess';
 import Profile from './pages/Profile';
-import Admin from './pages/Admin';
 import EnhancedCoachDashboard from './pages/EnhancedCoachDashboard';
 import AuthGuard from './components/AuthGuard';
 import AuthProvider from './contexts/auth/AuthProvider';
@@ -25,7 +24,6 @@ function App() {
               <Route element={<AuthGuard />}>
                 <Route index element={<Index />} />
                 <Route path="/profile" element={<Profile />} />
-                <Route path="/admin" element={<Admin />} />
                 <Route path="/coach" element={<EnhancedCoachDashboard />} />
               </Route>
               <Route path="/auth/callback" element={<AuthCallback />} />
