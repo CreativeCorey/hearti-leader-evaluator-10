@@ -358,7 +358,6 @@ export const de = {
       i10: "Seien Sie in jeder Interaktion ein Vorbild für inklusives Verhalten."
     }
   },
-  },
   report: {
     header: {
       title: "Liebe Führungskraft des 21. Jahrhunderts:",
@@ -374,3 +373,4 @@ export const de = {
     }
   }
 };
+
