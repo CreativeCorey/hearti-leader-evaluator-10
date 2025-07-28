@@ -22,10 +22,11 @@ const DimensionCard: React.FC<DimensionCardProps> = ({
   userName = '', 
   assessment 
 }) => {
-  const { statusContent, description, levels, tips } = getDimensionReportContent(dimension, status, userName);
+  const { t, currentLanguage } = useLanguage();
+  const { statusContent, description, levels, tips } = getDimensionReportContent(dimension, status, userName, currentLanguage);
   const DimensionIcon = dimensionIcons[dimension];
   const isMobile = useIsMobile();
-  const { t } = useLanguage();
+  
 
   // PDF class mapping for dimension headers
   const dimensionHeaderClass = `${dimension.toLowerCase()}-header`;

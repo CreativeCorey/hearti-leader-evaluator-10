@@ -256,55 +256,6 @@ export const en = {
       saveHabit: "Save Habit"
     },
   },
-  dimensions: {
-    titles: {
-      humility: "Humility",
-      empathy: "Empathy",
-      accountability: "Accountability",
-      resiliency: "Resiliency",
-      transparency: "Transparency",
-      inclusivity: "Inclusivity"
-    },
-    descriptions: {
-      humility: "The ability to recognize one's limitations and mistakes, and to be open to feedback and growth.",
-      empathy: "The capacity to understand and share the feelings of others, and to respond with compassion.",
-      accountability: "The willingness to take responsibility for one's actions and decisions, and to follow through on commitments.",
-      resiliency: "The ability to recover from setbacks, adapt to change, and keep going in the face of adversity.",
-      transparency: "The practice of being open, honest, and clear in communications and decision-making processes.",
-      inclusivity: "The commitment to creating environments where all people feel welcomed, respected, and valued."
-    },
-    feedback: {
-      "humility.excellent": "Your humility score is excellent. This is a significant strength in your leadership approach.",
-      "humility.good": "Your humility score is good. This is a positive aspect of your leadership with room for further development.",
-      "humility.average": "Your humility score is average. Consider focusing on developing this aspect of your leadership.",
-      "humility.needsImprovement": "Your humility score needs improvement. This area represents an opportunity for significant growth.",
-      
-      "empathy.excellent": "Your empathy score is excellent. This is a significant strength in your leadership approach.",
-      "empathy.good": "Your empathy score is good. This is a positive aspect of your leadership with room for further development.",
-      "empathy.average": "Your empathy score is average. Consider focusing on developing this aspect of your leadership.",
-      "empathy.needsImprovement": "Your empathy score is below average. This area represents an opportunity for significant growth.",
-      
-      "accountability.excellent": "Your accountability score is excellent. This is a significant strength in your leadership approach.",
-      "accountability.good": "Your accountability score is good. This is a positive aspect of your leadership with room for further development.",
-      "accountability.average": "Your accountability score is average. Consider focusing on developing this aspect of your leadership.",
-      "accountability.needsImprovement": "Your accountability score needs improvement. This area represents an opportunity for significant growth.",
-      
-      "resiliency.excellent": "Your resiliency score is excellent. This is a significant strength in your leadership approach.",
-      "resiliency.good": "Your resiliency score is good. This is a positive aspect of your leadership with room for further development.",
-      "resiliency.average": "Your resiliency score is average. Consider focusing on developing this aspect of your leadership.",
-      "resiliency.needsImprovement": "Your resiliency score needs improvement. This area represents an opportunity for significant growth.",
-      
-      "transparency.excellent": "Your transparency score is excellent. This is a significant strength in your leadership approach.",
-      "transparency.good": "Your transparency score is good. This is a positive aspect of your leadership with room for further development.",
-      "transparency.average": "Your transparency score is average. Consider focusing on developing this aspect of your leadership.",
-      "transparency.needsImprovement": "Your transparency score needs improvement. This area represents an opportunity for significant growth.",
-      
-      "inclusivity.excellent": "Your inclusivity score is excellent. This is a significant strength in your leadership approach.",
-      "inclusivity.good": "Your inclusivity score is good. This is a positive aspect of your leadership with room for further development.",
-      "inclusivity.average": "Your inclusivity score is average. Consider focusing on developing this aspect of your leadership.",
-      "inclusivity.needsImprovement": "Your inclusivity score needs improvement. This area represents an opportunity for significant growth."
-    }
-  },
   activities: {
     categories: {
       activelistening: "Active Listening",
@@ -338,6 +289,18 @@ export const en = {
     footer: {
       title: "Change the World:",
       content: "In this HEARTI:Leader Assessment Report, we have provided you with the framework, tools, and resources you need to help evolve your leadership for this new world of work—the rest is up to you. We hope you will wake up every single day equipped and motivated to move our world forward.\n\nIf you'd like more insights and information on how to be a HEARTI:Leader and how to foster a best-in-class workplace, contact PrismWork. We have team dynamic and development workshops to bring your team together with the HEARTI:Leader point of view."
+    }
+  },
+  dimensions: {
+    humility: {
+      status: {
+        strength: '<p class="mb-4"><strong>Congratulations!</strong> {{userName}}, your HEARTI:Leader strength is Humility. You are aware of your weaknesses, eager to improve yourself, appreciative of others\' strengths, and focused on goals beyond your own self-interest.</p>',
+        vulnerability: '<p class="mb-4">{{userName}}, an area of growth for you is Humility. Humble leaders are aware of their weaknesses, eager to improve themselves, appreciative of others\' strengths, and are focused on goals beyond their own self-interest.</p>',
+        neutral: '<p class="mb-4">Humble leaders are aware of their weaknesses, eager to improve themselves, appreciative of others\' strengths, and are focused on goals beyond their own self-interest.</p>'
+      },
+      description: '<p class="mb-4">When it comes to leading in the new world of work, being humble means being comfortable that you don\'t have all the answers, but you possess the courage to learn. This capability is vital for working through diversity, inclusion, equity, and belonging issues. The key here is to start by knowing where you are (and where you aren\'t...yet).</p><p class="mb-4"><strong>4 Core Elements to Being a Humble Leader:</strong></p><ul class="list-disc pl-5 mb-4"><li>Having an awareness of your limitations</li><li>Understanding that the success of your teams or employees enhance your success</li><li>Operating with a service mindset</li><li>Being driven by a higher purpose</li></ul>',
+      levels: '<p class="mb-2"><strong>Best-In-Class:</strong> Humble leaders focus on all stakeholders\' needs, asking, "What have I done for others?"</p><p class="mb-2"><strong>Evolving:</strong> Individuals evolving their humble leadership prioritize the company\'s needs but may not understand the link to stakeholders. They may ask themselves, "What have I done for the organization?"</p><p class="mb-2"><strong>Unready:</strong> Leaders who are unready in humility are self- and personal career-minded, asking, "What have I done for me?"</p>',
+      tips: '<p class="mb-2">Being a humble leader requires overcoming a belief in scarcity and replacing it with a growth mindset. To become more familiar with a growth mindset, read Stanford University Professor Carol Dweck\'s book, Mindset: The New Psychology of Success, or you can watch her TEDTalk.</p><p class="mb-2">Put Dweck\'s work into practice by adding the word "yet" to every negative statement. For example:</p><ul class="list-disc pl-5 mb-2"><li>"I\'m not good at using PowerPoint...yet."</li><li>"I\'m not good at public speaking...yet."</li><li>"I\'m not good at asking for help...yet."</li></ul><p class="mb-2">If you struggle with micro-managing and perfectionism, enlist your colleagues and/or manager to help identify when you are being overly perfectionistic. Develop a code word or some way to lightly acknowledge the behaviors so you can better recognize patterns and can collaborate to change them.</p><p>Get clear on your "why" when it comes to work and life—having a higher purpose and providing your team with insights into your "why" can enlist them as allies in your goal. Understand their "why," too.</p>'
     }
   }
 };
