@@ -120,44 +120,112 @@ export function getDimensionReportContent(
     tips: ''
   };
   
-  // For now, we'll use fallback English content until all dimensions are added to translations
-  // This maintains exact same functionality while allowing gradual translation addition
+  // Try to get translations from the specific language
+  const dimensionReport = (t as any).dimensions?.report?.[dimension];
+  const dimensionStatus = (t as any).dimensions?.[dimension]?.status;
   
-  // Check if the translation exists, otherwise use fallback
-  const dimensionTranslations = (t as any).dimensions?.[dimension];
-  
-  if (dimensionTranslations) {
-    const statusKey = status === 'strength' ? 'strength' : status === 'vulnerability' ? 'vulnerability' : 'neutral';
-    const statusTemplate = dimensionTranslations.status?.[statusKey] || '';
-    content.statusContent = statusTemplate.replace('{{userName}}', userName);
-    content.description = dimensionTranslations.description || '';
-    content.levels = dimensionTranslations.levels || '';
-    content.tips = dimensionTranslations.tips || '';
+  if (dimensionReport || dimensionStatus) {
+    // Handle status content
+    if (dimensionStatus) {
+      const statusKey = status === 'strength' ? 'strength' : status === 'vulnerability' ? 'vulnerability' : 'neutral';
+      const statusTemplate = dimensionStatus[statusKey] || '';
+      content.statusContent = statusTemplate.replace(/\{\{userName\}\}/g, userName);
+    }
+    
+    // Handle description, levels, and tips from the report section
+    if (dimensionReport) {
+      content.description = dimensionReport.description || '';
+      content.levels = dimensionReport.levels?.content || '';
+      content.tips = dimensionReport.tips?.content || '';
+    }
   }
   
-  // If no translations exist, use the original English content as fallback
-  if (!content.statusContent) {
-    // Fall back to original hardcoded content for now
-    switch (dimension) {
-      case 'humility':
-        if (status === 'strength') {
-          content.statusContent = `<p class="mb-4"><strong>Congratulations!</strong> ${userName}, your HEARTI:Leader strength is Humility. You are aware of your weaknesses, eager to improve yourself, appreciative of others' strengths, and focused on goals beyond your own self-interest.</p>`;
-        } else if (status === 'vulnerability') {
-          content.statusContent = `<p class="mb-4">${userName}, an area of growth for you is Humility. Humble leaders are aware of their weaknesses, eager to improve themselves, appreciative of others' strengths, and are focused on goals beyond their own self-interest.</p>`;
-        } else {
-          content.statusContent = `<p class="mb-4">Humble leaders are aware of their weaknesses, eager to improve themselves, appreciative of others' strengths, and are focused on goals beyond their own self-interest.</p>`;
-        }
-        content.description = `<p class="mb-4">When it comes to leading in the new world of work, being humble means being comfortable that you don't have all the answers, but you possess the courage to learn. This capability is vital for working through diversity, inclusion, equity, and belonging issues. The key here is to start by knowing where you are (and where you aren't...yet).</p><p class="mb-4"><strong>4 Core Elements to Being a Humble Leader:</strong></p><ul class="list-disc pl-5 mb-4"><li>Having an awareness of your limitations</li><li>Understanding that the success of your teams or employees enhance your success</li><li>Operating with a service mindset</li><li>Being driven by a higher purpose</li></ul>`;
-        content.levels = `<p class="mb-2"><strong>Best-In-Class:</strong> Humble leaders focus on all stakeholders' needs, asking, "What have I done for others?"</p><p class="mb-2"><strong>Evolving:</strong> Individuals evolving their humble leadership prioritize the company's needs but may not understand the link to stakeholders. They may ask themselves, "What have I done for the organization?"</p><p class="mb-2"><strong>Unready:</strong> Leaders who are unready in humility are self- and personal career-minded, asking, "What have I done for me?"</p>`;
-        content.tips = `<p class="mb-2">Being a humble leader requires overcoming a belief in scarcity and replacing it with a growth mindset. To become more familiar with a growth mindset, read Stanford University Professor Carol Dweck's book, Mindset: The New Psychology of Success, or you can watch her TEDTalk.</p><p class="mb-2">Put Dweck's work into practice by adding the word "yet" to every negative statement. For example:</p><ul class="list-disc pl-5 mb-2"><li>"I'm not good at using PowerPoint...yet."</li><li>"I'm not good at public speaking...yet."</li><li>"I'm not good at asking for help...yet."</li></ul><p class="mb-2">If you struggle with micro-managing and perfectionism, enlist your colleagues and/or manager to help identify when you are being overly perfectionistic. Develop a code word or some way to lightly acknowledge the behaviors so you can better recognize patterns and can collaborate to change them.</p><p>Get clear on your "why" when it comes to work and life—having a higher purpose and providing your team with insights into your "why" can enlist them as allies in your goal. Understand their "why," too.</p>`;
-        break;
-        
-      default:
-        // For other dimensions, return empty content for now - will be added to translations
-        content.statusContent = `<p class="mb-4">Content for ${dimension} dimension will be available in multiple languages soon.</p>`;
-        content.description = `<p class="mb-4">Detailed description for ${dimension} coming soon.</p>`;
-        content.levels = `<p class="mb-2">Dimension levels information coming soon.</p>`;
-        content.tips = `<p class="mb-2">Development tips for ${dimension} coming soon.</p>`;
+  // If no translations exist, use the English content as fallback
+  if (!content.statusContent && !content.description) {
+    // Check if we have English translations first
+    const englishDimension = translations.en.dimensions?.[dimension];
+    
+    if (englishDimension) {
+      // Use English translations
+      const statusKey = status === 'strength' ? 'strength' : status === 'vulnerability' ? 'vulnerability' : 'neutral';
+      content.statusContent = englishDimension.status[statusKey].replace(/\{\{userName\}\}/g, userName);
+      content.description = englishDimension.description;
+      content.levels = englishDimension.levels;
+      content.tips = englishDimension.tips;
+    } else {
+      // Fallback to hardcoded content for dimensions not yet in translations
+      switch (dimension) {
+        case 'empathy':
+          if (status === 'strength') {
+            content.statusContent = `<p class="mb-4"><strong>Congratulations!</strong> ${userName}, your HEARTI:Leader strength is Empathy. You can understand others' feelings, needs, and motivations effectively.</p>`;
+          } else if (status === 'vulnerability') {
+            content.statusContent = `<p class="mb-4">${userName}, an area of growth for you is Empathy. Empathetic leaders can understand others' feelings, needs, and motivations effectively.</p>`;
+          } else {
+            content.statusContent = `<p class="mb-4">Empathetic leaders can understand others' feelings, needs, and motivations effectively.</p>`;
+          }
+          content.description = `<p class="mb-4">Empathetic leaders are able to understand the feelings, needs, and motivations of others. Based on curiosity and learning, you also tend to be good at active listening and enjoy helping others grow and develop.</p>`;
+          content.levels = `<p class="mb-2"><strong>Best-In-Class:</strong> Best-in-class empathetic leaders take responsibility for effectively connecting with others.</p><p class="mb-2"><strong>Evolving:</strong> Individuals evolving empathy recognize its value but may not truly understand how to authentically connect with others.</p><p class="mb-2"><strong>Unready:</strong> Leaders who are unready in empathy do not recognize the value of empathetic behaviors.</p>`;
+          content.tips = `<p class="mb-2">Challenge yourself with experiences that push you out of your comfort zone. Learn new skills that will make you humble, as humility is a true empathy driver.</p><p class="mb-2">Seek feedback from family, friends, and colleagues about your relationship skills, then check in regularly on your progress.</p><p class="mb-2">Cultivate your curiosity and ask better questions in every conversation.</p>`;
+          break;
+          
+        case 'accountability':
+          if (status === 'strength') {
+            content.statusContent = `<p class="mb-4"><strong>Congratulations!</strong> ${userName}, your HEARTI:Leader strength is Accountability. You dare to make unpopular decisions and take responsibility for actions and outcomes.</p>`;
+          } else if (status === 'vulnerability') {
+            content.statusContent = `<p class="mb-4">${userName}, an area of growth for you is Accountability. Accountable leaders dare to make unpopular decisions and take responsibility for actions and outcomes.</p>`;
+          } else {
+            content.statusContent = `<p class="mb-4">Accountable leaders dare to make unpopular decisions and take responsibility for actions and outcomes.</p>`;
+          }
+          content.description = `<p class="mb-4">Accountable leaders dare to make unpopular decisions and are willing to be responsible for their own and others' actions and decisions. They communicate what they are going to do, work with others for support, and deliver as promised.</p>`;
+          content.levels = `<p class="mb-2"><strong>Best-In-Class:</strong> Best-in-class accountable leaders use tools like strategic planning and cascading goals to outline individual and team accountabilities.</p><p class="mb-2"><strong>Evolving:</strong> Individuals developing accountable leadership may work with individuals and teams to clearly define roles but may be inconsistent in holding people accountable.</p><p class="mb-2"><strong>Unready:</strong> Leaders who are unready in accountability focus on the individual. They may lack understanding of cross-team interdependencies.</p>`;
+          content.tips = `<p class="mb-2">Build trust through reliability, accountability, integrity, and generosity. Start measuring what matters and create governance plans that address both direct priorities and inclusive culture.</p>`;
+          break;
+          
+        case 'resiliency':
+          if (status === 'strength') {
+            content.statusContent = `<p class="mb-4"><strong>Congratulations!</strong> ${userName}, your HEARTI:Leader strength is Resiliency. You persist through challenges with flexibility and inspire others to continue toward shared goals.</p>`;
+          } else if (status === 'vulnerability') {
+            content.statusContent = `<p class="mb-4">${userName}, an area of growth for you is Resiliency. Resilient leaders persist through challenges with flexibility and inspire others to continue toward shared goals.</p>`;
+          } else {
+            content.statusContent = `<p class="mb-4">Resilient leaders persist through challenges with flexibility and inspire others to continue toward shared goals.</p>`;
+          }
+          content.description = `<p class="mb-4">Resilient leaders are able to persist through challenges with flexibility. They inspire others to continue toward shared goals and can outmaneuver competition through strategic, flexible responses to challenges.</p>`;
+          content.levels = `<p class="mb-2"><strong>Best-In-Class:</strong> Best-in-class resilient leaders cultivate and value resilience in their followers and teams.</p><p class="mb-2"><strong>Evolving:</strong> Individuals developing resilient leadership recognize the need for resilience but may not have performance measures and processes to capture learning.</p><p class="mb-2"><strong>Unready:</strong> Leaders who are unready in resiliency may punish individuals for team shortcomings and lack processes for capturing learning.</p>`;
+          content.tips = `<p class="mb-2">Practice mindfulness through journaling, yoga, and spiritual practices. Take small risks and try new things monthly. Acknowledge challenges and break them into smaller goals.</p>`;
+          break;
+          
+        case 'transparency':
+          if (status === 'strength') {
+            content.statusContent = `<p class="mb-4"><strong>Congratulations!</strong> ${userName}, your HEARTI:Leader strength is Transparency. You understand that sharing information is critical to individual and team success.</p>`;
+          } else if (status === 'vulnerability') {
+            content.statusContent = `<p class="mb-4">${userName}, an area of growth for you is Transparency. Transparent leaders understand that sharing information is critical to individual and team success.</p>`;
+          } else {
+            content.statusContent = `<p class="mb-4">Transparent leaders understand that sharing information is critical to individual and team success.</p>`;
+          }
+          content.description = `<p class="mb-4">Transparent leaders understand that sharing information is critical to individual and team success. They know that communication is the foundation of building trust and are not afraid to share information that may be uncomfortable or represent opposing views.</p>`;
+          content.levels = `<p class="mb-2"><strong>Best-In-Class:</strong> Transparent leaders understand that clear communication is critical and know when to share what information appropriately.</p><p class="mb-2"><strong>Evolving:</strong> Individuals developing transparent leadership understand the importance of communication but may be inconsistent across teams and uncomfortable knowing what to share.</p><p class="mb-2"><strong>Unready:</strong> Leaders who are unready in transparency may withhold communication to maintain status, hierarchy, or perceived control.</p>`;
+          content.tips = `<p class="mb-2">Adopt an open-door policy, get to know your employees personally, always be honest, and address difficult situations promptly to maintain trust and morale.</p>`;
+          break;
+          
+        case 'inclusivity':
+          if (status === 'strength') {
+            content.statusContent = `<p class="mb-4"><strong>Congratulations!</strong> ${userName}, your HEARTI:Leader strength is Inclusivity. You are a champion of differences and understand that diverse teams drive more significant innovation.</p>`;
+          } else if (status === 'vulnerability') {
+            content.statusContent = `<p class="mb-4">${userName}, an area of growth for you is Inclusivity. Inclusive leaders are champions of differences and understand that diverse teams drive more significant innovation.</p>`;
+          } else {
+            content.statusContent = `<p class="mb-4">Inclusive leaders are champions of differences and understand that diverse teams drive more significant innovation.</p>`;
+          }
+          content.description = `<p class="mb-4">Inclusive leaders are champions of differences and understand that diverse teams drive more significant innovation and better outcomes. Being an inclusive leader is about understanding dynamics related to belonging, listening to all voices, considering all ideas, and giving credit where credit is due.</p>`;
+          content.levels = `<p class="mb-2"><strong>Best-In-Class:</strong> Champions of belonging advocate for creating a workplace grounded in diversity, equity, and inclusion with supporting systems, processes, and culture.</p><p class="mb-2"><strong>Evolving:</strong> Evolving leaders are aware of the importance of diversity, equity, and inclusion but lack advocacy and accountability.</p><p class="mb-2"><strong>Unready:</strong> Unready leaders are scarcity-driven and may lack basic systems, processes, and culture for tracking progress and advocacy.</p>`;
+          content.tips = `<p class="mb-2">Read books on inclusive leadership, take time to build anti-racism insights and skills, understand your privilege, and become a better ally in the workplace.</p>`;
+          break;
+          
+        default:
+          content.statusContent = `<p class="mb-4">Content for ${dimension} dimension will be available in multiple languages soon.</p>`;
+          content.description = `<p class="mb-4">Detailed description for ${dimension} coming soon.</p>`;
+          content.levels = `<p class="mb-2">Dimension levels information coming soon.</p>`;
+          content.tips = `<p class="mb-2">Development tips for ${dimension} coming soon.</p>`;
+      }
     }
   }
   
