@@ -121,23 +121,20 @@ export function getDimensionReportContent(
   };
   
   // Try to get translations from the specific language
-  const dimensionReport = (t as any).dimensions?.report?.[dimension];
-  const dimensionStatus = (t as any).dimensions?.[dimension]?.status;
+  const dimensionTranslation = (t as any).dimensions?.[dimension];
   
-  if (dimensionReport || dimensionStatus) {
+  if (dimensionTranslation) {
     // Handle status content
-    if (dimensionStatus) {
+    if (dimensionTranslation.status) {
       const statusKey = status === 'strength' ? 'strength' : status === 'vulnerability' ? 'vulnerability' : 'neutral';
-      const statusTemplate = dimensionStatus[statusKey] || '';
+      const statusTemplate = dimensionTranslation.status[statusKey] || '';
       content.statusContent = statusTemplate.replace(/\{\{userName\}\}/g, userName);
     }
     
-    // Handle description, levels, and tips from the report section
-    if (dimensionReport) {
-      content.description = dimensionReport.description || '';
-      content.levels = dimensionReport.levels?.content || '';
-      content.tips = dimensionReport.tips?.content || '';
-    }
+    // Handle description, levels, and tips
+    content.description = dimensionTranslation.description || '';
+    content.levels = dimensionTranslation.levels || '';
+    content.tips = dimensionTranslation.tips || '';
   }
   
   // If no translations exist, use the English content as fallback
