@@ -2,7 +2,7 @@
 import React from 'react';
 import { CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, CreditCard, ExternalLink } from 'lucide-react';
+import { Loader2, CreditCard } from 'lucide-react';
 import { User } from '@supabase/supabase-js';
 import {
   DropdownMenu,
@@ -24,67 +24,12 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
   const recentAttempt = lastAttemptTime && (Date.now() - lastAttemptTime < 3000);
   const buttonDisabled = processingPayment || !user || recentAttempt;
   
-  // Check if there's a stored payment URL from a previous attempt
-  const [storedPaymentUrl, setStoredPaymentUrl] = React.useState<string | null>(null);
-  
-  React.useEffect(() => {
-    // Check on mount and whenever processing status changes
-    const checkStoredUrl = () => {
-      const url = typeof window !== 'undefined' ? localStorage.getItem('stripe_payment_url') : null;
-      setStoredPaymentUrl(url);
-    };
-    
-    checkStoredUrl();
-    
-    // Also set up an interval to check regularly
-    const intervalId = setInterval(checkStoredUrl, 1000);
-    return () => clearInterval(intervalId);
-  }, [processingPayment]);
   
   const handleMainAction = (type: 'subscription' | 'one-time') => {
     // Just prepare the payment, no automatic redirect
     onPayNow(type);
   };
   
-  const handleManualRedirect = () => {
-    if (storedPaymentUrl) {
-      console.log("Manual redirect to:", storedPaymentUrl);
-      
-      try {
-        // Direct location change for reliable navigation
-        window.location.href = storedPaymentUrl;
-        
-        toast({
-          title: "Redirecting to Stripe",
-          description: "You're being redirected to complete your payment.",
-        });
-      } catch (e) {
-        console.error("Redirect error:", e);
-        
-        // Fallback: copy URL to clipboard if navigation fails
-        try {
-          navigator.clipboard.writeText(storedPaymentUrl);
-          toast({
-            title: "Redirect Failed",
-            description: "Payment URL copied to clipboard. Please paste it in your browser address bar.",
-            variant: "destructive"
-          });
-        } catch (clipboardError) {
-          toast({
-            title: "Redirect Failed",
-            description: "Could not navigate to payment page. Please try again later.",
-            variant: "destructive"
-          });
-        }
-      }
-    } else {
-      toast({
-        title: "No Payment URL Available",
-        description: "Please click the main payment button first to generate a payment link.",
-        variant: "destructive"
-      });
-    }
-  };
   
   return (
     <CardFooter className="flex flex-col gap-3">
@@ -108,17 +53,6 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           )}
         </Button>
         
-        {storedPaymentUrl && (
-          <Button 
-            variant="outline" 
-            size="lg"
-            className="w-full bg-amber-50 text-amber-600 border-amber-400 hover:bg-amber-100 font-bold"
-            onClick={handleManualRedirect}
-          >
-            <ExternalLink className="mr-2 h-4 w-4" />
-            Go To Payment Page Now
-          </Button>
-        )}
         
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -154,7 +88,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
       {processingPayment && (
         <div className="text-xs text-muted-foreground mt-2 text-center space-y-2">
           <p>
-            Payment is being prepared. Click the manual redirect button when it appears.
+            Preparing your payment session...
           </p>
         </div>
       )}

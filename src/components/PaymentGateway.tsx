@@ -12,7 +12,6 @@ import { LoadingState } from './payment/LoadingState';
 import { PaymentSuccess } from './payment/PaymentSuccess';
 import { PaymentError } from './payment/PaymentError';
 import { FeaturesList } from './payment/FeaturesList';
-import { DebugInfo } from './payment/DebugInfo';
 import { PaymentFooter } from './payment/PaymentFooter';
 
 interface PaymentGatewayProps {
@@ -26,8 +25,6 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
 }) => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [debugInfo, setDebugInfo] = useState<string | null>(null);
-  const [paymentAttemptCount, setPaymentAttemptCount] = useState(0);
   const [lastAttemptTime, setLastAttemptTime] = useState<number | null>(null);
   const [initialCheckDone, setInitialCheckDone] = useState(false);
   
@@ -54,8 +51,6 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
     try {
       const now = Date.now();
       setLastAttemptTime(now);
-      setDebugInfo(`Starting ${paymentType} payment process at ${new Date(now).toLocaleTimeString()}...`);
-      setPaymentAttemptCount(prev => prev + 1);
       
       localStorage.removeItem('payment_error');
       localStorage.setItem('pending_assessment', JSON.stringify(assessment));
@@ -63,16 +58,14 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
       // Attempt to redirect to Stripe payment
       const redirectSuccess = await redirectToStripePayment(assessment, paymentType);
       if (!redirectSuccess) {
-        setDebugInfo(prev => `${prev || ""}\nRedirect was not successful. Please try again.`);
         toast({
           title: "Redirect Failed",
-          description: "Could not start the payment process. Please try again or use manual redirect if available.",
+          description: "Could not start the payment process. Please try again.",
           variant: "destructive"
         });
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
-      setDebugInfo(prev => `${prev || ""}\nPayment process error: ${errorMessage}`);
       localStorage.setItem('payment_error', errorMessage);
       refreshPaymentStatus();
       toast({
@@ -84,7 +77,6 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   };
   
   const handleRefreshStatus = () => {
-    setDebugInfo(prev => `${prev || ""}\nManually refreshing payment status at ${new Date().toLocaleTimeString()}...`);
     refreshPaymentStatus();
     toast({
       title: "Refreshing",
@@ -134,13 +126,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
       
       <FeaturesList />
       
-      <DebugInfo 
-        debugInfo={debugInfo}
-        paymentAttemptCount={paymentAttemptCount}
-        lastAttemptTime={lastAttemptTime}
-      />
-      
-      <PaymentFooter 
+      <PaymentFooter
         processingPayment={processingPayment}
         user={user}
         lastAttemptTime={lastAttemptTime}
