@@ -1,3 +1,5 @@
+import { activities } from './it/activities';
+
 export const it = {
   common: {
     loading: "Caricamento...",
@@ -207,4 +209,5 @@ export const it = {
       noHabits: "Nessuna abitudine trovata. Clicca su \"Aggiungi Abitudine\" per crearne una.",
     },
   },
+  activities
 };
