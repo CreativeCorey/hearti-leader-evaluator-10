@@ -334,7 +334,7 @@ export function getActivityCategoryTranslation(category: string, currentLanguage
  * Gets activity description translation using activity ID
  */
 export function getActivityDescriptionTranslation(activityId: string, t: (key: string, options?: any) => string): string {
-  const descriptionKey = `activities.descriptions.${activityId}`;
+  const descriptionKey = `activities.activities.descriptions.${activityId}`;
   const translated = t(descriptionKey);
   
   // If translation key is returned as-is, it means no translation was found
