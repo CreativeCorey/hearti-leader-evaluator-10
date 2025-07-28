@@ -201,5 +201,19 @@ export const es = {
     report: {
       description: "Insights y recomendaciones para ayudarte a desarrollar tus habilidades de liderazgo"
     }
+  },
+  report: {
+    header: {
+      title: "Estimado Líder del Siglo XXI:",
+      content: "Usted representa el futuro, no el pasado. Probablemente fue alentado a desarrollar sus habilidades de liderazgo enfocándose en competencias diseñadas para la Era Industrial de ayer en lugar de aquellas relevantes hoy—y mucho menos mañana.\n\nEntendemos porque identificamos las habilidades de liderazgo esenciales requeridas para el lugar de trabajo del mañana. Estudiamos los avances recientes en psicología cognitiva y positiva, diseño organizacional y gestión del rendimiento. También hablamos con líderes modernos de docenas de industrias.\n\nA través de este proceso, entendimos que las competencias centrales requeridas para el lugar de trabajo del siglo XXI son rasgos que los líderes transformacionales usan intencionalmente para fomentar mejores resultados. Son Humildad, Empatía, Responsabilidad, Resistencia, Transparencia e Inclusividad. Los líderes que aprovechan estas competencias forjarán caminos de innovación, creatividad y experiencias positivas para los empleados. Nuestra investigación también reveló que las empresas que contratan y desarrollan líderes con estos rasgos tienen mejor rendimiento que aquellas que contratan y desarrollan líderes con comportamientos de liderazgo tradicionales."
+    },
+    dimension: {
+      analysisTitle: "Análisis de Dimensiones HEARTI",
+      analysisDescription: "Cada dimensión a continuación muestra su puntuación, nivel de competencia y orientación para su desarrollo continuo."
+    },
+    footer: {
+      title: "Cambiar el Mundo:",
+      content: "En este Informe de Evaluación HEARTI:Leader, le hemos proporcionado el marco, las herramientas y los recursos que necesita para ayudar a evolucionar su liderazgo para este nuevo mundo del trabajo—el resto depende de usted. Esperamos que se despierte cada día equipado y motivado para hacer avanzar nuestro mundo.\n\nSi desea más conocimientos e información sobre cómo ser un HEARTI:Leader y cómo fomentar un lugar de trabajo de clase mundial, contacte a PrismWork. Tenemos talleres de dinámica de equipo y desarrollo para unir a su equipo con el punto de vista HEARTI:Leader."
+    }
   }
 };

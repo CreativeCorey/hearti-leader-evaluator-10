@@ -357,5 +357,20 @@ export const de = {
       i9: "Ordnen Sie Mitarbeiter aus verschiedenen Abteilungen oder mit unterschiedlichem Hintergrund für Projekte zu.",
       i10: "Seien Sie in jeder Interaktion ein Vorbild für inklusives Verhalten."
     }
+  },
+  },
+  report: {
+    header: {
+      title: "Liebe Führungskraft des 21. Jahrhunderts:",
+      content: "Sie repräsentieren die Zukunft, nicht die Vergangenheit. Sie wurden wahrscheinlich ermutigt, Ihre Führungskompetenzen zu entwickeln, indem Sie sich auf Kompetenzen konzentrierten, die für das Industriezeitalter von gestern entwickelt wurden, anstatt auf solche, die heute relevant sind—geschweige denn morgen.\n\nWir verstehen das, denn wir haben die wesentlichen Führungskompetenzen identifiziert, die für den Arbeitsplatz von morgen erforderlich sind. Wir haben die neuesten Durchbrüche in der kognitiven und positiven Psychologie, im Organisationsdesign und im Leistungsmanagement studiert. Wir haben auch mit modernen Führungskräften aus Dutzenden von Branchen gesprochen.\n\nDurch diesen Prozess verstanden wir, dass die Kernkompetenzen, die für den Arbeitsplatz des 21. Jahrhunderts erforderlich sind, Eigenschaften sind, die transformationale Führungskräfte bewusst einsetzen, um bessere Ergebnisse zu fördern. Das sind Demut, Empathie, Verantwortlichkeit, Belastbarkeit, Transparenz und Inklusivität. Führungskräfte, die diese Kompetenzen nutzen, werden Wege für Innovation, Kreativität und positive Mitarbeitererfahrungen schaffen. Unsere Forschung hat auch gezeigt, dass Unternehmen, die Führungskräfte mit diesen Eigenschaften einstellen und entwickeln, besser abschneiden als solche, die Führungskräfte mit traditionellen Führungsverhalten einstellen und entwickeln."
+    },
+    dimension: {
+      analysisTitle: "HEARTI Dimensionsanalyse",
+      analysisDescription: "Jede Dimension unten zeigt Ihre Punktzahl, Kompetenzniveau und Anleitung für Ihre kontinuierliche Entwicklung."
+    },
+    footer: {
+      title: "Die Welt verändern:",
+      content: "In diesem HEARTI:Leader Bewertungsbericht haben wir Ihnen das Framework, die Werkzeuge und Ressourcen zur Verfügung gestellt, die Sie benötigen, um Ihre Führung für diese neue Arbeitswelt zu entwickeln—der Rest liegt bei Ihnen. Wir hoffen, dass Sie jeden Tag ausgerüstet und motiviert aufwachen, unsere Welt voranzubringen.\n\nWenn Sie mehr Einblicke und Informationen darüber wünschen, wie Sie ein HEARTI:Leader werden und wie Sie einen erstklassigen Arbeitsplatz fördern können, kontaktieren Sie PrismWork. Wir haben Teamdynamik- und Entwicklungsworkshops, um Ihr Team mit der HEARTI:Leader-Perspektive zusammenzubringen."
+    }
   }
 };

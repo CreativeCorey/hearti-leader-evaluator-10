@@ -209,5 +209,19 @@ export const it = {
       noHabits: "Nessuna abitudine trovata. Clicca su \"Aggiungi Abitudine\" per crearne una.",
     },
   },
-  activities
+  activities,
+  report: {
+    header: {
+      title: "Caro Leader del 21° Secolo:",
+      content: "Rappresenti il futuro, non il passato. Probabilmente sei stato incoraggiato a sviluppare le tue competenze di leadership concentrandoti su competenze progettate per l'Era Industriale di ieri invece di quelle rilevanti oggi—figuriamoci domani.\n\nComprendiamo perché abbiamo identificato le competenze di leadership essenziali richieste per il luogo di lavoro di domani. Abbiamo studiato i recenti progressi nella psicologia cognitiva e positiva, progettazione organizzativa e gestione delle prestazioni. Abbiamo anche parlato con leader moderni di dozzine di settori.\n\nAttraverso questo processo, abbiamo capito che le competenze fondamentali richieste per il luogo di lavoro del 21° secolo sono tratti che i leader trasformazionali usano intenzionalmente per incoraggiare risultati migliori. Sono Umiltà, Empatia, Responsabilità, Resilienza, Trasparenza e Inclusività. I leader che sfruttano queste competenze forgeranno percorsi di innovazione, creatività ed esperienze positive per i dipendenti. La nostra ricerca ha anche rivelato che le aziende che assumono e sviluppano leader con questi tratti hanno prestazioni migliori di quelle che assumono e sviluppano leader con comportamenti di leadership tradizionali."
+    },
+    dimension: {
+      analysisTitle: "Analisi delle Dimensioni HEARTI",
+      analysisDescription: "Ogni dimensione qui sotto mostra il tuo punteggio, livello di competenza e guida per il tuo sviluppo continuo."
+    },
+    footer: {
+      title: "Cambiare il Mondo:",
+      content: "In questo Rapporto di Valutazione HEARTI:Leader, ti abbiamo fornito il framework, gli strumenti e le risorse di cui hai bisogno per aiutare a far evolvere la tua leadership per questo nuovo mondo del lavoro—il resto dipende da te. Speriamo che ti svegli ogni giorno equipaggiato e motivato a far progredire il nostro mondo.\n\nSe vuoi più intuizioni e informazioni su come essere un HEARTI:Leader e su come promuovere un luogo di lavoro di classe mondiale, contatta PrismWork. Abbiamo workshop di dinamiche di squadra e sviluppo per riunire il tuo team con il punto di vista HEARTI:Leader."
+    }
+  }
 };
