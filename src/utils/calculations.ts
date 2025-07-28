@@ -121,7 +121,13 @@ export function getDimensionReportContent(
   };
   
   // Try to get translations from the specific language
-  const dimensionTranslation = (t as any).dimensions?.[dimension];
+  // Check multiple possible structures since languages are organized differently
+  let dimensionTranslation = (t as any).dimensions?.[dimension];
+  
+  // If not found, try the alternative structure (like French)
+  if (!dimensionTranslation) {
+    dimensionTranslation = (t as any).dimensions?.dimensions?.[dimension];
+  }
   
   if (dimensionTranslation) {
     // Handle status content
@@ -137,18 +143,25 @@ export function getDimensionReportContent(
     content.tips = dimensionTranslation.tips || '';
   }
   
-  // If no translations exist, use the English content as fallback
-  if (!content.statusContent && !content.description) {
-    // Check if we have English translations first
+  // If we still don't have complete content, use English as fallback
+  if (!content.statusContent || !content.description || !content.levels || !content.tips) {
     const englishDimension = translations.en.dimensions?.[dimension];
     
     if (englishDimension) {
-      // Use English translations
-      const statusKey = status === 'strength' ? 'strength' : status === 'vulnerability' ? 'vulnerability' : 'neutral';
-      content.statusContent = englishDimension.status[statusKey].replace(/\{\{userName\}\}/g, userName);
-      content.description = englishDimension.description;
-      content.levels = englishDimension.levels;
-      content.tips = englishDimension.tips;
+      // Use English translations to fill missing content
+      if (!content.statusContent) {
+        const statusKey = status === 'strength' ? 'strength' : status === 'vulnerability' ? 'vulnerability' : 'neutral';
+        content.statusContent = englishDimension.status[statusKey].replace(/\{\{userName\}\}/g, userName);
+      }
+      if (!content.description) {
+        content.description = englishDimension.description;
+      }
+      if (!content.levels) {
+        content.levels = englishDimension.levels;
+      }
+      if (!content.tips) {
+        content.tips = englishDimension.tips;
+      }
     } else {
       // Fallback to hardcoded content for dimensions not yet in translations
       switch (dimension) {
