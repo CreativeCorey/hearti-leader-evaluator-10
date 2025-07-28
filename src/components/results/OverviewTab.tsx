@@ -7,7 +7,9 @@ import {
   SpectraSection,
   ScoreCard
 } from './overview';
+import PaymentGateway from '@/components/PaymentGateway';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Lock } from 'lucide-react';
 import { useLanguage } from '@/contexts/language/LanguageContext';
 
@@ -73,7 +75,20 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/95 dark:to-gray-950/95 z-10 flex items-end justify-center pb-6">
               <div className="text-center">
                 <Lock className="h-6 w-6 mx-auto mb-2 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground font-medium">Unlock to see detailed HEARTI™ dimensions</p>
+                <p className="text-sm text-muted-foreground font-medium mb-3">Unlock to see detailed HEARTI™ dimensions</p>
+                <Button 
+                  variant="default" 
+                  size="sm"
+                  onClick={() => {
+                    // Scroll to payment section or open payment modal
+                    const paymentSection = document.getElementById('payment-section');
+                    if (paymentSection) {
+                      paymentSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                >
+                  Unlock Premium Features
+                </Button>
               </div>
             </div>
             <CardHeader>
@@ -86,6 +101,17 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
               </div>
             </CardContent>
           </Card>
+          
+          {/* Payment Gateway Section for unlocking premium features */}
+          <div id="payment-section">
+            <PaymentGateway 
+              assessment={safeAssessment}
+              onPaymentComplete={(assessment) => {
+                // This will trigger a page refresh or state update to show paid content
+                window.location.reload();
+              }}
+            />
+          </div>
         </>
       )}
     </div>
