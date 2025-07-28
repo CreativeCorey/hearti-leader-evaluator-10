@@ -30,7 +30,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   const [paymentAttemptCount, setPaymentAttemptCount] = useState(0);
   const [lastAttemptTime, setLastAttemptTime] = useState<number | null>(null);
   const [initialCheckDone, setInitialCheckDone] = useState(false);
-  const [manualPaymentUrl, setManualPaymentUrl] = useState<string | null>(null);
+  
   
   const { 
     processingPayment, 
@@ -49,13 +49,6 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
     }
   }, [initialCheckDone, user, refreshPaymentStatus]);
 
-  // Check for stored payment URL
-  useEffect(() => {
-    const storedUrl = localStorage.getItem('stripe_payment_url');
-    if (storedUrl) {
-      setManualPaymentUrl(storedUrl);
-    }
-  }, []);
 
   const handlePayNow = async (paymentType: 'one-time' | 'subscription' | 'annual-subscription') => {
     try {
@@ -138,40 +131,6 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
         />
       )}
       
-      {manualPaymentUrl && !processingPayment && (
-        <div className="px-6 py-2 mx-6 mb-4 text-sm bg-amber-50 border border-amber-200 rounded-md text-amber-700">
-          <p>If automatic redirection fails, you can:</p>
-          <Button
-            variant="outline"
-            size="sm"
-            className="mt-2 w-full border-amber-400 text-amber-700 hover:bg-amber-100"
-            onClick={() => {
-              try {
-                console.log("Manual redirect to:", manualPaymentUrl);
-                // Open in new tab instead of same window to prevent freezing
-                const newWindow = window.open(manualPaymentUrl, '_blank', 'noopener,noreferrer');
-                if (!newWindow) {
-                  // Fallback: try same window redirect
-                  window.location.href = manualPaymentUrl;
-                }
-                toast({
-                  title: "Opening Payment Page",
-                  description: "Please complete your payment in the new tab."
-                });
-              } catch (e) {
-                console.error("Manual redirect error:", e);
-                toast({
-                  title: "Redirect Failed",
-                  description: "Could not navigate to payment page. Please copy the URL and open it manually.",
-                  variant: "destructive"
-                });
-              }
-            }}
-          >
-            Go To Payment Page Now
-          </Button>
-        </div>
-      )}
       
       <FeaturesList />
       
