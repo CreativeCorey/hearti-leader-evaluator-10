@@ -880,7 +880,6 @@ const activityDescriptionsTranslations = {
     'activities.descriptions.i9': "اقرن موظفين من أقسام أو خلفيات مختلفة في مشاريع。",
     'activities.descriptions.i10': "قد بالقدوة من خلال إظهار السلوك الشامل في كل تفاعل。"
   }
-  }
 };
 
 // Activity categories translations
