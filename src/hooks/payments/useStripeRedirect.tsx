@@ -23,8 +23,13 @@ export const useStripeRedirect = () => {
     }
     
     const now = Date.now();
-    if (lastAttemptRef.current && now - lastAttemptRef.current < 3000) {
+    if (lastAttemptRef.current && now - lastAttemptRef.current < 2000) {
       console.log("Throttling repeated payment attempts");
+      toast({
+        title: "Please wait",
+        description: "Please wait a moment before trying again.",
+        variant: "default"
+      });
       return false;
     }
     lastAttemptRef.current = now;
@@ -36,6 +41,13 @@ export const useStripeRedirect = () => {
       localStorage.setItem('pending_assessment', JSON.stringify(assessment));
       
       console.log("Invoking create-payment function with timestamp:", Date.now());
+      
+      // Show immediate feedback
+      toast({
+        title: "Starting Payment Process",
+        description: "Creating your payment session...",
+      });
+      
       const { data, error } = await supabase.functions.invoke('create-payment', {
         body: { 
           timestamp: Date.now(),
@@ -55,17 +67,27 @@ export const useStripeRedirect = () => {
         console.error("Create payment error:", error);
         setRedirectError(error.message || "Payment creation failed");
         setProcessingPayment(false);
-        throw error;
+        toast({
+          title: "Payment Error",
+          description: "Failed to create payment session. Please try again.",
+          variant: "destructive"
+        });
+        return false;
       }
       
-      if (data.error) {
+      if (data?.error) {
         console.error("Create payment API error:", data.error);
         setRedirectError(data.error);
         setProcessingPayment(false);
-        throw new Error(data.error);
+        toast({
+          title: "Payment Error",
+          description: data.error,
+          variant: "destructive"
+        });
+        return false;
       }
       
-      if (data.paid) {
+      if (data?.paid) {
         toast({
           title: "Payment Already Completed",
           description: "You've already paid for access to assessment results.",
@@ -74,9 +96,15 @@ export const useStripeRedirect = () => {
         return true;
       }
       
-      if (!data.url) {
+      if (!data?.url) {
         setProcessingPayment(false);
-        throw new Error("No payment URL returned from server");
+        setRedirectError("No payment URL returned from server");
+        toast({
+          title: "Payment Error",
+          description: "Unable to create payment session. Please try again.",
+          variant: "destructive"
+        });
+        return false;
       }
 
       console.log("Received Stripe payment URL:", data.url);
@@ -85,21 +113,34 @@ export const useStripeRedirect = () => {
       localStorage.setItem('stripe_payment_url', data.url);
       
       toast({
-        title: "Payment Ready",
-        description: "Please use the manual redirect button to continue to payment.",
+        title: "Redirecting to Stripe",
+        description: "You're being redirected to complete your payment.",
       });
       
-      // No longer perform automatic redirect
-      setProcessingPayment(false);
+      // Attempt automatic redirect in a new tab
+      try {
+        window.open(data.url, '_blank');
+        setProcessingPayment(false);
+        return true;
+      } catch (redirectError) {
+        console.error("Automatic redirect failed:", redirectError);
+        // Fallback to manual redirect option
+        toast({
+          title: "Manual Redirect Required",
+          description: "Please use the manual redirect button to continue to payment.",
+        });
+        setProcessingPayment(false);
+        return false;
+      }
       
-      return true;
     } catch (error) {
       console.error("Payment error:", error);
-      setRedirectError(error instanceof Error ? error.message : String(error));
+      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+      setRedirectError(errorMessage);
       setProcessingPayment(false);
       toast({
         title: "Payment Error",
-        description: error instanceof Error ? error.message : "Failed to start payment process. Please try again.",
+        description: "Failed to start payment process. Please try again.",
         variant: "destructive"
       });
       return false;
