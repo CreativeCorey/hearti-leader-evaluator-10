@@ -100,6 +100,9 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          message_type: string | null
+          recipient_id: string | null
+          sender_role: string | null
           user_id: string
           username: string
         }
@@ -107,6 +110,9 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          message_type?: string | null
+          recipient_id?: string | null
+          sender_role?: string | null
           user_id: string
           username: string
         }
@@ -114,8 +120,44 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          message_type?: string | null
+          recipient_id?: string | null
+          sender_role?: string | null
           user_id?: string
           username?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          message: string
+          scheduled_for: string | null
+          title: string
+          type: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message: string
+          scheduled_for?: string | null
+          title: string
+          type?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          scheduled_for?: string | null
+          title?: string
+          type?: string | null
+          user_id?: string
         }
         Relationships: []
       }
