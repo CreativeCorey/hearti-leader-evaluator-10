@@ -1,3 +1,7 @@
+import { report } from './fr/report';
+import { activities } from './fr/activities';
+import { dimensions } from './fr/dimensions';
+
 export const fr = {
   common: {
     loading: "Chargement...",
