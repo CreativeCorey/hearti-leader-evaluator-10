@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { HEARTIAssessment } from '@/types';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 import ReportHeader from '../ReportHeader';
 import DimensionCard from '../DimensionCard';
 import ReportFooter from '../ReportFooter';
@@ -11,14 +12,18 @@ interface DesktopReportViewProps {
 }
 
 const DesktopReportView: React.FC<DesktopReportViewProps> = ({ assessment, assessments = [] }) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="pdf-page">
       <ReportHeader assessment={assessment} />
       
       <div className="pdf-section">
-        <h3 className="text-2xl font-medium mb-4 pdf-section-title">HEARTI Dimension Analysis</h3>
+        <h3 className="text-2xl font-medium mb-4 pdf-section-title">
+          {t('report.dimension.analysisTitle', { fallback: 'HEARTI Dimension Analysis' })}
+        </h3>
         <p className="text-sm mb-4">
-          Each dimension below shows your score, competency level, and guidance for your continued development.
+          {t('report.dimension.analysisDescription', { fallback: 'Each dimension below shows your score, competency level, and guidance for your continued development.' })}
         </p>
         
         <div className="grid grid-cols-1 gap-4">

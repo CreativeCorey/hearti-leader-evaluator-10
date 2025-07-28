@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { HEARTIAssessment } from '@/types';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 import ReportHeader from '../ReportHeader';
 import DimensionCard from '../DimensionCard';
 import ReportFooter from '../ReportFooter';
@@ -18,6 +19,7 @@ const ReportCarousel: React.FC<ReportCarouselProps> = ({
   setCurrentPage,
   assessments = []
 }) => {
+  const { t } = useLanguage();
   // Extract dimensions to display
   const dimensionEntries = Object.entries(assessment.dimensionScores);
   
@@ -35,7 +37,7 @@ const ReportCarousel: React.FC<ReportCarouselProps> = ({
       
       return (
         <div className="pdf-section">
-          <h3 className="text-2xl font-medium mb-4 pdf-section-title">HEARTI Dimension Analysis</h3>
+          <h3 className="text-2xl font-medium mb-4 pdf-section-title">{t('report.dimension.analysisTitle', { fallback: 'HEARTI Dimension Analysis' })}</h3>
           <DimensionCard 
             dimension={dimension as 'humility' | 'empathy' | 'accountability' | 'resiliency' | 'transparency' | 'inclusivity'}
             score={score}
@@ -81,7 +83,7 @@ const ReportCarousel: React.FC<ReportCarouselProps> = ({
               {index === 0 ? <ReportHeader assessment={assessment} /> :
                index < dimensionEntries.length + 1 ? (
                  <div className="pdf-section">
-                   <h3 className="text-2xl font-medium mb-4 pdf-section-title">HEARTI Dimension Analysis</h3>
+                   <h3 className="text-2xl font-medium mb-4 pdf-section-title">{t('report.dimension.analysisTitle', { fallback: 'HEARTI Dimension Analysis' })}</h3>
                    <DimensionCard 
                      dimension={dimensionEntries[index - 1][0] as 'humility' | 'empathy' | 'accountability' | 'resiliency' | 'transparency' | 'inclusivity'}
                      score={dimensionEntries[index - 1][1]}
