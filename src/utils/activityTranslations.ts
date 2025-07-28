@@ -334,8 +334,15 @@ export function getActivityCategoryTranslation(category: string, currentLanguage
  * Gets activity description translation using activity ID
  */
 export function getActivityDescriptionTranslation(activityId: string, t: (key: string, options?: any) => string): string {
-  const descriptionKey = `activities.activities.descriptions.${activityId}`;
-  const translated = t(descriptionKey);
+  // Try the double-nested structure first (activities.activities.descriptions.{id})
+  let descriptionKey = `activities.activities.descriptions.${activityId}`;
+  let translated = t(descriptionKey);
+  
+  // If that fails, try the single-nested structure (activities.descriptions.{id})
+  if (translated === descriptionKey) {
+    descriptionKey = `activities.descriptions.${activityId}`;
+    translated = t(descriptionKey);
+  }
   
   // If translation key is returned as-is, it means no translation was found
   if (translated === descriptionKey) {
