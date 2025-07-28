@@ -7,12 +7,15 @@ import {
   SpectraSection,
   ScoreCard
 } from './overview';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Lock } from 'lucide-react';
 import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface OverviewTabProps {
   assessment: HEARTIAssessment;
   assessments?: HEARTIAssessment[]; 
   onSelectAssessment?: (assessment: HEARTIAssessment) => void;
+  hasPaid?: boolean;
 }
 
 // Fallback data for when assessment is invalid or missing
@@ -32,7 +35,8 @@ const fallbackAssessment: Partial<HEARTIAssessment> = {
 const OverviewTab: React.FC<OverviewTabProps> = ({ 
   assessment, 
   assessments = [], 
-  onSelectAssessment 
+  onSelectAssessment,
+  hasPaid = true 
 }) => {
   const { t, currentLanguage } = useLanguage();
   
@@ -51,14 +55,53 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   
   return (
     <div className="space-y-6">
-      {/* HEARTI Spectra Chart at the top */}
-      <SpectraSection assessment={safeAssessment} />
-      
-      {/* Share Results Card */}
-      <ShareSection assessment={safeAssessment} />
-      
-      {/* HEARTI:Leader Score Card */}
+      {/* Always show HEARTI Leader Score */}
       <ScoreCard assessment={safeAssessment} formattedDate={formattedDate} />
+      
+      {hasPaid ? (
+        <>
+          {/* Full content for paying users */}
+          <SpectraSection assessment={safeAssessment} />
+          <ShareSection assessment={safeAssessment} />
+        </>
+      ) : (
+        /* Limited content for non-paying users */
+        <>
+          <Card className="relative">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/95 dark:to-gray-950/95 z-10 flex items-end justify-center pb-6">
+              <div className="text-center">
+                <Lock className="h-6 w-6 mx-auto mb-2 text-muted-foreground" />
+                <p className="text-sm text-muted-foreground font-medium">Unlock to see detailed HEARTI™ dimensions</p>
+              </div>
+            </div>
+            <CardHeader>
+              <CardTitle>HEARTI™ Spectra Analysis</CardTitle>
+              <CardDescription>Your detailed leadership profile across all six dimensions</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="opacity-20 pointer-events-none">
+                <SpectraSection assessment={safeAssessment} />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="relative">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/95 dark:to-gray-950/95 z-10 flex items-end justify-center pb-6">
+              <div className="text-center">
+                <Lock className="h-6 w-6 mx-auto mb-2 text-muted-foreground" />
+                <p className="text-sm text-muted-foreground font-medium">Unlock to share your results</p>
+              </div>
+            </div>
+            <CardHeader>
+              <CardTitle>Share Your Results</CardTitle>
+              <CardDescription>Show your leadership growth to your network</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-32 bg-muted rounded opacity-20"></div>
+            </CardContent>
+          </Card>
+        </>
+      )}
     </div>
   );
 };

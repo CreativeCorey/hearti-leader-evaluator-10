@@ -3,9 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AssessmentTab, HEARTIAssessment, ResultsDisplayProps } from '@/types';
 import ResultsDisplay from '@/components/results/ResultsDisplay';
+import PaymentGateway from '@/components/PaymentGateway';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import AssessmentForm from '@/components/AssessmentForm';
+import { useAssessmentPayment } from '@/hooks/useAssessmentPayment';
 
 interface AssessmentTabsProps {
   activeTab: AssessmentTab;
@@ -33,6 +35,15 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
   const [showEmptyState, setShowEmptyState] = useState(false);
   const [showAssessmentForm, setShowAssessmentForm] = useState(false);
   const [isAssessmentInProgress, setIsAssessmentInProgress] = useState(false);
+  const [completedAssessment, setCompletedAssessment] = useState<HEARTIAssessment | null>(null);
+  const [showPaymentGateway, setShowPaymentGateway] = useState(false);
+  
+  // Payment verification hook
+  const { hasPaid, checkingPayment } = useAssessmentPayment((assessment) => {
+    // When payment is complete, show results
+    setShowPaymentGateway(false);
+    setActiveTab('overview');
+  });
   
   // Check for saved progress on component mount
   useEffect(() => {
@@ -77,10 +88,36 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
   // Handle assessment completion
   const handleAssessmentComplete = (assessment: HEARTIAssessment) => {
     setIsAssessmentInProgress(false); // Assessment is no longer in progress
-    onComplete(assessment);
+    setCompletedAssessment(assessment);
     setShowAssessmentForm(false);
-    setActiveTab('overview'); // Switch to overview after completion
+    
+    // Check if user has paid - if not, show payment gateway
+    if (!hasPaid && !checkingPayment) {
+      setShowPaymentGateway(true);
+      setActiveTab('overview'); // Set to overview but payment will show
+    } else if (hasPaid) {
+      // User has already paid, proceed to results
+      onComplete(assessment);
+      setActiveTab('overview');
+    }
   };
+  
+  
+  // If showing the payment gateway after assessment completion
+  if (showPaymentGateway && completedAssessment) {
+    return (
+      <div className="max-w-md mx-auto my-8">
+        <PaymentGateway 
+          assessment={completedAssessment}
+          onPaymentComplete={(assessment) => {
+            setShowPaymentGateway(false);
+            onComplete(assessment);
+            setActiveTab('overview');
+          }}
+        />
+      </div>
+    );
+  }
   
   // If showing the assessment form, render it
   if (showAssessmentForm || activeTab === 'take') {
@@ -130,19 +167,36 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as AssessmentTab)} className="w-full">
           <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">Summary</TabsTrigger>
-            <TabsTrigger value="dimensions">Dimensions</TabsTrigger>
-            <TabsTrigger value="dataViz">HEARTI Spectra</TabsTrigger>
-            <TabsTrigger value="report">Report</TabsTrigger>
-            <TabsTrigger value="developSkills">HEARTI Coach</TabsTrigger>
-            <TabsTrigger value="buildHabits">Build Habits</TabsTrigger>
+            <TabsTrigger value="dimensions" disabled={!hasPaid}>Dimensions</TabsTrigger>
+            <TabsTrigger value="dataViz" disabled={!hasPaid}>HEARTI Spectra</TabsTrigger>
+            <TabsTrigger value="report" disabled={!hasPaid}>Report</TabsTrigger>
+            <TabsTrigger value="developSkills" disabled={!hasPaid}>HEARTI Coach</TabsTrigger>
+            <TabsTrigger value="buildHabits" disabled={!hasPaid}>Build Habits</TabsTrigger>
           </TabsList>
           
-          {/* Results content - pass the activeTab to control which content shows */}
+          {/* Results content - only show if paid or on overview tab */}
           <div className="mt-4">
-            <ResultsDisplay
-              assessment={latestAssessment}
-              assessments={userAssessments}
-            />
+            {hasPaid || activeTab === 'overview' ? (
+              <ResultsDisplay
+                assessment={latestAssessment}
+                assessments={userAssessments}
+                hasPaid={hasPaid}
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <h3 className="text-xl font-semibold mb-4">Premium Content</h3>
+                <p className="text-muted-foreground mb-6 max-w-md">
+                  Unlock all assessment features including detailed analysis, coaching recommendations, and habit tracking.
+                </p>
+                <PaymentGateway 
+                  assessment={latestAssessment}
+                  onPaymentComplete={(assessment) => {
+                    onComplete(assessment);
+                    setActiveTab('overview');
+                  }}
+                />
+              </div>
+            )}
           </div>
         </Tabs>
       )}

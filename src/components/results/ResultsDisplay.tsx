@@ -10,12 +10,14 @@ interface ResultsDisplayProps {
   assessment: HEARTIAssessment;
   assessments?: HEARTIAssessment[];
   onSelectAssessment?: (assessment: HEARTIAssessment) => void;
+  hasPaid?: boolean;
 }
 
 const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ 
   assessment, 
   assessments = [],
-  onSelectAssessment
+  onSelectAssessment,
+  hasPaid = true
 }) => {
   const [exportingPdf, setExportingPdf] = useState(false);
   const [selectedAssessment, setSelectedAssessment] = useState<HEARTIAssessment>(assessment);
@@ -61,6 +63,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
         exportingPdf={exportingPdf}
         topDevelopmentArea={topDevelopmentArea}
         onSelectAssessment={handleAssessmentSelect}
+        hasPaid={hasPaid}
       />
     </div>
   );

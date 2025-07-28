@@ -57,7 +57,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
     }
   }, []);
 
-  const handlePayNow = async (paymentType: 'one-time' | 'subscription') => {
+  const handlePayNow = async (paymentType: 'one-time' | 'subscription' | 'annual-subscription') => {
     try {
       const now = Date.now();
       setLastAttemptTime(now);

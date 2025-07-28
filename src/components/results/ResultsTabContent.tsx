@@ -17,6 +17,7 @@ interface ResultsTabContentProps {
   exportingPdf?: boolean;
   topDevelopmentArea?: 'humility' | 'empathy' | 'accountability' | 'resiliency' | 'transparency' | 'inclusivity';
   onSelectAssessment?: (assessment: HEARTIAssessment) => void;
+  hasPaid?: boolean;
 }
 
 const ResultsTabContent: React.FC<ResultsTabContentProps> = ({ 
@@ -26,7 +27,8 @@ const ResultsTabContent: React.FC<ResultsTabContentProps> = ({
   onExportPDF,
   exportingPdf = false,
   topDevelopmentArea = 'humility',
-  onSelectAssessment
+  onSelectAssessment,
+  hasPaid = true
 }) => {
   // Create a Promise-returning function for the PDF export
   const handleExportPDF = async () => {
@@ -43,6 +45,7 @@ const ResultsTabContent: React.FC<ResultsTabContentProps> = ({
           assessment={assessment} 
           assessments={assessments}
           onSelectAssessment={onSelectAssessment}
+          hasPaid={hasPaid}
         />
       </TabsContent>
       
