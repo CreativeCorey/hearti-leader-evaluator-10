@@ -121,13 +121,13 @@ Deno.serve(async (req) => {
 
         // If user doesn't exist, create profile
         if (!existingUser) {
-          // Generate a UUID for historical users
-          const historicalUserId = crypto.randomUUID();
+          // Generate a UUID using native crypto API
+          const newUuid = crypto.randomUUID();
           
           const { data: newUser, error: profileError } = await supabase
             .from('profiles')
             .insert({
-              id: historicalUserId,
+              id: newUuid,
               email,
               name: `${firstName} ${lastName}`.trim(),
               role: 'user',
