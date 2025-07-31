@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/language/LanguageContext";
 import DataImporter from "@/components/admin/DataImporter";
+import UserManagement from "@/components/admin/UserManagement";
 import { Shield, Database, Users } from "lucide-react";
 
 const Admin = () => {
@@ -88,17 +89,25 @@ const Admin = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="data-import" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2">
+      <Tabs defaultValue="user-management" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="user-management" className="flex items-center gap-2">
+            <Users className="h-4 w-4" />
+            User Management
+          </TabsTrigger>
           <TabsTrigger value="data-import" className="flex items-center gap-2">
             <Database className="h-4 w-4" />
             Data Import
           </TabsTrigger>
           <TabsTrigger value="overview" className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
+            <Shield className="h-4 w-4" />
             System Overview
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="user-management">
+          <UserManagement />
+        </TabsContent>
 
         <TabsContent value="data-import">
           <DataImporter />
