@@ -286,6 +286,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_current_user_role: {
+        Args: Record<PropertyKey, never>
+        Returns: Database["public"]["Enums"]["user_role"]
+      }
       get_organization_assessments: {
         Args: { org_id: string }
         Returns: {
@@ -299,6 +303,10 @@ export type Database = {
           overall_score: number
           user_id: string
         }[]
+      }
+      is_authenticated_user: {
+        Args: { user_uuid?: string }
+        Returns: boolean
       }
     }
     Enums: {
