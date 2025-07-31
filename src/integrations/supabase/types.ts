@@ -21,6 +21,7 @@ export type Database = {
           demographics: Json | null
           dimension_scores: Json
           email: string | null
+          historical_profile_id: string | null
           id: string
           organization_id: string | null
           overall_score: number
@@ -32,6 +33,7 @@ export type Database = {
           demographics?: Json | null
           dimension_scores: Json
           email?: string | null
+          historical_profile_id?: string | null
           id?: string
           organization_id?: string | null
           overall_score: number
@@ -43,12 +45,20 @@ export type Database = {
           demographics?: Json | null
           dimension_scores?: Json
           email?: string | null
+          historical_profile_id?: string | null
           id?: string
           organization_id?: string | null
           overall_score?: number
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "assessments_historical_profile_id_fkey"
+            columns: ["historical_profile_id"]
+            isOneToOne: false
+            referencedRelation: "historical_profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "assessments_organization_id_fkey"
             columns: ["organization_id"]
@@ -94,6 +104,50 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      historical_profiles: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          is_historical: boolean
+          name: string | null
+          organization_id: string | null
+          role: Database["public"]["Enums"]["user_role"]
+          source_unique_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          is_historical?: boolean
+          name?: string | null
+          organization_id?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          source_unique_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          is_historical?: boolean
+          name?: string | null
+          organization_id?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          source_unique_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "historical_profiles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       messages: {
         Row: {
@@ -339,6 +393,7 @@ export type Database = {
           demographics: Json | null
           dimension_scores: Json
           email: string | null
+          historical_profile_id: string | null
           id: string
           organization_id: string | null
           overall_score: number

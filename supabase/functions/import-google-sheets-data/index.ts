@@ -110,9 +110,9 @@ Deno.serve(async (req) => {
           continue;
         }
 
-        // Check if user exists by email
+        // Check if historical profile exists by email
         const { data: existingUser } = await supabase
-          .from('profiles')
+          .from('historical_profiles')
           .select('id')
           .eq('email', email)
           .maybeSingle();
@@ -125,12 +125,12 @@ Deno.serve(async (req) => {
           const newUuid = crypto.randomUUID();
           
           const { data: newUser, error: profileError } = await supabase
-            .from('profiles')
+            .from('historical_profiles')
             .insert({
-              id: newUuid,
               email,
               name: `${firstName} ${lastName}`.trim(),
               role: 'user',
+              source_unique_id: uniqueId,
             })
             .select('id')
             .single();
@@ -177,7 +177,7 @@ Deno.serve(async (req) => {
         const { error: assessmentError } = await supabase
           .from('assessments')
           .insert({
-            user_id: userId,
+            historical_profile_id: userId, // Use historical_profile_id for historical data
             date: parsedDate.toISOString(),
             answers,
             dimension_scores: dimensionScores,
