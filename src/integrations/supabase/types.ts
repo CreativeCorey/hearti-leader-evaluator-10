@@ -245,6 +245,39 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_activities: {
+        Row: {
+          activity_id: string
+          completed: boolean
+          created_at: string
+          dimension: string
+          id: string
+          saved_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          activity_id: string
+          completed?: boolean
+          created_at?: string
+          dimension: string
+          id?: string
+          saved_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          activity_id?: string
+          completed?: boolean
+          created_at?: string
+          dimension?: string
+          id?: string
+          saved_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscribers: {
         Row: {
           created_at: string
