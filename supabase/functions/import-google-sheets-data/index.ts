@@ -65,7 +65,9 @@ Deno.serve(async (req) => {
     }
 
     // Fetch data from Google Sheets API
-    const sheetsUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${googleApiKey}`;
+    // Use default range if none provided
+    const actualRange = range || 'A:Z';
+    const sheetsUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${actualRange}?key=${googleApiKey}`;
     
     console.log('Fetching data from Google Sheets API...');
     const response = await fetch(sheetsUrl);
