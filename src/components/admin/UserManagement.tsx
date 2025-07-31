@@ -45,6 +45,8 @@ interface UserProfile {
   organization_id: string | null;
   created_at: string;
   organization_name?: string;
+  isHistorical?: boolean;
+  source_unique_id?: string;
 }
 
 const UserManagement = () => {
@@ -56,12 +58,13 @@ const UserManagement = () => {
   const { toast } = useToast();
   const { checkAndEnforceRateLimit } = useRateLimit();
 
-  // Load all users
+  // Load all users (both regular and historical)
   const loadUsers = async () => {
     try {
       setLoading(true);
       
-      const { data, error } = await supabase
+      // Get regular profiles
+      const { data: regularProfiles, error: regularError } = await supabase
         .from('profiles')
         .select(`
           id,
@@ -71,19 +74,47 @@ const UserManagement = () => {
           organization_id,
           created_at,
           organizations(name)
-        `)
-        .order('created_at', { ascending: false });
+        `);
 
-      if (error) {
-        throw error;
+      if (regularError) {
+        throw regularError;
       }
 
-      const usersWithOrgNames = (data || []).map(user => ({
+      // Get historical profiles
+      const { data: historicalProfiles, error: historicalError } = await supabase
+        .from('historical_profiles')
+        .select(`
+          id,
+          name,
+          email,
+          role,
+          organization_id,
+          created_at,
+          source_unique_id,
+          organizations(name)
+        `);
+
+      if (historicalError) {
+        console.warn('Could not load historical profiles:', historicalError);
+      }
+
+      // Combine and mark historical profiles
+      const regularUsers = (regularProfiles || []).map(user => ({
         ...user,
-        organization_name: (user.organizations as any)?.name || null
+        organization_name: (user.organizations as any)?.name || null,
+        isHistorical: false
       }));
 
-      setUsers(usersWithOrgNames);
+      const historicalUsers = (historicalProfiles || []).map(user => ({
+        ...user,
+        organization_name: (user.organizations as any)?.name || null,
+        isHistorical: true
+      }));
+
+      const allUsers = [...regularUsers, ...historicalUsers]
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+      setUsers(allUsers);
     } catch (error) {
       console.error('Error loading users:', error);
       toast({
@@ -110,8 +141,11 @@ const UserManagement = () => {
     try {
       setUpdatingUser(userId);
 
+      const user = users.find(u => u.id === userId);
+      const tableName = user?.isHistorical ? 'historical_profiles' : 'profiles';
+
       const { error } = await supabase
-        .from('profiles')
+        .from(tableName)
         .update({ role: newRole as any })
         .eq('id', userId);
 
@@ -255,6 +289,7 @@ const UserManagement = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>User</TableHead>
+                <TableHead>Type</TableHead>
                 <TableHead>Organization</TableHead>
                 <TableHead>Current Role</TableHead>
                 <TableHead>Joined</TableHead>
@@ -269,6 +304,11 @@ const UserManagement = () => {
                       <div className="font-medium">{user.name || 'No name'}</div>
                       <div className="text-sm text-muted-foreground">{user.email}</div>
                     </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={user.isHistorical ? "outline" : "default"}>
+                      {user.isHistorical ? "Historical" : "Active"}
+                    </Badge>
                   </TableCell>
                   <TableCell>
                     {user.organization_name || 'No organization'}
