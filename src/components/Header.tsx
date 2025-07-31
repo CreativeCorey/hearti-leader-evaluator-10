@@ -78,6 +78,11 @@ const Header = () => {
                 Coach Dashboard
               </Link>
             )}
+            {user && profile?.role === 'admin' && (
+              <Link to="/admin" className={`${location.pathname === '/admin' ? 'text-foreground font-medium' : 'text-muted-foreground'} hover:text-foreground transition-colors`}>
+                Admin
+              </Link>
+            )}
           </nav>
         </div>
         
@@ -146,6 +151,11 @@ const Header = () => {
               {user && profile?.role && ['coach', 'admin'].includes(profile.role) && (
                 <DropdownMenuItem asChild>
                   <Link to="/coach">Coach Dashboard</Link>
+                </DropdownMenuItem>
+              )}
+              {user && profile?.role === 'admin' && (
+                <DropdownMenuItem asChild>
+                  <Link to="/admin">Admin</Link>
                 </DropdownMenuItem>
               )}
               <DropdownMenuItem onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
