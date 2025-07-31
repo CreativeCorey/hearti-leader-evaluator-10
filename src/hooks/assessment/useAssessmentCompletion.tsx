@@ -10,6 +10,8 @@ import {
 import { calculateDimensionScores, calculateOverallScore } from '@/utils/calculations';
 import { saveAssessment, getCurrentUserAssessments } from '@/utils/localStorage';
 import { questions } from '@/constants/assessmentQuestions';
+import { useRateLimit } from '@/hooks/useRateLimit';
+import { validateAssessmentAnswers, validateDemographics } from '@/utils/input-validation';
 
 export const useAssessmentCompletion = (
   answers: HEARTIAnswer[],
@@ -17,6 +19,7 @@ export const useAssessmentCompletion = (
   onComplete: (assessment: HEARTIAssessment) => void
 ) => {
   const { toast } = useToast();
+  const { checkAndEnforceRateLimit } = useRateLimit();
   const [assessmentComplete, setAssessmentComplete] = useState(false);
   const [tempAssessment, setTempAssessment] = useState<HEARTIAssessment | null>(null);
   const [previousDemographics, setPreviousDemographics] = useState<Demographics | undefined>(undefined);
@@ -53,11 +56,27 @@ export const useAssessmentCompletion = (
       return;
     }
     
+    // Rate limiting: 5 assessments per hour
+    if (!checkAndEnforceRateLimit('assessment_completion', 5, 3600000)) {
+      return;
+    }
+    
     // Ensure we have answers for all questions
     if (answers.length < questions.length) {
       toast({
         title: "Incomplete Assessment",
         description: `Please answer all ${questions.length} questions to complete the assessment.`,
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Validate assessment answers format and values
+    const answersOnly = answers.map(a => a.score);
+    if (!validateAssessmentAnswers(answersOnly)) {
+      toast({
+        title: "Invalid Assessment Data",
+        description: "Assessment contains invalid answers. Please try again.",
         variant: "destructive"
       });
       return;
@@ -96,6 +115,16 @@ export const useAssessmentCompletion = (
 
   const handleDemographicsComplete = async (demographics: Demographics) => {
     if (!tempAssessment) return;
+    
+    // Validate demographics data
+    if (!validateDemographics(demographics)) {
+      toast({
+        title: "Invalid Demographics",
+        description: "Demographics data contains invalid values. Please check your inputs.",
+        variant: "destructive"
+      });
+      return;
+    }
     
     const finalAssessment: HEARTIAssessment = {
       ...tempAssessment,

@@ -98,3 +98,19 @@ export const validateOrganizationName = (name: string): boolean => {
 export const validateUserName = (name: string): boolean => {
   return name.length >= 1 && name.length <= 50 && /^[a-zA-Z\s\-\.]+$/.test(name);
 };
+
+// Validate numeric scores
+export const validateScore = (score: number): boolean => {
+  return typeof score === 'number' && score >= 1 && score <= 5 && !isNaN(score);
+};
+
+// Validate demographic data
+export const validateDemographics = (demographics: any): boolean => {
+  if (!demographics || typeof demographics !== 'object') return true; // Optional
+  
+  // Basic validation for demographic fields
+  const validKeys = ['age', 'gender', 'location', 'jobRole', 'companySize', 'managementLevel', 'raceEthnicity', 'salaryRange'];
+  const keys = Object.keys(demographics);
+  
+  return keys.every(key => validKeys.includes(key));
+};

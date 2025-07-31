@@ -7,6 +7,13 @@ import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import OrganizationSelector from "./OrganizationSelector";
 import { useLanguage } from "@/contexts/language/LanguageContext";
+import { 
+  validateEmail, 
+  validatePassword, 
+  validateUserName, 
+  validateOrganizationName, 
+  sanitizeText 
+} from "@/utils/input-validation";
 
 interface SignUpFormProps {
   email: string;
@@ -43,19 +50,40 @@ const SignUpForm = ({
     // Reset error
     setPasswordError("");
     
+    // Comprehensive input validation
+    if (!validateEmail(email)) {
+      setPasswordError("Please enter a valid email address");
+      return;
+    }
+    
+    if (name && !validateUserName(sanitizeText(name))) {
+      setPasswordError("Name contains invalid characters");
+      return;
+    }
+    
+    if (organization && !validateOrganizationName(sanitizeText(organization))) {
+      setPasswordError("Organization name contains invalid characters");
+      return;
+    }
+    
     // Validate password match
     if (password !== confirmPassword) {
       setPasswordError(t('auth.passwordsDoNotMatch'));
       return;
     }
     
-    // Validate password strength
-    if (password.length < 8) {
-      setPasswordError(t('auth.passwordTooShort'));
+    // Comprehensive password validation
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      setPasswordError(passwordValidation.errors[0]); // Show first error
       return;
     }
     
-    await signUp(email, password, name, organization);
+    // Sanitize inputs before submission
+    const sanitizedName = name ? sanitizeText(name) : '';
+    const sanitizedOrg = organization ? sanitizeText(organization) : '';
+    
+    await signUp(email, password, sanitizedName, sanitizedOrg);
   };
 
   return (

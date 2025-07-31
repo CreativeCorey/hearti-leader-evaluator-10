@@ -4,6 +4,7 @@ import { HEARTIQuestion, HEARTIAnswer } from '@/types';
 import { questions } from '@/constants/assessmentQuestions';
 import { shuffleArray } from '@/utils/assessmentUtils';
 import { useToast } from '@/hooks/use-toast';
+import { validateScore } from '@/utils/input-validation';
 
 export const useAssessmentQuestions = () => {
   const { toast } = useToast();
@@ -46,6 +47,17 @@ export const useAssessmentQuestions = () => {
   const handleAnswerChange = (score: number) => {
     if (!currentQuestion) {
       console.warn("Cannot change answer: No current question");
+      return;
+    }
+    
+    // Validate score input for security
+    if (!validateScore(score)) {
+      console.warn("Invalid score provided:", score);
+      toast({
+        title: "Invalid input",
+        description: "Please select a valid score between 1 and 5.",
+        variant: "destructive"
+      });
       return;
     }
     

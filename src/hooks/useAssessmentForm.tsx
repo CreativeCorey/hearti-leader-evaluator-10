@@ -4,6 +4,7 @@ import { useUserInitialization } from './assessment/useUserInitialization';
 import { useAssessmentCompletion } from './assessment/useAssessmentCompletion';
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from './use-toast';
+import { checkRateLimit, validateScore } from '@/utils/input-validation';
 
 // LocalStorage key for saving assessment progress
 const ASSESSMENT_PROGRESS_KEY = 'assessment_progress';
