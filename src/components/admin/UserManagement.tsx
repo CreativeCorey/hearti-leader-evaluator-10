@@ -33,6 +33,7 @@ import { Search, UserCheck, UserX, Shield, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useRateLimit } from '@/hooks/useRateLimit';
+import GoogleSheetsImporter from './GoogleSheetsImporter';
 
 type UserRole = "user" | "admin" | "coach";
 
@@ -184,16 +185,19 @@ const UserManagement = () => {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Users className="h-5 w-5" />
-          User Management
-        </CardTitle>
-        <CardDescription>
-          Manage user roles and permissions. Grant coach or admin privileges to users.
-        </CardDescription>
-      </CardHeader>
+    <div className="space-y-6">
+      <GoogleSheetsImporter />
+      
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Users className="h-5 w-5" />
+            User Management
+          </CardTitle>
+          <CardDescription>
+            Manage user roles and permissions. Grant coach or admin privileges to users.
+          </CardDescription>
+        </CardHeader>
       <CardContent className="space-y-4">
         {/* Filters */}
         <div className="flex gap-4">
@@ -395,7 +399,8 @@ const UserManagement = () => {
           </div>
         )}
       </CardContent>
-    </Card>
+      </Card>
+    </div>
   );
 };
 
