@@ -5,6 +5,7 @@ import { ensureUserProfileExists } from '../supabase/profiles';
 import { ASSESSMENTS_KEY } from './constants';
 import { getOrCreateAnonymousId, ensureUserExists } from './user';
 import { getUseSupabase } from './settings';
+import { migrateLocalStorageToSupabase } from './migration';
 
 // Assessment Management
 export const saveAssessment = async (assessment: HEARTIAssessment): Promise<boolean> => {
@@ -81,11 +82,24 @@ export const getCurrentUserAssessments = async (): Promise<HEARTIAssessment[]> =
     // If using Supabase, try to get from there as well
     if (getUseSupabase()) {
       try {
+        // First, attempt to migrate any localStorage data to Supabase
+        const localAssessments = await getLocalAssessments();
+        const localUserAssessments = localAssessments.filter(assessment => assessment.userId === userId);
+        
+        if (localUserAssessments.length > 0) {
+          console.log('Found local assessments, attempting migration...');
+          await migrateLocalStorageToSupabase();
+        }
+        
         const supabaseAssessments = await getUserAssessmentsFromSupabase(userId);
         console.log('Found Supabase assessments:', supabaseAssessments.length);
         
+        // Get fresh local assessments after potential migration
+        const updatedLocalAssessments = await getLocalAssessments();
+        const updatedLocalUserAssessments = updatedLocalAssessments.filter(assessment => assessment.userId === userId);
+        
         // Merge assessments from both sources, prioritizing Supabase
-        const mergedAssessments = [...localUserAssessments];
+        const mergedAssessments = [...updatedLocalUserAssessments];
         
         for (const supabaseAssessment of supabaseAssessments) {
           const existingIndex = mergedAssessments.findIndex(a => a.id === supabaseAssessment.id);
@@ -97,8 +111,9 @@ export const getCurrentUserAssessments = async (): Promise<HEARTIAssessment[]> =
         }
         
         // Store the merged assessments back in localStorage to keep it in sync
+        const allLocalAssessments = await getLocalAssessments();
         localStorage.setItem(ASSESSMENTS_KEY, JSON.stringify([
-          ...allAssessments.filter(a => a.userId !== userId),
+          ...allLocalAssessments.filter(a => a.userId !== userId),
           ...mergedAssessments
         ]));
         
