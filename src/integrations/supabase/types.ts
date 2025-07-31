@@ -341,6 +341,10 @@ export type Database = {
         Args: { user_uuid?: string }
         Returns: boolean
       }
+      validate_assessment_answers: {
+        Args: { answers: Json }
+        Returns: boolean
+      }
     }
     Enums: {
       user_role: "user" | "admin"
