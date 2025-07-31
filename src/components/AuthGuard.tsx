@@ -6,34 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getOrCreateAnonymousId, getUserProfile } from "../utils/localStorage";
 
 const AuthGuard = () => {
-  const { user, isLoading, anonymousMode } = useAuth();
-  const { toast } = useToast();
-  
-  // Set up anonymous user ID if not authenticated
-  useEffect(() => {
-    const initializeAnonymousUser = async () => {
-      if (!isLoading && !user && !anonymousMode) {
-        try {
-          // Get or create anonymous ID and ensure user exists
-          const anonymousId = getOrCreateAnonymousId();
-          console.log("Using anonymous ID:", anonymousId);
-          
-          // Try to ensure the user profile exists in localStorage
-          const userProfile = await getUserProfile();
-          console.log("User profile created or retrieved:", userProfile);
-        } catch (error) {
-          console.error("Error initializing anonymous user:", error);
-          toast({
-            title: "Initialization Error",
-            description: "There was a problem setting up your anonymous profile. Some features may be limited.",
-            variant: "destructive",
-          });
-        }
-      }
-    };
-    
-    initializeAnonymousUser();
-  }, [user, isLoading, anonymousMode, toast]);
+  const { user, isLoading, session } = useAuth();
 
   if (isLoading) {
     return (
@@ -44,9 +17,13 @@ const AuthGuard = () => {
     );
   }
 
-  // Allow access if user is logged in OR anonymous mode is enabled
-  if (user || anonymousMode) {
-    return <Outlet />;
+  // SECURITY: Only allow access for properly authenticated users with valid sessions
+  if (user && session && session.access_token) {
+    // Additional validation: Check if session is not expired
+    const currentTime = Math.floor(Date.now() / 1000);
+    if (session.expires_at && session.expires_at > currentTime) {
+      return <Outlet />;
+    }
   }
 
   // Otherwise redirect to auth page

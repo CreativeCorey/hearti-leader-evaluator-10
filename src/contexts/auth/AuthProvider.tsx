@@ -24,24 +24,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [anonymousId] = useState<string>(getOrCreateAnonymousId());
   const [anonymousMode, setAnonymousMode] = useState<boolean>(isAnonymousAccessEnabled());
 
-  // Initialize auth state
+  // Initialize auth state - SECURE VERSION: No anonymous access
   useEffect(() => {
     setIsLoading(true);
     
     const checkAuth = async () => {
-      // If anonymous mode is enabled, set a mock user
-      if (anonymousMode) {
-        const mockUser = createMockAnonymousUser();
-        // Use a setTimeout to simulate auth loading
-        setTimeout(() => {
-          setUser(mockUser as User);
-          setSession(null); // No session for mock users
-          setIsLoading(false);
-        }, 300);
-        return;
-      }
-      
-      // Otherwise check with Supabase
       try {
         const { data, error } = await supabase.auth.getSession();
         
@@ -51,25 +38,60 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setUser(null);
           setSession(null);
         } else {
-          setSession(data.session);
-          setUser(data.session?.user || null);
+          // Validate session integrity
+          if (data.session && data.session.access_token && data.session.user) {
+            // Additional validation: Check if token is expired
+            const currentTime = Math.floor(Date.now() / 1000);
+            if (data.session.expires_at && data.session.expires_at > currentTime) {
+              setSession(data.session);
+              setUser(data.session.user);
+            } else {
+              // Session expired, clear it
+              console.log('Session expired, clearing auth state');
+              await supabase.auth.signOut();
+              setSession(null);
+              setUser(null);
+            }
+          } else {
+            setSession(null);
+            setUser(null);
+          }
         }
       } catch (err) {
         console.error('Failed to check auth:', err);
         setError('Failed to check authentication status');
+        setSession(null);
+        setUser(null);
       } finally {
         setIsLoading(false);
       }
     };
     
-    // Listen for auth changes
+    // Listen for auth changes with proper validation
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        setUser(session?.user || null);
+      (event, session) => {
+        console.log('Auth state changed:', event);
+        
+        // Validate session before setting state
+        if (session && session.access_token && session.user) {
+          const currentTime = Math.floor(Date.now() / 1000);
+          if (session.expires_at && session.expires_at > currentTime) {
+            setSession(session);
+            setUser(session.user);
+          } else {
+            setSession(null);
+            setUser(null);
+          }
+        } else {
+          setSession(null);
+          setUser(null);
+        }
         setIsLoading(false);
       }
     );
+    
+    // SECURITY: Disable anonymous mode permanently
+    setAnonymousMode(false);
     
     // Initial check
     checkAuth();
@@ -78,7 +100,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, [anonymousMode]);
+  }, []); // Remove anonymousMode dependency
 
   // Sign up function
   const signUp = async (email: string, password: string, name?: string, organization?: string): Promise<void> => {
@@ -153,17 +175,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     
     try {
-      if (anonymousMode) {
-        setAnonymousMode(false);
-        allowAnonymousAccess(false);
-        setUser(null);
-        toast({
-          title: "Signed out",
-          description: "Anonymous mode disabled",
-        });
-        return;
-      }
-      
       const { error } = await signOutUser();
       
       if (error) {
@@ -174,6 +185,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           variant: "destructive",
         });
       } else {
+        // Clear all auth state
+        setSession(null);
+        setUser(null);
+        setAnonymousMode(false);
+        
         toast({
           title: "Signed out",
           description: "You have been successfully signed out",
@@ -257,30 +273,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
   
-  // Toggle anonymous mode
+  // SECURITY: Disable anonymous mode toggle for security
   const toggleAnonymousMode = () => {
-    if (anonymousMode) {
-      // Turn off anonymous mode
-      setAnonymousMode(false);
-      allowAnonymousAccess(false);
-      setUser(null); // Clear the mock user
-      
-      toast({
-        title: "Anonymous Mode Disabled",
-        description: "You need to sign in to access protected features",
-      });
-    } else {
-      // Turn on anonymous mode
-      setAnonymousMode(true);
-      allowAnonymousAccess(true);
-      const mockUser = createMockAnonymousUser();
-      setUser(mockUser as User);
-      
-      toast({
-        title: "Anonymous Mode Enabled",
-        description: "You can now access all features without signing in",
-      });
-    }
+    toast({
+      title: "Anonymous Mode Disabled",
+      description: "For security reasons, anonymous access has been disabled. Please sign in to continue.",
+      variant: "destructive"
+    });
   };
 
   // Provide context value

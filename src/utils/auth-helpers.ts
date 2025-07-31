@@ -67,18 +67,44 @@ export const handleMarketingConsent = async (userId: string, email: string, name
   }
 };
 
-// Helper for sign-up
+// Helper for sign-up with input validation
 export const signUpWithEmail = async (email: string, password: string, name?: string, organization?: string) => {
+  // Import validation functions
+  const { validateEmail, validatePassword, sanitizeText, validateUserName, validateOrganizationName } = await import('./input-validation');
+  
+  // Validate inputs
+  if (!validateEmail(email)) {
+    return { data: null, error: { message: "Invalid email format" } };
+  }
+  
+  const passwordValidation = validatePassword(password);
+  if (!passwordValidation.isValid) {
+    return { data: null, error: { message: passwordValidation.errors.join('. ') } };
+  }
+  
+  // Sanitize optional inputs
+  const sanitizedName = name ? sanitizeText(name, 50) : null;
+  const sanitizedOrg = organization ? sanitizeText(organization, 100) : null;
+  
+  // Additional validation for name and organization
+  if (sanitizedName && !validateUserName(sanitizedName)) {
+    return { data: null, error: { message: "Invalid name format" } };
+  }
+  
+  if (sanitizedOrg && !validateOrganizationName(sanitizedOrg)) {
+    return { data: null, error: { message: "Invalid organization name format" } };
+  }
+  
   const redirectUrl = getAuthRedirectUrl();
   console.log("Signup redirect URL:", redirectUrl);
   
   const { data, error } = await supabase.auth.signUp({
-    email,
+    email: email.toLowerCase().trim(),
     password,
     options: {
       data: {
-        name: name || null,
-        organization: organization || null,
+        name: sanitizedName,
+        organization: sanitizedOrg,
         marketing_consent: localStorage.getItem("marketing_consent") === "true"
       },
       emailRedirectTo: redirectUrl
@@ -88,10 +114,23 @@ export const signUpWithEmail = async (email: string, password: string, name?: st
   return { data, error };
 };
 
-// Helper for sign-in
+// Helper for sign-in with input validation
 export const signInWithEmail = async (email: string, password: string) => {
+  // Import validation functions
+  const { validateEmail } = await import('./input-validation');
+  
+  // Validate email format
+  if (!validateEmail(email)) {
+    return { data: null, error: { message: "Invalid email format" } };
+  }
+  
+  // Basic password length check for sign-in
+  if (!password || password.length < 1 || password.length > 128) {
+    return { data: null, error: { message: "Invalid password" } };
+  }
+  
   return await supabase.auth.signInWithPassword({
-    email,
+    email: email.toLowerCase().trim(),
     password
   });
 };
@@ -138,17 +177,15 @@ export const getCurrentSession = async () => {
   return await supabase.auth.getSession();
 };
 
-// Helper to bypass authentication for testing
-export const allowAnonymousAccess = (enabled = true) => {
-  if (enabled) {
-    localStorage.setItem("hearti-anonymous-access", "enabled");
-  } else {
-    localStorage.removeItem("hearti-anonymous-access");
-  }
-  return enabled;
+// SECURITY: Anonymous access disabled for security reasons
+export const allowAnonymousAccess = (enabled = false) => {
+  // Always return false - anonymous access is permanently disabled
+  localStorage.removeItem("hearti-anonymous-access");
+  console.warn("Anonymous access has been disabled for security reasons");
+  return false;
 };
 
-// Check if anonymous access is enabled
+// Check if anonymous access is enabled - always returns false for security
 export const isAnonymousAccessEnabled = () => {
-  return localStorage.getItem("hearti-anonymous-access") === "enabled";
+  return false; // Permanently disabled for security
 };
