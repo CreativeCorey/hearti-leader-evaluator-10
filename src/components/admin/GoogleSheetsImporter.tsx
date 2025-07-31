@@ -45,15 +45,20 @@ const GoogleSheetsImporter: React.FC = () => {
         description: "Reading data from Google Sheets...",
       });
 
+      console.log('Calling import function with:', { sheetId: sheetId.trim(), range: range.trim() || 'A:Z' });
+
       const { data, error } = await supabase.functions.invoke('import-google-sheets-data', {
         body: {
           sheetId: sheetId.trim(),
-          range: range.trim(),
+          range: range.trim() || 'A:Z',
         },
       });
 
+      console.log('Function response:', { data, error });
+
       if (error) {
-        throw new Error(error.message);
+        console.error('Supabase function error:', error);
+        throw new Error(`Failed to send a request to the Edge Function: ${error.message}`);
       }
 
       setImportResult(data);
