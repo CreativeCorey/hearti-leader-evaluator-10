@@ -1,19 +1,10 @@
-
-// Simple edge function that provides identity tokens for Google Workload Identity Federation
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { create } from "https://deno.land/x/djwt@v2.8/mod.ts"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, Metadata-Flavor',
   'Access-Control-Allow-Methods': 'GET, OPTIONS',
 }
-
-// Create a simple secret key for signing tokens
-// In a production environment, this should be stored securely and kept consistent
-const encoder = new TextEncoder();
-const secretKey = "supabase-identity-token-secret-key-for-workload-identity-federation";
-const keyBytes = encoder.encode(secretKey);
 
 console.log("Identity token provider started");
 
@@ -41,31 +32,31 @@ serve(async (req) => {
   }
 
   try {
-    // Create a JWT token that will serve as the identity token
+    // Create a simple identity token (not a JWT, just a string token)
     const now = Math.floor(Date.now() / 1000);
-    const payload = {
+    const tokenData = {
       iss: "https://odwkgxdkjyccnkydxvjw.supabase.co",
-      sub: "supabase-edge-function", // Subject identifier
-      aud: "https://odwkgxdkjyccnkydxvjw.supabase.co",
+      sub: "supabase-edge-function",
+      aud: "https://odwkgxdkjyccnkydxvjw.supabase.co", 
       iat: now,
-      exp: now + 3600, // Token expires in 1 hour
+      exp: now + 3600,
     };
 
-    // Sign the JWT with our key
-    const jwt = await create({ alg: "HS256", typ: "JWT" }, payload, keyBytes);
+    // Return a simple base64 encoded token instead of JWT
+    const token = btoa(JSON.stringify(tokenData));
 
-    // Return the token as expected by the Google Workload Identity Federation
-    return new Response(jwt, { 
+    // Return the token as expected
+    return new Response(token, { 
       headers: { 
         ...corsHeaders, 
-        "Content-Type": "application/text"
+        "Content-Type": "text/plain"
       } 
     });
   } catch (error) {
     console.error("Error generating identity token:", error);
     
     return new Response(
-      JSON.stringify({ error: "Failed to generate identity token" }),
+      JSON.stringify({ error: "Failed to generate identity token", details: error.message }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
