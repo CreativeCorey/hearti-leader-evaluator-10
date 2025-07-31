@@ -3,15 +3,16 @@ import { HEARTIAssessment } from '../../types';
 import { saveAssessmentToSupabase, getUserAssessmentsFromSupabase } from '../supabase/assessments';
 import { ensureUserProfileExists } from '../supabase/profiles';
 import { ASSESSMENTS_KEY } from './constants';
-import { getOrCreateAnonymousId } from './user';
+import { getOrCreateAnonymousId, ensureUserExists } from './user';
 import { getUseSupabase } from './settings';
 
 // Assessment Management
 export const saveAssessment = async (assessment: HEARTIAssessment): Promise<boolean> => {
   try {
-    // Ensure the assessment has a user ID
+    // Ensure the assessment has a user ID (use authenticated user if available)
     if (!assessment.userId) {
-      assessment.userId = getOrCreateAnonymousId();
+      const { id: userId } = await ensureUserExists();
+      assessment.userId = userId;
     }
     
     // Get existing assessments
@@ -67,7 +68,8 @@ export const getLocalAssessments = async (): Promise<HEARTIAssessment[]> => {
 
 export const getCurrentUserAssessments = async (): Promise<HEARTIAssessment[]> => {
   try {
-    const userId = getOrCreateAnonymousId();
+    // Get the current user ID (authenticated or anonymous)
+    const { id: userId } = await ensureUserExists();
     console.log('Getting assessments for user:', userId);
     
     // First try to get from localStorage

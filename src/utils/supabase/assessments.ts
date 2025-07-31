@@ -144,6 +144,20 @@ export async function getUserAssessmentsFromSupabase(userId: string): Promise<HE
 
 export async function saveAssessment(assessment: HEARTIAssessment): Promise<string> {
   try {
+    // Get user email for the assessment
+    let email: string | undefined;
+    try {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('id', assessment.userId)
+        .maybeSingle();
+      
+      email = profile?.email || undefined;
+    } catch (error) {
+      console.error('Could not fetch user email:', error);
+    }
+    
     // Convert from our frontend model to the database model
     const dbAssessment = {
       id: assessment.id,
@@ -154,6 +168,7 @@ export async function saveAssessment(assessment: HEARTIAssessment): Promise<stri
       dimension_scores: assessment.dimensionScores as unknown as Json,
       overall_score: assessment.overallScore,
       demographics: assessment.demographics as unknown as Json,
+      email: email || `user@${assessment.userId.substring(0, 8)}.com`, // Fallback email
     };
 
     const { data, error } = await supabase
