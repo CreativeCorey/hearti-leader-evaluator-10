@@ -58,30 +58,34 @@ Deno.serve(async (req) => {
 
     console.log('Starting Google Sheets import from sheet:', sheetId);
 
-    // For now, let's create some test data to verify the import process works
-    // In a real implementation, you would need proper Google API authentication
-    const testData = [
-      [
-        'Contact Email', 'Contact Personal ID', 'Contact Name', 'Contact Last Name', 
-        'Date & Time', 'Q59: My current management level is...', 'Q60: My company size is...',
-        'Q61: My main job role is...', 'F13: Humility (All)', 'F14: Empathy (All)',
-        'F15: Accountability (All)', 'F16: Resiliency (All)', 'F17: Transparency (All)',
-        'F18: Inclusivity (All)', 'Total Custom Score'
-      ],
-      [
-        'test@example.com', 'test-123', 'John', 'Doe', '2024-01-01 10:00:00',
-        'Middle Management', '100-500', 'Manager', '4.2', '4.5', '4.1', '4.3', '4.4', '4.0', '4.25'
-      ],
-      [
-        'jane@example.com', 'test-456', 'Jane', 'Smith', '2024-01-02 11:00:00',
-        'Senior Management', '500+', 'Director', '4.5', '4.3', '4.6', '4.2', '4.1', '4.4', '4.35'
-      ]
-    ];
+    // Get Google API key from environment
+    const googleApiKey = Deno.env.get('GOOGLE_API_KEY');
+    if (!googleApiKey) {
+      throw new Error('Google API key not configured');
+    }
 
-    const headers = testData[0];
-    const dataRows = testData.slice(1);
+    // Fetch data from Google Sheets API
+    const sheetsUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${googleApiKey}`;
+    
+    console.log('Fetching data from Google Sheets API...');
+    const response = await fetch(sheetsUrl);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Google Sheets API error:', errorText);
+      throw new Error(`Failed to fetch data from Google Sheets: ${response.status} - ${errorText}`);
+    }
 
-    console.log(`Found ${dataRows.length} rows to process (test data)`);
+    const sheetsData = await response.json();
+    
+    if (!sheetsData.values || sheetsData.values.length === 0) {
+      throw new Error('No data found in the specified range');
+    }
+
+    const headers = sheetsData.values[0];
+    const dataRows = sheetsData.values.slice(1);
+
+    console.log(`Found ${dataRows.length} rows to process from Google Sheets`);
 
     // Convert rows to objects
     const importData: ImportRow[] = dataRows.map(row => {
@@ -209,7 +213,7 @@ Deno.serve(async (req) => {
         },
         errors,
         totalRows: dataRows.length,
-        note: "This is a test import with sample data. Connect to actual Google Sheets API for real data.",
+        note: "Successfully imported data from Google Sheets",
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
