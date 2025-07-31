@@ -64,15 +64,17 @@ Deno.serve(async (req) => {
       {
         headers: {
           'Authorization': `Bearer ${supabaseKey}`,
+          'Metadata-Flavor': 'Google',
         },
       }
     );
 
     if (!identityResponse.ok) {
-      throw new Error('Failed to get identity token');
+      const errorText = await identityResponse.text();
+      throw new Error(`Failed to get identity token: ${errorText}`);
     }
 
-    const { token: identityToken } = await identityResponse.json();
+    const identityToken = await identityResponse.text();
 
     // Exchange for Google access token
     const workloadConfig = JSON.parse(Deno.env.get('GOOGLE_WORKLOAD_IDENTITY_CONFIG')!);

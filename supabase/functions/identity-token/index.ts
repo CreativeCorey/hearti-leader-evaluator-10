@@ -9,16 +9,11 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'GET, OPTIONS',
 }
 
-// Create a raw Ed25519 key pair for signing tokens
+// Create a simple secret key for signing tokens
 // In a production environment, this should be stored securely and kept consistent
 const encoder = new TextEncoder();
-const key = await crypto.subtle.generateKey(
-  { name: "Ed25519" },
-  true,
-  ["sign", "verify"]
-);
-const exportedKey = await crypto.subtle.exportKey("raw", key.privateKey);
-const keyBytes = new Uint8Array(exportedKey);
+const secretKey = "supabase-identity-token-secret-key-for-workload-identity-federation";
+const keyBytes = encoder.encode(secretKey);
 
 console.log("Identity token provider started");
 
@@ -57,7 +52,7 @@ serve(async (req) => {
     };
 
     // Sign the JWT with our key
-    const jwt = await create({ alg: "EdDSA", typ: "JWT" }, payload, keyBytes);
+    const jwt = await create({ alg: "HS256", typ: "JWT" }, payload, keyBytes);
 
     // Return the token as expected by the Google Workload Identity Federation
     return new Response(jwt, { 
