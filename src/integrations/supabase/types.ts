@@ -25,7 +25,7 @@ export type Database = {
           id: string
           organization_id: string | null
           overall_score: number
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           answers: Json
@@ -37,7 +37,7 @@ export type Database = {
           id?: string
           organization_id?: string | null
           overall_score: number
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           answers?: Json
@@ -49,7 +49,7 @@ export type Database = {
           id?: string
           organization_id?: string | null
           overall_score?: number
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -397,7 +397,7 @@ export type Database = {
           id: string
           organization_id: string | null
           overall_score: number
-          user_id: string
+          user_id: string | null
         }[]
       }
       is_authenticated_user: {
