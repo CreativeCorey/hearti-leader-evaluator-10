@@ -35,20 +35,38 @@ serve(async (req) => {
     }
     
     // Authenticate the user
-    const authHeader = req.headers.get("Authorization")!;
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      console.log("No authorization header provided");
+      return new Response(JSON.stringify({ 
+        hasPaid: false,
+        paymentDetails: null,
+        error: "No authentication provided",
+        timestamp: Date.now()
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" },
+        status: 200,
+      });
+    }
+    
     const token = authHeader.replace("Bearer ", "");
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
     
-    if (userError) {
-      console.error("Auth error:", userError.message);
-      throw new Error(`Authentication error: ${userError.message}`);
+    if (userError || !userData.user?.id) {
+      console.log("Authentication failed:", userError?.message || "No user found");
+      // Return a non-error response for invalid sessions - user just hasn't paid
+      return new Response(JSON.stringify({ 
+        hasPaid: false,
+        paymentDetails: null,
+        error: null, // Don't return error for auth issues
+        timestamp: Date.now()
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "no-store" },
+        status: 200,
+      });
     }
     
     const user = userData.user;
-    if (!user?.id) {
-      console.error("No user found");
-      throw new Error("User not authenticated");
-    }
     
     console.log("User authenticated:", user.id);
 

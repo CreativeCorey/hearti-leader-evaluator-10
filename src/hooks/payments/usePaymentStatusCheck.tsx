@@ -27,22 +27,27 @@ export const usePaymentStatusCheck = () => {
       const { data, error } = await checkPaymentStatusFromAPI(Date.now());
       
       if (error) {
-        handlePaymentStatusError(error, setPaymentError);
+        console.log("Payment status check error (non-critical):", error);
+        // For authentication errors, just assume user hasn't paid
         setHasPaid(false);
+        setPaymentError(null); // Don't show error for auth issues
         return;
       }
       
       const validationError = validatePaymentData(data);
       if (validationError) {
-        setPaymentError(validationError);
+        console.log("Payment validation warning:", validationError);
+        setPaymentError(null); // Don't show validation errors as user errors
       }
       
       setHasPaid(data.hasPaid);
       console.log("Payment status:", data.hasPaid ? "Paid" : "Not paid", data);
       
     } catch (error) {
-      handlePaymentError(error, setPaymentError);
+      console.log("Payment check failed (treating as unpaid):", error);
+      // Don't show errors for payment checks - just assume unpaid
       setHasPaid(false);
+      setPaymentError(null);
     } finally {
       setCheckingPayment(false);
     }

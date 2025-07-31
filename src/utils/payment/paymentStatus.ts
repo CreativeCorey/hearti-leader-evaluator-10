@@ -7,7 +7,7 @@ export const checkPaymentStatusFromAPI = async (timestamp: number) => {
   });
   
   if (error) throw error;
-  return { data, error: data.error };
+  return { data, error: data.error || null };
 };
 
 export const validatePaymentData = (data: any) => {
