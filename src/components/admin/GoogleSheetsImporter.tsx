@@ -17,6 +17,8 @@ interface ImportResult {
   errors?: string[];
   totalRows?: number;
   error?: string;
+  message?: string; // For background task responses
+  note?: string;    // Additional info
 }
 
 const GoogleSheetsImporter: React.FC = () => {
@@ -64,10 +66,27 @@ const GoogleSheetsImporter: React.FC = () => {
       setImportResult(data);
 
       if (data.success) {
-        toast({
-          title: "Import Complete",
-          description: `Imported ${data.imported.profiles} profiles and ${data.imported.assessments} assessments`,
-        });
+        // Handle background task response (large imports)
+        if (data.message && data.message.includes('background')) {
+          toast({
+            title: "Import Started",
+            description: data.message,
+          });
+        } 
+        // Handle immediate response (small imports)
+        else if (data.imported) {
+          toast({
+            title: "Import Complete",
+            description: `Imported ${data.imported.profiles} profiles and ${data.imported.assessments} assessments`,
+          });
+        }
+        // Handle other success cases
+        else {
+          toast({
+            title: "Import Started",
+            description: data.note || "Import processing started",
+          });
+        }
       } else {
         toast({
           title: "Import Failed",
@@ -197,6 +216,7 @@ const GoogleSheetsImporter: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
+              {/* Show import stats for immediate processing */}
               {importResult.success && importResult.imported && (
                 <div className="space-y-2">
                   <p className="text-sm">
@@ -207,6 +227,22 @@ const GoogleSheetsImporter: React.FC = () => {
                     <li>• {importResult.imported.assessments} historical assessments</li>
                     <li>• Total rows processed: {importResult.totalRows}</li>
                   </ul>
+                </div>
+              )}
+
+              {/* Show background processing info */}
+              {importResult.success && importResult.message && (
+                <div className="space-y-2">
+                  <p className="text-sm">
+                    <strong>Status:</strong>
+                  </p>
+                  <p className="text-sm">{importResult.message}</p>
+                  {importResult.totalRows && (
+                    <p className="text-sm">• Total rows to process: {importResult.totalRows}</p>
+                  )}
+                  {importResult.note && (
+                    <p className="text-sm text-muted-foreground">📝 {importResult.note}</p>
+                  )}
                 </div>
               )}
 
