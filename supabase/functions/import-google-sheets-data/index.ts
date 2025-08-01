@@ -290,7 +290,10 @@ async function processRow(supabase: any, row: any) {
 
     // Extract dimension scores with detailed logging
     console.log(`Processing dimension scores for user: ${finalEmail}`);
-    console.log(`Available columns for dimension scores:`, Object.keys(row).filter(key => 
+    console.log(`All available columns:`, Object.keys(row));
+    
+    // Look for dimension score columns with various patterns
+    const dimensionKeys = Object.keys(row).filter(key => 
       key.toLowerCase().includes('humility') || 
       key.toLowerCase().includes('empathy') || 
       key.toLowerCase().includes('accountability') || 
@@ -298,27 +301,45 @@ async function processRow(supabase: any, row: any) {
       key.toLowerCase().includes('transparency') || 
       key.toLowerCase().includes('inclusivity') ||
       key.startsWith('F1')
-    ));
+    );
+    
+    console.log(`Found potential dimension columns:`, dimensionKeys);
 
-    const dimensionScores = {
-      humility: parseFloat(row['F13: Humility (All)'] || row['Humility'] || row['humility'] || row['F13']) || 3,
-      empathy: parseFloat(row['F14: Empathy (All)'] || row['Empathy'] || row['empathy'] || row['F14']) || 3,
-      accountability: parseFloat(row['F15: Accountability (All)'] || row['Accountability'] || row['accountability'] || row['F15']) || 3,
-      resiliency: parseFloat(row['F16: Resiliency (All)'] || row['Resiliency'] || row['resiliency'] || row['F16']) || 3,
-      transparency: parseFloat(row['F17: Transparency (All)'] || row['Transparency'] || row['transparency'] || row['F17']) || 3,
-      inclusivity: parseFloat(row['F18: Inclusivity (All)'] || row['Inclusivity'] || row['inclusivity'] || row['F18']) || 3,
+    // Get dimension scores using multiple patterns - if no value, keep undefined (don't default to 3)
+    const getDimensionScore = (dimension: string) => {
+      const patterns = [
+        `F13: Humility (All)`, `F14: Empathy (All)`, `F15: Accountability (All)`, 
+        `F16: Resiliency (All)`, `F17: Transparency (All)`, `F18: Inclusivity (All)`,
+        dimension.charAt(0).toUpperCase() + dimension.slice(1),
+        dimension.toLowerCase(),
+        dimension.toUpperCase(),
+        `F13`, `F14`, `F15`, `F16`, `F17`, `F18`
+      ];
+      
+      for (const pattern of patterns) {
+        if (row[pattern] !== undefined && row[pattern] !== null && row[pattern] !== '') {
+          const value = parseFloat(row[pattern]);
+          if (!isNaN(value)) {
+            console.log(`Found ${dimension} in column "${pattern}": ${value}`);
+            return value;
+          }
+        }
+      }
+      
+      console.log(`No valid value found for ${dimension}, will use default`);
+      return 3; // Only use default if no value found
     };
 
-    console.log(`Raw dimension values for ${finalEmail}:`, {
-      humility: row['F13: Humility (All)'] || row['Humility'] || row['humility'] || row['F13'],
-      empathy: row['F14: Empathy (All)'] || row['Empathy'] || row['empathy'] || row['F14'],
-      accountability: row['F15: Accountability (All)'] || row['Accountability'] || row['accountability'] || row['F15'],
-      resiliency: row['F16: Resiliency (All)'] || row['Resiliency'] || row['resiliency'] || row['F16'],
-      transparency: row['F17: Transparency (All)'] || row['Transparency'] || row['transparency'] || row['F17'],
-      inclusivity: row['F18: Inclusivity (All)'] || row['Inclusivity'] || row['inclusivity'] || row['F18'],
-    });
+    const dimensionScores = {
+      humility: getDimensionScore('humility'),
+      empathy: getDimensionScore('empathy'), 
+      accountability: getDimensionScore('accountability'),
+      resiliency: getDimensionScore('resiliency'),
+      transparency: getDimensionScore('transparency'),
+      inclusivity: getDimensionScore('inclusivity'),
+    };
     
-    console.log(`Parsed dimension scores for ${finalEmail}:`, dimensionScores);
+    console.log(`Final dimension scores for ${finalEmail}:`, dimensionScores);
 
     // Extract actual answers from Q1-Q65 columns with different possible formats
     const answers: number[] = [];
@@ -337,11 +358,15 @@ async function processRow(supabase: any, row: any) {
       answers.push(answerValue);
     }
 
-    // Extract demographics
+    // Extract demographics with all relevant fields
     const demographics = {
       managementLevel: row['Q59: My current management level is...'] || '',
       companySize: row['Q60: My company size is...'] || '',
       jobRole: row['Q61: My main job role is...'] || '',
+      location: row['Q62: Where are you located?'] || '',
+      age: row['Q63: My age is...'] || '',
+      gender: row['Q64: My gender identity is...'] || '',
+      raceEthnicity: row['Q65: My Race/Ethnicity is...\n(Please check all that apply)'] || '',
       isHistorical: true,
       sourceUniqueId: responseId,
     };

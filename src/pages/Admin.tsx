@@ -8,7 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/language/LanguageContext";
 import DataImporter from "@/components/admin/DataImporter";
 import UserManagement from "@/components/admin/UserManagement";
-import { Shield, Database, Users } from "lucide-react";
+import UserDataManager from "@/components/admin/UserDataManager";
+import { Shield, Database, Users, Trash2 } from "lucide-react";
 
 const Admin = () => {
   const { user } = useAuth();
@@ -90,18 +91,22 @@ const Admin = () => {
       </div>
 
       <Tabs defaultValue="user-management" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="user-management" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
-            User Management
+            Users
           </TabsTrigger>
           <TabsTrigger value="data-import" className="flex items-center gap-2">
             <Database className="h-4 w-4" />
-            Data Import
+            Import
+          </TabsTrigger>
+          <TabsTrigger value="data-management" className="flex items-center gap-2">
+            <Trash2 className="h-4 w-4" />
+            Delete
           </TabsTrigger>
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <Shield className="h-4 w-4" />
-            System Overview
+            Overview
           </TabsTrigger>
         </TabsList>
 
@@ -111,6 +116,10 @@ const Admin = () => {
 
         <TabsContent value="data-import">
           <DataImporter />
+        </TabsContent>
+
+        <TabsContent value="data-management">
+          <UserDataManager />
         </TabsContent>
 
         <TabsContent value="overview" className="space-y-6">
