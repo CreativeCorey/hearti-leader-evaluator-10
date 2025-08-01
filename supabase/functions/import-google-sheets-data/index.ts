@@ -291,6 +291,7 @@ async function processRow(supabase: any, row: any) {
     // Extract dimension scores with detailed logging
     console.log(`Processing dimension scores for user: ${finalEmail}`);
     console.log(`All available columns:`, Object.keys(row));
+    console.log(`First few column values:`, Object.keys(row).slice(0, 10).map(key => `${key}: ${row[key]}`));
     
     // Look for dimension score columns with various patterns
     const dimensionKeys = Object.keys(row).filter(key => 
@@ -304,6 +305,16 @@ async function processRow(supabase: any, row: any) {
     );
     
     console.log(`Found potential dimension columns:`, dimensionKeys);
+    
+    // Log specific columns we're looking for
+    const exactColumns = ['Humility', 'Empathy', 'Accountability', 'Resiliency', 'Transparency', 'Inclusivity'];
+    exactColumns.forEach(col => {
+      if (row[col] !== undefined) {
+        console.log(`Found exact column ${col} with value:`, row[col]);
+      } else {
+        console.log(`Column ${col} not found`);
+      }
+    });
 
     // Get dimension scores using multiple patterns - prioritize exact column names
     const getDimensionScore = (dimension: string) => {
