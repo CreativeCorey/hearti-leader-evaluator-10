@@ -287,7 +287,18 @@ async function processRow(supabase: any, row: any) {
       profileCreated = true;
     }
 
-    // Extract dimension scores
+    // Extract dimension scores with detailed logging
+    console.log(`Processing dimension scores for user: ${finalEmail}`);
+    console.log(`Available columns for dimension scores:`, Object.keys(row).filter(key => 
+      key.toLowerCase().includes('humility') || 
+      key.toLowerCase().includes('empathy') || 
+      key.toLowerCase().includes('accountability') || 
+      key.toLowerCase().includes('resiliency') || 
+      key.toLowerCase().includes('transparency') || 
+      key.toLowerCase().includes('inclusivity') ||
+      key.startsWith('F1')
+    ));
+
     const dimensionScores = {
       humility: parseFloat(row['F13: Humility (All)'] || row['Humility'] || row['humility'] || row['F13']) || 3,
       empathy: parseFloat(row['F14: Empathy (All)'] || row['Empathy'] || row['empathy'] || row['F14']) || 3,
@@ -296,6 +307,17 @@ async function processRow(supabase: any, row: any) {
       transparency: parseFloat(row['F17: Transparency (All)'] || row['Transparency'] || row['transparency'] || row['F17']) || 3,
       inclusivity: parseFloat(row['F18: Inclusivity (All)'] || row['Inclusivity'] || row['inclusivity'] || row['F18']) || 3,
     };
+
+    console.log(`Raw dimension values for ${finalEmail}:`, {
+      humility: row['F13: Humility (All)'] || row['Humility'] || row['humility'] || row['F13'],
+      empathy: row['F14: Empathy (All)'] || row['Empathy'] || row['empathy'] || row['F14'],
+      accountability: row['F15: Accountability (All)'] || row['Accountability'] || row['accountability'] || row['F15'],
+      resiliency: row['F16: Resiliency (All)'] || row['Resiliency'] || row['resiliency'] || row['F16'],
+      transparency: row['F17: Transparency (All)'] || row['Transparency'] || row['transparency'] || row['F17'],
+      inclusivity: row['F18: Inclusivity (All)'] || row['Inclusivity'] || row['inclusivity'] || row['F18'],
+    });
+    
+    console.log(`Parsed dimension scores for ${finalEmail}:`, dimensionScores);
 
     // Extract actual answers from Q1-Q65 columns with different possible formats
     const answers: number[] = [];
