@@ -181,10 +181,11 @@ const UserDataManager: React.FC = () => {
         .delete({ count: 'exact' })
         .not('historical_profile_id', 'is', null);
 
-      // Delete all historical profiles
+      // Delete all historical profiles (only those marked as historical)
       const { count: historicalProfileCount, error: deleteHistoricalProfilesError } = await supabase
         .from('historical_profiles')
-        .delete({ count: 'exact' });
+        .delete({ count: 'exact' })
+        .eq('is_historical', true);
 
       const errors: string[] = [];
       
@@ -277,16 +278,18 @@ const UserDataManager: React.FC = () => {
                     <AlertTriangle className="w-5 h-5 text-destructive" />
                     Confirm User Data Deletion
                   </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This will permanently delete ALL data for user "{userEmail}" including:
-                    <ul className="list-disc list-inside mt-2 space-y-1">
-                      <li>All assessment results</li>
-                      <li>All saved activities</li>
-                      <li>All habits and tracking data</li>
-                      <li>User profile information</li>
-                    </ul>
-                    <strong className="text-destructive">This action cannot be undone.</strong>
-                  </AlertDialogDescription>
+                   <AlertDialogDescription>
+                     <div>
+                       This will permanently delete ALL data for user "{userEmail}" including:
+                       <ul className="list-disc list-inside mt-2 space-y-1">
+                         <li>All assessment results</li>
+                         <li>All saved activities</li>
+                         <li>All habits and tracking data</li>
+                         <li>User profile information</li>
+                       </ul>
+                       <strong className="text-destructive">This action cannot be undone.</strong>
+                     </div>
+                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
@@ -327,15 +330,17 @@ const UserDataManager: React.FC = () => {
                     <AlertTriangle className="w-5 h-5 text-destructive" />
                     Confirm Bulk Deletion
                   </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This will permanently delete ALL historical data including:
-                    <ul className="list-disc list-inside mt-2 space-y-1">
-                      <li>All historical profiles</li>
-                      <li>All historical assessment results</li>
-                      <li>All imported Google Sheets data</li>
-                    </ul>
-                    <strong className="text-destructive">This action cannot be undone.</strong>
-                  </AlertDialogDescription>
+                   <AlertDialogDescription>
+                     <div>
+                       This will permanently delete ALL historical data including:
+                       <ul className="list-disc list-inside mt-2 space-y-1">
+                         <li>All historical profiles</li>
+                         <li>All historical assessment results</li>
+                         <li>All imported Google Sheets data</li>
+                       </ul>
+                       <strong className="text-destructive">This action cannot be undone.</strong>
+                     </div>
+                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
