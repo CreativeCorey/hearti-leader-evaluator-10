@@ -103,7 +103,20 @@ Deno.serve(async (req) => {
     let importedAssessments = 0;
     let errors: string[] = [];
 
-    for (const row of importData) {
+    // Process data in batches to avoid timeouts
+    const BATCH_SIZE = 10;
+    const totalBatches = Math.ceil(importData.length / BATCH_SIZE);
+    
+    console.log(`Processing ${importData.length} rows in ${totalBatches} batches of ${BATCH_SIZE}`);
+
+    for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
+      const startIndex = batchIndex * BATCH_SIZE;
+      const endIndex = Math.min(startIndex + BATCH_SIZE, importData.length);
+      const batch = importData.slice(startIndex, endIndex);
+      
+      console.log(`Processing batch ${batchIndex + 1}/${totalBatches} (rows ${startIndex + 1}-${endIndex})`);
+
+      for (const row of batch) {
       try {
         // Extract user info - try multiple possible column names
         const email = row['Contact Email'] || row['E-mail'] || row['Email'] || row['email'];
@@ -226,6 +239,12 @@ Deno.serve(async (req) => {
 
       } catch (error) {
         errors.push(`Error processing row: ${error.message}`);
+      }
+      }
+      
+      // Add a small delay between batches to avoid overwhelming the system
+      if (batchIndex < totalBatches - 1) {
+        await new Promise(resolve => setTimeout(resolve, 100));
       }
     }
 
