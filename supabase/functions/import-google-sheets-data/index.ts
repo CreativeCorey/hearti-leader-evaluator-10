@@ -104,15 +104,17 @@ Deno.serve(async (req) => {
 
     for (const row of importData) {
       try {
-        // Extract user info
-        const email = row['Contact Email'] || row['E-mail'];
-        const uniqueId = row['Contact Personal ID'] || row['Contact UID'];
-        const firstName = row['Contact Name'] || row['First Name'];
-        const lastName = row['Contact Last Name'] || row['Last Name'];
-        const assessmentDate = row['Date & Time'];
+        // Extract user info - try multiple possible column names
+        const email = row['Contact Email'] || row['E-mail'] || row['Email'] || row['email'];
+        const uniqueId = row['Contact Personal ID'] || row['Contact UID'] || row['Personal ID'] || row['UID'] || row['ID'] || row['id'];
+        const firstName = row['Contact Name'] || row['First Name'] || row['Name'] || row['name'];
+        const lastName = row['Contact Last Name'] || row['Last Name'] || row['LastName'] || row['lastname'];
+        const assessmentDate = row['Date & Time'] || row['Date'] || row['Timestamp'];
 
-        if (!email || !uniqueId) {
-          errors.push(`Skipping row: Missing email or unique ID`);
+        console.log(`Processing row: email=${email}, uniqueId=${uniqueId}, firstName=${firstName}, lastName=${lastName}`);
+
+        if (!email) {
+          errors.push(`Skipping row: Missing email (available columns: ${Object.keys(row).join(', ')})`);
           continue;
         }
 
@@ -134,9 +136,9 @@ Deno.serve(async (req) => {
             .from('historical_profiles')
             .insert({
               email,
-              name: `${firstName} ${lastName}`.trim(),
+              name: `${firstName || ''} ${lastName || ''}`.trim() || email,
               role: 'user',
-              source_unique_id: uniqueId,
+              source_unique_id: uniqueId || email,
             })
             .select('id')
             .single();
