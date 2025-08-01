@@ -88,6 +88,7 @@ Deno.serve(async (req) => {
     const dataRows = sheetsData.values.slice(1);
 
     console.log(`Found ${dataRows.length} rows to process from Google Sheets`);
+    console.log(`Available columns: ${headers.join(', ')}`);
 
     // Convert rows to objects
     const importData: ImportRow[] = dataRows.map(row => {
@@ -152,15 +153,17 @@ Deno.serve(async (req) => {
           importedProfiles++;
         }
 
-        // Extract dimension scores
+        // Extract dimension scores - try multiple possible column name formats
         const dimensionScores = {
-          humility: parseFloat(row['F13: Humility (All)']) || 3,
-          empathy: parseFloat(row['F14: Empathy (All)']) || 3,
-          accountability: parseFloat(row['F15: Accountability (All)']) || 3,
-          resiliency: parseFloat(row['F16: Resiliency (All)']) || 3,
-          transparency: parseFloat(row['F17: Transparency (All)']) || 3,
-          inclusivity: parseFloat(row['F18: Inclusivity (All)']) || 3,
+          humility: parseFloat(row['F13: Humility (All)'] || row['Humility'] || row['humility'] || row['F13']) || 0,
+          empathy: parseFloat(row['F14: Empathy (All)'] || row['Empathy'] || row['empathy'] || row['F14']) || 0,
+          accountability: parseFloat(row['F15: Accountability (All)'] || row['Accountability'] || row['accountability'] || row['F15']) || 0,
+          resiliency: parseFloat(row['F16: Resiliency (All)'] || row['Resiliency'] || row['resiliency'] || row['F16']) || 0,
+          transparency: parseFloat(row['F17: Transparency (All)'] || row['Transparency'] || row['transparency'] || row['F17']) || 0,
+          inclusivity: parseFloat(row['F18: Inclusivity (All)'] || row['Inclusivity'] || row['inclusivity'] || row['F18']) || 0,
         };
+
+        console.log(`Dimension scores for ${email}:`, dimensionScores);
 
         // Extract actual answers from Q1-Q65 columns
         const answers: number[] = [];
@@ -185,6 +188,21 @@ Deno.serve(async (req) => {
 
         // Parse assessment date
         const parsedDate = assessmentDate ? new Date(assessmentDate) : new Date();
+
+        // Check if assessment already exists for this user and date
+        const { data: existingAssessment } = await supabase
+          .from('assessments')
+          .select('id')
+          .eq('historical_profile_id', userId)
+          .eq('email', email)
+          .gte('date', new Date(parsedDate.getTime() - 24 * 60 * 60 * 1000).toISOString()) // Within 24 hours
+          .lte('date', new Date(parsedDate.getTime() + 24 * 60 * 60 * 1000).toISOString())
+          .maybeSingle();
+
+        if (existingAssessment) {
+          console.log(`Skipping duplicate assessment for ${email} on ${parsedDate.toISOString()}`);
+          continue;
+        }
 
         // Insert assessment
         const { error: assessmentError } = await supabase
