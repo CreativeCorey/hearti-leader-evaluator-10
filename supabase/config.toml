@@ -1,1 +1,77 @@
 project_id = "odwkgxdkjyccnkydxvjw"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+
+[studio]
+enabled = true
+port = 54323
+
+[inbucket]
+enabled = true
+port = 54324
+smtp_port = 54325
+pop3_port = 54326
+
+[storage]
+enabled = true
+port = 54327
+image_transformation = true
+double_encode_urls = true
+
+[auth]
+enabled = true
+port = 54328
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://lovableproject.com"]
+jwt_expiry = 3600
+refresh_token_rotation_enabled = true
+security_update_password_require_reauthentication = true
+
+[rest]
+enabled = true
+port = 54329
+
+[realtime]
+enabled = true
+port = 54330
+
+[functions.import-google-sheets-data]
+verify_jwt = true
+
+[functions.bulk-import-assessments]
+verify_jwt = true
+
+[functions.check-payment-status]
+verify_jwt = true
+
+[functions.create-payment]
+verify_jwt = true
+
+[functions.customer-portal]
+verify_jwt = true
+
+[functions.identity-token]
+verify_jwt = true
+
+[functions.marketing-subscribe]
+verify_jwt = false
+
+[functions.secure-payment-status]
+verify_jwt = true
+
+[functions.sync-assessment-to-sheet]
+verify_jwt = false
+
+[functions.test-google-sheets]
+verify_jwt = true
+
+[functions.verify-payment]
+verify_jwt = true
