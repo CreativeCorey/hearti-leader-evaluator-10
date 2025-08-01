@@ -259,11 +259,25 @@ async function processRow(supabase: any, row: any) {
     const finalEmail = email || `response-${responseId}@historical-import.com`;
 
     // Check if historical profile exists by response ID first, then by email
-    const { data: existingUser } = await supabase
-      .from('historical_profiles')
-      .select('id')
-      .or(`source_unique_id.eq.${responseId},email.eq.${finalEmail}`)
-      .maybeSingle();
+    let existingUser = null;
+    if (responseId) {
+      const { data } = await supabase
+        .from('historical_profiles')
+        .select('id')
+        .eq('source_unique_id', responseId)
+        .maybeSingle();
+      existingUser = data;
+    }
+    
+    // If not found by response ID, try by email
+    if (!existingUser) {
+      const { data } = await supabase
+        .from('historical_profiles')
+        .select('id')
+        .eq('email', finalEmail)
+        .maybeSingle();
+      existingUser = data;
+    }
 
     let userId = existingUser?.id;
 
@@ -305,14 +319,18 @@ async function processRow(supabase: any, row: any) {
     
     console.log(`Found potential dimension columns:`, dimensionKeys);
 
-    // Get dimension scores using multiple patterns - if no value, keep undefined (don't default to 3)
+    // Get dimension scores using multiple patterns - prioritize exact column names
     const getDimensionScore = (dimension: string) => {
+      // Define patterns in order of preference
       const patterns = [
+        // Exact dimension name variations
+        dimension.charAt(0).toUpperCase() + dimension.slice(1),  // "Humility"
+        dimension.toLowerCase(),  // "humility"
+        dimension.toUpperCase(),  // "HUMILITY"
+        // Traditional format patterns
         `F13: Humility (All)`, `F14: Empathy (All)`, `F15: Accountability (All)`, 
         `F16: Resiliency (All)`, `F17: Transparency (All)`, `F18: Inclusivity (All)`,
-        dimension.charAt(0).toUpperCase() + dimension.slice(1),
-        dimension.toLowerCase(),
-        dimension.toUpperCase(),
+        // Factor number patterns
         `F13`, `F14`, `F15`, `F16`, `F17`, `F18`
       ];
       
