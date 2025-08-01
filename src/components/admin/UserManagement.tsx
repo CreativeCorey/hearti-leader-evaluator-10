@@ -29,11 +29,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Search, UserCheck, UserX, Shield, Users } from 'lucide-react';
+import { Search, UserCheck, UserX, Shield, Users, BarChart3 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useRateLimit } from '@/hooks/useRateLimit';
 import GoogleSheetsImporter from './GoogleSheetsImporter';
+import UserAssessmentDetails from './UserAssessmentDetails';
 
 type UserRole = "user" | "admin" | "coach";
 
@@ -55,6 +56,7 @@ const UserManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [updatingUser, setUpdatingUser] = useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
   const { toast } = useToast();
   const { checkAndEnforceRateLimit } = useRateLimit();
 
@@ -327,6 +329,14 @@ const UserManagement = () => {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex gap-2 justify-end">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSelectedUser(user)}
+                      >
+                        <BarChart3 className="h-3 w-3 mr-1" />
+                        View Assessments
+                      </Button>
                       {user.role !== 'coach' && (
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
@@ -440,6 +450,17 @@ const UserManagement = () => {
         )}
       </CardContent>
       </Card>
+
+      {selectedUser && (
+        <UserAssessmentDetails
+          userId={selectedUser.id}
+          userName={selectedUser.name || ''}
+          userEmail={selectedUser.email}
+          isHistorical={selectedUser.isHistorical || false}
+          open={!!selectedUser}
+          onOpenChange={(open) => !open && setSelectedUser(null)}
+        />
+      )}
     </div>
   );
 };
