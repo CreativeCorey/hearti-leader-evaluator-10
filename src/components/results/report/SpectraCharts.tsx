@@ -1,44 +1,69 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { HEARTIAssessment } from '@/types';
 import { formatDataForRadarChart } from '@/utils/calculations';
 import { useIsMobile } from '@/hooks/use-mobile';
 import RadarSpectraChart from './RadarSpectraChart';
 import DimensionIcons from '../comparison/radar/DimensionIcons';
 import { useRadarChartConfig } from '@/hooks/use-radar-chart-config';
+import { getAggregateData, AggregateData } from '@/services/aggregateDataService';
 
 interface SpectraChartsProps {
   assessment: HEARTIAssessment;
   assessments?: HEARTIAssessment[];
 }
 
-const aggregateData = {
-  averageScores: {
-    humility: 3.8,
-    empathy: 3.6,
-    accountability: 4.1,
-    resiliency: 3.7,
-    transparency: 3.9,
-    inclusivity: 3.5
-  }
-};
-
 const SpectraCharts: React.FC<SpectraChartsProps> = ({ assessment, assessments = [] }) => {
+  const [aggregateData, setAggregateData] = useState<AggregateData | null>(null);
+  const [isLoadingAggregate, setIsLoadingAggregate] = useState(true);
   const isMobile = useIsMobile();
   const { iconSize } = useRadarChartConfig();
+
+  // Load aggregate data when component mounts
+  useEffect(() => {
+    getAggregateData().then((data) => {
+      setAggregateData(data);
+      setIsLoadingAggregate(false);
+    }).catch((error) => {
+      console.error('Failed to load aggregate data:', error);
+      setIsLoadingAggregate(false);
+    });
+  }, []);
   
   // Ensure we have valid dimension scores before proceeding
   const hasValidDimensionScores = assessment && 
     assessment.dimensionScores && 
     Object.keys(assessment.dimensionScores).length > 0;
   
-  // Use sample data if assessment data is missing
+  // Use fallback data if assessment data is missing or aggregate data is not loaded
+  const defaultScores = {
+    humility: 3.8,
+    empathy: 3.6,
+    accountability: 4.1,
+    resiliency: 3.7,
+    transparency: 3.9,
+    inclusivity: 3.5
+  };
+  
   const userScores = hasValidDimensionScores ? 
     assessment.dimensionScores : 
-    aggregateData.averageScores;
+    defaultScores;
   
   const chartData = formatDataForRadarChart(userScores);
-  const benchmarkData = formatDataForRadarChart(aggregateData.averageScores);
+  const benchmarkData = formatDataForRadarChart(
+    aggregateData?.averageScores || defaultScores
+  );
+
+  if (isLoadingAggregate) {
+    return (
+      <div className="my-6 pdf-section">
+        <h3 className="text-xl font-medium mb-5 pdf-section-title text-gray-700">Your HEARTI:Leader Spectra</h3>
+        <div className="flex justify-center items-center py-8">
+          <div className="text-muted-foreground">Loading benchmark data...</div>
+        </div>
+      </div>
+    );
+  }
   
   // Using pink color for user's radar chart
   const userPinkColor = "#D946EF";

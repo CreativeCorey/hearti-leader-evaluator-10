@@ -8,10 +8,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import RadarChartDisplay from "./comparison/RadarChartDisplay";
 import ComparisonAnalysis from "./comparison/ComparisonAnalysis";
 import ProgressChart from "./comparison/ProgressChart";
-import { aggregateData, userColor, comparisonColors } from "./comparison/aggregateData";
+import { userColor, comparisonColors } from "./comparison/aggregateData";
 import { useIsMobile } from '@/hooks/use-mobile';
 import { formatDataForRadarChart } from '@/utils/calculations';
 import { useLanguage } from '@/contexts/language/LanguageContext';
+import { getAggregateData, AggregateData } from '@/services/aggregateDataService';
 
 interface ComparisonTabProps {
   assessment: HEARTIAssessment;
@@ -40,8 +41,24 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
   const [chartView, setChartView] = useState<'combined' | 'separate'>('combined');
   const [compareMode, setCompareMode] = useState<'none' | 'average'>('average');
   const [assessment, setAssessment] = useState<HEARTIAssessment>(initialAssessment);
+  const [aggregateData, setAggregateData] = useState<AggregateData | null>(null);
+  const [isLoadingAggregate, setIsLoadingAggregate] = useState(false);
   const isMobile = useIsMobile();
   const { t } = useLanguage();
+
+  // Load aggregate data when component mounts or when compare mode changes to average
+  useEffect(() => {
+    if (compareMode === 'average' && !aggregateData) {
+      setIsLoadingAggregate(true);
+      getAggregateData().then((data) => {
+        setAggregateData(data);
+        setIsLoadingAggregate(false);
+      }).catch((error) => {
+        console.error('Failed to load aggregate data:', error);
+        setIsLoadingAggregate(false);
+      });
+    }
+  }, [compareMode, aggregateData]);
 
   // Reset the selected assessment when the initial assessment changes
   useEffect(() => {
@@ -61,7 +78,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
   
   // Get comparison data based on selection
   const getComparisonData = () => {
-    if (compareMode === 'average') {
+    if (compareMode === 'average' && aggregateData) {
       return formatDataForRadarChart(aggregateData.averageScores);
     }
     return null;
@@ -70,7 +87,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
   // Format data for combined chart
   const combinedChartData = convertToComparisonFormat(
     assessment.dimensionScores,
-    compareMode === 'average' ? aggregateData.averageScores : null
+    compareMode === 'average' && aggregateData ? aggregateData.averageScores : null
   );
   
   // Get comparison label based on selection with proper translation
@@ -139,13 +156,19 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
             />
           </div>
           
-          {compareMode !== 'none' && (
+          {compareMode !== 'none' && aggregateData && !isLoadingAggregate && (
             <ComparisonAnalysis 
               assessment={assessment}
               averageScores={compareMode === 'average' ? aggregateData.averageScores : undefined} 
               comparisonLabel={getComparisonLabel()}
               comparisonColor={getComparisonColor()}
             />
+          )}
+          
+          {compareMode !== 'none' && isLoadingAggregate && (
+            <div className="flex justify-center items-center py-8">
+              <div className="text-muted-foreground">Loading comparison data...</div>
+            </div>
           )}
         </CardContent>
       </Card>

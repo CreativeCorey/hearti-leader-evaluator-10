@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Upload, AlertCircle, CheckCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { invalidateAggregateDataCache } from '@/services/aggregateDataService';
 
 interface ImportResult {
   success: boolean;
@@ -75,9 +76,11 @@ const GoogleSheetsImporter: React.FC = () => {
         } 
         // Handle immediate response (small imports)
         else if (data.imported) {
+          // Invalidate aggregate data cache since new data was imported
+          invalidateAggregateDataCache();
           toast({
             title: "Import Complete",
-            description: `Imported ${data.imported.profiles} profiles and ${data.imported.assessments} assessments`,
+            description: `Imported ${data.imported.profiles} profiles and ${data.imported.assessments} assessments. Comparison data will refresh automatically.`,
           });
         }
         // Handle other success cases
