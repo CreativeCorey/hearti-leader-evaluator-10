@@ -134,47 +134,48 @@ Deno.serve(async (req) => {
 
       for (const row of batch) {
       try {
-        // Extract user info - try multiple possible column names
-        const email = row['Contact Email'] || row['E-mail'] || row['Email'] || row['email'];
-        const uniqueId = row['Contact Personal ID'] || row['Contact UID'] || row['Personal ID'] || row['UID'] || row['ID'] || row['id'];
+        // Extract user info - try multiple possible column names based on actual sheet structure
+        const email = row['Contact Email'] || row['E-mail'] || row['Email'] || row['email'] || 
+                     row['Contact UID'] || row['UID'] || null; // Use UID as fallback for email
+        const uniqueId = row['Contact Personal ID'] || row['Contact UID'] || row['UID'] || row['Personal ID'] || row['ID'] || row['id'];
         const firstName = row['Contact Name'] || row['First Name'] || row['Name'] || row['name'];
         const lastName = row['Contact Last Name'] || row['Last Name'] || row['LastName'] || row['lastname'];
         const assessmentDate = row['Date & Time'] || row['Date'] || row['Timestamp'];
 
         console.log(`Processing row: email=${email}, uniqueId=${uniqueId}, firstName=${firstName}, lastName=${lastName}`);
 
-        if (!email) {
-          errors.push(`Skipping row: Missing email (available columns: ${Object.keys(row).join(', ')})`);
+        if (!email && !uniqueId) {
+          errors.push(`Skipping row: Missing both email and unique ID (available columns: ${Object.keys(row).slice(0, 10).join(', ')}...)`);
           continue;
         }
+
+        // Generate email from UID if missing
+        const finalEmail = email || `${uniqueId}@historical-import.com`;
 
         // Check if historical profile exists by email
         const { data: existingUser } = await supabase
           .from('historical_profiles')
           .select('id')
-          .eq('email', email)
+          .eq('email', finalEmail)
           .maybeSingle();
 
         let userId = existingUser?.id;
 
         // If user doesn't exist, create profile
         if (!existingUser) {
-          // Generate a UUID using native crypto API
-          const newUuid = crypto.randomUUID();
-          
           const { data: newUser, error: profileError } = await supabase
             .from('historical_profiles')
             .insert({
-              email,
-              name: `${firstName || ''} ${lastName || ''}`.trim() || email,
+              email: finalEmail,
+              name: `${firstName || ''} ${lastName || ''}`.trim() || finalEmail,
               role: 'user',
-              source_unique_id: uniqueId || email,
+              source_unique_id: uniqueId || finalEmail,
             })
             .select('id')
             .single();
 
           if (profileError) {
-            errors.push(`Failed to create profile for ${email}: ${profileError.message}`);
+            errors.push(`Failed to create profile for ${finalEmail}: ${profileError.message}`);
             continue;
           }
 
@@ -183,22 +184,33 @@ Deno.serve(async (req) => {
         }
 
         // Extract dimension scores - try multiple possible column name formats
+        // Since your sheet has individual Q scores, we need to calculate dimensions from them
         const dimensionScores = {
-          humility: parseFloat(row['F13: Humility (All)'] || row['Humility'] || row['humility'] || row['F13']) || 0,
-          empathy: parseFloat(row['F14: Empathy (All)'] || row['Empathy'] || row['empathy'] || row['F14']) || 0,
-          accountability: parseFloat(row['F15: Accountability (All)'] || row['Accountability'] || row['accountability'] || row['F15']) || 0,
-          resiliency: parseFloat(row['F16: Resiliency (All)'] || row['Resiliency'] || row['resiliency'] || row['F16']) || 0,
-          transparency: parseFloat(row['F17: Transparency (All)'] || row['Transparency'] || row['transparency'] || row['F17']) || 0,
-          inclusivity: parseFloat(row['F18: Inclusivity (All)'] || row['Inclusivity'] || row['inclusivity'] || row['F18']) || 0,
+          humility: parseFloat(row['F13: Humility (All)'] || row['Humility'] || row['humility'] || row['F13']) || 3,
+          empathy: parseFloat(row['F14: Empathy (All)'] || row['Empathy'] || row['empathy'] || row['F14']) || 3,
+          accountability: parseFloat(row['F15: Accountability (All)'] || row['Accountability'] || row['accountability'] || row['F15']) || 3,
+          resiliency: parseFloat(row['F16: Resiliency (All)'] || row['Resiliency'] || row['resiliency'] || row['F16']) || 3,
+          transparency: parseFloat(row['F17: Transparency (All)'] || row['Transparency'] || row['transparency'] || row['F17']) || 3,
+          inclusivity: parseFloat(row['F18: Inclusivity (All)'] || row['Inclusivity'] || row['inclusivity'] || row['F18']) || 3,
         };
 
-        console.log(`Dimension scores for ${email}:`, dimensionScores);
+        console.log(`Dimension scores for ${finalEmail}:`, dimensionScores);
 
-        // Extract actual answers from Q1-Q65 columns
+        // Extract actual answers from Q1-Q65 columns with different possible formats
         const answers: number[] = [];
         for (let i = 1; i <= 65; i++) {
+          // Try different question column formats based on your sheet structure
           const questionKey = `Q${i}`;
-          const answerValue = parseFloat(row[questionKey]) || 3; // Default to 3 if missing
+          const questionKeyScore = `Q${i}: I regularly acknowledge when I don't know the answer - Score`;
+          const questionKeyNumber = `Q${i}: I regularly acknowledge when I don't know the answer - Number`;
+          
+          let answerValue = parseFloat(row[questionKey]) || 
+                           parseFloat(row[questionKeyScore]) || 
+                           parseFloat(row[questionKeyNumber]) || 
+                           3; // Default to 3 (neutral) if missing
+          
+          // Ensure answer is within valid range (1-5)
+          answerValue = Math.max(1, Math.min(5, answerValue));
           answers.push(answerValue);
         }
 
@@ -211,9 +223,12 @@ Deno.serve(async (req) => {
           sourceUniqueId: uniqueId,
         };
 
-        // Calculate overall score
-        const overallScore = parseFloat(row['Total Custom Score']) || 
+        // Calculate overall score safely - ensure it's between 1 and 5
+        let overallScore = parseFloat(row['Total Custom Score']) || 
           (Object.values(dimensionScores).reduce((sum, score) => sum + score, 0) / 6);
+        
+        // Ensure overall score is within valid range
+        overallScore = Math.max(1, Math.min(5, overallScore));
 
         // Parse assessment date
         const parsedDate = assessmentDate ? new Date(assessmentDate) : new Date();
@@ -223,13 +238,13 @@ Deno.serve(async (req) => {
           .from('assessments')
           .select('id')
           .eq('historical_profile_id', userId)
-          .eq('email', email)
+          .eq('email', finalEmail)
           .gte('date', new Date(parsedDate.getTime() - 24 * 60 * 60 * 1000).toISOString()) // Within 24 hours
           .lte('date', new Date(parsedDate.getTime() + 24 * 60 * 60 * 1000).toISOString())
           .maybeSingle();
 
         if (existingAssessment) {
-          console.log(`Skipping duplicate assessment for ${email} on ${parsedDate.toISOString()}`);
+          console.log(`Skipping duplicate assessment for ${finalEmail} on ${parsedDate.toISOString()}`);
           continue;
         }
 
@@ -243,11 +258,11 @@ Deno.serve(async (req) => {
             dimension_scores: dimensionScores,
             overall_score: overallScore,
             demographics,
-            email,
+            email: finalEmail, // Use the final email (generated if needed)
           });
 
         if (assessmentError) {
-          errors.push(`Failed to create assessment for ${email}: ${assessmentError.message}`);
+          errors.push(`Failed to create assessment for ${finalEmail}: ${assessmentError.message}`);
           continue;
         }
 
