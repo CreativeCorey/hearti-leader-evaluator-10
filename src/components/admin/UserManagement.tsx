@@ -33,7 +33,6 @@ import { Search, UserCheck, UserX, Shield, Users, BarChart3 } from 'lucide-react
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useRateLimit } from '@/hooks/useRateLimit';
-import GoogleSheetsImporter from './GoogleSheetsImporter';
 import UserAssessmentDetails from './UserAssessmentDetails';
 
 type UserRole = "user" | "admin" | "coach";
@@ -222,8 +221,6 @@ const UserManagement = () => {
 
   return (
     <div className="space-y-6">
-      <GoogleSheetsImporter />
-      
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
