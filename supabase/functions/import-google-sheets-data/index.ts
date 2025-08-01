@@ -245,23 +245,24 @@ async function processRow(supabase: any, row: any) {
     // Extract user info - try multiple possible column names based on actual sheet structure
     const email = row['Contact Email'] || row['E-mail'] || row['Email'] || row['email'] || 
                  row['Contact UID'] || row['UID'] || null;
-    const uniqueId = row['Contact Personal ID'] || row['Contact UID'] || row['UID'] || row['Personal ID'] || row['ID'] || row['id'];
+    const responseId = row['Response ID'] || row['ResponseID'] || row['response_id'] || row['Response Id'] || 
+                      row['ID'] || row['id'] || row['Contact Personal ID'] || row['Contact UID'] || row['UID'] || row['Personal ID'];
     const firstName = row['Contact Name'] || row['First Name'] || row['Name'] || row['name'];
     const lastName = row['Contact Last Name'] || row['Last Name'] || row['LastName'] || row['lastname'];
     const assessmentDate = row['Date & Time'] || row['Date'] || row['Timestamp'];
 
-    if (!email && !uniqueId) {
-      return { profileCreated, assessmentCreated, error: 'Missing both email and unique ID' };
+    if (!email && !responseId) {
+      return { profileCreated, assessmentCreated, error: 'Missing both email and response ID' };
     }
 
-    // Generate email from UID if missing
-    const finalEmail = email || `${uniqueId}@historical-import.com`;
+    // Generate email from response ID if missing
+    const finalEmail = email || `response-${responseId}@historical-import.com`;
 
-    // Check if historical profile exists by email
+    // Check if historical profile exists by response ID first, then by email
     const { data: existingUser } = await supabase
       .from('historical_profiles')
       .select('id')
-      .eq('email', finalEmail)
+      .or(`source_unique_id.eq.${responseId},email.eq.${finalEmail}`)
       .maybeSingle();
 
     let userId = existingUser?.id;
@@ -274,7 +275,7 @@ async function processRow(supabase: any, row: any) {
           email: finalEmail,
           name: `${firstName || ''} ${lastName || ''}`.trim() || finalEmail,
           role: 'user',
-          source_unique_id: uniqueId || finalEmail,
+          source_unique_id: responseId || finalEmail,
         })
         .select('id')
         .single();
@@ -342,7 +343,7 @@ async function processRow(supabase: any, row: any) {
       companySize: row['Q60: My company size is...'] || '',
       jobRole: row['Q61: My main job role is...'] || '',
       isHistorical: true,
-      sourceUniqueId: uniqueId,
+      sourceUniqueId: responseId,
     };
 
     // Calculate overall score safely
