@@ -104,18 +104,29 @@ Deno.serve(async (req) => {
     let importedAssessments = 0;
     let errors: string[] = [];
 
-    // Process data in batches to avoid timeouts
-    const BATCH_SIZE = 10;
+    // Process data in smaller batches to avoid timeouts and add early response capability
+    const BATCH_SIZE = 5; // Reduced batch size
+    const MAX_PROCESSING_TIME = 45000; // 45 seconds (leave buffer for response)
+    const startTime = Date.now();
+    
     const totalBatches = Math.ceil(importData.length / BATCH_SIZE);
     
     console.log(`Processing ${importData.length} rows in ${totalBatches} batches of ${BATCH_SIZE}`);
 
     for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
+      // Check if we're approaching timeout
+      const elapsed = Date.now() - startTime;
+      if (elapsed > MAX_PROCESSING_TIME) {
+        console.log(`Stopping import due to timeout after ${elapsed}ms. Processed ${batchIndex} batches.`);
+        errors.push(`Import stopped due to timeout. Only processed ${batchIndex * BATCH_SIZE} of ${importData.length} rows.`);
+        break;
+      }
+
       const startIndex = batchIndex * BATCH_SIZE;
       const endIndex = Math.min(startIndex + BATCH_SIZE, importData.length);
       const batch = importData.slice(startIndex, endIndex);
       
-      console.log(`Processing batch ${batchIndex + 1}/${totalBatches} (rows ${startIndex + 1}-${endIndex})`);
+      console.log(`Processing batch ${batchIndex + 1}/${totalBatches} (rows ${startIndex + 1}-${endIndex}) - elapsed: ${elapsed}ms`);
 
       for (const row of batch) {
       try {
@@ -249,7 +260,8 @@ Deno.serve(async (req) => {
       }
     }
 
-    console.log(`Import completed: ${importedProfiles} profiles, ${importedAssessments} assessments`);
+    const finalElapsed = Date.now() - startTime;
+    console.log(`Import completed in ${finalElapsed}ms: ${importedProfiles} profiles, ${importedAssessments} assessments`);
 
     return new Response(
       JSON.stringify({
