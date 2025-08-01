@@ -307,18 +307,28 @@ async function processRow(supabase: any, row: any) {
 
     // Get dimension scores using multiple patterns - prioritize exact column names
     const getDimensionScore = (dimension: string) => {
-      // Define patterns in order of preference
+      // Define patterns in order of preference - dynamically build based on dimension
       const patterns = [
         // Exact dimension name variations
         dimension.charAt(0).toUpperCase() + dimension.slice(1),  // "Humility"
         dimension.toLowerCase(),  // "humility"
         dimension.toUpperCase(),  // "HUMILITY"
-        // Traditional format patterns
-        `F13: Humility (All)`, `F14: Empathy (All)`, `F15: Accountability (All)`, 
-        `F16: Resiliency (All)`, `F17: Transparency (All)`, `F18: Inclusivity (All)`,
-        // Factor number patterns
-        `F13`, `F14`, `F15`, `F16`, `F17`, `F18`
       ];
+      
+      // Add specific patterns for each dimension
+      if (dimension === 'humility') {
+        patterns.push('F13: Humility (All)', 'F13');
+      } else if (dimension === 'empathy') {
+        patterns.push('F14: Empathy (All)', 'F14');
+      } else if (dimension === 'accountability') {
+        patterns.push('F15: Accountability (All)', 'F15');
+      } else if (dimension === 'resiliency') {
+        patterns.push('F16: Resiliency (All)', 'F16');
+      } else if (dimension === 'transparency') {
+        patterns.push('F17: Transparency (All)', 'F17');
+      } else if (dimension === 'inclusivity') {
+        patterns.push('F18: Inclusivity (All)', 'F18');
+      }
       
       for (const pattern of patterns) {
         if (row[pattern] !== undefined && row[pattern] !== null && row[pattern] !== '') {
