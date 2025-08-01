@@ -175,44 +175,42 @@ const UserDataManager: React.FC = () => {
     setDeleteResult(null);
 
     try {
-      // Delete all historical assessments
-      const { count: historicalAssessmentCount, error: deleteHistoricalAssessmentsError } = await supabase
-        .from('assessments')
-        .delete({ count: 'exact' })
-        .not('historical_profile_id', 'is', null);
+      console.log('Calling clear-historical-data function...');
 
-      // Delete all historical profiles (only those marked as historical)
-      const { count: historicalProfileCount, error: deleteHistoricalProfilesError } = await supabase
-        .from('historical_profiles')
-        .delete({ count: 'exact' })
-        .eq('is_historical', true);
-
-      const errors: string[] = [];
-      
-      if (deleteHistoricalAssessmentsError) {
-        errors.push(`Failed to delete historical assessments: ${deleteHistoricalAssessmentsError.message}`);
-      }
-      
-      if (deleteHistoricalProfilesError) {
-        errors.push(`Failed to delete historical profiles: ${deleteHistoricalProfilesError.message}`);
-      }
-
-      setDeleteResult({
-        success: errors.length === 0,
-        deletedProfiles: historicalProfileCount || 0,
-        deletedAssessments: historicalAssessmentCount || 0,
-        errors
+      const { data, error } = await supabase.functions.invoke('clear-historical-data', {
+        body: {}
       });
 
-      if (errors.length === 0) {
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw new Error(`Failed to call clear function: ${error.message}`);
+      }
+
+      console.log('Clear function response:', data);
+
+      if (data.success) {
+        setDeleteResult({
+          success: true,
+          deletedProfiles: data.deletedProfiles,
+          deletedAssessments: data.deletedAssessments,
+          errors: []
+        });
+
         toast({
           title: "Success",
-          description: `Deleted ${historicalAssessmentCount || 0} historical assessments and ${historicalProfileCount || 0} historical profiles`,
+          description: `Deleted ${data.deletedAssessments} historical assessments and ${data.deletedProfiles} historical profiles`,
         });
       } else {
+        setDeleteResult({
+          success: false,
+          deletedProfiles: 0,
+          deletedAssessments: 0,
+          errors: [data.error || 'Unknown error']
+        });
+
         toast({
           title: "Error",
-          description: "Some errors occurred during bulk deletion",
+          description: data.error || "Failed to delete historical data",
           variant: "destructive"
         });
       }
