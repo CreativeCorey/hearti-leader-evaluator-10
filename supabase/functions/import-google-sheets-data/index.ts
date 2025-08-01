@@ -258,26 +258,12 @@ async function processRow(supabase: any, row: any) {
     // Generate email from response ID if missing
     const finalEmail = email || `response-${responseId}@historical-import.com`;
 
-    // Check if historical profile exists by response ID first, then by email
-    let existingUser = null;
-    if (responseId) {
-      const { data } = await supabase
-        .from('historical_profiles')
-        .select('id')
-        .eq('source_unique_id', responseId)
-        .maybeSingle();
-      existingUser = data;
-    }
-    
-    // If not found by response ID, try by email
-    if (!existingUser) {
-      const { data } = await supabase
-        .from('historical_profiles')
-        .select('id')
-        .eq('email', finalEmail)
-        .maybeSingle();
-      existingUser = data;
-    }
+    // Check if historical profile exists by email only
+    const { data: existingUser } = await supabase
+      .from('historical_profiles')
+      .select('id')
+      .eq('email', finalEmail)
+      .maybeSingle();
 
     let userId = existingUser?.id;
 
