@@ -160,8 +160,13 @@ Deno.serve(async (req) => {
           inclusivity: parseFloat(row['F18: Inclusivity (All)']) || 3,
         };
 
-        // Create dummy answers array (normally would extract from Q1-Q65 columns)
-        const answers = Array(65).fill(0).map(() => Math.floor(Math.random() * 5) + 1);
+        // Extract actual answers from Q1-Q65 columns
+        const answers: number[] = [];
+        for (let i = 1; i <= 65; i++) {
+          const questionKey = `Q${i}`;
+          const answerValue = parseFloat(row[questionKey]) || 3; // Default to 3 if missing
+          answers.push(answerValue);
+        }
 
         // Extract demographics
         const demographics = {
