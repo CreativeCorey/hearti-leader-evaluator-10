@@ -89,9 +89,13 @@ Deno.serve(async (req) => {
     const dataRows = sheetsData.values.slice(1);
 
     console.log(`Found ${dataRows.length} rows to process from Google Sheets`);
-    console.log(`Available columns: ${headers.join(', ')}`);
-
-    // Convert rows to objects
+    console.log(`Available columns (first 20):`, headers.slice(0, 20));
+    console.log(`All column headers:`, headers);
+    
+    // Log a sample row to see the data structure
+    if (dataRows.length > 0) {
+      console.log(`Sample row data:`, dataRows[0]);
+    }
     const importData: ImportRow[] = dataRows.map(row => {
       const obj: any = {};
       headers.forEach((header: string, index: number) => {
