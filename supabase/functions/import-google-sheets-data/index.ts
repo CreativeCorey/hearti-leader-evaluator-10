@@ -366,22 +366,9 @@ async function processRow(supabase: any, row: any) {
     
     console.log(`Final dimension scores for ${finalEmail}:`, dimensionScores);
 
-    // Extract actual answers from Q1-Q65 columns with different possible formats
+    // For historical data, we don't have reliable individual question answers
+    // So we'll use an empty array instead of defaulting to 3
     const answers: number[] = [];
-    for (let i = 1; i <= 65; i++) {
-      const questionKey = `Q${i}`;
-      const questionKeyScore = `Q${i}: I regularly acknowledge when I don't know the answer - Score`;
-      const questionKeyNumber = `Q${i}: I regularly acknowledge when I don't know the answer - Number`;
-      
-      let answerValue = parseFloat(row[questionKey]) || 
-                       parseFloat(row[questionKeyScore]) || 
-                       parseFloat(row[questionKeyNumber]) || 
-                       3;
-      
-      // Ensure answer is within valid range (1-5)
-      answerValue = Math.max(1, Math.min(5, answerValue));
-      answers.push(answerValue);
-    }
 
     // Extract demographics with all relevant fields
     const demographics = {
