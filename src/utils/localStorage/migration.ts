@@ -79,6 +79,9 @@ export const migrateLocalStorageToSupabase = async (): Promise<MigrationResult> 
           userId: authenticatedUserId
         };
 
+        // Debug the answers format
+        console.log('Assessment answers format:', typeof updatedAssessment.answers, updatedAssessment.answers);
+        
         // Save to Supabase
         await saveAssessment(updatedAssessment);
         result.migratedCount++;

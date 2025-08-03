@@ -32,9 +32,12 @@ function parseAssessment(assessment: any): HEARTIAssessment {
     }
   };
 
-  // Safely parse the answers array
-  if (assessment.answers && isValidAnswersArray(assessment.answers)) {
-    parsedAssessment.answers = assessment.answers as any;
+  // Safely parse the answers array - convert from number[] to HEARTIAnswer[]
+  if (assessment.answers && Array.isArray(assessment.answers)) {
+    parsedAssessment.answers = assessment.answers.map((score: number, index: number) => ({
+      questionId: `q${index + 1}`, // Generate question IDs
+      score: typeof score === 'number' ? score : 0
+    }));
   }
 
   // Safely parse the dimension scores
@@ -159,12 +162,23 @@ export async function saveAssessment(assessment: HEARTIAssessment): Promise<stri
     }
     
     // Convert from our frontend model to the database model
+    // Transform answers from HEARTIAnswer[] to number[]
+    const answersArray = Array.isArray(assessment.answers) 
+      ? assessment.answers.map(answer => 
+          typeof answer === 'object' && 'score' in answer 
+            ? answer.score 
+            : typeof answer === 'number' 
+              ? answer 
+              : 0
+        )
+      : [];
+    
     const dbAssessment = {
       id: assessment.id,
       user_id: assessment.userId,
       organization_id: assessment.organizationId,
       date: assessment.date, // Ensure date is properly stored
-      answers: assessment.answers as unknown as Json,
+      answers: answersArray as unknown as Json,
       dimension_scores: assessment.dimensionScores as unknown as Json,
       overall_score: assessment.overallScore,
       demographics: assessment.demographics as unknown as Json,
