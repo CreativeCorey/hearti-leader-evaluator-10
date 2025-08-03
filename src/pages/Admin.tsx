@@ -9,6 +9,7 @@ import { useLanguage } from "@/contexts/language/LanguageContext";
 import DataImporter from "@/components/admin/DataImporter";
 import UserManagement from "@/components/admin/UserManagement";
 import UserDataManager from "@/components/admin/UserDataManager";
+import AdminBroadcast from "@/components/admin/AdminBroadcast";
 import { Shield, Database, Users, Trash2 } from "lucide-react";
 
 const Admin = () => {
@@ -110,8 +111,9 @@ const Admin = () => {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="user-management">
+        <TabsContent value="user-management" className="space-y-6">
           <UserManagement />
+          <AdminBroadcast />
         </TabsContent>
 
         <TabsContent value="data-import">

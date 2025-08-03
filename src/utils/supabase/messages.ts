@@ -7,6 +7,10 @@ export interface Message {
   username: string;
   user_id: string;
   created_at: string;
+  recipient_id?: string;
+  message_type?: string;
+  sender_role?: string;
+  organization_id?: string;
 }
 
 /**
@@ -28,6 +32,38 @@ export const sendMessage = async (content: string, username: string, userId: str
     content: content.trim(),
     user_id: userId,
     username,
+    message_type: 'group'
+  });
+};
+
+/**
+ * Send an admin broadcast message to all users
+ */
+export const sendBroadcastMessage = async (content: string, username: string, userId: string) => {
+  return await supabase.from('messages').insert({
+    content: content.trim(),
+    user_id: userId,
+    username,
+    message_type: 'broadcast',
+    sender_role: 'admin'
+  });
+};
+
+/**
+ * Send a message to organization members
+ */
+export const sendOrganizationMessage = async (
+  content: string, 
+  username: string, 
+  userId: string, 
+  organizationId: string
+) => {
+  return await supabase.from('messages').insert({
+    content: content.trim(),
+    user_id: userId,
+    username,
+    message_type: 'organization',
+    organization_id: organizationId
   });
 };
 

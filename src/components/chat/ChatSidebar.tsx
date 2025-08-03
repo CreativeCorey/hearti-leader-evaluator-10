@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Users, MessageSquare, Layout, Home } from 'lucide-react';
+import { Users, MessageSquare, Layout, Home, Building, Megaphone } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -42,6 +42,32 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
         <Users size={24} />
       </Button>
       
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => setActiveTab('organization')}
+        className={cn(
+          "rounded-full",
+          activeTab === 'organization' && "bg-blue-100 text-blue-600"
+        )}
+        title="Organization Chat"
+      >
+        <Building size={24} />
+      </Button>
+      
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => setActiveTab('broadcast')}
+        className={cn(
+          "rounded-full",
+          activeTab === 'broadcast' && "bg-blue-100 text-blue-600"
+        )}
+        title="Admin Broadcasts"
+      >
+        <Megaphone size={24} />
+      </Button>
+
       <Button
         variant="ghost"
         size="icon"

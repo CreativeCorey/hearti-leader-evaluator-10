@@ -101,6 +101,8 @@ const ChatPage = () => {
   // Get chat title based on active tab
   const getChatTitle = () => {
     switch(activeTab) {
+      case 'organization': return 'Organization Chat';
+      case 'broadcast': return 'Admin Broadcasts';
       case 'spaces': return 'Spaces';
       case 'direct': return 'Direct Messages';
       case 'group':
@@ -145,7 +147,8 @@ const ChatPage = () => {
             <TabContent 
               messages={messages} 
               loading={loading} 
-              userId={user?.id} 
+              userId={user?.id}
+              activeTab={activeTab}
             />
           </Tabs>
           

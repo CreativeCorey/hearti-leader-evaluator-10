@@ -36,8 +36,13 @@ export function useChat() {
       try {
         setLoading(true);
         
-        // Get messages from Supabase
-        const { data, error } = await fetchMessages(50);
+        // Get messages from Supabase (group messages and broadcasts)
+        const { data, error } = await supabase
+          .from('messages')
+          .select('*')
+          .in('message_type', ['group', 'broadcast'])
+          .order('created_at', { ascending: true })
+          .limit(50);
           
         if (error) {
           console.error('Error loading messages:', error);

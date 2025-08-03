@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Users, MessageSquare, Layout } from 'lucide-react';
+import { Users, MessageSquare, Layout, Building, Megaphone } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface MobileTabsProps {
@@ -22,6 +22,28 @@ const MobileTabs: React.FC<MobileTabsProps> = ({ activeTab, setActiveTab }) => {
         <span>Group</span>
       </button>
       
+      <button
+        onClick={() => setActiveTab('organization')}
+        className={cn(
+          "flex items-center justify-center flex-1 py-3 border-b-2 border-transparent",
+          activeTab === 'organization' && "border-blue-500 text-blue-600"
+        )}
+      >
+        <Building size={20} className="mr-2" />
+        <span>Org</span>
+      </button>
+      
+      <button
+        onClick={() => setActiveTab('broadcast')}
+        className={cn(
+          "flex items-center justify-center flex-1 py-3 border-b-2 border-transparent",
+          activeTab === 'broadcast' && "border-blue-500 text-blue-600"
+        )}
+      >
+        <Megaphone size={20} className="mr-2" />
+        <span>Broadcasts</span>
+      </button>
+
       <button
         onClick={() => setActiveTab('direct')}
         className={cn(
