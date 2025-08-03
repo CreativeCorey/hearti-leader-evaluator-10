@@ -412,6 +412,16 @@ async function processRow(supabase: any, row: any) {
       return { profileCreated, assessmentCreated, error: null }; // Skip duplicate
     }
 
+    // Validate dimension scores before insertion
+    const validDimensionScores = Object.values(dimensionScores).every(score => 
+      typeof score === 'number' && !isNaN(score) && score >= 1 && score <= 5
+    );
+    
+    if (!validDimensionScores) {
+      console.error(`Invalid dimension scores for ${finalEmail}:`, dimensionScores);
+      return { profileCreated, assessmentCreated, error: `Invalid dimension scores for ${finalEmail}` };
+    }
+
     // Insert assessment
     const { error: assessmentError } = await supabase
       .from('assessments')
@@ -426,6 +436,7 @@ async function processRow(supabase: any, row: any) {
       });
 
     if (assessmentError) {
+      console.error(`Assessment creation failed for ${finalEmail}:`, assessmentError);
       return { profileCreated, assessmentCreated, error: `Failed to create assessment for ${finalEmail}: ${assessmentError.message}` };
     }
 
