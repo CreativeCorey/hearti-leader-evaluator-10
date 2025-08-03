@@ -422,6 +422,26 @@ export type Database = {
           user_id: string | null
         }[]
       }
+      get_paginated_assessments: {
+        Args: {
+          page_offset?: number
+          page_limit?: number
+          organization_filter?: string
+        }
+        Returns: {
+          id: string
+          user_id: string
+          organization_id: string
+          date: string
+          overall_score: number
+          answers: Json
+          dimension_scores: Json
+          demographics: Json
+          historical_profile_id: string
+          email: string
+          total_count: number
+        }[]
+      }
       is_authenticated_user: {
         Args: { user_uuid?: string }
         Returns: boolean
