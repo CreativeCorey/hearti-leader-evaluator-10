@@ -15,8 +15,10 @@ import {
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
-interface UserRole {
-  role?: 'user' | 'admin' | 'coach';
+import { UserRole } from '@/types';
+
+interface UserProfile {
+  role?: UserRole;
   organization_id?: string;
 }
 
@@ -26,7 +28,7 @@ const Header = () => {
   const { theme, setTheme } = useTheme();
   const location = useLocation();
   const isMobile = useIsMobile();
-  const [profile, setProfile] = useState<UserRole | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
 
   // Load user profile and role
   useEffect(() => {

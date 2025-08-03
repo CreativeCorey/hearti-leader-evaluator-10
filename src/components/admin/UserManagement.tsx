@@ -35,7 +35,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useRateLimit } from '@/hooks/useRateLimit';
 import UserAssessmentDetails from './UserAssessmentDetails';
 
-type UserRole = "user" | "admin" | "coach";
+type UserRole = "user" | "admin" | "coach" | "super_admin";
 
 interface UserProfile {
   id: string;

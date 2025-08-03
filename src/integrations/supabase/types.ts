@@ -415,6 +415,10 @@ export type Database = {
         Args: { user_uuid?: string }
         Returns: boolean
       }
+      promote_user_to_admin: {
+        Args: { target_user_id: string }
+        Returns: boolean
+      }
       validate_assessment_answers: {
         Args: { answers: Json }
         Returns: boolean

@@ -41,29 +41,15 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     previousDemographics,
     isSubmitting,
     currentAssessment
-  } = useAssessmentForm((assessment) => {
-    // Show loading state only at assessment completion
-    if (currentQuestionIndex === totalQuestions - 1 && !loadingStateComplete) {
-      setShowLoadingState(true);
-      // This will be triggered when loading animation completes
-    } else {
-      onComplete(assessment);
-    }
-  });
+  } = useAssessmentForm(onComplete);
 
-  // Handle loading state completion
+  // Handle loading state completion - simplified flow
   useEffect(() => {
-    if (loadingStateComplete && assessmentComplete && currentAssessment) {
-      // This ensures we only call onComplete after the loading animation finishes
-      const timer = setTimeout(() => {
-        if (onComplete && currentAssessment) {
-          // Pass the assessment directly
-          onComplete(currentAssessment);
-        }
-      }, 100);
-      return () => clearTimeout(timer);
+    if (loadingStateComplete && currentAssessment) {
+      // Call completion directly after loading state
+      onComplete(currentAssessment);
     }
-  }, [loadingStateComplete, assessmentComplete, onComplete, currentAssessment]);
+  }, [loadingStateComplete, currentAssessment, onComplete]);
 
   // Loading state while initializing form
   if (loading) {

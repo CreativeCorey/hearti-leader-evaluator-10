@@ -32,13 +32,15 @@ export interface HEARTIAssessment {
   email?: string;
 }
 
+export type UserRole = 'user' | 'admin' | 'super_admin' | 'coach';
+
 export interface UserProfile {
   id: string;
   email?: string;
   name?: string;
   organization?: string;
   organizationId?: string;
-  role?: string;
+  role?: UserRole;
   useSupabase?: boolean;
   createdAt?: string;
 }
