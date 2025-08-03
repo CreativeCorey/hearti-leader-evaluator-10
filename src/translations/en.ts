@@ -54,6 +54,46 @@ export const en = {
     and: "and",
     privacyPolicy: "Privacy Policy"
   },
+  demographics: {
+    managementLevel: "My management level is...",
+    companySize: "My company size is...",
+    jobRole: "My main job role is...",
+    salaryRange: "My salary range is...",
+    location: "My location is...",
+    ageRange: "My age range is...",
+    genderIdentity: "My gender identity is...",
+    raceEthnicity: "My race/ethnicity is... (select all that apply)",
+    veteranStatus: "Are you a military veteran?",
+    disabilityStatus: "Do you identify as someone with a disability?",
+    jobRoles: {
+      "C-Suite / Partner": "C-Suite / Partner",
+      "Sales": "Sales",
+      "Operations": "Operations", 
+      "Finance": "Finance",
+      "Marketing": "Marketing",
+      "Engineering": "Engineering",
+      "Procurement": "Procurement",
+      "HR": "HR",
+      "Legal": "Legal",
+      "Technology": "Technology",
+      "Research and development": "Research and development",
+      "Production": "Production",
+      "Customer Service": "Customer Service",
+      "Supply Chain": "Supply Chain",
+      "Management": "Management",
+      "Entrepreneur": "Entrepreneur",
+      "Communications": "Communications",
+      "Student": "Student",
+      "Investor": "Investor",
+      "Educator": "Educator",
+      "Athlete": "Athlete"
+    },
+    responses: {
+      "Yes": "Yes",
+      "No": "No",
+      "Prefer not to answer": "Prefer not to answer"
+    }
+  },
   assessment: {
     title: "HEARTI™ Leadership Companion",
     subtitle: "Measure your growth in Humility, Empathy, Accountability, Resiliency, Transparency, and Inclusivity",

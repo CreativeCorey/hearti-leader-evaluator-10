@@ -73,6 +73,18 @@ const UserManagement = () => {
       
       const offset = (page - 1) * pageSize;
       
+      // First, get total counts separately for better performance
+      const { count: regularCount } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
+        
+      const { count: historicalCount } = await supabase
+        .from('historical_profiles')
+        .select('*', { count: 'exact', head: true });
+      
+      // Calculate total before filtering
+      const unfilteredTotal = (regularCount || 0) + (historicalCount || 0);
+      
       // Build query filters for both regular and historical profiles
       let regularQuery = supabase
         .from('profiles')
@@ -114,7 +126,7 @@ const UserManagement = () => {
       }
 
       // Get filtered regular profiles
-      const { data: regularProfiles, error: regularError, count: regularCount } = await regularQuery
+      const { data: regularProfiles, error: regularError, count: filteredRegularCount } = await regularQuery
         .order('created_at', { ascending: false });
 
       if (regularError) {
@@ -122,7 +134,7 @@ const UserManagement = () => {
       }
 
       // Get filtered historical profiles
-      const { data: historicalProfilesData, error: historicalError, count: historicalCount } = await historicalQuery
+      const { data: historicalProfilesData, error: historicalError, count: filteredHistoricalCount } = await historicalQuery
         .order('created_at', { ascending: false });
 
       if (historicalError) {
@@ -146,8 +158,11 @@ const UserManagement = () => {
       const allFilteredUsers = [...regularUsers, ...historicalUsers]
         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-      // Update counts based on filtered results
-      const totalFilteredCount = allFilteredUsers.length;
+      // Update counts - use unfiltered total if no search/filter is applied
+      const totalFilteredCount = (searchTerm || selectedRole !== 'all') 
+        ? allFilteredUsers.length 
+        : unfilteredTotal;
+        
       setTotalCount(totalFilteredCount);
       setTotalPages(Math.ceil(totalFilteredCount / pageSize));
 
