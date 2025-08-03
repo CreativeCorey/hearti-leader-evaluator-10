@@ -61,8 +61,8 @@ const ImportProgressBar: React.FC<ImportProgressBarProps> = ({
       try {
         pollCount++;
         
-        // Get a longer time window to account for the fact that import may have started before polling
-        const timeWindow = new Date(startTime - 30000).toISOString(); // 30 seconds before start
+        // Get a wider time window to account for background processing delays
+        const timeWindow = new Date(startTime - 120000).toISOString(); // 2 minutes before start
         
         // Check database for recent imports
         const { data: recentProfiles } = await supabase
@@ -74,9 +74,9 @@ const ImportProgressBar: React.FC<ImportProgressBarProps> = ({
         const { data: recentAssessments } = await supabase
           .from('assessments')
           .select('date, historical_profile_id')
-          .gte('date', timeWindow)
+          .gte('created_at', timeWindow)
           .not('historical_profile_id', 'is', null)
-          .order('date', { ascending: false });
+          .order('created_at', { ascending: false });
 
         const importedProfiles = recentProfiles?.length || 0;
         const importedAssessments = recentAssessments?.length || 0;
