@@ -1,7 +1,6 @@
-
 import React, { useEffect, useState } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AssessmentTab, HEARTIAssessment, ResultsDisplayProps } from '@/types';
+import { AssessmentTab, HEARTIAssessment } from '@/types';
 import ResultsDisplay from '@/components/results/ResultsDisplay';
 import PaymentGateway from '@/components/PaymentGateway';
 import { useToast } from '@/hooks/use-toast';
@@ -40,134 +39,107 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
   const [completedAssessment, setCompletedAssessment] = useState<HEARTIAssessment | null>(null);
   const [showPaymentGateway, setShowPaymentGateway] = useState(false);
   
-  // Payment verification hook
-  const { hasPaid, checkingPayment } = useAssessmentPayment((assessment) => {
-    // When payment is complete, show results
+  const { checkingPayment, hasPaid } = useAssessmentPayment((updatedAssessment) => {
+    console.log("Payment completed:", updatedAssessment);
     setShowPaymentGateway(false);
-    setActiveTab('overview');
+    onComplete(updatedAssessment);
   });
-  
+
+  // Check for empty state when component mounts
+  useEffect(() => {
+    if (!latestAssessment && userAssessments.length === 0) {
+      setShowEmptyState(true);
+    } else {
+      setShowEmptyState(false);
+    }
+  }, [latestAssessment, userAssessments]);
+
   // Check for saved progress on component mount
   useEffect(() => {
-    const savedProgress = localStorage.getItem('assessment_progress');
-    if (savedProgress) {
-      // If there's saved progress, we consider assessment in progress
+    const savedProgress = localStorage.getItem('assessmentProgress');
+    if (savedProgress && !latestAssessment) {
       setIsAssessmentInProgress(true);
     }
-  }, []);
-  
-  // Check if assessments are available after a short delay
-  // This helps avoid the flash of "No assessments available" during initial load
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowEmptyState(!latestAssessment && userAssessments.length === 0 && !isAssessmentInProgress);
-    }, 500); // Reduced from 1000ms to 500ms for faster loading
-    
-    return () => clearTimeout(timer);
-  }, [latestAssessment, userAssessments, isAssessmentInProgress]);
-  
-  // Redirect to take assessment tab if no assessments available
-  useEffect(() => {
-    if (showEmptyState && activeTab !== 'take') {
-      setActiveTab('take');
-      toast({
-        title: "No assessments found",
-        description: "Please take an assessment to view your results.",
-      });
-    }
-  }, [showEmptyState, activeTab, setActiveTab, toast]);
+  }, [latestAssessment]);
 
-  // Handle the take assessment button click
+  // Redirect to overview tab if user has assessments but is on take tab
+  useEffect(() => {
+    if (latestAssessment && activeTab === 'take') {
+      setActiveTab('overview');
+    }
+  }, [latestAssessment, activeTab, setActiveTab]);
+
   const handleTakeAssessment = () => {
-    console.log("Take assessment button clicked");
     setShowAssessmentForm(true);
-    setIsAssessmentInProgress(true);
-    // Update the URL without full page reload
-    window.history.pushState(null, '', '/?tab=take');
+    setShowEmptyState(false);
     setActiveTab('take');
   };
-  
-  // Handle assessment completion
+
   const handleAssessmentComplete = (assessment: HEARTIAssessment) => {
     console.log("handleAssessmentComplete called with assessment:", assessment);
-    console.log("Payment status - hasPaid:", hasPaid, "checkingPayment:", checkingPayment);
-    
-    setIsAssessmentInProgress(false); // Assessment is no longer in progress
     setCompletedAssessment(assessment);
     setShowAssessmentForm(false);
+    setIsAssessmentInProgress(false);
     
-    // Check if user has paid - if not, show payment gateway
-    if (!hasPaid && !checkingPayment) {
-      console.log("User has not paid, showing payment gateway");
+    // Clear any saved progress
+    localStorage.removeItem('assessmentProgress');
+    
+    // If user hasn't paid, show payment gateway
+    if (!hasPaid) {
+      console.log("User hasn't paid, showing payment gateway");
       setShowPaymentGateway(true);
-      setActiveTab('overview'); // Set to overview but payment will show
-    } else if (hasPaid) {
-      console.log("User has already paid, proceeding to results");
-      // User has already paid, proceed to results
-      onComplete(assessment);
-      setActiveTab('overview');
     } else {
-      console.log("Payment status unclear, defaulting to payment gateway");
-      // Default to payment gateway if payment status is unclear
-      setShowPaymentGateway(true);
+      console.log("User has paid, calling onComplete");
+      onComplete(assessment);
       setActiveTab('overview');
     }
   };
-  
-  
-  // If showing the payment gateway after assessment completion
-  if (showPaymentGateway && completedAssessment) {
-    return (
-      <div className="max-w-md mx-auto my-8">
-        <PaymentGateway 
-          assessment={completedAssessment}
-          onPaymentComplete={(assessment) => {
-            setShowPaymentGateway(false);
-            onComplete(assessment);
-            setActiveTab('overview');
-          }}
-        />
-      </div>
-    );
+
+  // Show payment gateway if requested
+  if (showPaymentGateway) {
+    return <PaymentGateway 
+      assessment={completedAssessment || latestAssessment!} 
+      onPaymentComplete={(updatedAssessment) => {
+        console.log("Payment completed:", updatedAssessment);
+        setShowPaymentGateway(false);
+        onComplete(updatedAssessment);
+        setActiveTab('overview');
+      }} 
+    />;
   }
-  
-  // If showing the assessment form, render it
+
+  // Show assessment form when taking assessment
   if (showAssessmentForm || activeTab === 'take') {
     return (
-      <div className="max-w-3xl mx-auto my-4">
-        <AssessmentForm onComplete={handleAssessmentComplete} />
-      </div>
+      <AssessmentForm
+        onComplete={handleAssessmentComplete}
+      />
     );
   }
-  
-  // If no assessments are available yet, show a prompt to take an assessment
+
+  // Show empty state for first-time users
   if (showEmptyState) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <h2 className="text-2xl font-bold mb-4">Meet Your HEARTI™ Coach</h2>
-        <p className="mb-6 text-muted-foreground max-w-md">
-          Start your leadership journey by completing the assessment to see your results.
+      <div className="flex flex-col items-center justify-center min-h-[400px] p-8 text-center">
+        <h2 className="text-2xl font-bold mb-4">Take Your First HEARTI Assessment</h2>
+        <p className="text-muted-foreground mb-6 max-w-md">
+          Discover your leadership strengths and areas for growth with our comprehensive HEARTI assessment.
         </p>
-        <button 
-          className="px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+        <button
           onClick={handleTakeAssessment}
+          className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
         >
-          Take Assessment
+          Start Assessment
         </button>
       </div>
     );
   }
-  
-  if (!latestAssessment && userAssessments.length === 0) {
-    // Show a more lightweight loading state
+
+  // Show loading state if needed
+  if (viewTransitioning) {
     return (
-      <div className="flex justify-center p-4">
-        <div className="animate-pulse flex space-x-2 w-full max-w-md">
-          <div className="flex-1 space-y-2 py-1">
-            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-            <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-          </div>
-        </div>
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -179,22 +151,38 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as AssessmentTab)} className="w-full">
           <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview">{t('tabs.summary')}</TabsTrigger>
-            <TabsTrigger value="dimensions">{t('tabs.dimensions')}</TabsTrigger>
-            <TabsTrigger value="dataViz">{t('tabs.dataViz.desktop')}</TabsTrigger>
-            <TabsTrigger value="report">{t('tabs.report')}</TabsTrigger>
-            <TabsTrigger value="developSkills">{t('tabs.developSkills')}</TabsTrigger>
-            <TabsTrigger value="buildHabits">{t('tabs.buildHabits')}</TabsTrigger>
+            <TabsTrigger value="dimensions" disabled={!hasPaid}>{t('tabs.dimensions')}</TabsTrigger>
+            <TabsTrigger value="dataViz" disabled={!hasPaid}>{t('tabs.dataViz.desktop')}</TabsTrigger>
+            <TabsTrigger value="report" disabled={!hasPaid}>{t('tabs.report')}</TabsTrigger>
+            <TabsTrigger value="developSkills" disabled={!hasPaid}>{t('tabs.developSkills')}</TabsTrigger>
+            <TabsTrigger value="buildHabits" disabled={!hasPaid}>{t('tabs.buildHabits')}</TabsTrigger>
           </TabsList>
           
-          {/* Results content */}
+          {/* Results content - only show if paid or on overview tab */}
           <div className="mt-4">
-            <ResultsDisplay
-              assessment={latestAssessment}
-              allAssessments={userAssessments}
-              onRefreshAssessments={() => {}}
-              activeTab={activeTab}
-              onTabChange={setActiveTab}
-            />
+            {hasPaid || activeTab === 'overview' ? (
+              <ResultsDisplay
+                assessment={latestAssessment}
+                allAssessments={userAssessments}
+                onRefreshAssessments={() => {}}
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <h3 className="text-xl font-semibold mb-4">Premium Content</h3>
+                <p className="text-muted-foreground mb-6 max-w-md">
+                  Unlock all assessment features including detailed analysis, coaching recommendations, and habit tracking.
+                </p>
+                <PaymentGateway 
+                  assessment={latestAssessment}
+                  onPaymentComplete={(assessment) => {
+                    onComplete(assessment);
+                    setActiveTab('overview');
+                  }}
+                />
+              </div>
+            )}
           </div>
         </Tabs>
       )}

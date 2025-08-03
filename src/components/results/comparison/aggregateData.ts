@@ -152,10 +152,10 @@ export const aggregateData = {
   }
 };
 
-export const userColor = "#6366f1";
+export const userColor = "#D946EF"; // Bright magenta for user scores
 
 export const comparisonColors = {
-  average: "#8b5cf6",
+  average: "#F97316", // Bright orange for average scores  
   men: "#3b82f6",
   women: "#f97316"
 };
