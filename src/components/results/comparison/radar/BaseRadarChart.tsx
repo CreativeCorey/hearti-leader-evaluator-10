@@ -66,9 +66,14 @@ const BaseRadarChart: React.FC<BaseRadarChartProps> = ({
   const angleProps = polarAngleProps || defaultPolarAngleProps;
   
   return (
-    <ResponsiveContainer key={`container-${JSON.stringify(data?.slice(0, 2))}`} width="100%" height="100%" className={className}>
+    <ResponsiveContainer 
+      key={`container-${JSON.stringify(data?.slice(0, 2))}-${Date.now()}`} 
+      width="100%" 
+      height="100%" 
+      className={className}
+    >
       <RadarChart 
-        key={`radar-${JSON.stringify(data?.slice(0, 3))}`}
+        key={`radar-${JSON.stringify(data?.slice(0, 3))}-${Date.now()}`}
         cx="50%" 
         cy="50%" 
         outerRadius={config.outerRadius} 

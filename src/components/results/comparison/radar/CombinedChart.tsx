@@ -54,6 +54,7 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
         <DimensionIcons iconSize={iconSize} />
         
         <BaseRadarChart 
+          key={`combined-chart-${compareMode}-${getComparisonLabel()}-${Date.now()}`}
           data={combinedChartData} 
           config={{
             ...config,
