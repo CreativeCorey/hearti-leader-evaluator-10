@@ -13,7 +13,8 @@ const roles = [
   'C-Suite / Partner', 'Sales', 'Operations', 'Finance', 'Marketing', 
   'Engineering', 'Procurement', 'HR', 'Legal', 'Technology', 
   'Research and development', 'Production', 'Customer Service', 
-  'Supply Chain', 'Management', 'Entrepreneur', 'Communications', 'Student', 'Investor'
+  'Supply Chain', 'Management', 'Entrepreneur', 'Communications', 
+  'Student', 'Investor', 'Educator', 'Athlete'
 ];
 
 const JobRoleSelect: React.FC<JobRoleSelectProps> = ({ value, onChange }) => {

@@ -78,6 +78,8 @@ export interface Demographics {
   genderIdentity?: string;
   raceEthnicity?: string[];
   salaryRange?: string;
+  veteranStatus?: string;
+  disabilityStatus?: string;
 }
 
 // Type for chart data - making it an array type compatible with recharts

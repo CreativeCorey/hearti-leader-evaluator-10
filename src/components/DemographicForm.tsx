@@ -15,6 +15,8 @@ import AgeRangeSelect from './demographics/AgeRangeSelect';
 import GenderIdentitySelect from './demographics/GenderIdentitySelect';
 import RaceEthnicitySelect from './demographics/RaceEthnicitySelect';
 import SalaryRangeSelect from './demographics/SalaryRangeSelect';
+import VeteranStatusSelect from './demographics/VeteranStatusSelect';
+import DisabilityStatusSelect from './demographics/DisabilityStatusSelect';
 
 interface DemographicFormProps {
   onComplete: (demographics: Demographics) => void;
@@ -164,6 +166,16 @@ const DemographicForm: React.FC<DemographicFormProps> = ({
             <RaceEthnicitySelect 
               value={raceEthnicity} 
               onChange={handleRaceEthnicityChange}
+            />
+
+            <VeteranStatusSelect
+              value={demographics.veteranStatus}
+              onChange={(value) => setDemographics(prev => ({ ...prev, veteranStatus: value }))}
+            />
+
+            <DisabilityStatusSelect
+              value={demographics.disabilityStatus}
+              onChange={(value) => setDemographics(prev => ({ ...prev, disabilityStatus: value }))}
             />
           </>
         )}
