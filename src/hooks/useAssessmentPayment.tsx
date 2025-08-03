@@ -9,7 +9,7 @@ import { useAuth } from '@/hooks/use-auth';
 export const useAssessmentPayment = (onComplete: (assessment: HEARTIAssessment) => void) => {
   const { user } = useAuth();
   const [lastRefreshTime, setLastRefreshTime] = useState(Date.now());
-  const { checkingPayment, hasPaid, paymentError, checkPaymentStatus } = usePaymentStatusCheck();
+  const { checkingPayment, hasPaid, paymentError, checkPaymentStatus, userRole, viewMode, setViewMode } = usePaymentStatusCheck();
   const { processingPayment, redirectError, redirectToStripePayment } = useStripeRedirect();
   const { paymentVerificationError, verifyPayment } = usePaymentVerification(onComplete);
   
@@ -53,6 +53,9 @@ export const useAssessmentPayment = (onComplete: (assessment: HEARTIAssessment) 
     refreshPaymentStatus: () => {
       console.log("Manual payment status refresh requested");
       setLastRefreshTime(Date.now());
-    }
+    },
+    userRole,
+    viewMode,
+    setViewMode
   };
 };

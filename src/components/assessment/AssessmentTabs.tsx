@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import AssessmentForm from '@/components/AssessmentForm';
 import { useAssessmentPayment } from '@/hooks/useAssessmentPayment';
 import { useLanguage } from '@/contexts/language/LanguageContext';
+import ViewModeToggle from '@/components/admin/ViewModeToggle';
 
 interface AssessmentTabsProps {
   activeTab: AssessmentTab;
@@ -39,7 +40,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
   const [completedAssessment, setCompletedAssessment] = useState<HEARTIAssessment | null>(null);
   const [showPaymentGateway, setShowPaymentGateway] = useState(false);
   
-  const { checkingPayment, hasPaid } = useAssessmentPayment((updatedAssessment) => {
+  const { checkingPayment, hasPaid, userRole, viewMode, setViewMode } = useAssessmentPayment((updatedAssessment) => {
     console.log("Payment completed:", updatedAssessment);
     setShowPaymentGateway(false);
     onComplete(updatedAssessment);
@@ -146,6 +147,9 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
   
   return (
     <div className="w-full">
+      {/* Super Admin View Mode Toggle */}
+      <ViewModeToggle viewMode={viewMode} setViewMode={setViewMode} userRole={userRole} />
+      
       {/* Only show tabs if we have assessments */}
       {latestAssessment && (
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as AssessmentTab)} className="w-full">
