@@ -28,10 +28,17 @@ const SeparateCharts: React.FC<SeparateChartsProps> = ({
   // Convert comparison data to array if needed
   const comparisonData = compareMode !== 'none' ? getComparisonData() : null;
   
-  // Debug logging to understand data flow
-  console.log('SeparateCharts - compareMode:', compareMode);
-  console.log('SeparateCharts - comparisonData:', comparisonData);
-  console.log('SeparateCharts - chartData:', chartData);
+  // Debug logging to understand data flow - remove after testing
+  console.log('SeparateCharts Debug:', {
+    compareMode,
+    hasComparisonData: !!comparisonData,
+    comparisonDataLength: comparisonData?.length,
+    chartDataLength: chartData?.length,
+    comparisonLabel: getComparisonLabel(),
+    comparisonColor: getComparisonColor(),
+    firstComparisonValue: comparisonData?.[0],
+    firstChartValue: chartData?.[0]
+  });
   
   // If no comparison mode is selected, only show the user chart
   if (compareMode === 'none') {

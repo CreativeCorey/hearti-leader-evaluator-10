@@ -610,7 +610,7 @@ export async function fetchAggregateData(): Promise<AggregateData> {
 // Cache the aggregate data for performance
 let cachedAggregateData: AggregateData | null = null;
 let lastFetchTime = 0;
-const CACHE_DURATION = 2 * 60 * 1000; // 2 minutes - shorter cache for more dynamic updates
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes - longer cache for stability
 
 export async function getAggregateData(): Promise<AggregateData> {
   const now = Date.now();

@@ -167,19 +167,24 @@ const UserManagement = () => {
       setTotalCount(totalFilteredCount);
       setTotalPages(Math.ceil(totalFilteredCount / pageSize));
 
-      // Apply pagination to filtered results - FIXED: Use totalFilteredCount instead of allFilteredUsers.length
+      // Apply pagination to filtered results - FIXED: Ensure we have data for the requested page
       const startIndex = (page - 1) * pageSize;
       const endIndex = startIndex + pageSize;
       
-      // For unfiltered results, we need to get more data if we're beyond what we've loaded
-      let paginatedUsers;
-      if (searchTerm || selectedRole !== 'all') {
-        // For filtered results, use the filtered array
-        paginatedUsers = allFilteredUsers.slice(startIndex, endIndex);
-      } else {
-        // For unfiltered results, we have all data so slice appropriately
-        paginatedUsers = allFilteredUsers.slice(startIndex, endIndex);
-      }
+      // For debugging pagination issues
+      console.log('Pagination Debug:', {
+        page,
+        startIndex,
+        endIndex,
+        totalUsers: allFilteredUsers.length,
+        totalCount: totalFilteredCount,
+        pageSize,
+        searchTerm,
+        selectedRole
+      });
+      
+      const paginatedUsers = allFilteredUsers.slice(startIndex, endIndex);
+      console.log('Paginated users:', paginatedUsers.length);
 
       setUsers(paginatedUsers);
       setCurrentPage(page);

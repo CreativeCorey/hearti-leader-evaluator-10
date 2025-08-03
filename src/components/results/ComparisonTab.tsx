@@ -92,7 +92,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
       setIsLoadingAggregate(true);
       // Always fetch fresh data for now to ensure accuracy
       getAggregateData().then((data) => {
-        console.log('Loaded aggregate data:', data);
+        console.log('Loaded aggregate data for compareMode:', compareMode, data);
         setAggregateData(data);
         setIsLoadingAggregate(false);
       }).catch((error) => {
@@ -100,7 +100,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
         setIsLoadingAggregate(false);
       });
     }
-  }, [compareMode]);
+  }, [compareMode, genderCompareMode, jobRoleCompareMode, companySizeCompareMode, managementLevelCompareMode, raceEthnicityCompareMode, locationCompareMode, salaryCompareMode]);
 
   // Reset the selected assessment when the initial assessment changes
   useEffect(() => {
