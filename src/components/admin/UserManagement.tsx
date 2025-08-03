@@ -59,7 +59,7 @@ const UserManagement = () => {
   const { toast } = useToast();
   const { checkAndEnforceRateLimit } = useRateLimit();
 
-  // Load all users (both regular and historical)
+  // Load all users (both regular and historical) with pagination
   const loadUsers = async () => {
     try {
       setLoading(true);
@@ -75,13 +75,14 @@ const UserManagement = () => {
           organization_id,
           created_at,
           organizations(name)
-        `);
+        `)
+        .order('created_at', { ascending: false });
 
       if (regularError) {
         throw regularError;
       }
 
-      // Get historical profiles
+      // Get historical profiles with larger limit
       const { data: historicalProfiles, error: historicalError } = await supabase
         .from('historical_profiles')
         .select(`
@@ -93,11 +94,22 @@ const UserManagement = () => {
           created_at,
           source_unique_id,
           organizations(name)
-        `);
+        `)
+        .order('created_at', { ascending: false })
+        .limit(5000); // Increase limit to see more records
 
       if (historicalError) {
         console.warn('Could not load historical profiles:', historicalError);
       }
+
+      // Get total counts for accurate statistics
+      const { count: regularCount } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
+
+      const { count: historicalCount } = await supabase
+        .from('historical_profiles')
+        .select('*', { count: 'exact', head: true });
 
       // Combine and mark historical profiles
       const regularUsers = (regularProfiles || []).map(user => ({
@@ -115,7 +127,19 @@ const UserManagement = () => {
       const allUsers = [...regularUsers, ...historicalUsers]
         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
+      // Store actual counts for statistics
+      const actualTotalCount = (regularCount || 0) + (historicalCount || 0);
+      
       setUsers(allUsers);
+      
+      // Show a toast if we're displaying a subset
+      if (allUsers.length < actualTotalCount) {
+        toast({
+          title: "Info",
+          description: `Showing ${allUsers.length} of ${actualTotalCount} total users. Displaying most recent records.`,
+        });
+      }
+      
     } catch (error) {
       console.error('Error loading users:', error);
       toast({
