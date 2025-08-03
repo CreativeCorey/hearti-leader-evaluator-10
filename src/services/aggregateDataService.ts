@@ -42,6 +42,20 @@ export interface RaceEthnicityBreakdown {
   other: AggregateScores;
 }
 
+export interface LocationBreakdown {
+  northAmerica: AggregateScores;
+  europe: AggregateScores;
+  asia: AggregateScores;
+  other: AggregateScores;
+}
+
+export interface SalaryBreakdown {
+  under50k: AggregateScores;
+  '50k-100k': AggregateScores;
+  '100k-150k': AggregateScores;
+  over150k: AggregateScores;
+}
+
 export interface AggregateData {
   averageScores: AggregateScores;
   demographics: {
@@ -50,6 +64,8 @@ export interface AggregateData {
     companySize: CompanySizeBreakdown;
     managementLevel: ManagementLevelBreakdown;
     raceEthnicity: RaceEthnicityBreakdown;
+    location: LocationBreakdown;
+    salary: SalaryBreakdown;
   };
 }
 
@@ -208,6 +224,74 @@ const defaultAggregateData: AggregateData = {
         resiliency: 3.7,
         transparency: 3.9,
         inclusivity: 3.6
+      }
+    },
+    location: {
+      northAmerica: {
+        humility: 3.7,
+        empathy: 3.5,
+        accountability: 4.1,
+        resiliency: 3.8,
+        transparency: 3.8,
+        inclusivity: 3.4
+      },
+      europe: {
+        humility: 3.9,
+        empathy: 3.7,
+        accountability: 4.0,
+        resiliency: 3.6,
+        transparency: 4.0,
+        inclusivity: 3.6
+      },
+      asia: {
+        humility: 3.6,
+        empathy: 3.4,
+        accountability: 4.2,
+        resiliency: 3.8,
+        transparency: 3.7,
+        inclusivity: 3.3
+      },
+      other: {
+        humility: 3.8,
+        empathy: 3.6,
+        accountability: 3.9,
+        resiliency: 3.7,
+        transparency: 3.9,
+        inclusivity: 3.5
+      }
+    },
+    salary: {
+      under50k: {
+        humility: 3.9,
+        empathy: 3.8,
+        accountability: 3.9,
+        resiliency: 3.7,
+        transparency: 4.0,
+        inclusivity: 3.7
+      },
+      '50k-100k': {
+        humility: 3.8,
+        empathy: 3.6,
+        accountability: 4.1,
+        resiliency: 3.7,
+        transparency: 3.9,
+        inclusivity: 3.5
+      },
+      '100k-150k': {
+        humility: 3.7,
+        empathy: 3.5,
+        accountability: 4.2,
+        resiliency: 3.8,
+        transparency: 3.8,
+        inclusivity: 3.4
+      },
+      over150k: {
+        humility: 3.6,
+        empathy: 3.3,
+        accountability: 4.3,
+        resiliency: 3.9,
+        transparency: 3.7,
+        inclusivity: 3.2
       }
     }
   }
@@ -402,6 +486,79 @@ function calculateRaceEthnicityScores(assessments: any[]): RaceEthnicityBreakdow
   };
 }
 
+function calculateLocationScores(assessments: any[]): LocationBreakdown {
+  const northAmericaAssessments = assessments.filter(a => 
+    a.demographics?.location?.toLowerCase().includes('united states') ||
+    a.demographics?.location?.toLowerCase().includes('canada') ||
+    a.demographics?.location?.toLowerCase().includes('usa') ||
+    a.demographics?.location?.toLowerCase().includes('us')
+  );
+  
+  const europeAssessments = assessments.filter(a => 
+    a.demographics?.location?.toLowerCase().includes('united kingdom') ||
+    a.demographics?.location?.toLowerCase().includes('germany') ||
+    a.demographics?.location?.toLowerCase().includes('france') ||
+    a.demographics?.location?.toLowerCase().includes('spain') ||
+    a.demographics?.location?.toLowerCase().includes('italy') ||
+    a.demographics?.location?.toLowerCase().includes('netherlands') ||
+    a.demographics?.location?.toLowerCase().includes('uk')
+  );
+  
+  const asiaAssessments = assessments.filter(a => 
+    a.demographics?.location?.toLowerCase().includes('india') ||
+    a.demographics?.location?.toLowerCase().includes('china') ||
+    a.demographics?.location?.toLowerCase().includes('japan') ||
+    a.demographics?.location?.toLowerCase().includes('singapore') ||
+    a.demographics?.location?.toLowerCase().includes('australia')
+  );
+  
+  const otherAssessments = assessments.filter(a => 
+    !northAmericaAssessments.includes(a) && 
+    !europeAssessments.includes(a) && 
+    !asiaAssessments.includes(a)
+  );
+
+  return {
+    northAmerica: calculateAverageScores(northAmericaAssessments),
+    europe: calculateAverageScores(europeAssessments),
+    asia: calculateAverageScores(asiaAssessments),
+    other: calculateAverageScores(otherAssessments)
+  };
+}
+
+function calculateSalaryScores(assessments: any[]): SalaryBreakdown {
+  const under50kAssessments = assessments.filter(a => 
+    a.demographics?.salaryRange?.includes('Under') ||
+    a.demographics?.salaryRange?.includes('$25,000-$49,999') ||
+    a.demographics?.salaryRange?.includes('Less than $50,000')
+  );
+  
+  const _50kTo100kAssessments = assessments.filter(a => 
+    a.demographics?.salaryRange?.includes('$50,000-$74,999') ||
+    a.demographics?.salaryRange?.includes('$75,000-$99,999') ||
+    a.demographics?.salaryRange?.includes('$50,000-$100,000')
+  );
+  
+  const _100kTo150kAssessments = assessments.filter(a => 
+    a.demographics?.salaryRange?.includes('$100,000-$124,999') ||
+    a.demographics?.salaryRange?.includes('$125,000-$149,999') ||
+    a.demographics?.salaryRange?.includes('$100,000-$150,000')
+  );
+  
+  const over150kAssessments = assessments.filter(a => 
+    a.demographics?.salaryRange?.includes('$150,000') ||
+    a.demographics?.salaryRange?.includes('$200,000') ||
+    a.demographics?.salaryRange?.includes('Over $150,000')
+  );
+
+  return {
+    under50k: calculateAverageScores(under50kAssessments),
+    '50k-100k': calculateAverageScores(_50kTo100kAssessments),
+    '100k-150k': calculateAverageScores(_100kTo150kAssessments),
+    over150k: calculateAverageScores(over150kAssessments)
+  };
+}
+
 export async function fetchAggregateData(): Promise<AggregateData> {
   try {
     // Fetch all assessments with dimension scores and demographics
@@ -429,6 +586,8 @@ export async function fetchAggregateData(): Promise<AggregateData> {
     const companySizeDemographics = calculateCompanySizeScores(assessments);
     const managementLevelDemographics = calculateManagementLevelScores(assessments);
     const raceEthnicityDemographics = calculateRaceEthnicityScores(assessments);
+    const locationDemographics = calculateLocationScores(assessments);
+    const salaryDemographics = calculateSalaryScores(assessments);
 
     return {
       averageScores,
@@ -437,7 +596,9 @@ export async function fetchAggregateData(): Promise<AggregateData> {
         jobRole: jobRoleDemographics,
         companySize: companySizeDemographics,
         managementLevel: managementLevelDemographics,
-        raceEthnicity: raceEthnicityDemographics
+        raceEthnicity: raceEthnicityDemographics,
+        location: locationDemographics,
+        salary: salaryDemographics
       }
     };
   } catch (error) {

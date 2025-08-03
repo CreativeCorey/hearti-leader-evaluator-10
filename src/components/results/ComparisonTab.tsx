@@ -23,12 +23,14 @@ interface ComparisonTabProps {
   onSelectAssessment?: (assessment: HEARTIAssessment) => void;
 }
 
-type CompareMode = 'none' | 'average' | 'gender' | 'jobRole' | 'companySize' | 'managementLevel' | 'raceEthnicity';
+type CompareMode = 'none' | 'average' | 'gender' | 'jobRole' | 'companySize' | 'managementLevel' | 'raceEthnicity' | 'location' | 'salary';
 type GenderCompareMode = 'men' | 'women';
 type JobRoleCompareMode = 'engineering' | 'management' | 'executive' | 'other';
 type CompanySizeCompareMode = 'small' | 'medium' | 'large';
 type ManagementLevelCompareMode = 'individual' | 'manager' | 'executive';
 type RaceEthnicityCompareMode = 'white' | 'black' | 'hispanic' | 'asian' | 'other';
+type LocationCompareMode = 'northAmerica' | 'europe' | 'asia' | 'other';
+type SalaryCompareMode = 'under50k' | '50k-100k' | '100k-150k' | 'over150k';
 
 // Helper function to convert dimensions to comparison format
 const convertToComparisonFormat = (
@@ -55,6 +57,8 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
   const [companySizeCompareMode, setCompanySizeCompareMode] = useState<CompanySizeCompareMode>('medium');
   const [managementLevelCompareMode, setManagementLevelCompareMode] = useState<ManagementLevelCompareMode>('manager');
   const [raceEthnicityCompareMode, setRaceEthnicityCompareMode] = useState<RaceEthnicityCompareMode>('white');
+  const [locationCompareMode, setLocationCompareMode] = useState<LocationCompareMode>('northAmerica');
+  const [salaryCompareMode, setSalaryCompareMode] = useState<SalaryCompareMode>('50k-100k');
   const [assessment, setAssessment] = useState<HEARTIAssessment>(initialAssessment);
   const [aggregateData, setAggregateData] = useState<AggregateData | null>(null);
   const [isLoadingAggregate, setIsLoadingAggregate] = useState(false);
@@ -131,6 +135,10 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
         return formatDataForRadarChart(aggregateData.demographics.managementLevel[managementLevelCompareMode]);
       case 'raceEthnicity':
         return formatDataForRadarChart(aggregateData.demographics.raceEthnicity[raceEthnicityCompareMode]);
+      case 'location':
+        return formatDataForRadarChart(aggregateData.demographics.location[locationCompareMode]);
+      case 'salary':
+        return formatDataForRadarChart(aggregateData.demographics.salary[salaryCompareMode]);
       default:
         return null;
     }
@@ -153,6 +161,10 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
         return aggregateData.demographics.managementLevel[managementLevelCompareMode];
       case 'raceEthnicity':
         return aggregateData.demographics.raceEthnicity[raceEthnicityCompareMode];
+      case 'location':
+        return aggregateData.demographics.location[locationCompareMode];
+      case 'salary':
+        return aggregateData.demographics.salary[salaryCompareMode];
       default:
         return null;
     }
@@ -178,6 +190,13 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
         return `${managementLevelCompareMode.charAt(0).toUpperCase() + managementLevelCompareMode.slice(1)} Level Average`;
       case 'raceEthnicity':
         return `${raceEthnicityCompareMode.charAt(0).toUpperCase() + raceEthnicityCompareMode.slice(1)} Average`;
+      case 'location':
+        return `${locationCompareMode === 'northAmerica' ? 'North America' : locationCompareMode.charAt(0).toUpperCase() + locationCompareMode.slice(1)} Average`;
+      case 'salary':
+        return `${salaryCompareMode === 'under50k' ? 'Under $50k' : 
+                  salaryCompareMode === '50k-100k' ? '$50k-$100k' :
+                  salaryCompareMode === '100k-150k' ? '$100k-$150k' :
+                  'Over $150k'} Average`;
       default:
         return '';
     }
@@ -192,6 +211,8 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
       case 'companySize': return '#f59e0b'; // Orange for company size
       case 'managementLevel': return '#ef4444'; // Red for management level
       case 'raceEthnicity': return '#8b5cf6'; // Purple for race/ethnicity
+      case 'location': return '#06b6d4'; // Cyan for location
+      case 'salary': return '#84cc16'; // Lime for salary
       default: return "#000000";
     }
   };
@@ -259,6 +280,14 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
                         <div className="flex items-center space-x-1">
                           <RadioGroupItem value="raceEthnicity" id="raceEthnicity" />
                           <Label htmlFor="raceEthnicity" className="text-xs sm:text-sm">Race/Ethnicity</Label>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <RadioGroupItem value="location" id="location" />
+                          <Label htmlFor="location" className="text-xs sm:text-sm">Location</Label>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <RadioGroupItem value="salary" id="salary" />
+                          <Label htmlFor="salary" className="text-xs sm:text-sm">Salary</Label>
                         </div>
                       </>
                     )}
@@ -331,6 +360,34 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
                           <SelectItem value="hispanic">Hispanic</SelectItem>
                           <SelectItem value="asian">Asian</SelectItem>
                           <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                    
+                    {compareMode === 'location' && (
+                      <Select value={locationCompareMode} onValueChange={(value) => setLocationCompareMode(value as LocationCompareMode)}>
+                        <SelectTrigger className="w-40">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="northAmerica">North America</SelectItem>
+                          <SelectItem value="europe">Europe</SelectItem>
+                          <SelectItem value="asia">Asia</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                    
+                    {compareMode === 'salary' && (
+                      <Select value={salaryCompareMode} onValueChange={(value) => setSalaryCompareMode(value as SalaryCompareMode)}>
+                        <SelectTrigger className="w-36">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="under50k">Under $50k</SelectItem>
+                          <SelectItem value="50k-100k">$50k-$100k</SelectItem>
+                          <SelectItem value="100k-150k">$100k-$150k</SelectItem>
+                          <SelectItem value="over150k">Over $150k</SelectItem>
                         </SelectContent>
                       </Select>
                     )}

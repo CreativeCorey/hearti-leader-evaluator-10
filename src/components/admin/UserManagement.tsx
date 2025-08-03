@@ -367,26 +367,26 @@ const UserManagement = () => {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 py-4">
           <div className="text-center">
-            <div className="text-2xl font-bold">{totalCount}</div>
-            <div className="text-sm text-muted-foreground">Total Users</div>
+            <div className="text-2xl font-bold text-green-600">{totalCount}</div>
+            <div className="text-sm text-muted-foreground">Total Users Found</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-red-600">
               {users.filter(u => u.role === 'admin').length}
             </div>
-            <div className="text-sm text-muted-foreground">Admins (Page)</div>
+            <div className="text-sm text-muted-foreground">Admins (This Page)</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-blue-600">
               {users.filter(u => u.role === 'coach').length}
             </div>
-            <div className="text-sm text-muted-foreground">Coaches (Page)</div>
+            <div className="text-sm text-muted-foreground">Coaches (This Page)</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-gray-600">
               {users.filter(u => u.role === 'user').length}
             </div>
-            <div className="text-sm text-muted-foreground">Regular Users (Page)</div>
+            <div className="text-sm text-muted-foreground">Regular Users (This Page)</div>
           </div>
         </div>
 
