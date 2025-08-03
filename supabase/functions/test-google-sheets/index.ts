@@ -7,7 +7,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-console.log("Starting test-google-sheets function with workload identity federation!")
+console.log("Starting test-google-sheets function with Google API key!")
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -32,58 +32,20 @@ serve(async (req) => {
     }
     console.log("Using Sheet ID:", sheetId)
     
-    // Get the workload identity configuration
-    const workloadIdentityConfig = Deno.env.get("GOOGLE_WORKLOAD_IDENTITY_CONFIG")
-    if (!workloadIdentityConfig) {
-      console.error("Missing GOOGLE_WORKLOAD_IDENTITY_CONFIG")
+    // Get Google API key (simple approach)
+    const googleApiKey = Deno.env.get("GOOGLE_API_KEY")
+    if (!googleApiKey) {
+      console.error("Missing GOOGLE_API_KEY")
       return new Response(
         JSON.stringify({ 
-          error: "Missing workload identity configuration",
-          message: "Please add the GOOGLE_WORKLOAD_IDENTITY_CONFIG secret"
+          error: "Missing Google API key",
+          message: "Please add the GOOGLE_API_KEY secret"
         }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       )
     }
     
-    // Get service account email
-    const serviceAccountEmail = Deno.env.get("GOOGLE_SERVICE_ACCOUNT_EMAIL")
-    if (!serviceAccountEmail) {
-      console.error("Missing GOOGLE_SERVICE_ACCOUNT_EMAIL")
-      return new Response(
-        JSON.stringify({ 
-          error: "Missing service account email",
-          message: "Please add the GOOGLE_SERVICE_ACCOUNT_EMAIL secret"
-        }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      )
-    }
-    
-    console.log("Using service account email:", serviceAccountEmail)
-    
-    // Parse the workload identity configuration
-    let configJson;
-    try {
-      configJson = JSON.parse(workloadIdentityConfig);
-      console.log("Workload identity config parsed successfully");
-      
-      // Validate required fields
-      if (!configJson.audience) {
-        throw new Error("Missing 'audience' field in workload identity config");
-      }
-      if (!configJson.subject_token_type) {
-        throw new Error("Missing 'subject_token_type' field in workload identity config");
-      }
-    } catch (parseError) {
-      console.error("Failed to parse workload identity config:", parseError.message);
-      console.error("Config starts with:", workloadIdentityConfig.substring(0, 100));
-      return new Response(
-        JSON.stringify({ 
-          error: "Invalid workload identity configuration format",
-          message: `The GOOGLE_WORKLOAD_IDENTITY_CONFIG does not contain valid JSON: ${parseError.message}. Expected JSON credential file from Google Cloud Console.`
-        }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      )
-    }
+    console.log("Using Google API key authentication")
     
     // Create very simple test data
     const testValues = [
@@ -95,94 +57,14 @@ serve(async (req) => {
       "Test", "Test", "Test", "Test", "Test", "Test", "Test"
     ]
     
-    // Get access token using workload identity federation
-    console.log("Getting identity token from our provider...");
-    
-    // First, get our identity token from our own identity provider
-    const identityResponse = await fetch(`https://odwkgxdkjyccnkydxvjw.functions.supabase.co/identity-token`, {
-      headers: {
-        "Metadata-Flavor": "Google"
-      }
-    });
-    
-    if (!identityResponse.ok) {
-      const errorText = await identityResponse.text();
-      console.error("Identity token request failed:", identityResponse.status, errorText);
-      return new Response(
-        JSON.stringify({ 
-          error: "Failed to get identity token",
-          status: identityResponse.status,
-          message: errorText
-        }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-    
-    const identityToken = await identityResponse.text();
-    console.log("Got identity token");
-    
-    // Now exchange the identity token for a Google access token
-    console.log("Exchanging identity token for Google access token...");
-    
-    // Prepare the token exchange using configuration from credential.json
-    const tokenUrl = configJson.credential_source.url || "https://sts.googleapis.com/v1/token";
-    const tokenRequest = {
-      audience: configJson.audience,
-      grantType: "urn:ietf:params:oauth:grant-type:token-exchange",
-      requestedTokenType: "urn:ietf:params:oauth:token-type:access_token",
-      scope: "https://www.googleapis.com/auth/spreadsheets",
-      subjectTokenType: configJson.subject_token_type || "urn:ietf:params:oauth:token-type:jwt",
-      subjectToken: identityToken
-    };
-    
-    console.log("Token request:", JSON.stringify(tokenRequest, null, 2));
-    
-    const tokenResponse = await fetch(tokenUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(tokenRequest)
-    });
-    
-    if (!tokenResponse.ok) {
-      const errorText = await tokenResponse.text();
-      console.error("Token request failed:", tokenResponse.status, errorText);
-      return new Response(
-        JSON.stringify({ 
-          error: "Failed to get Google API access token",
-          status: tokenResponse.status,
-          message: errorText
-        }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-    
-    const tokenData = await tokenResponse.json();
-    const accessToken = tokenData.access_token;
-    
-    if (!accessToken) {
-      console.error("No access token in response:", JSON.stringify(tokenData));
-      return new Response(
-        JSON.stringify({ 
-          error: "No access token received",
-          message: "The token response did not contain an access_token"
-        }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-    
-    console.log("Successfully obtained access token");
-    
-    // Try to use the token with Google Sheets API
+    // Try to use the API key with Google Sheets API
     try {
-      const sheetsUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A:Q:append?valueInputOption=USER_ENTERED`;
+      const sheetsUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A:Q:append?valueInputOption=USER_ENTERED&key=${googleApiKey}`;
       console.log("Making request to Google Sheets API...");
       
       const response = await fetch(sheetsUrl, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -208,7 +90,7 @@ serve(async (req) => {
             return new Response(
               JSON.stringify({ 
                 error: "Permission denied",
-                message: `The service account ${serviceAccountEmail} doesn't have permission to access this Google Sheet. Make sure the sheet is shared with this email.`,
+                message: `The API key doesn't have permission to access this Google Sheet. Make sure the sheet is publicly accessible or the API key has the correct permissions.`,
                 details: error
               }),
               { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -244,7 +126,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           success: true, 
-          message: "Test data successfully sent to Google Sheets using workload identity federation",
+          message: "Test data successfully sent to Google Sheets using API key",
           details: result
         }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
