@@ -17,7 +17,7 @@ export function isValidAnswersArray(answers: Json): answers is Json[] {
     return (
       typeof answer === 'object' && 
       answer !== null &&
-      hasProperties(answer, ['questionId', 'score', 'dimension'])
+      hasProperties(answer, ['questionId', 'score'])
     );
   });
 }
