@@ -12,45 +12,55 @@ export const usePaymentStatusCheck = () => {
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'admin' | 'subscriber' | 'unsubscribed'>('admin');
+  const [isInitialized, setIsInitialized] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
-  // Check user role on mount
+  // Load user profile and set role
   useEffect(() => {
-    const fetchUserRole = async () => {
-      if (!user) return;
-      
-      try {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user.id)
-          .maybeSingle();
-        
-        setUserRole(profile?.role || 'user');
-      } catch (error) {
-        console.error('Error fetching user role:', error);
-        setUserRole('user');
-      }
-    };
-
-    fetchUserRole();
+    if (user) {
+      const loadProfile = async () => {
+        try {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+          
+          const role = profile?.role || 'user';
+          console.log('User role loaded:', role);
+          setUserRole(role);
+        } catch (error) {
+          console.error('Error fetching user role:', error);
+          setUserRole('user');
+        } finally {
+          setIsInitialized(true);
+        }
+      };
+      loadProfile();
+    } else {
+      setUserRole(null);
+      setIsInitialized(true);
+    }
   }, [user]);
 
   const checkPaymentStatus = useCallback(async () => {
-    if (!user) {
-      console.log("No user found, skipping payment status check");
+    if (!user || !isInitialized) {
+      console.log("No user or not initialized, skipping payment status check");
       setCheckingPayment(false);
       return;
     }
 
     // Super admins and regular admins have automatic access unless in unsubscribed view mode
     if (userRole === 'super_admin' || userRole === 'admin') {
+      console.log('Admin/Super Admin detected with viewMode:', viewMode);
       if (viewMode === 'admin' || viewMode === 'subscriber') {
+        console.log('Setting hasPaid to true for admin view');
         setHasPaid(true);
         setCheckingPayment(false);
         return;
       } else if (viewMode === 'unsubscribed') {
+        console.log('Setting hasPaid to false for unsubscribed view');
         setHasPaid(false);
         setCheckingPayment(false);
         return;
@@ -89,7 +99,15 @@ export const usePaymentStatusCheck = () => {
     } finally {
       setCheckingPayment(false);
     }
-  }, [user, toast, userRole, viewMode]);
+  }, [user, toast, userRole, viewMode, isInitialized]);
+
+  // Trigger payment status check when user, role, or view mode changes
+  useEffect(() => {
+    if (isInitialized) {
+      console.log('Triggering payment check due to dependency change');
+      checkPaymentStatus();
+    }
+  }, [checkPaymentStatus, isInitialized]);
 
   return {
     checkingPayment,
