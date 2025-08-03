@@ -392,6 +392,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_aggregate_scores: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          dimension: string
+          average_score: number
+          gender_scores: Json
+          role_scores: Json
+          company_size_scores: Json
+          management_level_scores: Json
+        }[]
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: Database["public"]["Enums"]["user_role"]

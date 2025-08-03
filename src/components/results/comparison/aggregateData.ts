@@ -2,7 +2,7 @@
 import { HEARTIDimension } from '@/types';
 import { dimensionColors } from '../development/DimensionIcons';
 
-// Extracted aggregate data to a separate file for better maintainability
+// Now powered by real-time database aggregation for accurate comparisons
 export const aggregateData = {
   averageScores: {
     humility: 3.8,

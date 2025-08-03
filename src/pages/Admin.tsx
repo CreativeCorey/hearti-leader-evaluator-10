@@ -10,11 +10,14 @@ import DataImporter from "@/components/admin/DataImporter";
 import UserManagement from "@/components/admin/UserManagement";
 import UserDataManager from "@/components/admin/UserDataManager";
 import AdminBroadcast from "@/components/admin/AdminBroadcast";
+import ViewModeToggle from "@/components/admin/ViewModeToggle";
 import { Shield, Database, Users, Trash2 } from "lucide-react";
+import { usePaymentStatusCheck } from "@/hooks/payments/usePaymentStatusCheck";
 
 const Admin = () => {
   const { user } = useAuth();
   const { currentLanguage } = useLanguage();
+  const { userRole, viewMode, setViewMode } = usePaymentStatusCheck();
   const [userProfile, setUserProfile] = useState<any>(null);
   const [authLoading, setAuthLoading] = useState(true);
 
@@ -83,6 +86,13 @@ const Admin = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
+      {/* Super Admin View Mode Toggle */}
+      <ViewModeToggle 
+        viewMode={viewMode} 
+        setViewMode={setViewMode} 
+        userRole={userRole || ''} 
+      />
+      
       <div className="flex items-center gap-3 mb-8">
         <Shield className="h-8 w-8 text-primary" />
         <div>
