@@ -75,6 +75,7 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
           
           {compareMode !== 'none' && (
             <Radar
+              key={`comparison-radar-${getComparisonLabel()}`}
               name={`${getComparisonLabel()} ${scoreText}`}
               dataKey="Comparison"
               stroke={getComparisonColor()}

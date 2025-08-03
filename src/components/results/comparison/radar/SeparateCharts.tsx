@@ -66,6 +66,7 @@ const SeparateCharts: React.FC<SeparateChartsProps> = ({
         <p className="text-center font-medium text-fuchsia-600 mb-3">{t('results.spectra.title')}</p>
         <div className="relative h-[calc(100%-35px)]">
           <ChartWithIcons 
+            key={`user-chart-${chartData[0]?.value || 'empty'}`}
             data={chartData} 
             chartColor={userColor}
             chartTitle={t('results.spectra.title')}
@@ -81,6 +82,7 @@ const SeparateCharts: React.FC<SeparateChartsProps> = ({
           </p>
           <div className="relative h-[calc(100%-35px)]">
             <ChartWithIcons 
+              key={`comparison-chart-${getComparisonLabel()}-${comparisonData[0]?.value || 'empty'}`}
               data={comparisonData} 
               chartColor={getComparisonColor()} 
               showIcons={true}

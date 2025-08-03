@@ -49,6 +49,7 @@ const RadarChartDisplay: React.FC<RadarChartDisplayProps> = ({
     return (
       <div className={containerClasses}>
         <CombinedChart
+          key={`combined-${compareMode}-${JSON.stringify(combinedChartData)}`}
           combinedChartData={combinedChartData}
           compareMode={compareMode}
           userColor={userColor}
@@ -62,6 +63,7 @@ const RadarChartDisplay: React.FC<RadarChartDisplayProps> = ({
   return (
     <div className={`${isMobile ? 'p-0' : 'p-2'} w-full`}>
       <SeparateCharts
+        key={`separate-${compareMode}-${getComparisonLabel()}-${getComparisonColor()}`}
         chartData={chartData}
         getComparisonData={getComparisonData}
         compareMode={compareMode}
