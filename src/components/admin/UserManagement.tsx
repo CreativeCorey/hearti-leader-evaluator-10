@@ -66,28 +66,15 @@ const UserManagement = () => {
   const { toast } = useToast();
   const { checkAndEnforceRateLimit } = useRateLimit();
 
-  // Load users with pagination
+  // Load users with pagination and filtering
   const loadUsers = async (page: number = currentPage) => {
     try {
       setLoading(true);
       
       const offset = (page - 1) * pageSize;
       
-      // Get total counts first
-      const { count: regularCount } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true });
-
-      const { count: historicalCount } = await supabase
-        .from('historical_profiles')
-        .select('*', { count: 'exact', head: true });
-
-      const totalUserCount = (regularCount || 0) + (historicalCount || 0);
-      setTotalCount(totalUserCount);
-      setTotalPages(Math.ceil(totalUserCount / pageSize));
-
-      // Get regular profiles (always include all since they're few)
-      const { data: regularProfiles, error: regularError } = await supabase
+      // Build query filters for both regular and historical profiles
+      let regularQuery = supabase
         .from('profiles')
         .select(`
           id,
@@ -97,43 +84,49 @@ const UserManagement = () => {
           organization_id,
           created_at,
           organizations(name)
-        `)
+        `, { count: 'exact' });
+
+      let historicalQuery = supabase
+        .from('historical_profiles')
+        .select(`
+          id,
+          name,
+          email,
+          role,
+          organization_id,
+          created_at,
+          source_unique_id,
+          organizations(name)
+        `, { count: 'exact' });
+
+      // Apply search filters
+      if (searchTerm) {
+        const searchFilter = `name.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`;
+        regularQuery = regularQuery.or(searchFilter);
+        historicalQuery = historicalQuery.or(searchFilter);
+      }
+
+      // Apply role filters  
+      if (selectedRole !== 'all') {
+        // Cast to any to avoid type issues with enum differences
+        regularQuery = regularQuery.eq('role', selectedRole as any);
+        historicalQuery = historicalQuery.eq('role', selectedRole as any);
+      }
+
+      // Get filtered regular profiles
+      const { data: regularProfiles, error: regularError, count: regularCount } = await regularQuery
         .order('created_at', { ascending: false });
 
       if (regularError) {
         throw regularError;
       }
 
-      // Calculate how many historical profiles to fetch based on pagination
-      const regularUsersCount = regularProfiles?.length || 0;
-      const historicalOffset = Math.max(0, offset - regularUsersCount);
-      const historicalLimit = offset < regularUsersCount 
-        ? pageSize 
-        : pageSize - Math.max(0, regularUsersCount - offset);
+      // Get filtered historical profiles
+      const { data: historicalProfilesData, error: historicalError, count: historicalCount } = await historicalQuery
+        .order('created_at', { ascending: false });
 
-      // Get historical profiles with pagination
-      let historicalProfiles: any[] = [];
-      if (historicalLimit > 0 && historicalOffset < (historicalCount || 0)) {
-        const { data, error: historicalError } = await supabase
-          .from('historical_profiles')
-          .select(`
-            id,
-            name,
-            email,
-            role,
-            organization_id,
-            created_at,
-            source_unique_id,
-            organizations(name)
-          `)
-          .order('created_at', { ascending: false })
-          .range(historicalOffset, historicalOffset + historicalLimit - 1);
-
-        if (historicalError) {
-          console.warn('Could not load historical profiles:', historicalError);
-        } else {
-          historicalProfiles = data || [];
-        }
+      if (historicalError) {
+        console.warn('Could not load historical profiles:', historicalError);
       }
 
       // Combine and mark profiles
@@ -143,20 +136,25 @@ const UserManagement = () => {
         isHistorical: false
       }));
 
-      const historicalUsers = historicalProfiles.map(user => ({
+      const historicalUsers = (historicalProfilesData || []).map(user => ({
         ...user,
         organization_name: (user.organizations as any)?.name || null,
         isHistorical: true
       }));
 
-      // Combine all users and apply pagination correctly
-      const allUsers = [...regularUsers, ...historicalUsers]
+      // Combine all filtered users and sort
+      const allFilteredUsers = [...regularUsers, ...historicalUsers]
         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-      // For pagination, we need to slice correctly based on the page
+      // Update counts based on filtered results
+      const totalFilteredCount = allFilteredUsers.length;
+      setTotalCount(totalFilteredCount);
+      setTotalPages(Math.ceil(totalFilteredCount / pageSize));
+
+      // Apply pagination to filtered results
       const startIndex = offset;
       const endIndex = startIndex + pageSize;
-      const paginatedUsers = allUsers.slice(startIndex, endIndex);
+      const paginatedUsers = allFilteredUsers.slice(startIndex, endIndex);
 
       setUsers(paginatedUsers);
       setCurrentPage(page);
@@ -259,17 +257,8 @@ const UserManagement = () => {
     }
   };
 
-  // Filter users based on search and role (applied to current page)
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = 
-      user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.organization_name?.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesRole = selectedRole === 'all' || user.role === selectedRole;
-    
-    return matchesSearch && matchesRole;
-  });
+  // Users are already filtered in the query, no need to filter again
+  const filteredUsers = users;
 
   // Calculate pagination info
   const startIndex = (currentPage - 1) * pageSize + 1;

@@ -449,15 +449,17 @@ export async function fetchAggregateData(): Promise<AggregateData> {
 // Cache the aggregate data for performance
 let cachedAggregateData: AggregateData | null = null;
 let lastFetchTime = 0;
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const CACHE_DURATION = 2 * 60 * 1000; // 2 minutes - shorter cache for more dynamic updates
 
 export async function getAggregateData(): Promise<AggregateData> {
   const now = Date.now();
   
   if (cachedAggregateData && (now - lastFetchTime) < CACHE_DURATION) {
+    console.log('Using cached aggregate data');
     return cachedAggregateData;
   }
   
+  console.log('Fetching fresh aggregate data');
   cachedAggregateData = await fetchAggregateData();
   lastFetchTime = now;
   

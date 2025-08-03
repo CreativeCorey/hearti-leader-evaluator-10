@@ -84,9 +84,11 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
 
   // Load aggregate data when component mounts or when compare mode changes
   useEffect(() => {
-    if (compareMode !== 'none' && !aggregateData) {
+    if (compareMode !== 'none') {
       setIsLoadingAggregate(true);
+      // Always fetch fresh data for now to ensure accuracy
       getAggregateData().then((data) => {
+        console.log('Loaded aggregate data:', data);
         setAggregateData(data);
         setIsLoadingAggregate(false);
       }).catch((error) => {
@@ -94,7 +96,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
         setIsLoadingAggregate(false);
       });
     }
-  }, [compareMode, aggregateData]);
+  }, [compareMode]);
 
   // Reset the selected assessment when the initial assessment changes
   useEffect(() => {
