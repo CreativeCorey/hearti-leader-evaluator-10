@@ -15,14 +15,45 @@ export interface DemographicBreakdown {
   women: AggregateScores;
 }
 
+export interface JobRoleBreakdown {
+  engineering: AggregateScores;
+  management: AggregateScores;
+  executive: AggregateScores;
+  other: AggregateScores;
+}
+
+export interface CompanySizeBreakdown {
+  small: AggregateScores;
+  medium: AggregateScores;
+  large: AggregateScores;
+}
+
+export interface ManagementLevelBreakdown {
+  individual: AggregateScores;
+  manager: AggregateScores;
+  executive: AggregateScores;
+}
+
+export interface RaceEthnicityBreakdown {
+  white: AggregateScores;
+  black: AggregateScores;
+  hispanic: AggregateScores;
+  asian: AggregateScores;
+  other: AggregateScores;
+}
+
 export interface AggregateData {
   averageScores: AggregateScores;
   demographics: {
     gender: DemographicBreakdown;
+    jobRole: JobRoleBreakdown;
+    companySize: CompanySizeBreakdown;
+    managementLevel: ManagementLevelBreakdown;
+    raceEthnicity: RaceEthnicityBreakdown;
   };
 }
 
-// Default fallback data (your original hardcoded values)
+// Default fallback data (expanded with all demographic breakdowns)
 const defaultAggregateData: AggregateData = {
   averageScores: {
     humility: 3.8,
@@ -49,6 +80,134 @@ const defaultAggregateData: AggregateData = {
         resiliency: 3.6,
         transparency: 4.1,
         inclusivity: 3.8
+      }
+    },
+    jobRole: {
+      engineering: {
+        humility: 3.7,
+        empathy: 3.4,
+        accountability: 4.2,
+        resiliency: 3.9,
+        transparency: 3.8,
+        inclusivity: 3.4
+      },
+      management: {
+        humility: 3.9,
+        empathy: 3.8,
+        accountability: 4.0,
+        resiliency: 3.6,
+        transparency: 4.0,
+        inclusivity: 3.6
+      },
+      executive: {
+        humility: 3.5,
+        empathy: 3.3,
+        accountability: 4.3,
+        resiliency: 4.0,
+        transparency: 3.6,
+        inclusivity: 3.2
+      },
+      other: {
+        humility: 3.8,
+        empathy: 3.7,
+        accountability: 3.9,
+        resiliency: 3.7,
+        transparency: 3.9,
+        inclusivity: 3.7
+      }
+    },
+    companySize: {
+      small: {
+        humility: 4.0,
+        empathy: 3.8,
+        accountability: 3.9,
+        resiliency: 3.8,
+        transparency: 4.1,
+        inclusivity: 3.7
+      },
+      medium: {
+        humility: 3.8,
+        empathy: 3.6,
+        accountability: 4.1,
+        resiliency: 3.7,
+        transparency: 3.9,
+        inclusivity: 3.5
+      },
+      large: {
+        humility: 3.6,
+        empathy: 3.4,
+        accountability: 4.2,
+        resiliency: 3.6,
+        transparency: 3.7,
+        inclusivity: 3.3
+      }
+    },
+    managementLevel: {
+      individual: {
+        humility: 3.9,
+        empathy: 3.7,
+        accountability: 4.0,
+        resiliency: 3.8,
+        transparency: 3.9,
+        inclusivity: 3.6
+      },
+      manager: {
+        humility: 3.7,
+        empathy: 3.5,
+        accountability: 4.1,
+        resiliency: 3.6,
+        transparency: 3.8,
+        inclusivity: 3.4
+      },
+      executive: {
+        humility: 3.5,
+        empathy: 3.3,
+        accountability: 4.3,
+        resiliency: 4.0,
+        transparency: 3.6,
+        inclusivity: 3.2
+      }
+    },
+    raceEthnicity: {
+      white: {
+        humility: 3.7,
+        empathy: 3.5,
+        accountability: 4.1,
+        resiliency: 3.7,
+        transparency: 3.8,
+        inclusivity: 3.4
+      },
+      black: {
+        humility: 4.0,
+        empathy: 3.9,
+        accountability: 4.0,
+        resiliency: 3.8,
+        transparency: 4.1,
+        inclusivity: 3.8
+      },
+      hispanic: {
+        humility: 3.9,
+        empathy: 3.8,
+        accountability: 3.9,
+        resiliency: 3.6,
+        transparency: 4.0,
+        inclusivity: 3.7
+      },
+      asian: {
+        humility: 3.6,
+        empathy: 3.4,
+        accountability: 4.2,
+        resiliency: 3.8,
+        transparency: 3.7,
+        inclusivity: 3.3
+      },
+      other: {
+        humility: 3.8,
+        empathy: 3.7,
+        accountability: 4.0,
+        resiliency: 3.7,
+        transparency: 3.9,
+        inclusivity: 3.6
       }
     }
   }
@@ -102,6 +261,7 @@ function calculateAverageScores(assessments: any[]): AggregateScores {
 
 function calculateDemographicScores(assessments: any[]): DemographicBreakdown {
   const menAssessments = assessments.filter(a => 
+    a.demographics?.gender === 'Man' || a.demographics?.gender === 'man' ||
     a.demographics?.genderIdentity === 'man' || 
     a.demographics?.genderIdentity === 'male' ||
     a.demographics?.genderIdentity === 'Man' ||
@@ -109,6 +269,7 @@ function calculateDemographicScores(assessments: any[]): DemographicBreakdown {
   );
   
   const womenAssessments = assessments.filter(a => 
+    a.demographics?.gender === 'Woman' || a.demographics?.gender === 'woman' ||
     a.demographics?.genderIdentity === 'woman' || 
     a.demographics?.genderIdentity === 'female' ||
     a.demographics?.genderIdentity === 'Woman' ||
@@ -118,6 +279,126 @@ function calculateDemographicScores(assessments: any[]): DemographicBreakdown {
   return {
     men: calculateAverageScores(menAssessments),
     women: calculateAverageScores(womenAssessments)
+  };
+}
+
+function calculateJobRoleScores(assessments: any[]): JobRoleBreakdown {
+  const engineeringAssessments = assessments.filter(a => 
+    a.demographics?.jobRole?.toLowerCase().includes('engineer') ||
+    a.demographics?.jobRole?.toLowerCase().includes('developer') ||
+    a.demographics?.jobRole?.toLowerCase().includes('programmer')
+  );
+  
+  const managementAssessments = assessments.filter(a => 
+    a.demographics?.managementLevel?.toLowerCase().includes('manager') ||
+    a.demographics?.jobRole?.toLowerCase().includes('manager')
+  );
+  
+  const executiveAssessments = assessments.filter(a => 
+    a.demographics?.managementLevel?.toLowerCase().includes('executive') ||
+    a.demographics?.managementLevel?.toLowerCase().includes('c-suite') ||
+    a.demographics?.jobRole?.toLowerCase().includes('ceo') ||
+    a.demographics?.jobRole?.toLowerCase().includes('cto') ||
+    a.demographics?.jobRole?.toLowerCase().includes('cfo')
+  );
+  
+  const otherAssessments = assessments.filter(a => 
+    !engineeringAssessments.includes(a) && 
+    !managementAssessments.includes(a) && 
+    !executiveAssessments.includes(a)
+  );
+
+  return {
+    engineering: calculateAverageScores(engineeringAssessments),
+    management: calculateAverageScores(managementAssessments),
+    executive: calculateAverageScores(executiveAssessments),
+    other: calculateAverageScores(otherAssessments)
+  };
+}
+
+function calculateCompanySizeScores(assessments: any[]): CompanySizeBreakdown {
+  const smallAssessments = assessments.filter(a => 
+    a.demographics?.companySize?.includes('1-50') ||
+    a.demographics?.companySize?.includes('1-250') ||
+    a.demographics?.companySize?.includes('51-250')
+  );
+  
+  const mediumAssessments = assessments.filter(a => 
+    a.demographics?.companySize?.includes('251-2,500') ||
+    a.demographics?.companySize?.includes('501-1000') ||
+    a.demographics?.companySize?.includes('1001-5000')
+  );
+  
+  const largeAssessments = assessments.filter(a => 
+    a.demographics?.companySize?.includes('2,501') ||
+    a.demographics?.companySize?.includes('10,000+') ||
+    a.demographics?.companySize?.includes('5001+')
+  );
+
+  return {
+    small: calculateAverageScores(smallAssessments),
+    medium: calculateAverageScores(mediumAssessments),
+    large: calculateAverageScores(largeAssessments)
+  };
+}
+
+function calculateManagementLevelScores(assessments: any[]): ManagementLevelBreakdown {
+  const individualAssessments = assessments.filter(a => 
+    a.demographics?.managementLevel?.toLowerCase().includes('individual')
+  );
+  
+  const managerAssessments = assessments.filter(a => 
+    a.demographics?.managementLevel?.toLowerCase().includes('manager') &&
+    !a.demographics?.managementLevel?.toLowerCase().includes('individual')
+  );
+  
+  const executiveAssessments = assessments.filter(a => 
+    a.demographics?.managementLevel?.toLowerCase().includes('executive') ||
+    a.demographics?.managementLevel?.toLowerCase().includes('c-suite')
+  );
+
+  return {
+    individual: calculateAverageScores(individualAssessments),
+    manager: calculateAverageScores(managerAssessments),
+    executive: calculateAverageScores(executiveAssessments)
+  };
+}
+
+function calculateRaceEthnicityScores(assessments: any[]): RaceEthnicityBreakdown {
+  const whiteAssessments = assessments.filter(a => 
+    a.demographics?.raceEthnicity?.toLowerCase().includes('white') ||
+    a.demographics?.raceEthnicity?.toLowerCase().includes('caucasian')
+  );
+  
+  const blackAssessments = assessments.filter(a => 
+    a.demographics?.raceEthnicity?.toLowerCase().includes('black') ||
+    a.demographics?.raceEthnicity?.toLowerCase().includes('african')
+  );
+  
+  const hispanicAssessments = assessments.filter(a => 
+    a.demographics?.raceEthnicity?.toLowerCase().includes('hispanic') ||
+    a.demographics?.raceEthnicity?.toLowerCase().includes('latino') ||
+    a.demographics?.raceEthnicity?.toLowerCase().includes('latina')
+  );
+  
+  const asianAssessments = assessments.filter(a => 
+    a.demographics?.raceEthnicity?.toLowerCase().includes('asian') ||
+    a.demographics?.raceEthnicity?.toLowerCase().includes('pacific')
+  );
+  
+  const otherAssessments = assessments.filter(a => 
+    !whiteAssessments.includes(a) && 
+    !blackAssessments.includes(a) && 
+    !hispanicAssessments.includes(a) && 
+    !asianAssessments.includes(a)
+  );
+
+  return {
+    white: calculateAverageScores(whiteAssessments),
+    black: calculateAverageScores(blackAssessments),
+    hispanic: calculateAverageScores(hispanicAssessments),
+    asian: calculateAverageScores(asianAssessments),
+    other: calculateAverageScores(otherAssessments)
   };
 }
 
@@ -143,12 +424,20 @@ export async function fetchAggregateData(): Promise<AggregateData> {
     console.log(`Calculating aggregate data from ${assessments.length} assessments`);
 
     const averageScores = calculateAverageScores(assessments);
-    const demographics = calculateDemographicScores(assessments);
+    const genderDemographics = calculateDemographicScores(assessments);
+    const jobRoleDemographics = calculateJobRoleScores(assessments);
+    const companySizeDemographics = calculateCompanySizeScores(assessments);
+    const managementLevelDemographics = calculateManagementLevelScores(assessments);
+    const raceEthnicityDemographics = calculateRaceEthnicityScores(assessments);
 
     return {
       averageScores,
       demographics: {
-        gender: demographics
+        gender: genderDemographics,
+        jobRole: jobRoleDemographics,
+        companySize: companySizeDemographics,
+        managementLevel: managementLevelDemographics,
+        raceEthnicity: raceEthnicityDemographics
       }
     };
   } catch (error) {

@@ -9,7 +9,7 @@ import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface CombinedChartProps {
   combinedChartData: any[];
-  compareMode: 'none' | 'average';
+  compareMode: string;
   userColor: string;
   getComparisonColor: () => string;
   getComparisonLabel: () => string;
@@ -73,7 +73,7 @@ const CombinedChart: React.FC<CombinedChartProps> = ({
             </filter>
           </defs>
           
-          {compareMode === 'average' && (
+          {compareMode !== 'none' && (
             <Radar
               name={`${getComparisonLabel()} ${scoreText}`}
               dataKey="Comparison"

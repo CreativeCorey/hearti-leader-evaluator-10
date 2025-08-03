@@ -8,7 +8,7 @@ interface RadarChartDisplayProps {
   chartData: any[];
   combinedChartData: any[];
   getComparisonData: () => any[] | null;
-  compareMode: 'none' | 'average';
+  compareMode: string;
   getComparisonLabel: () => string;
   getComparisonColor: () => string;
   userColor: string;

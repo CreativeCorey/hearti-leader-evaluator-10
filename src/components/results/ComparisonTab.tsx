@@ -5,6 +5,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import RadarChartDisplay from "./comparison/RadarChartDisplay";
 import ComparisonAnalysis from "./comparison/ComparisonAnalysis";
 import ProgressChart from "./comparison/ProgressChart";
@@ -13,12 +14,21 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { formatDataForRadarChart } from '@/utils/calculations';
 import { useLanguage } from '@/contexts/language/LanguageContext';
 import { getAggregateData, AggregateData } from '@/services/aggregateDataService';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/use-auth';
 
 interface ComparisonTabProps {
   assessment: HEARTIAssessment;
   assessments?: HEARTIAssessment[];
   onSelectAssessment?: (assessment: HEARTIAssessment) => void;
 }
+
+type CompareMode = 'none' | 'average' | 'gender' | 'jobRole' | 'companySize' | 'managementLevel' | 'raceEthnicity';
+type GenderCompareMode = 'men' | 'women';
+type JobRoleCompareMode = 'engineering' | 'management' | 'executive' | 'other';
+type CompanySizeCompareMode = 'small' | 'medium' | 'large';
+type ManagementLevelCompareMode = 'individual' | 'manager' | 'executive';
+type RaceEthnicityCompareMode = 'white' | 'black' | 'hispanic' | 'asian' | 'other';
 
 // Helper function to convert dimensions to comparison format
 const convertToComparisonFormat = (
@@ -37,18 +47,44 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
   assessment: initialAssessment, 
   assessments = [],
   onSelectAssessment
-}) => {
+ }) => {
   const [chartView, setChartView] = useState<'combined' | 'separate'>('combined');
-  const [compareMode, setCompareMode] = useState<'none' | 'average'>('average');
+  const [compareMode, setCompareMode] = useState<CompareMode>('average');
+  const [genderCompareMode, setGenderCompareMode] = useState<GenderCompareMode>('women');
+  const [jobRoleCompareMode, setJobRoleCompareMode] = useState<JobRoleCompareMode>('management');
+  const [companySizeCompareMode, setCompanySizeCompareMode] = useState<CompanySizeCompareMode>('medium');
+  const [managementLevelCompareMode, setManagementLevelCompareMode] = useState<ManagementLevelCompareMode>('manager');
+  const [raceEthnicityCompareMode, setRaceEthnicityCompareMode] = useState<RaceEthnicityCompareMode>('white');
   const [assessment, setAssessment] = useState<HEARTIAssessment>(initialAssessment);
   const [aggregateData, setAggregateData] = useState<AggregateData | null>(null);
   const [isLoadingAggregate, setIsLoadingAggregate] = useState(false);
+  const [userProfile, setUserProfile] = useState<any>(null);
   const isMobile = useIsMobile();
   const { t } = useLanguage();
+  const { user } = useAuth();
 
-  // Load aggregate data when component mounts or when compare mode changes to average
+  // Check if user is super admin
+  const isSuperAdmin = userProfile?.role === 'super_admin';
+
+  // Load user profile
   useEffect(() => {
-    if (compareMode === 'average' && !aggregateData) {
+    if (user) {
+      const loadProfile = async () => {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+        
+        setUserProfile(profile);
+      };
+      loadProfile();
+    }
+  }, [user]);
+
+  // Load aggregate data when component mounts or when compare mode changes
+  useEffect(() => {
+    if (compareMode !== 'none' && !aggregateData) {
       setIsLoadingAggregate(true);
       getAggregateData().then((data) => {
         setAggregateData(data);
@@ -78,30 +114,84 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
   
   // Get comparison data based on selection
   const getComparisonData = () => {
-    if (compareMode === 'average' && aggregateData) {
-      return formatDataForRadarChart(aggregateData.averageScores);
+    if (!aggregateData) return null;
+    
+    switch (compareMode) {
+      case 'average':
+        return formatDataForRadarChart(aggregateData.averageScores);
+      case 'gender':
+        return formatDataForRadarChart(aggregateData.demographics.gender[genderCompareMode]);
+      case 'jobRole':
+        return formatDataForRadarChart(aggregateData.demographics.jobRole[jobRoleCompareMode]);
+      case 'companySize':
+        return formatDataForRadarChart(aggregateData.demographics.companySize[companySizeCompareMode]);
+      case 'managementLevel':
+        return formatDataForRadarChart(aggregateData.demographics.managementLevel[managementLevelCompareMode]);
+      case 'raceEthnicity':
+        return formatDataForRadarChart(aggregateData.demographics.raceEthnicity[raceEthnicityCompareMode]);
+      default:
+        return null;
     }
-    return null;
   };
   
   // Format data for combined chart
+  const getCombinedComparisonScores = () => {
+    if (!aggregateData) return null;
+    
+    switch (compareMode) {
+      case 'average':
+        return aggregateData.averageScores;
+      case 'gender':
+        return aggregateData.demographics.gender[genderCompareMode];
+      case 'jobRole':
+        return aggregateData.demographics.jobRole[jobRoleCompareMode];
+      case 'companySize':
+        return aggregateData.demographics.companySize[companySizeCompareMode];
+      case 'managementLevel':
+        return aggregateData.demographics.managementLevel[managementLevelCompareMode];
+      case 'raceEthnicity':
+        return aggregateData.demographics.raceEthnicity[raceEthnicityCompareMode];
+      default:
+        return null;
+    }
+  };
+
   const combinedChartData = convertToComparisonFormat(
     assessment.dimensionScores,
-    compareMode === 'average' && aggregateData ? aggregateData.averageScores : null
+    getCombinedComparisonScores()
   );
   
   // Get comparison label based on selection with proper translation
   const getComparisonLabel = () => {
-    if (compareMode === 'average') {
-      return t('results.comparison.averageLabel', { fallback: 'Average' });
+    switch (compareMode) {
+      case 'average':
+        return t('results.comparison.averageLabel', { fallback: 'Global Average' });
+      case 'gender':
+        return `${genderCompareMode === 'men' ? 'Men' : 'Women'} Average`;
+      case 'jobRole':
+        return `${jobRoleCompareMode.charAt(0).toUpperCase() + jobRoleCompareMode.slice(1)} Average`;
+      case 'companySize':
+        return `${companySizeCompareMode.charAt(0).toUpperCase() + companySizeCompareMode.slice(1)} Company Average`;
+      case 'managementLevel':
+        return `${managementLevelCompareMode.charAt(0).toUpperCase() + managementLevelCompareMode.slice(1)} Level Average`;
+      case 'raceEthnicity':
+        return `${raceEthnicityCompareMode.charAt(0).toUpperCase() + raceEthnicityCompareMode.slice(1)} Average`;
+      default:
+        return '';
     }
-    return '';
   };
   
   // Get color for comparison data
   const getComparisonColor = () => {
-    if (compareMode === 'average') return comparisonColors.average;
-    return "#000000";
+    switch (compareMode) {
+      case 'average': return comparisonColors.average;
+      case 'gender': return '#ec4899'; // Pink for gender
+      case 'jobRole': return '#10b981'; // Green for job role
+      case 'companySize': return '#f59e0b'; // Orange for company size
+      case 'managementLevel': return '#ef4444'; // Red for management level
+      case 'raceEthnicity': return '#8b5cf6'; // Purple for race/ethnicity
+      default: return "#000000";
+    }
   };
   
   // Get translated text for UI elements
@@ -130,16 +220,121 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
                 </TabsList>
               </Tabs>
               
-              <RadioGroup defaultValue="average" className="flex flex-row sm:flex-row space-x-2 w-auto" onValueChange={(value) => setCompareMode(value as 'none' | 'average')}>
-                <div className="flex items-center space-x-1">
-                  <RadioGroupItem value="none" id="none" />
-                  <Label htmlFor="none" className="text-xs sm:text-sm">{noneText}</Label>
+              <div className="flex flex-col gap-2">
+                {/* Comparison mode selection */}
+                <div className="flex flex-wrap gap-2">
+                  <RadioGroup 
+                    value={compareMode} 
+                    className="flex flex-row flex-wrap gap-2" 
+                    onValueChange={(value) => setCompareMode(value as CompareMode)}
+                  >
+                    <div className="flex items-center space-x-1">
+                      <RadioGroupItem value="none" id="none" />
+                      <Label htmlFor="none" className="text-xs sm:text-sm">{noneText}</Label>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <RadioGroupItem value="average" id="average" />
+                      <Label htmlFor="average" className="text-xs sm:text-sm">{averageText}</Label>
+                    </div>
+                    {isSuperAdmin && (
+                      <>
+                        <div className="flex items-center space-x-1">
+                          <RadioGroupItem value="gender" id="gender" />
+                          <Label htmlFor="gender" className="text-xs sm:text-sm">Gender</Label>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <RadioGroupItem value="jobRole" id="jobRole" />
+                          <Label htmlFor="jobRole" className="text-xs sm:text-sm">Job Role</Label>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <RadioGroupItem value="companySize" id="companySize" />
+                          <Label htmlFor="companySize" className="text-xs sm:text-sm">Company Size</Label>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <RadioGroupItem value="managementLevel" id="managementLevel" />
+                          <Label htmlFor="managementLevel" className="text-xs sm:text-sm">Management</Label>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <RadioGroupItem value="raceEthnicity" id="raceEthnicity" />
+                          <Label htmlFor="raceEthnicity" className="text-xs sm:text-sm">Race/Ethnicity</Label>
+                        </div>
+                      </>
+                    )}
+                  </RadioGroup>
                 </div>
-                <div className="flex items-center space-x-1">
-                  <RadioGroupItem value="average" id="average" />
-                  <Label htmlFor="average" className="text-xs sm:text-sm">{averageText}</Label>
-                </div>
-              </RadioGroup>
+                
+                {/* Sub-category selectors for super admins */}
+                {isSuperAdmin && (
+                  <div className="flex flex-wrap gap-2">
+                    {compareMode === 'gender' && (
+                      <Select value={genderCompareMode} onValueChange={(value) => setGenderCompareMode(value as GenderCompareMode)}>
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="men">Men</SelectItem>
+                          <SelectItem value="women">Women</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                    
+                    {compareMode === 'jobRole' && (
+                      <Select value={jobRoleCompareMode} onValueChange={(value) => setJobRoleCompareMode(value as JobRoleCompareMode)}>
+                        <SelectTrigger className="w-40">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="engineering">Engineering</SelectItem>
+                          <SelectItem value="management">Management</SelectItem>
+                          <SelectItem value="executive">Executive</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                    
+                    {compareMode === 'companySize' && (
+                      <Select value={companySizeCompareMode} onValueChange={(value) => setCompanySizeCompareMode(value as CompanySizeCompareMode)}>
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="small">Small</SelectItem>
+                          <SelectItem value="medium">Medium</SelectItem>
+                          <SelectItem value="large">Large</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                    
+                    {compareMode === 'managementLevel' && (
+                      <Select value={managementLevelCompareMode} onValueChange={(value) => setManagementLevelCompareMode(value as ManagementLevelCompareMode)}>
+                        <SelectTrigger className="w-40">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="individual">Individual</SelectItem>
+                          <SelectItem value="manager">Manager</SelectItem>
+                          <SelectItem value="executive">Executive</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                    
+                    {compareMode === 'raceEthnicity' && (
+                      <Select value={raceEthnicityCompareMode} onValueChange={(value) => setRaceEthnicityCompareMode(value as RaceEthnicityCompareMode)}>
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="white">White</SelectItem>
+                          <SelectItem value="black">Black</SelectItem>
+                          <SelectItem value="hispanic">Hispanic</SelectItem>
+                          <SelectItem value="asian">Asian</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           
@@ -159,7 +354,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
           {compareMode !== 'none' && aggregateData && !isLoadingAggregate && (
             <ComparisonAnalysis 
               assessment={assessment}
-              averageScores={compareMode === 'average' ? aggregateData.averageScores : undefined} 
+              averageScores={getCombinedComparisonScores()} 
               comparisonLabel={getComparisonLabel()}
               comparisonColor={getComparisonColor()}
             />
