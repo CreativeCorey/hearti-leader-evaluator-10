@@ -163,10 +163,8 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
             {hasPaid || activeTab === 'overview' ? (
               <ResultsDisplay
                 assessment={latestAssessment}
-                allAssessments={userAssessments}
-                onRefreshAssessments={() => {}}
-                activeTab={activeTab}
-                onTabChange={setActiveTab}
+                assessments={userAssessments}
+                hasPaid={hasPaid}
               />
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-center">
