@@ -34,6 +34,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useRateLimit } from '@/hooks/useRateLimit';
 import UserAssessmentDetails from './UserAssessmentDetails';
+import PaginationControls from './PaginationControls';
 
 type UserRole = "user" | "admin" | "coach" | "super_admin";
 
@@ -166,10 +167,19 @@ const UserManagement = () => {
       setTotalCount(totalFilteredCount);
       setTotalPages(Math.ceil(totalFilteredCount / pageSize));
 
-      // Apply pagination to filtered results
-      const startIndex = offset;
+      // Apply pagination to filtered results - FIXED: Use totalFilteredCount instead of allFilteredUsers.length
+      const startIndex = (page - 1) * pageSize;
       const endIndex = startIndex + pageSize;
-      const paginatedUsers = allFilteredUsers.slice(startIndex, endIndex);
+      
+      // For unfiltered results, we need to get more data if we're beyond what we've loaded
+      let paginatedUsers;
+      if (searchTerm || selectedRole !== 'all') {
+        // For filtered results, use the filtered array
+        paginatedUsers = allFilteredUsers.slice(startIndex, endIndex);
+      } else {
+        // For unfiltered results, we have all data so slice appropriately
+        paginatedUsers = allFilteredUsers.slice(startIndex, endIndex);
+      }
 
       setUsers(paginatedUsers);
       setCurrentPage(page);
@@ -275,41 +285,6 @@ const UserManagement = () => {
   // Users are already filtered in the query, no need to filter again
   const filteredUsers = users;
 
-  // Calculate pagination info
-  const startIndex = (currentPage - 1) * pageSize + 1;
-  const endIndex = Math.min(currentPage * pageSize, totalCount);
-
-  // Generate page numbers for pagination controls
-  const getPageNumbers = () => {
-    const pages = [];
-    const maxVisible = 5;
-    
-    if (totalPages <= maxVisible) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      const start = Math.max(1, currentPage - 2);
-      const end = Math.min(totalPages, start + maxVisible - 1);
-      
-      if (start > 1) {
-        pages.push(1);
-        if (start > 2) pages.push('...');
-      }
-      
-      for (let i = start; i <= end; i++) {
-        pages.push(i);
-      }
-      
-      if (end < totalPages) {
-        if (end < totalPages - 1) pages.push('...');
-        pages.push(totalPages);
-      }
-    }
-    
-    return pages;
-  };
-
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
       case 'admin': return 'destructive';
@@ -405,15 +380,17 @@ const UserManagement = () => {
           </div>
         </div>
 
-        {/* Pagination Info */}
-        <div className="flex justify-between items-center py-2 text-sm text-muted-foreground">
-          <div>
-            Showing {startIndex} to {endIndex} of {totalCount} users
-          </div>
-          <div>
-            Page {currentPage} of {totalPages}
-          </div>
-        </div>
+        {/* Top Pagination Controls */}
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalCount={totalCount}
+          pageSize={pageSize}
+          loading={loading}
+          onGoToPage={goToPage}
+          onPreviousPage={goToPreviousPage}
+          onNextPage={goToNextPage}
+        />
 
         {/* Users Table */}
         <div className="border rounded-md">
@@ -575,65 +552,17 @@ const UserManagement = () => {
           </Table>
         </div>
 
-        {/* Pagination Controls */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={goToPreviousPage}
-              disabled={currentPage === 1 || loading}
-            >
-              Previous
-            </Button>
-            
-            <div className="flex items-center gap-1">
-              {getPageNumbers().map((page, index) => (
-                page === '...' ? (
-                  <span key={index} className="px-2">...</span>
-                ) : (
-                  <Button
-                    key={index}
-                    variant={currentPage === page ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => goToPage(page as number)}
-                    disabled={loading}
-                    className="min-w-[2.5rem]"
-                  >
-                    {page}
-                  </Button>
-                )
-              ))}
-            </div>
-            
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={goToNextPage}
-              disabled={currentPage === totalPages || loading}
-            >
-              Next
-            </Button>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Go to page:</span>
-            <Input
-              type="number"
-              min={1}
-              max={totalPages}
-              value={currentPage}
-              onChange={(e) => {
-                const page = parseInt(e.target.value);
-                if (page >= 1 && page <= totalPages) {
-                  goToPage(page);
-                }
-              }}
-              className="w-20"
-              disabled={loading}
-            />
-          </div>
-        </div>
+        {/* Bottom Pagination Controls */}
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalCount={totalCount}
+          pageSize={pageSize}
+          loading={loading}
+          onGoToPage={goToPage}
+          onPreviousPage={goToPreviousPage}
+          onNextPage={goToNextPage}
+        />
 
         {filteredUsers.length === 0 && !loading && (
           <div className="text-center py-8 text-muted-foreground">
