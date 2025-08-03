@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import AssessmentForm from '@/components/AssessmentForm';
 import { useAssessmentPayment } from '@/hooks/useAssessmentPayment';
+import { useLanguage } from '@/contexts/language/LanguageContext';
 
 interface AssessmentTabsProps {
   activeTab: AssessmentTab;
@@ -30,6 +31,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
   sendLatestToSheets,
   viewTransitioning
 }) => {
+  const { t } = useLanguage();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [showEmptyState, setShowEmptyState] = useState(false);
@@ -176,37 +178,23 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
       {latestAssessment && (
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as AssessmentTab)} className="w-full">
           <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="overview">Summary</TabsTrigger>
-            <TabsTrigger value="dimensions" disabled={!hasPaid}>Dimensions</TabsTrigger>
-            <TabsTrigger value="dataViz" disabled={!hasPaid}>HEARTI Spectra</TabsTrigger>
-            <TabsTrigger value="report" disabled={!hasPaid}>Report</TabsTrigger>
-            <TabsTrigger value="developSkills" disabled={!hasPaid}>HEARTI Coach</TabsTrigger>
-            <TabsTrigger value="buildHabits" disabled={!hasPaid}>Build Habits</TabsTrigger>
+            <TabsTrigger value="overview">{t('tabs.summary')}</TabsTrigger>
+            <TabsTrigger value="dimensions">{t('tabs.dimensions')}</TabsTrigger>
+            <TabsTrigger value="dataViz">{t('tabs.dataViz.desktop')}</TabsTrigger>
+            <TabsTrigger value="report">{t('tabs.report')}</TabsTrigger>
+            <TabsTrigger value="developSkills">{t('tabs.developSkills')}</TabsTrigger>
+            <TabsTrigger value="buildHabits">{t('tabs.buildHabits')}</TabsTrigger>
           </TabsList>
           
-          {/* Results content - only show if paid or on overview tab */}
+          {/* Results content */}
           <div className="mt-4">
-            {hasPaid || activeTab === 'overview' ? (
-              <ResultsDisplay
-                assessment={latestAssessment}
-                assessments={userAssessments}
-                hasPaid={hasPaid}
-              />
-            ) : (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <h3 className="text-xl font-semibold mb-4">Premium Content</h3>
-                <p className="text-muted-foreground mb-6 max-w-md">
-                  Unlock all assessment features including detailed analysis, coaching recommendations, and habit tracking.
-                </p>
-                <PaymentGateway 
-                  assessment={latestAssessment}
-                  onPaymentComplete={(assessment) => {
-                    onComplete(assessment);
-                    setActiveTab('overview');
-                  }}
-                />
-              </div>
-            )}
+            <ResultsDisplay
+              assessment={latestAssessment}
+              allAssessments={userAssessments}
+              onRefreshAssessments={() => {}}
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+            />
           </div>
         </Tabs>
       )}
