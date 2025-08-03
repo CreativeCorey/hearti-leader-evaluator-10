@@ -74,19 +74,56 @@ const UserManagement = () => {
       
       const offset = (page - 1) * pageSize;
       
-      // First, get total counts separately for better performance
-      const { count: regularCount } = await supabase
+      // Build base queries for counting with filters applied
+      let countRegularQuery = supabase
         .from('profiles')
         .select('*', { count: 'exact', head: true });
-        
-      const { count: historicalCount } = await supabase
+
+      let countHistoricalQuery = supabase
         .from('historical_profiles')
         .select('*', { count: 'exact', head: true });
+
+      // Apply search filters for counting
+      if (searchTerm) {
+        const searchFilter = `name.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`;
+        countRegularQuery = countRegularQuery.or(searchFilter);
+        countHistoricalQuery = countHistoricalQuery.or(searchFilter);
+      }
+
+      // Apply role filters for counting
+      if (selectedRole !== 'all') {
+        countRegularQuery = countRegularQuery.eq('role', selectedRole as any);
+        countHistoricalQuery = countHistoricalQuery.eq('role', selectedRole as any);
+      }
+
+      // Get filtered counts
+      const { count: filteredRegularCount } = await countRegularQuery;
+      const { count: filteredHistoricalCount } = await countHistoricalQuery;
+
+      const totalFilteredCount = (filteredRegularCount || 0) + (filteredHistoricalCount || 0);
       
-      // Calculate total before filtering
-      const unfilteredTotal = (regularCount || 0) + (historicalCount || 0);
-      
-      // Build query filters for both regular and historical profiles
+      setTotalCount(totalFilteredCount);
+      setTotalPages(Math.ceil(totalFilteredCount / pageSize));
+
+      console.log('Pagination Debug:', {
+        page,
+        offset,
+        pageSize,
+        totalFilteredCount,
+        filteredRegularCount,
+        filteredHistoricalCount,
+        searchTerm,
+        selectedRole
+      });
+
+      // If no results found, set empty array and return
+      if (totalFilteredCount === 0) {
+        setUsers([]);
+        setCurrentPage(page);
+        return;
+      }
+
+      // Now build the data queries for the specific page
       let regularQuery = supabase
         .from('profiles')
         .select(`
@@ -97,7 +134,7 @@ const UserManagement = () => {
           organization_id,
           created_at,
           organizations(name)
-        `, { count: 'exact' });
+        `);
 
       let historicalQuery = supabase
         .from('historical_profiles')
@@ -110,33 +147,32 @@ const UserManagement = () => {
           created_at,
           source_unique_id,
           organizations(name)
-        `, { count: 'exact' });
+        `);
 
-      // Apply search filters
+      // Apply same filters to data queries
       if (searchTerm) {
         const searchFilter = `name.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`;
         regularQuery = regularQuery.or(searchFilter);
         historicalQuery = historicalQuery.or(searchFilter);
       }
 
-      // Apply role filters  
       if (selectedRole !== 'all') {
-        // Cast to any to avoid type issues with enum differences
         regularQuery = regularQuery.eq('role', selectedRole as any);
         historicalQuery = historicalQuery.eq('role', selectedRole as any);
       }
 
-      // Get filtered regular profiles
-      const { data: regularProfiles, error: regularError, count: filteredRegularCount } = await regularQuery
-        .order('created_at', { ascending: false });
+      // Get all filtered data and sort combined
+      const { data: regularProfiles, error: regularError } = await regularQuery
+        .order('created_at', { ascending: false })
+        .limit(totalFilteredCount); // Ensure we get enough data
 
       if (regularError) {
         throw regularError;
       }
 
-      // Get filtered historical profiles
-      const { data: historicalProfilesData, error: historicalError, count: filteredHistoricalCount } = await historicalQuery
-        .order('created_at', { ascending: false });
+      const { data: historicalProfilesData, error: historicalError } = await historicalQuery
+        .order('created_at', { ascending: false })
+        .limit(totalFilteredCount); // Ensure we get enough data
 
       if (historicalError) {
         console.warn('Could not load historical profiles:', historicalError);
@@ -155,36 +191,23 @@ const UserManagement = () => {
         isHistorical: true
       }));
 
-      // Combine all filtered users and sort
+      // Combine all filtered users and sort by created_at globally
       const allFilteredUsers = [...regularUsers, ...historicalUsers]
         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-      // Update counts - use unfiltered total if no search/filter is applied
-      const totalFilteredCount = (searchTerm || selectedRole !== 'all') 
-        ? allFilteredUsers.length 
-        : unfilteredTotal;
-        
-      setTotalCount(totalFilteredCount);
-      setTotalPages(Math.ceil(totalFilteredCount / pageSize));
-
-      // Apply pagination to filtered results - FIXED: Ensure we have data for the requested page
-      const startIndex = (page - 1) * pageSize;
+      // Apply pagination to sorted results
+      const startIndex = offset;
       const endIndex = startIndex + pageSize;
       
-      // For debugging pagination issues
-      console.log('Pagination Debug:', {
-        page,
+      console.log('Final pagination:', {
+        allFilteredUsersLength: allFilteredUsers.length,
         startIndex,
         endIndex,
-        totalUsers: allFilteredUsers.length,
-        totalCount: totalFilteredCount,
-        pageSize,
-        searchTerm,
-        selectedRole
+        page
       });
       
       const paginatedUsers = allFilteredUsers.slice(startIndex, endIndex);
-      console.log('Paginated users:', paginatedUsers.length);
+      console.log('Paginated users for page', page, ':', paginatedUsers.length);
 
       setUsers(paginatedUsers);
       setCurrentPage(page);
