@@ -55,9 +55,18 @@ serve(async (req) => {
     try {
       configJson = JSON.parse(workloadIdentityConfig);
       console.log("Workload identity config parsed successfully");
+      
+      // Validate required fields
+      if (!configJson.audience) {
+        throw new Error("Missing 'audience' field in workload identity config");
+      }
+      if (!configJson.subject_token_type) {
+        throw new Error("Missing 'subject_token_type' field in workload identity config");
+      }
     } catch (parseError) {
       console.error("Failed to parse workload identity config:", parseError.message);
-      throw new Error("Invalid workload identity configuration format")
+      console.error("Config starts with:", workloadIdentityConfig.substring(0, 100));
+      throw new Error(`Invalid workload identity configuration format: ${parseError.message}. Expected JSON credential file.`)
     }
     
     // Check if we received assessment_id

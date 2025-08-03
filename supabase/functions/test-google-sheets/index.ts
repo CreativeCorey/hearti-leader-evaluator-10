@@ -65,12 +65,21 @@ serve(async (req) => {
     try {
       configJson = JSON.parse(workloadIdentityConfig);
       console.log("Workload identity config parsed successfully");
+      
+      // Validate required fields
+      if (!configJson.audience) {
+        throw new Error("Missing 'audience' field in workload identity config");
+      }
+      if (!configJson.subject_token_type) {
+        throw new Error("Missing 'subject_token_type' field in workload identity config");
+      }
     } catch (parseError) {
       console.error("Failed to parse workload identity config:", parseError.message);
+      console.error("Config starts with:", workloadIdentityConfig.substring(0, 100));
       return new Response(
         JSON.stringify({ 
           error: "Invalid workload identity configuration format",
-          message: "The GOOGLE_WORKLOAD_IDENTITY_CONFIG does not contain valid JSON"
+          message: `The GOOGLE_WORKLOAD_IDENTITY_CONFIG does not contain valid JSON: ${parseError.message}. Expected JSON credential file from Google Cloud Console.`
         }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       )
