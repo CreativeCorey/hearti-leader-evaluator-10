@@ -13,7 +13,7 @@ import { userColor, comparisonColors } from "./comparison/aggregateData";
 import { useIsMobile } from '@/hooks/use-mobile';
 import { formatDataForRadarChart } from '@/utils/calculations';
 import { useLanguage } from '@/contexts/language/LanguageContext';
-import { getAggregateData, AggregateData } from '@/services/aggregateDataService';
+import { getAggregateData, AggregateData, invalidateAggregateDataCache } from '@/services/aggregateDataService';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/use-auth';
 
@@ -90,7 +90,10 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
   useEffect(() => {
     if (compareMode !== 'none') {
       setIsLoadingAggregate(true);
-      // Always fetch fresh data for now to ensure accuracy
+      // Invalidate cache for super admins to ensure they see fresh historical data
+      if (isSuperAdmin) {
+        invalidateAggregateDataCache();
+      }
       getAggregateData().then((data) => {
         console.log('Loaded aggregate data for compareMode:', compareMode, data);
         setAggregateData(data);
@@ -100,7 +103,7 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
         setIsLoadingAggregate(false);
       });
     }
-  }, [compareMode, genderCompareMode, jobRoleCompareMode, companySizeCompareMode, managementLevelCompareMode, raceEthnicityCompareMode, locationCompareMode, salaryCompareMode]);
+  }, [compareMode, genderCompareMode, jobRoleCompareMode, companySizeCompareMode, managementLevelCompareMode, raceEthnicityCompareMode, locationCompareMode, salaryCompareMode, isSuperAdmin]);
 
   // Reset the selected assessment when the initial assessment changes
   useEffect(() => {

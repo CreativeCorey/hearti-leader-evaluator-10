@@ -562,9 +562,10 @@ function calculateSalaryScores(assessments: any[]): SalaryBreakdown {
 export async function fetchAggregateData(): Promise<AggregateData> {
   try {
     // Fetch all assessments with dimension scores and demographics
+    // Include both regular assessments and historical assessments for comprehensive aggregate data
     const { data: assessments, error } = await supabase
       .from('assessments')
-      .select('dimension_scores, demographics')
+      .select('dimension_scores, demographics, historical_profile_id')
       .not('dimension_scores', 'is', null)
       .not('demographics', 'is', null);
 
@@ -578,7 +579,10 @@ export async function fetchAggregateData(): Promise<AggregateData> {
       return defaultAggregateData;
     }
 
-    console.log(`Calculating aggregate data from ${assessments.length} assessments`);
+    const regularAssessments = assessments.filter(a => !a.historical_profile_id);
+    const historicalAssessments = assessments.filter(a => a.historical_profile_id);
+    
+    console.log(`Calculating aggregate data from ${assessments.length} total assessments (${regularAssessments.length} regular, ${historicalAssessments.length} historical)`);
 
     const averageScores = calculateAverageScores(assessments);
     const genderDemographics = calculateDemographicScores(assessments);
