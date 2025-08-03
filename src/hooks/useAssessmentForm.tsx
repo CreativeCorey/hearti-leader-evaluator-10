@@ -61,7 +61,7 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
   
   // Load saved progress from localStorage when component initializes
   useEffect(() => {
-    if (!userLoading && shuffledQuestions.length > 0 && !assessmentComplete && !isSubmitting) {
+    if (!userLoading && shuffledQuestions.length > 0 && !assessmentComplete && !isSubmitting && initializing) {
       try {
         const savedProgress = localStorage.getItem(ASSESSMENT_PROGRESS_KEY);
         if (savedProgress) {
@@ -88,7 +88,7 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
     } else if (!userLoading && shuffledQuestions.length > 0) {
       setInitializing(false);
     }
-  }, [userLoading, shuffledQuestions.length, setCurrentQuestionIndex, setAnswers, assessmentComplete, isSubmitting]);
+  }, [userLoading, shuffledQuestions.length, setCurrentQuestionIndex, setAnswers, assessmentComplete, isSubmitting, initializing]);
 
   // Save progress whenever answers or current question changes
   useEffect(() => {
