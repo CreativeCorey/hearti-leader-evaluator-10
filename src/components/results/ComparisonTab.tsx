@@ -122,26 +122,38 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
   const getComparisonData = () => {
     if (!aggregateData) return null;
     
+    let result = null;
     switch (compareMode) {
       case 'average':
-        return formatDataForRadarChart(aggregateData.averageScores);
+        result = formatDataForRadarChart(aggregateData.averageScores);
+        break;
       case 'gender':
-        return formatDataForRadarChart(aggregateData.demographics.gender[genderCompareMode]);
+        result = formatDataForRadarChart(aggregateData.demographics.gender[genderCompareMode]);
+        break;
       case 'jobRole':
-        return formatDataForRadarChart(aggregateData.demographics.jobRole[jobRoleCompareMode]);
+        result = formatDataForRadarChart(aggregateData.demographics.jobRole[jobRoleCompareMode]);
+        break;
       case 'companySize':
-        return formatDataForRadarChart(aggregateData.demographics.companySize[companySizeCompareMode]);
+        result = formatDataForRadarChart(aggregateData.demographics.companySize[companySizeCompareMode]);
+        break;
       case 'managementLevel':
-        return formatDataForRadarChart(aggregateData.demographics.managementLevel[managementLevelCompareMode]);
+        result = formatDataForRadarChart(aggregateData.demographics.managementLevel[managementLevelCompareMode]);
+        break;
       case 'raceEthnicity':
-        return formatDataForRadarChart(aggregateData.demographics.raceEthnicity[raceEthnicityCompareMode]);
+        result = formatDataForRadarChart(aggregateData.demographics.raceEthnicity[raceEthnicityCompareMode]);
+        break;
       case 'location':
-        return formatDataForRadarChart(aggregateData.demographics.location[locationCompareMode]);
+        result = formatDataForRadarChart(aggregateData.demographics.location[locationCompareMode]);
+        break;
       case 'salary':
-        return formatDataForRadarChart(aggregateData.demographics.salary[salaryCompareMode]);
+        result = formatDataForRadarChart(aggregateData.demographics.salary[salaryCompareMode]);
+        break;
       default:
-        return null;
+        result = null;
     }
+    
+    console.log('getComparisonData result:', { compareMode, result, genderCompareMode, jobRoleCompareMode });
+    return result;
   };
   
   // Format data for combined chart
