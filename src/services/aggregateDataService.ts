@@ -367,24 +367,35 @@ function calculateDemographicScores(assessments: any[]): DemographicBreakdown {
 }
 
 function calculateJobRoleScores(assessments: any[]): JobRoleBreakdown {
-  const engineeringAssessments = assessments.filter(a => 
-    a.demographics?.jobRole?.toLowerCase().includes('engineer') ||
-    a.demographics?.jobRole?.toLowerCase().includes('developer') ||
-    a.demographics?.jobRole?.toLowerCase().includes('programmer')
-  );
+  const engineeringAssessments = assessments.filter(a => {
+    const jobRole = a.demographics?.jobRole;
+    return jobRole && typeof jobRole === 'string' && (
+      jobRole.toLowerCase().includes('engineer') ||
+      jobRole.toLowerCase().includes('developer') ||
+      jobRole.toLowerCase().includes('programmer')
+    );
+  });
   
-  const managementAssessments = assessments.filter(a => 
-    a.demographics?.managementLevel?.toLowerCase().includes('manager') ||
-    a.demographics?.jobRole?.toLowerCase().includes('manager')
-  );
+  const managementAssessments = assessments.filter(a => {
+    const managementLevel = a.demographics?.managementLevel;
+    const jobRole = a.demographics?.jobRole;
+    return (managementLevel && typeof managementLevel === 'string' && managementLevel.toLowerCase().includes('manager')) ||
+           (jobRole && typeof jobRole === 'string' && jobRole.toLowerCase().includes('manager'));
+  });
   
-  const executiveAssessments = assessments.filter(a => 
-    a.demographics?.managementLevel?.toLowerCase().includes('executive') ||
-    a.demographics?.managementLevel?.toLowerCase().includes('c-suite') ||
-    a.demographics?.jobRole?.toLowerCase().includes('ceo') ||
-    a.demographics?.jobRole?.toLowerCase().includes('cto') ||
-    a.demographics?.jobRole?.toLowerCase().includes('cfo')
-  );
+  const executiveAssessments = assessments.filter(a => {
+    const managementLevel = a.demographics?.managementLevel;
+    const jobRole = a.demographics?.jobRole;
+    return (managementLevel && typeof managementLevel === 'string' && (
+             managementLevel.toLowerCase().includes('executive') ||
+             managementLevel.toLowerCase().includes('c-suite')
+           )) ||
+           (jobRole && typeof jobRole === 'string' && (
+             jobRole.toLowerCase().includes('ceo') ||
+             jobRole.toLowerCase().includes('cto') ||
+             jobRole.toLowerCase().includes('cfo')
+           ));
+  });
   
   const otherAssessments = assessments.filter(a => 
     !engineeringAssessments.includes(a) && 
@@ -449,26 +460,38 @@ function calculateManagementLevelScores(assessments: any[]): ManagementLevelBrea
 }
 
 function calculateRaceEthnicityScores(assessments: any[]): RaceEthnicityBreakdown {
-  const whiteAssessments = assessments.filter(a => 
-    a.demographics?.raceEthnicity?.toLowerCase().includes('white') ||
-    a.demographics?.raceEthnicity?.toLowerCase().includes('caucasian')
-  );
+  const whiteAssessments = assessments.filter(a => {
+    const race = a.demographics?.raceEthnicity;
+    return race && typeof race === 'string' && (
+      race.toLowerCase().includes('white') ||
+      race.toLowerCase().includes('caucasian')
+    );
+  });
   
-  const blackAssessments = assessments.filter(a => 
-    a.demographics?.raceEthnicity?.toLowerCase().includes('black') ||
-    a.demographics?.raceEthnicity?.toLowerCase().includes('african')
-  );
+  const blackAssessments = assessments.filter(a => {
+    const race = a.demographics?.raceEthnicity;
+    return race && typeof race === 'string' && (
+      race.toLowerCase().includes('black') ||
+      race.toLowerCase().includes('african')
+    );
+  });
   
-  const hispanicAssessments = assessments.filter(a => 
-    a.demographics?.raceEthnicity?.toLowerCase().includes('hispanic') ||
-    a.demographics?.raceEthnicity?.toLowerCase().includes('latino') ||
-    a.demographics?.raceEthnicity?.toLowerCase().includes('latina')
-  );
+  const hispanicAssessments = assessments.filter(a => {
+    const race = a.demographics?.raceEthnicity;
+    return race && typeof race === 'string' && (
+      race.toLowerCase().includes('hispanic') ||
+      race.toLowerCase().includes('latino') ||
+      race.toLowerCase().includes('latina')
+    );
+  });
   
-  const asianAssessments = assessments.filter(a => 
-    a.demographics?.raceEthnicity?.toLowerCase().includes('asian') ||
-    a.demographics?.raceEthnicity?.toLowerCase().includes('pacific')
-  );
+  const asianAssessments = assessments.filter(a => {
+    const race = a.demographics?.raceEthnicity;
+    return race && typeof race === 'string' && (
+      race.toLowerCase().includes('asian') ||
+      race.toLowerCase().includes('pacific')
+    );
+  });
   
   const otherAssessments = assessments.filter(a => 
     !whiteAssessments.includes(a) && 
