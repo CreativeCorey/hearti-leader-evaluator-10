@@ -251,12 +251,17 @@ async function processRow(supabase: any, row: any) {
     const lastName = row['Contact Last Name'] || row['Last Name'] || row['LastName'] || row['lastname'];
     const assessmentDate = row['Date & Time'] || row['Date'] || row['Timestamp'];
 
+    // More permissive check - accept any valid identifier
+    const hasValidId = email || responseId || Object.values(row).some(val => val && val.toString().trim().length > 0);
+
     if (!email && !responseId) {
-      return { profileCreated, assessmentCreated, error: 'Missing both email and response ID' };
+      console.log('Skipping row - missing both email and response ID:', Object.keys(row).slice(0, 5));
+      return { profileCreated, assessmentCreated, error: 'Missing both email and response ID - skipping row' };
     }
 
     // Generate email from response ID if missing
     const finalEmail = email || `response-${responseId}@historical-import.com`;
+    console.log(`Processing user: ${finalEmail} (responseId: ${responseId})`)
 
     // Check if historical profile exists by email only
     const { data: existingUser } = await supabase

@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Loader2, Upload, AlertCircle, CheckCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { invalidateAggregateDataCache } from '@/services/aggregateDataService';
+import ImportProgressBar from './ImportProgressBar';
 
 interface ImportResult {
   success: boolean;
@@ -28,6 +29,8 @@ const GoogleSheetsImporter: React.FC = () => {
   const [range, setRange] = useState('Sheet1!A:Z');
   const [isImporting, setIsImporting] = useState(false);
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
+  const [showProgress, setShowProgress] = useState(false);
+  const [totalRows, setTotalRows] = useState(0);
 
   const handleImport = async () => {
     if (!sheetId.trim()) {
@@ -69,9 +72,11 @@ const GoogleSheetsImporter: React.FC = () => {
       if (data.success) {
         // Handle background task response (large imports)
         if (data.message && data.message.includes('background')) {
+          setTotalRows(data.totalRows || 0);
+          setShowProgress(true);
           toast({
             title: "Import Started",
-            description: data.message,
+            description: `Processing ${data.totalRows} records in background. Progress will be tracked below.`,
           });
         } 
         // Handle immediate response (small imports)
@@ -85,6 +90,8 @@ const GoogleSheetsImporter: React.FC = () => {
         }
         // Handle other success cases
         else {
+          setTotalRows(data.totalRows || 0);
+          setShowProgress(true);
           toast({
             title: "Import Started",
             description: data.note || "Import processing started",
@@ -124,6 +131,25 @@ const GoogleSheetsImporter: React.FC = () => {
   const handleSheetIdChange = (value: string) => {
     const extractedId = extractSheetId(value);
     setSheetId(extractedId);
+  };
+
+  const handleProgressComplete = (result: any) => {
+    setShowProgress(false);
+    setImportResult(result);
+    invalidateAggregateDataCache();
+    toast({
+      title: "Import Complete",
+      description: `Successfully imported ${result.imported?.profiles || 0} profiles and ${result.imported?.assessments || 0} assessments.`,
+    });
+  };
+
+  const handleProgressError = (error: string) => {
+    setShowProgress(false);
+    toast({
+      title: "Import Progress Error",
+      description: error,
+      variant: "destructive",
+    });
   };
 
   return (
@@ -198,6 +224,14 @@ const GoogleSheetsImporter: React.FC = () => {
             </>
           )}
         </Button>
+
+        {/* Progress Bar for Background Processing */}
+        <ImportProgressBar
+          isVisible={showProgress}
+          totalRecords={totalRows}
+          onComplete={handleProgressComplete}
+          onError={handleProgressError}
+        />
 
         {importResult && (
           <Card className={importResult.success ? "border-green-200" : "border-red-200"}>
