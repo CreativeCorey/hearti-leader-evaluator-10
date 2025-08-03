@@ -56,15 +56,37 @@ const UserManagement = () => {
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [updatingUser, setUpdatingUser] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(100);
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  
   const { toast } = useToast();
   const { checkAndEnforceRateLimit } = useRateLimit();
 
-  // Load all users (both regular and historical) with pagination
-  const loadUsers = async () => {
+  // Load users with pagination
+  const loadUsers = async (page: number = currentPage) => {
     try {
       setLoading(true);
       
-      // Get regular profiles
+      const offset = (page - 1) * pageSize;
+      
+      // Get total counts first
+      const { count: regularCount } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
+
+      const { count: historicalCount } = await supabase
+        .from('historical_profiles')
+        .select('*', { count: 'exact', head: true });
+
+      const totalUserCount = (regularCount || 0) + (historicalCount || 0);
+      setTotalCount(totalUserCount);
+      setTotalPages(Math.ceil(totalUserCount / pageSize));
+
+      // Get regular profiles (always include all since they're few)
       const { data: regularProfiles, error: regularError } = await supabase
         .from('profiles')
         .select(`
@@ -82,63 +104,62 @@ const UserManagement = () => {
         throw regularError;
       }
 
-      // Get historical profiles with larger limit
-      const { data: historicalProfiles, error: historicalError } = await supabase
-        .from('historical_profiles')
-        .select(`
-          id,
-          name,
-          email,
-          role,
-          organization_id,
-          created_at,
-          source_unique_id,
-          organizations(name)
-        `)
-        .order('created_at', { ascending: false })
-        .limit(5000); // Increase limit to see more records
+      // Calculate how many historical profiles to fetch based on pagination
+      const regularUsersCount = regularProfiles?.length || 0;
+      const historicalOffset = Math.max(0, offset - regularUsersCount);
+      const historicalLimit = offset < regularUsersCount 
+        ? pageSize 
+        : pageSize - Math.max(0, regularUsersCount - offset);
 
-      if (historicalError) {
-        console.warn('Could not load historical profiles:', historicalError);
+      // Get historical profiles with pagination
+      let historicalProfiles: any[] = [];
+      if (historicalLimit > 0 && historicalOffset < (historicalCount || 0)) {
+        const { data, error: historicalError } = await supabase
+          .from('historical_profiles')
+          .select(`
+            id,
+            name,
+            email,
+            role,
+            organization_id,
+            created_at,
+            source_unique_id,
+            organizations(name)
+          `)
+          .order('created_at', { ascending: false })
+          .range(historicalOffset, historicalOffset + historicalLimit - 1);
+
+        if (historicalError) {
+          console.warn('Could not load historical profiles:', historicalError);
+        } else {
+          historicalProfiles = data || [];
+        }
       }
 
-      // Get total counts for accurate statistics
-      const { count: regularCount } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true });
-
-      const { count: historicalCount } = await supabase
-        .from('historical_profiles')
-        .select('*', { count: 'exact', head: true });
-
-      // Combine and mark historical profiles
+      // Combine and mark profiles
       const regularUsers = (regularProfiles || []).map(user => ({
         ...user,
         organization_name: (user.organizations as any)?.name || null,
         isHistorical: false
       }));
 
-      const historicalUsers = (historicalProfiles || []).map(user => ({
+      const historicalUsers = historicalProfiles.map(user => ({
         ...user,
         organization_name: (user.organizations as any)?.name || null,
         isHistorical: true
       }));
 
+      // Combine all users and apply pagination correctly
       const allUsers = [...regularUsers, ...historicalUsers]
         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-      // Store actual counts for statistics
-      const actualTotalCount = (regularCount || 0) + (historicalCount || 0);
-      
-      setUsers(allUsers);
-      
-      // Show a toast if we're displaying a subset
-      if (allUsers.length < actualTotalCount) {
-        toast({
-          title: "Info",
-          description: `Showing ${allUsers.length} of ${actualTotalCount} total users. Displaying most recent records.`,
-        });
-      }
+      // For pagination, we need to slice correctly based on the page
+      const startIndex = offset;
+      const endIndex = startIndex + pageSize;
+      const paginatedUsers = allUsers.slice(startIndex, endIndex);
+
+      setUsers(paginatedUsers);
+      setCurrentPage(page);
       
     } catch (error) {
       console.error('Error loading users:', error);
@@ -152,9 +173,45 @@ const UserManagement = () => {
     }
   };
 
+  // Reset to first page when search or filter changes
+  const handleSearchOrFilterChange = () => {
+    setCurrentPage(1);
+    loadUsers(1);
+  };
+
+  // Navigation functions
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      loadUsers(page);
+    }
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      goToPage(currentPage + 1);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      goToPage(currentPage - 1);
+    }
+  };
+
   useEffect(() => {
-    loadUsers();
+    loadUsers(1);
   }, []);
+
+  // Update search and filter handlers
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (searchTerm || selectedRole !== 'all') {
+        handleSearchOrFilterChange();
+      }
+    }, 300); // Debounce search
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, selectedRole]);
 
   // Update user role
   const updateUserRole = async (userId: string, newRole: UserRole) => {
@@ -187,6 +244,9 @@ const UserManagement = () => {
         title: "Success",
         description: `User role updated to ${newRole} successfully.`,
       });
+      
+      // Reload current page to reflect changes
+      loadUsers(currentPage);
     } catch (error) {
       console.error('Error updating user role:', error);
       toast({
@@ -199,7 +259,7 @@ const UserManagement = () => {
     }
   };
 
-  // Filter users based on search and role
+  // Filter users based on search and role (applied to current page)
   const filteredUsers = users.filter(user => {
     const matchesSearch = 
       user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -210,6 +270,41 @@ const UserManagement = () => {
     
     return matchesSearch && matchesRole;
   });
+
+  // Calculate pagination info
+  const startIndex = (currentPage - 1) * pageSize + 1;
+  const endIndex = Math.min(currentPage * pageSize, totalCount);
+
+  // Generate page numbers for pagination controls
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 5;
+    
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      const start = Math.max(1, currentPage - 2);
+      const end = Math.min(totalPages, start + maxVisible - 1);
+      
+      if (start > 1) {
+        pages.push(1);
+        if (start > 2) pages.push('...');
+      }
+      
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+      
+      if (end < totalPages) {
+        if (end < totalPages - 1) pages.push('...');
+        pages.push(totalPages);
+      }
+    }
+    
+    return pages;
+  };
 
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
@@ -283,26 +378,36 @@ const UserManagement = () => {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 py-4">
           <div className="text-center">
-            <div className="text-2xl font-bold">{users.length}</div>
+            <div className="text-2xl font-bold">{totalCount}</div>
             <div className="text-sm text-muted-foreground">Total Users</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-red-600">
               {users.filter(u => u.role === 'admin').length}
             </div>
-            <div className="text-sm text-muted-foreground">Admins</div>
+            <div className="text-sm text-muted-foreground">Admins (Page)</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-blue-600">
               {users.filter(u => u.role === 'coach').length}
             </div>
-            <div className="text-sm text-muted-foreground">Coaches</div>
+            <div className="text-sm text-muted-foreground">Coaches (Page)</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-gray-600">
               {users.filter(u => u.role === 'user').length}
             </div>
-            <div className="text-sm text-muted-foreground">Regular Users</div>
+            <div className="text-sm text-muted-foreground">Regular Users (Page)</div>
+          </div>
+        </div>
+
+        {/* Pagination Info */}
+        <div className="flex justify-between items-center py-2 text-sm text-muted-foreground">
+          <div>
+            Showing {startIndex} to {endIndex} of {totalCount} users
+          </div>
+          <div>
+            Page {currentPage} of {totalPages}
           </div>
         </div>
 
@@ -326,6 +431,9 @@ const UserManagement = () => {
                     <div>
                       <div className="font-medium">{user.name || 'No name'}</div>
                       <div className="text-sm text-muted-foreground">{user.email}</div>
+                      {user.source_unique_id && (
+                        <div className="text-xs text-muted-foreground">ID: {user.source_unique_id}</div>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -463,7 +571,67 @@ const UserManagement = () => {
           </Table>
         </div>
 
-        {filteredUsers.length === 0 && (
+        {/* Pagination Controls */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4">
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={goToPreviousPage}
+              disabled={currentPage === 1 || loading}
+            >
+              Previous
+            </Button>
+            
+            <div className="flex items-center gap-1">
+              {getPageNumbers().map((page, index) => (
+                page === '...' ? (
+                  <span key={index} className="px-2">...</span>
+                ) : (
+                  <Button
+                    key={index}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => goToPage(page as number)}
+                    disabled={loading}
+                    className="min-w-[2.5rem]"
+                  >
+                    {page}
+                  </Button>
+                )
+              ))}
+            </div>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={goToNextPage}
+              disabled={currentPage === totalPages || loading}
+            >
+              Next
+            </Button>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">Go to page:</span>
+            <Input
+              type="number"
+              min={1}
+              max={totalPages}
+              value={currentPage}
+              onChange={(e) => {
+                const page = parseInt(e.target.value);
+                if (page >= 1 && page <= totalPages) {
+                  goToPage(page);
+                }
+              }}
+              className="w-20"
+              disabled={loading}
+            />
+          </div>
+        </div>
+
+        {filteredUsers.length === 0 && !loading && (
           <div className="text-center py-8 text-muted-foreground">
             <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p>No users found matching your search criteria.</p>
