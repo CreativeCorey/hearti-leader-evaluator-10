@@ -171,6 +171,9 @@ export const en = {
       title: "HEARTI:Leader Quotient Results",
       subtitle: "Share your HEARTI:Leader results with others or save them for future reference."
     },
+    report: {
+      description: "Insights and recommendations to help you develop your leadership skills"
+    },
     comparison: {
       title: "HEARTI Comparison",
       subtitle: "Compare your results with global benchmarks",

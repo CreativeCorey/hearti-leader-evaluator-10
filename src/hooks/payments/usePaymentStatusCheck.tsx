@@ -44,8 +44,8 @@ export const usePaymentStatusCheck = () => {
       return;
     }
 
-    // Super admins have automatic access unless they're in a different view mode
-    if (userRole === 'super_admin') {
+    // Super admins and regular admins have automatic access unless in unsubscribed view mode
+    if (userRole === 'super_admin' || userRole === 'admin') {
       if (viewMode === 'admin' || viewMode === 'subscriber') {
         setHasPaid(true);
         setCheckingPayment(false);
