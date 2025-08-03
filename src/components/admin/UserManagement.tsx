@@ -67,157 +67,73 @@ const UserManagement = () => {
   const { toast } = useToast();
   const { checkAndEnforceRateLimit } = useRateLimit();
 
-  // Load users with pagination and filtering
+  // Load users with pagination and filtering using the new database function
   const loadUsers = async (page: number = currentPage) => {
     try {
       setLoading(true);
       
       const offset = (page - 1) * pageSize;
       
-      // Build base queries for counting with filters applied
-      let countRegularQuery = supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true });
-
-      let countHistoricalQuery = supabase
-        .from('historical_profiles')
-        .select('*', { count: 'exact', head: true });
-
-      // Apply search filters for counting
-      if (searchTerm) {
-        const searchFilter = `name.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`;
-        countRegularQuery = countRegularQuery.or(searchFilter);
-        countHistoricalQuery = countHistoricalQuery.or(searchFilter);
-      }
-
-      // Apply role filters for counting
-      if (selectedRole !== 'all') {
-        countRegularQuery = countRegularQuery.eq('role', selectedRole as any);
-        countHistoricalQuery = countHistoricalQuery.eq('role', selectedRole as any);
-      }
-
-      // Get filtered counts
-      const { count: filteredRegularCount } = await countRegularQuery;
-      const { count: filteredHistoricalCount } = await countHistoricalQuery;
-
-      const totalFilteredCount = (filteredRegularCount || 0) + (filteredHistoricalCount || 0);
+      // Prepare filter parameters
+      const searchFilter = searchTerm.trim() || null;
+      const roleFilter = selectedRole !== 'all' ? selectedRole : null;
       
-      setTotalCount(totalFilteredCount);
-      setTotalPages(Math.ceil(totalFilteredCount / pageSize));
-
       console.log('Pagination Debug:', {
         page,
         offset,
         pageSize,
-        totalFilteredCount,
-        filteredRegularCount,
-        filteredHistoricalCount,
-        searchTerm,
-        selectedRole
+        searchTerm: searchFilter,
+        selectedRole: roleFilter
       });
 
-      // If no results found, set empty array and return
-      if (totalFilteredCount === 0) {
+      // Use the new database function for server-side pagination
+      const { data, error } = await supabase
+        .rpc('get_paginated_users', {
+          page_offset: offset,
+          page_limit: pageSize,
+          search_term: searchFilter,
+          role_filter: roleFilter as any
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      if (!data || data.length === 0) {
         setUsers([]);
+        setTotalCount(0);
+        setTotalPages(0);
         setCurrentPage(page);
         return;
       }
 
-      // Now build the data queries for the specific page
-      let regularQuery = supabase
-        .from('profiles')
-        .select(`
-          id,
-          name,
-          email,
-          role,
-          organization_id,
-          created_at,
-          organizations(name)
-        `);
-
-      let historicalQuery = supabase
-        .from('historical_profiles')
-        .select(`
-          id,
-          name,
-          email,
-          role,
-          organization_id,
-          created_at,
-          source_unique_id,
-          organizations(name)
-        `);
-
-      // Apply same filters to data queries
-      if (searchTerm) {
-        const searchFilter = `name.ilike.%${searchTerm}%,email.ilike.%${searchTerm}%`;
-        regularQuery = regularQuery.or(searchFilter);
-        historicalQuery = historicalQuery.or(searchFilter);
-      }
-
-      if (selectedRole !== 'all') {
-        regularQuery = regularQuery.eq('role', selectedRole as any);
-        historicalQuery = historicalQuery.eq('role', selectedRole as any);
-      }
-
-      // Use server-side pagination instead of client-side to handle large datasets
-      // Calculate how many records to get from each table for this page
-      const regularProfilesNeeded = Math.min(pageSize * 2, totalFilteredCount); // Get extra for proper sorting
-      const historicalProfilesNeeded = Math.min(pageSize * 2, totalFilteredCount); // Get extra for proper sorting
+      // Extract total count from the first row (all rows have the same total_count)
+      const totalFilteredCount = data[0]?.total_count || 0;
       
-      // Get data from both tables with generous limits for sorting
-      const { data: regularProfiles, error: regularError } = await regularQuery
-        .order('created_at', { ascending: false })
-        .limit(regularProfilesNeeded);
+      setTotalCount(totalFilteredCount);
+      setTotalPages(Math.ceil(totalFilteredCount / pageSize));
 
-      if (regularError) {
-        throw regularError;
-      }
-
-      const { data: historicalProfilesData, error: historicalError } = await historicalQuery
-        .order('created_at', { ascending: false })
-        .limit(historicalProfilesNeeded);
-
-      if (historicalError) {
-        console.warn('Could not load historical profiles:', historicalError);
-      }
-
-      // Combine and mark profiles
-      const regularUsers = (regularProfiles || []).map(user => ({
-        ...user,
-        organization_name: (user.organizations as any)?.name || null,
-        isHistorical: false
+      // Transform the data to match our interface
+      const transformedUsers = data.map(user => ({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        organization_id: user.organization_id,
+        created_at: user.created_at,
+        organization_name: user.organization_name,
+        isHistorical: user.is_historical,
+        source_unique_id: user.source_unique_id
       }));
 
-      const historicalUsers = (historicalProfilesData || []).map(user => ({
-        ...user,
-        organization_name: (user.organizations as any)?.name || null,
-        isHistorical: true
-      }));
-
-      // Combine all available users and sort by created_at globally
-      const allAvailableUsers = [...regularUsers, ...historicalUsers]
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-
-      // Apply pagination to sorted results
-      const startIndex = offset;
-      const endIndex = startIndex + pageSize;
-      
-      console.log('Final pagination:', {
-        allAvailableUsersLength: allAvailableUsers.length,
-        regularUsersCount: regularUsers.length,
-        historicalUsersCount: historicalUsers.length,
-        startIndex,
-        endIndex,
+      console.log('Server-side pagination result:', {
+        totalFilteredCount,
+        returnedUsersCount: transformedUsers.length,
         page,
-        totalFilteredCount
+        totalPages: Math.ceil(totalFilteredCount / pageSize)
       });
-      
-      const paginatedUsers = allAvailableUsers.slice(startIndex, endIndex);
-      console.log('Paginated users for page', page, ':', paginatedUsers.length);
 
-      setUsers(paginatedUsers);
+      setUsers(transformedUsers);
       setCurrentPage(page);
       
     } catch (error) {

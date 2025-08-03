@@ -442,6 +442,26 @@ export type Database = {
           total_count: number
         }[]
       }
+      get_paginated_users: {
+        Args: {
+          page_offset?: number
+          page_limit?: number
+          search_term?: string
+          role_filter?: Database["public"]["Enums"]["user_role"]
+        }
+        Returns: {
+          id: string
+          name: string
+          email: string
+          role: Database["public"]["Enums"]["user_role"]
+          organization_id: string
+          created_at: string
+          organization_name: string
+          is_historical: boolean
+          source_unique_id: string
+          total_count: number
+        }[]
+      }
       is_authenticated_user: {
         Args: { user_uuid?: string }
         Returns: boolean
