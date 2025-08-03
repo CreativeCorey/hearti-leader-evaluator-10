@@ -68,7 +68,7 @@ const Admin = () => {
   }
 
   // Redirect if not admin
-  if (!authLoading && (!user || userProfile?.role !== 'admin')) {
+  if (!authLoading && (!user || !['admin', 'super_admin'].includes(userProfile?.role || ''))) {
     return (
       <div className="container mx-auto px-4 py-8">
         <Alert variant="destructive">

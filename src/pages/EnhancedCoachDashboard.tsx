@@ -251,7 +251,7 @@ const EnhancedCoachDashboard = () => {
   const improvingParticipants = participants.filter(p => p.progress_trend === 'up').length;
 
   // Redirect if not admin
-  if (!authLoading && (!user || userProfile?.role !== 'admin')) {
+  if (!authLoading && (!user || !['admin', 'super_admin'].includes(userProfile?.role || ''))) {
     return (
       <div className="container mx-auto py-6 px-4">
         <Alert>

@@ -75,12 +75,12 @@ const Header = () => {
               Assessment
             </Link>
             {/* Conditional navigation links based on user role */}
-            {user && profile?.role && ['coach', 'admin'].includes(profile.role) && (
+            {user && profile?.role && ['coach', 'admin', 'super_admin'].includes(profile.role) && (
               <Link to="/coach" className={`${location.pathname === '/coach' ? 'text-foreground font-medium' : 'text-muted-foreground'} hover:text-foreground transition-colors`}>
                 Coach Dashboard
               </Link>
             )}
-            {user && profile?.role === 'admin' && (
+            {user && profile?.role && ['admin', 'super_admin'].includes(profile.role) && (
               <Link to="/admin" className={`${location.pathname === '/admin' ? 'text-foreground font-medium' : 'text-muted-foreground'} hover:text-foreground transition-colors`}>
                 Admin
               </Link>
@@ -150,12 +150,12 @@ const Header = () => {
                 <Link to="/">Assessment</Link>
               </DropdownMenuItem>
               {/* Conditional mobile navigation links based on user role */}
-              {user && profile?.role && ['coach', 'admin'].includes(profile.role) && (
+              {user && profile?.role && ['coach', 'admin', 'super_admin'].includes(profile.role) && (
                 <DropdownMenuItem asChild>
                   <Link to="/coach">Coach Dashboard</Link>
                 </DropdownMenuItem>
               )}
-              {user && profile?.role === 'admin' && (
+              {user && profile?.role && ['admin', 'super_admin'].includes(profile.role) && (
                 <DropdownMenuItem asChild>
                   <Link to="/admin">Admin</Link>
                 </DropdownMenuItem>

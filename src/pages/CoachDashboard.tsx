@@ -70,7 +70,7 @@ const CoachDashboard = () => {
   }, [user]);
 
   // Redirect if not coach or admin
-  if (!user || !['coach', 'admin'].includes(profile?.role || '')) {
+  if (!user || !['coach', 'admin', 'super_admin'].includes(profile?.role || '')) {
     return <Navigate to="/" replace />;
   }
 
