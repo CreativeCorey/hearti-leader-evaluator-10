@@ -42,7 +42,9 @@ const OrganizationChat: React.FC<OrganizationChatProps> = ({
 
   const loadMessages = async () => {
     try {
-      const response: any = await supabase
+      // Completely bypass TypeScript inference by using any
+      const supabaseClient: any = supabase;
+      const result = await supabaseClient
         .from('messages')
         .select('*')
         .eq('message_type', 'organization')
@@ -50,9 +52,9 @@ const OrganizationChat: React.FC<OrganizationChatProps> = ({
         .order('created_at', { ascending: true })
         .limit(50);
 
-      if (response.error) throw response.error;
+      if (result.error) throw result.error;
       
-      setMessages(response.data || []);
+      setMessages(result.data || []);
     } catch (error) {
       console.error('Error loading organization messages:', error);
       toast({
