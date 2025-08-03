@@ -108,9 +108,19 @@ export const validateScore = (score: number): boolean => {
 export const validateDemographics = (demographics: any): boolean => {
   if (!demographics || typeof demographics !== 'object') return true; // Optional
   
-  // Basic validation for demographic fields
-  const validKeys = ['age', 'gender', 'location', 'jobRole', 'companySize', 'managementLevel', 'raceEthnicity', 'salaryRange'];
+  // Valid demographic field names
+  const validKeys = [
+    'ageRange', 
+    'genderIdentity', 
+    'location', 
+    'jobRole', 
+    'companySize', 
+    'managementLevel', 
+    'raceEthnicity', 
+    'salaryRange'
+  ];
   const keys = Object.keys(demographics);
   
+  // All keys must be valid demographic fields
   return keys.every(key => validKeys.includes(key));
 };
