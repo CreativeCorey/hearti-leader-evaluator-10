@@ -155,6 +155,7 @@ export type Database = {
           created_at: string
           id: string
           message_type: string | null
+          organization_id: string | null
           recipient_id: string | null
           sender_role: string | null
           user_id: string
@@ -165,6 +166,7 @@ export type Database = {
           created_at?: string
           id?: string
           message_type?: string | null
+          organization_id?: string | null
           recipient_id?: string | null
           sender_role?: string | null
           user_id: string
@@ -175,12 +177,21 @@ export type Database = {
           created_at?: string
           id?: string
           message_type?: string | null
+          organization_id?: string | null
           recipient_id?: string | null
           sender_role?: string | null
           user_id?: string
           username?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "messages_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notifications: {
         Row: {
