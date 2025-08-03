@@ -161,10 +161,15 @@ const UserManagement = () => {
         historicalQuery = historicalQuery.eq('role', selectedRole as any);
       }
 
-      // Get all filtered data and sort combined
+      // Use server-side pagination instead of client-side to handle large datasets
+      // Calculate how many records to get from each table for this page
+      const regularProfilesNeeded = Math.min(pageSize * 2, totalFilteredCount); // Get extra for proper sorting
+      const historicalProfilesNeeded = Math.min(pageSize * 2, totalFilteredCount); // Get extra for proper sorting
+      
+      // Get data from both tables with generous limits for sorting
       const { data: regularProfiles, error: regularError } = await regularQuery
         .order('created_at', { ascending: false })
-        .limit(totalFilteredCount); // Ensure we get enough data
+        .limit(regularProfilesNeeded);
 
       if (regularError) {
         throw regularError;
@@ -172,7 +177,7 @@ const UserManagement = () => {
 
       const { data: historicalProfilesData, error: historicalError } = await historicalQuery
         .order('created_at', { ascending: false })
-        .limit(totalFilteredCount); // Ensure we get enough data
+        .limit(historicalProfilesNeeded);
 
       if (historicalError) {
         console.warn('Could not load historical profiles:', historicalError);
@@ -191,8 +196,8 @@ const UserManagement = () => {
         isHistorical: true
       }));
 
-      // Combine all filtered users and sort by created_at globally
-      const allFilteredUsers = [...regularUsers, ...historicalUsers]
+      // Combine all available users and sort by created_at globally
+      const allAvailableUsers = [...regularUsers, ...historicalUsers]
         .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
       // Apply pagination to sorted results
@@ -200,13 +205,16 @@ const UserManagement = () => {
       const endIndex = startIndex + pageSize;
       
       console.log('Final pagination:', {
-        allFilteredUsersLength: allFilteredUsers.length,
+        allAvailableUsersLength: allAvailableUsers.length,
+        regularUsersCount: regularUsers.length,
+        historicalUsersCount: historicalUsers.length,
         startIndex,
         endIndex,
-        page
+        page,
+        totalFilteredCount
       });
       
-      const paginatedUsers = allFilteredUsers.slice(startIndex, endIndex);
+      const paginatedUsers = allAvailableUsers.slice(startIndex, endIndex);
       console.log('Paginated users for page', page, ':', paginatedUsers.length);
 
       setUsers(paginatedUsers);
