@@ -114,10 +114,16 @@ export const useAssessmentCompletion = (
   };
 
   const handleDemographicsComplete = async (demographics: Demographics) => {
-    if (!tempAssessment) return;
+    console.log("handleDemographicsComplete called with demographics:", demographics);
+    
+    if (!tempAssessment) {
+      console.error("No temporary assessment found when completing demographics");
+      return;
+    }
     
     // Validate demographics data
     if (!validateDemographics(demographics)) {
+      console.error("Demographics validation failed:", demographics);
       toast({
         title: "Invalid Demographics",
         description: "Demographics data contains invalid values. Please check your inputs.",
@@ -126,22 +132,31 @@ export const useAssessmentCompletion = (
       return;
     }
     
+    console.log("Demographics validation passed, creating final assessment");
+    
     const finalAssessment: HEARTIAssessment = {
       ...tempAssessment,
       demographics
     };
     
     try {
+      console.log("Saving assessment with demographics:", finalAssessment);
       // Save assessment directly without any payment processing
       await saveAssessment(finalAssessment);
-      onComplete(finalAssessment);
+      
+      console.log("Assessment saved successfully, calling onComplete");
       
       toast({
         title: "Assessment Complete",
         description: "Your assessment has been saved successfully.",
       });
       
-      console.log("Assessment with demographics saved successfully");
+      // Call onComplete after a short delay to allow toast to show
+      setTimeout(() => {
+        console.log("Calling onComplete callback with final assessment");
+        onComplete(finalAssessment);
+      }, 500);
+      
     } catch (error) {
       console.error("Failed to save assessment:", error);
       toast({

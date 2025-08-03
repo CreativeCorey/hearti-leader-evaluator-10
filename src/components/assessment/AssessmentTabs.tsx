@@ -87,17 +87,27 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
   
   // Handle assessment completion
   const handleAssessmentComplete = (assessment: HEARTIAssessment) => {
+    console.log("handleAssessmentComplete called with assessment:", assessment);
+    console.log("Payment status - hasPaid:", hasPaid, "checkingPayment:", checkingPayment);
+    
     setIsAssessmentInProgress(false); // Assessment is no longer in progress
     setCompletedAssessment(assessment);
     setShowAssessmentForm(false);
     
     // Check if user has paid - if not, show payment gateway
     if (!hasPaid && !checkingPayment) {
+      console.log("User has not paid, showing payment gateway");
       setShowPaymentGateway(true);
       setActiveTab('overview'); // Set to overview but payment will show
     } else if (hasPaid) {
+      console.log("User has already paid, proceeding to results");
       // User has already paid, proceed to results
       onComplete(assessment);
+      setActiveTab('overview');
+    } else {
+      console.log("Payment status unclear, defaulting to payment gateway");
+      // Default to payment gateway if payment status is unclear
+      setShowPaymentGateway(true);
       setActiveTab('overview');
     }
   };
