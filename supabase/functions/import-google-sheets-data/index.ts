@@ -242,32 +242,30 @@ async function processRow(supabase: any, row: any) {
   let error: string | null = null;
 
   try {
-    // Extract user info - try multiple possible column names based on actual sheet structure
-    const email = row['Contact Email'] || row['E-mail'] || row['Email'] || row['email'] || 
-                 row['Contact UID'] || row['UID'] || null;
+    // Extract user info - use Contact UID as primary identifier
+    const contactUID = row['Contact UID'] || row['UID'] || null;
+    const email = row['Contact Email'] || row['E-mail'] || row['Email'] || row['email'] || null;
     const responseId = row['Response ID'] || row['ResponseID'] || row['response_id'] || row['Response Id'] || 
-                      row['ID'] || row['id'] || row['Contact Personal ID'] || row['Contact UID'] || row['UID'] || row['Personal ID'];
+                      row['ID'] || row['id'] || row['Contact Personal ID'] || contactUID || row['Personal ID'];
     const firstName = row['Contact Name'] || row['First Name'] || row['Name'] || row['name'];
     const lastName = row['Contact Last Name'] || row['Last Name'] || row['LastName'] || row['lastname'];
     const assessmentDate = row['Date & Time'] || row['Date'] || row['Timestamp'];
 
-    // More permissive check - accept any valid identifier
-    const hasValidId = email || responseId || Object.values(row).some(val => val && val.toString().trim().length > 0);
-
-    if (!email && !responseId) {
-      console.log('Skipping row - missing both email and response ID:', Object.keys(row).slice(0, 5));
-      return { profileCreated, assessmentCreated, error: 'Missing both email and response ID - skipping row' };
+    // Require Contact UID for validation
+    if (!contactUID) {
+      console.log('Skipping row - missing Contact UID:', Object.keys(row).slice(0, 5));
+      return { profileCreated, assessmentCreated, error: 'Missing Contact UID - skipping row' };
     }
 
-    // Generate email from response ID if missing
-    const finalEmail = email || `response-${responseId}@historical-import.com`;
-    console.log(`Processing user: ${finalEmail} (responseId: ${responseId})`)
+    // Generate email from Contact UID if missing
+    const finalEmail = email || `contact-${contactUID}@historical-import.com`;
+    console.log(`Processing user: ${finalEmail} (Contact UID: ${contactUID})`)
 
-    // Check if historical profile exists by email only
+    // Check if historical profile exists by Contact UID (source_unique_id)
     const { data: existingUser } = await supabase
       .from('historical_profiles')
       .select('id')
-      .eq('email', finalEmail)
+      .eq('source_unique_id', contactUID)
       .maybeSingle();
 
     let userId = existingUser?.id;
@@ -280,7 +278,7 @@ async function processRow(supabase: any, row: any) {
           email: finalEmail,
           name: `${firstName || ''} ${lastName || ''}`.trim() || finalEmail,
           role: 'user',
-          source_unique_id: responseId || finalEmail,
+          source_unique_id: contactUID,
         })
         .select('id')
         .single();
@@ -385,7 +383,7 @@ async function processRow(supabase: any, row: any) {
       gender: row['Q64: My gender identity is...'] || '',
       raceEthnicity: row['Q65: My Race/Ethnicity is...\n(Please check all that apply)'] || '',
       isHistorical: true,
-      sourceUniqueId: responseId,
+      sourceUniqueId: contactUID,
     };
 
     // Calculate overall score safely
@@ -412,9 +410,9 @@ async function processRow(supabase: any, row: any) {
       return { profileCreated, assessmentCreated, error: null }; // Skip duplicate
     }
 
-    // Validate dimension scores before insertion
+    // Validate dimension scores before insertion (allow scores higher than 5)
     const validDimensionScores = Object.values(dimensionScores).every(score => 
-      typeof score === 'number' && !isNaN(score) && score >= 1 && score <= 5
+      typeof score === 'number' && !isNaN(score) && score >= 1
     );
     
     if (!validDimensionScores) {
