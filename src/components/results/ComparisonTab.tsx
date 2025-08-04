@@ -121,46 +121,68 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
   // Format data for radar charts
   const chartData = formatDataForRadarChart(assessment.dimensionScores);
   
-  // Get comparison data based on selection
-  const getComparisonData = () => {
+  // Get comparison data based on selection - memoized with proper dependencies
+  const getComparisonData = React.useCallback(() => {
     if (!aggregateData) return null;
     
     let result = null;
+    let targetScores;
+    
     switch (compareMode) {
       case 'average':
-        result = formatDataForRadarChart(aggregateData.averageScores);
+        targetScores = aggregateData.averageScores;
         break;
       case 'gender':
-        result = formatDataForRadarChart(aggregateData.demographics.gender[genderCompareMode]);
+        targetScores = aggregateData.demographics.gender[genderCompareMode];
         break;
       case 'jobRole':
-        result = formatDataForRadarChart(aggregateData.demographics.jobRole[jobRoleCompareMode]);
+        targetScores = aggregateData.demographics.jobRole[jobRoleCompareMode];
         break;
       case 'companySize':
-        result = formatDataForRadarChart(aggregateData.demographics.companySize[companySizeCompareMode]);
+        targetScores = aggregateData.demographics.companySize[companySizeCompareMode];
         break;
       case 'managementLevel':
-        result = formatDataForRadarChart(aggregateData.demographics.managementLevel[managementLevelCompareMode]);
+        targetScores = aggregateData.demographics.managementLevel[managementLevelCompareMode];
         break;
       case 'raceEthnicity':
-        result = formatDataForRadarChart(aggregateData.demographics.raceEthnicity[raceEthnicityCompareMode]);
+        targetScores = aggregateData.demographics.raceEthnicity[raceEthnicityCompareMode];
         break;
       case 'location':
-        result = formatDataForRadarChart(aggregateData.demographics.location[locationCompareMode]);
+        targetScores = aggregateData.demographics.location[locationCompareMode];
         break;
       case 'salary':
-        result = formatDataForRadarChart(aggregateData.demographics.salary[salaryCompareMode]);
+        targetScores = aggregateData.demographics.salary[salaryCompareMode];
         break;
       default:
-        result = null;
+        targetScores = null;
     }
     
-    console.log('getComparisonData result:', { compareMode, result, genderCompareMode, jobRoleCompareMode });
+    result = targetScores ? formatDataForRadarChart(targetScores) : null;
+    
+    console.log('getComparisonData result:', { 
+      compareMode, 
+      targetScores, 
+      result, 
+      genderCompareMode, 
+      jobRoleCompareMode, 
+      managementLevelCompareMode,
+      raceEthnicityCompareMode 
+    });
     return result;
-  };
+  }, [
+    aggregateData, 
+    compareMode, 
+    genderCompareMode, 
+    jobRoleCompareMode, 
+    companySizeCompareMode, 
+    managementLevelCompareMode, 
+    raceEthnicityCompareMode, 
+    locationCompareMode, 
+    salaryCompareMode
+  ]);
   
-  // Format data for combined chart
-  const getCombinedComparisonScores = () => {
+  // Format data for combined chart - memoized with proper dependencies
+  const getCombinedComparisonScores = React.useCallback(() => {
     if (!aggregateData) return null;
     
     switch (compareMode) {
@@ -183,12 +205,23 @@ const ComparisonTab: React.FC<ComparisonTabProps> = ({
       default:
         return null;
     }
-  };
+  }, [
+    aggregateData, 
+    compareMode, 
+    genderCompareMode, 
+    jobRoleCompareMode, 
+    companySizeCompareMode, 
+    managementLevelCompareMode, 
+    raceEthnicityCompareMode, 
+    locationCompareMode, 
+    salaryCompareMode
+  ]);
 
-  const combinedChartData = convertToComparisonFormat(
-    assessment.dimensionScores,
-    getCombinedComparisonScores()
-  );
+  // Memoize combined chart data to ensure it updates when comparison data changes
+  const combinedChartData = React.useMemo(() => {
+    const comparisonScores = getCombinedComparisonScores();
+    return convertToComparisonFormat(assessment.dimensionScores, comparisonScores);
+  }, [assessment.dimensionScores, getCombinedComparisonScores]);
   
   // Get comparison label based on selection with proper translation
   const getComparisonLabel = () => {
