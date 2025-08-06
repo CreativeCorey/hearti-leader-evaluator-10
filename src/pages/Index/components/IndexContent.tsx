@@ -8,6 +8,9 @@ import SyncDialog from '@/components/sync/SyncDialog';
 import GoogleSheetsSetup from '@/components/google-integration/GoogleSheetsSetup';
 import GoogleTroubleshooting from '@/components/google-integration/GoogleTroubleshooting';
 import GoogleIntegrationTools from '@/components/google-integration/GoogleIntegrationTools';
+import { PulseTestBanner } from '@/components/pulse-test/PulseTestBanner';
+import { PulseTestModal } from '@/components/pulse-test/PulseTestModal';
+import { usePulseTest } from '@/hooks/usePulseTest';
 
 interface IndexContentProps {
   // UI state
@@ -63,6 +66,37 @@ const IndexContent: React.FC<IndexContentProps> = ({
   handleCancelSync,
   handleSyncDialogClose
 }) => {
+  const {
+    showPulseTestModal,
+    setShowPulseTestModal,
+    shouldShowPulseTestBanner,
+    shouldShowFullAssessmentBanner,
+    getDaysSinceLastAssessment,
+    startPulseTest,
+    getPulseTestQuestions,
+    updateScheduleAfterPulseTest,
+    createOrUpdateSchedule
+  } = usePulseTest();
+
+  // Create schedule when user completes assessment
+  React.useEffect(() => {
+    if (latestAssessment) {
+      createOrUpdateSchedule(latestAssessment);
+    }
+  }, [latestAssessment, createOrUpdateSchedule]);
+
+  const handleStartPulseTest = () => {
+    startPulseTest();
+  };
+
+  const handleStartFullAssessment = () => {
+    setActiveTab('take');
+  };
+
+  const handlePulseTestComplete = () => {
+    updateScheduleAfterPulseTest();
+  };
+  
   return (
     <div className={`container max-w-6xl mx-auto p-4 ${isMobile ? 'pt-20' : 'pt-8'}`}>
       <HeaderSection 
@@ -73,6 +107,17 @@ const IndexContent: React.FC<IndexContentProps> = ({
         isMobile={isMobile}
       />
       
+      {/* Pulse Test Banner - Show when user should take pulse test or full assessment */}
+      {(shouldShowPulseTestBanner() || shouldShowFullAssessmentBanner()) && (
+        <PulseTestBanner
+          daysSinceLastAssessment={getDaysSinceLastAssessment()}
+          isTimeForPulse={shouldShowPulseTestBanner()}
+          isTimeForFull={shouldShowFullAssessmentBanner()}
+          onStartPulseTest={handleStartPulseTest}
+          onStartFullAssessment={handleStartFullAssessment}
+        />
+      )}
+      
       <AssessmentTabs 
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -82,6 +127,17 @@ const IndexContent: React.FC<IndexContentProps> = ({
         testingSheets={testingSheets}
         sendLatestToSheets={() => latestAssessment && sendLatestToSheets(latestAssessment)}
       />
+      
+      {/* Pulse Test Modal */}
+      {showPulseTestModal && latestAssessment && (
+        <PulseTestModal
+          isOpen={showPulseTestModal}
+          onClose={() => setShowPulseTestModal(false)}
+          questions={getPulseTestQuestions()}
+          originalAssessmentId={latestAssessment.id}
+          onComplete={handlePulseTestComplete}
+        />
+      )}
       
       <GoogleSheetsSetup
         googleConnection={googleConnection}
