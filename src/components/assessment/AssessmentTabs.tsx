@@ -57,7 +57,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
 
   // Check for saved progress on component mount
   useEffect(() => {
-    const savedProgress = localStorage.getItem('assessmentProgress');
+    const savedProgress = localStorage.getItem('assessment_progress');
     if (savedProgress && !latestAssessment) {
       setIsAssessmentInProgress(true);
     }
@@ -83,7 +83,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
     setIsAssessmentInProgress(false);
     
     // Clear any saved progress
-    localStorage.removeItem('assessmentProgress');
+    localStorage.removeItem('assessment_progress');
     
     // If user hasn't paid, show payment gateway
     if (!hasPaid) {

@@ -151,6 +151,10 @@ export const useAssessmentCompletion = (
         description: "Your assessment has been saved successfully.",
       });
       
+      // Reset local completion state so the demographics screen doesn't persist
+      setAssessmentComplete(false);
+      setTempAssessment(null);
+      
       // Call onComplete after a short delay to allow toast to show
       setTimeout(() => {
         console.log("Calling onComplete callback with final assessment");
@@ -173,6 +177,11 @@ export const useAssessmentCompletion = (
     try {
       // Save assessment directly without any payment processing
       await saveAssessment(tempAssessment);
+      
+      // Reset local completion state so the demographics screen doesn't persist
+      setAssessmentComplete(false);
+      setTempAssessment(null);
+      
       onComplete(tempAssessment);
       
       toast({
