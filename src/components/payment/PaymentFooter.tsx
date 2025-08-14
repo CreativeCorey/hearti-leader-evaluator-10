@@ -16,7 +16,7 @@ interface PaymentFooterProps {
   processingPayment: boolean;
   user: User | null;
   lastAttemptTime: number | null;
-  onPayNow: (type: 'one-time' | 'subscription' | 'annual-subscription') => void;
+  onPayNow: (type: 'monthly' | 'annual' | 'oneTime') => void;
 }
 
 export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayNow }: PaymentFooterProps) => {
@@ -25,8 +25,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
   const buttonDisabled = processingPayment || !user || recentAttempt;
   
   
-  const handleMainAction = (type: 'subscription' | 'one-time') => {
-    // Just prepare the payment, no automatic redirect
+  const handleMainAction = (type: 'monthly' | 'oneTime') => {
     onPayNow(type);
   };
   
@@ -38,12 +37,12 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           size="lg" 
           className="w-full"
           disabled={buttonDisabled}
-          onClick={() => handleMainAction('subscription')}
+          onClick={() => handleMainAction('monthly')}
         >
           {processingPayment ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {recentAttempt ? 'Preparing Payment...' : 'Preparing Payment...'}
+              Opening Payment Page...
             </>
           ) : (
             <>
@@ -66,10 +65,10 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[240px]">
-            <DropdownMenuItem onClick={() => onPayNow('annual-subscription')}>
+            <DropdownMenuItem onClick={() => onPayNow('annual')}>
               Annual subscription ($7.99/month, billed yearly)
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onPayNow('one-time')}>
+            <DropdownMenuItem onClick={() => onPayNow('oneTime')}>
               Full Access - One Payment: $199.99
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -88,7 +87,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
       {processingPayment && (
         <div className="text-xs text-muted-foreground mt-2 text-center space-y-2">
           <p>
-            Preparing your payment session...
+            Opening Stripe payment page...
           </p>
         </div>
       )}

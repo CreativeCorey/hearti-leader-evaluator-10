@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { HEARTIAssessment } from '@/types';
-import { useAssessmentPayment } from '@/hooks/useAssessmentPayment';
+import { usePaymentStatusCheck } from '@/hooks/payments/usePaymentStatusCheck';
+import { usePaymentLinks } from '@/hooks/payments/usePaymentLinks';
 import { Card, CardHeader, CardDescription, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, Loader2 } from 'lucide-react';
@@ -31,47 +32,39 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   const [initialCheckDone, setInitialCheckDone] = useState(false);
   const { hasTrialAccess, checkActiveTrialStatus } = usePromoCode();
   
-  
   const { 
-    processingPayment, 
     checkingPayment,
     hasPaid,
     paymentError,
-    redirectToStripePayment,
-    refreshPaymentStatus
-  } = useAssessmentPayment(onPaymentComplete);
+    checkPaymentStatus
+  } = usePaymentStatusCheck();
+  
+  const { processingPayment, redirectToPayment } = usePaymentLinks();
 
   // Add an initial payment status check and trial status check
   useEffect(() => {
     if (!initialCheckDone && user) {
-      refreshPaymentStatus();
+      checkPaymentStatus();
       checkActiveTrialStatus();
       setInitialCheckDone(true);
     }
-  }, [initialCheckDone, user, refreshPaymentStatus, checkActiveTrialStatus]);
+  }, [initialCheckDone, user, checkPaymentStatus, checkActiveTrialStatus]);
 
 
-  const handlePayNow = async (paymentType: 'one-time' | 'subscription' | 'annual-subscription') => {
+  const handlePayNow = async (paymentType: 'monthly' | 'annual' | 'oneTime') => {
     try {
       const now = Date.now();
       setLastAttemptTime(now);
       
-      localStorage.removeItem('payment_error');
-      localStorage.setItem('pending_assessment', JSON.stringify(assessment));
-      
-      // Attempt to redirect to Stripe payment
-      const redirectSuccess = await redirectToStripePayment(assessment, paymentType);
+      const redirectSuccess = await redirectToPayment(assessment, paymentType);
       if (!redirectSuccess) {
         toast({
-          title: "Redirect Failed",
-          description: "Could not start the payment process. Please try again.",
+          title: "Payment Links Not Configured",
+          description: "Please set up your Stripe payment links in the dashboard first.",
           variant: "destructive"
         });
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : String(err);
-      localStorage.setItem('payment_error', errorMessage);
-      refreshPaymentStatus();
       toast({
         title: "Payment Error",
         description: "There was a problem starting the payment process. Please try again.",
@@ -81,7 +74,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   };
   
   const handleRefreshStatus = () => {
-    refreshPaymentStatus();
+    checkPaymentStatus();
     toast({
       title: "Refreshing",
       description: "Checking your payment status..."
@@ -131,7 +124,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
       <div className="px-6 space-y-4">
         <PromoCodeInput onPromoApplied={() => {
           checkActiveTrialStatus();
-          refreshPaymentStatus();
+          checkPaymentStatus();
         }} />
       </div>
       
