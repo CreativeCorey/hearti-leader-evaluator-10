@@ -36,7 +36,7 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({
   const chartColor = dimensionColors[topStrength];
 
   return (
-    <Card className="w-full shadow-lg overflow-hidden bg-white">
+    <Card className="w-full shadow-lg overflow-hidden bg-white dark:bg-gray-900">
       <CardContent className="p-4">
         <div className="text-center mb-4">
           <div className="flex justify-center items-center mb-2">
@@ -47,7 +47,7 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({
             />
           </div>
           <div className="flex justify-between items-center">
-            <h3 className="text-xl font-bold text-gray-800">
+            <h3 className="text-xl font-bold text-gray-800 dark:text-white">
               {isMobile ? "My Spectra" : "My HEARTI:Leader Spectra"}
             </h3>
             {onShare && (
@@ -57,7 +57,7 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({
               </Button>
             )}
           </div>
-          <p className="text-sm text-gray-600">{assessment.overallScore}/5</p>
+          <p className="text-sm text-gray-600 dark:text-gray-300">{assessment.overallScore}/5</p>
         </div>
         
         <RadarChartWithIcons 
@@ -73,8 +73,8 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({
               topStrengthScore={topStrengthScore} 
             />
             
-            <div className="mt-3 text-center border-t pt-2">
-              <p className="text-indigo-600 font-medium">hearti.app</p>
+            <div className="mt-3 text-center border-t dark:border-gray-700 pt-2">
+              <p className="text-indigo-600 dark:text-indigo-400 font-medium">hearti.app</p>
             </div>
           </>
         )}
