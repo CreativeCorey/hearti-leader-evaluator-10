@@ -32,7 +32,7 @@ const ShareModal: React.FC<ShareModalProps> = ({ assessment, open, onOpenChange 
   const capitalizedTopStrength = topStrength.charAt(0).toUpperCase() + topStrength.slice(1);
   
   // Default caption text
-  const defaultCaptionText = `The top strength in my HEARTI:Leader Quotient is ${capitalizedTopStrength}. Get yours at takehearti.com today #HEARTILeader`;
+  const defaultCaptionText = `The top strength in my HEARTI:Leader Quotient is ${capitalizedTopStrength}. Get yours at hearti.app today #HEARTILeader`;
   
   // State for custom caption
   const [captionText, setCaptionText] = useState(defaultCaptionText);

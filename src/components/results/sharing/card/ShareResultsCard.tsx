@@ -74,7 +74,7 @@ const ShareResultsCard: React.FC<ShareResultsCardProps> = ({
             />
             
             <div className="mt-3 text-center border-t pt-2">
-              <p className="text-indigo-600 font-medium">takehearti.com</p>
+              <p className="text-indigo-600 font-medium">hearti.app</p>
             </div>
           </>
         )}

@@ -33,7 +33,7 @@ export const shareToLinkedIn = async (
     await navigator.clipboard.writeText(captionText);
     
     // Open LinkedIn sharing dialog
-    const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=https://takehearti.com`;
+    const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=https://hearti.app`;
     window.open(linkedInUrl, '_blank', 'width=600,height=600');
     
     showSuccessToast(
@@ -50,7 +50,7 @@ export const shareToLinkedIn = async (
  * Handles sharing to Twitter/X
  */
 export const shareToTwitter = (shareableLink: string, captionText: string): void => {
-  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(captionText)}&url=https://takehearti.com`;
+  const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(captionText)}&url=https://hearti.app`;
   window.open(twitterUrl, '_blank', 'width=600,height=600');
 };
 
@@ -58,7 +58,7 @@ export const shareToTwitter = (shareableLink: string, captionText: string): void
  * Handles sharing to WhatsApp
  */
 export const shareToWhatsApp = (shareableLink: string, captionText: string): void => {
-  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(captionText + '\n\ntakehearti.com')}`;
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(captionText + '\n\nhearti.app')}`;
   window.open(whatsappUrl, '_blank', 'width=600,height=600');
 };
 
@@ -67,7 +67,7 @@ export const shareToWhatsApp = (shareableLink: string, captionText: string): voi
  */
 export const shareToEmail = (shareableLink: string, captionText: string): void => {
   const emailSubject = "My HEARTI:Leader Results";
-  const emailBody = `${captionText}\n\ntakehearti.com`;
+  const emailBody = `${captionText}\n\nhearti.app`;
   window.location.href = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
 };
 
