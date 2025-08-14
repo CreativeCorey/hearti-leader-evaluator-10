@@ -22,8 +22,8 @@ const TopStrengthBadge: React.FC<TopStrengthBadgeProps> = ({
     <div className="mt-4 bg-green-50 p-3 rounded-md border border-green-100 dark:bg-green-900/20 dark:border-green-800">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <Crown size={16} className="mr-2" />
-          <span className="font-medium text-green-800 dark:text-green-100">
+          <Crown size={16} className="mr-2 text-green-800 dark:text-white" />
+          <span className="font-medium text-green-800 dark:text-white">
             <span className="font-semibold">{t('results.comparison.strength')}:</span> {topStrength}
           </span>
         </div>
@@ -31,7 +31,7 @@ const TopStrengthBadge: React.FC<TopStrengthBadgeProps> = ({
           <DimensionIcon dimension={topStrength} />
         </div>
       </div>
-      <p className="text-green-700 dark:text-green-200 font-semibold mt-1 text-center">
+      <p className="text-green-700 dark:text-white font-semibold mt-1 text-center">
         {topStrengthScore.toString()}/5
       </p>
     </div>
