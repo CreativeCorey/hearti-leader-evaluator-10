@@ -2,8 +2,8 @@
 // Create these payment links in your Stripe Dashboard under Products > Payment links
 
 export const STRIPE_PAYMENT_LINKS = {
-  monthly: "https://buy.stripe.com/YOUR_MONTHLY_LINK_HERE",
-  annual: "https://buy.stripe.com/YOUR_ANNUAL_LINK_HERE", 
+  monthly: "https://buy.stripe.com/dRmfZgdKp4B66Rs1JSaIM04",
+  annual: "https://buy.stripe.com/4gM4gy9u9gjO4JkgEMaIM02", 
   oneTime: "https://buy.stripe.com/YOUR_ONE_TIME_LINK_HERE"
 };
 
