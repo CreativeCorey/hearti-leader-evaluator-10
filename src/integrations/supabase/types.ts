@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.12 (cd3cf9e)"
@@ -541,12 +541,12 @@ export type Database = {
       get_aggregate_scores: {
         Args: Record<PropertyKey, never>
         Returns: {
-          dimension: string
           average_score: number
-          gender_scores: Json
-          role_scores: Json
           company_size_scores: Json
+          dimension: string
+          gender_scores: Json
           management_level_scores: Json
+          role_scores: Json
         }[]
       }
       get_current_user_role: {
@@ -570,40 +570,40 @@ export type Database = {
       }
       get_paginated_assessments: {
         Args: {
-          page_offset?: number
-          page_limit?: number
           organization_filter?: string
+          page_limit?: number
+          page_offset?: number
         }
         Returns: {
-          id: string
-          user_id: string
-          organization_id: string
-          date: string
-          overall_score: number
           answers: Json
-          dimension_scores: Json
+          date: string
           demographics: Json
-          historical_profile_id: string
+          dimension_scores: Json
           email: string
+          historical_profile_id: string
+          id: string
+          organization_id: string
+          overall_score: number
           total_count: number
+          user_id: string
         }[]
       }
       get_paginated_users: {
         Args: {
-          page_offset?: number
           page_limit?: number
-          search_term?: string
+          page_offset?: number
           role_filter?: Database["public"]["Enums"]["user_role"]
+          search_term?: string
         }
         Returns: {
-          id: string
-          name: string
-          email: string
-          role: Database["public"]["Enums"]["user_role"]
-          organization_id: string
           created_at: string
-          organization_name: string
+          email: string
+          id: string
           is_historical: boolean
+          name: string
+          organization_id: string
+          organization_name: string
+          role: Database["public"]["Enums"]["user_role"]
           source_unique_id: string
           total_count: number
         }[]
