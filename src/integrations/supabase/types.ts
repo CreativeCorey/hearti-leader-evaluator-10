@@ -538,6 +538,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_organization_secure: {
+        Args: { org_description?: string; org_name: string }
+        Returns: string
+      }
       get_aggregate_scores: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -621,6 +625,16 @@ export type Database = {
         Returns: boolean
       }
       validate_promo_code: {
+        Args: { code_input: string }
+        Returns: {
+          code: string
+          id: string
+          is_valid: boolean
+          message: string
+          trial_days: number
+        }[]
+      }
+      validate_promo_code_secure: {
         Args: { code_input: string }
         Returns: {
           code: string
