@@ -22,16 +22,13 @@ export const createPaymentRecord = async (params: {
       { auth: { persistSession: false } }
     );
     
-    logStep("Creating payment record");
-    const { error: dbError } = await supabaseAdmin
-      .from('payments')
-      .insert({
-        user_id: params.userId,
-        stripe_session_id: params.sessionId,
-        amount: params.amount,
-        type: params.type,
-        status: 'pending',
-        created_at: new Date().toISOString()
+    logStep("Creating payment record using secure function");
+    const { data, error: dbError } = await supabaseAdmin
+      .rpc('create_payment_secure', {
+        p_user_id: params.userId,
+        p_stripe_session_id: params.sessionId,
+        p_amount: params.amount,
+        p_status: 'pending'
       });
       
     if (dbError) {
@@ -40,6 +37,8 @@ export const createPaymentRecord = async (params: {
       } else {
         logStep("Error creating payment record", dbError);
       }
+    } else {
+      logStep("Payment record created successfully", { paymentId: data });
     }
   } catch (error) {
     logStep("Error creating payment record", error);

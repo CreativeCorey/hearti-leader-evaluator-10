@@ -81,25 +81,25 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
-    // Try to update the payment record in the database
+    // Try to update the payment record in the database using secure function
     if (session.payment_status === 'paid') {
       try {
-        console.log("Updating payment record to paid");
-        const { error: updateError } = await supabaseAdmin
-          .from('payments')
-          .update({
-            status: 'paid',
-            updated_at: new Date().toISOString()
-          })
-          .eq('stripe_session_id', session.id);
+        console.log("Updating payment record to paid using secure function");
+        const { data, error: updateError } = await supabaseAdmin
+          .rpc('update_payment_status_secure', {
+            p_stripe_session_id: session.id,
+            p_status: 'paid'
+          });
           
         if (updateError) {
-          // If the table doesn't exist, we'll just log it and continue
-          if (updateError.message.includes("relation") && updateError.message.includes("does not exist")) {
-            console.log("Payments table doesn't exist, skipping update");
+          // If the function doesn't exist, we'll just log it and continue
+          if (updateError.message.includes("function") && updateError.message.includes("does not exist")) {
+            console.log("Secure payment function doesn't exist, skipping update");
           } else {
             console.error("Error updating payment record:", updateError);
           }
+        } else {
+          console.log("Payment record update result:", data);
         }
       } catch (dbError) {
         // If there's an error updating the payments table, log it but continue

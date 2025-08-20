@@ -542,6 +542,15 @@ export type Database = {
         Args: { org_description?: string; org_name: string }
         Returns: string
       }
+      create_payment_secure: {
+        Args: {
+          p_amount: number
+          p_status?: string
+          p_stripe_session_id: string
+          p_user_id: string
+        }
+        Returns: string
+      }
       get_aggregate_scores: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -661,8 +670,16 @@ export type Database = {
         Args: { user_uuid?: string }
         Returns: boolean
       }
+      is_service_role: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       promote_user_to_admin: {
         Args: { target_user_id: string }
+        Returns: boolean
+      }
+      update_payment_status_secure: {
+        Args: { p_status: string; p_stripe_session_id: string }
         Returns: boolean
       }
       validate_assessment_answers: {
