@@ -23,6 +23,7 @@ export const useAssessmentCompletion = (
   const [assessmentComplete, setAssessmentComplete] = useState(false);
   const [tempAssessment, setTempAssessment] = useState<HEARTIAssessment | null>(null);
   const [previousDemographics, setPreviousDemographics] = useState<Demographics | undefined>(undefined);
+  const [showProcessing, setShowProcessing] = useState(false);
 
   // Load previous demographics if they exist
   const loadPreviousDemographics = async () => {
@@ -132,37 +133,32 @@ export const useAssessmentCompletion = (
       return;
     }
     
-    console.log("Demographics validation passed, creating final assessment");
+    console.log("Demographics validation passed, starting processing sequence");
     
     const finalAssessment: HEARTIAssessment = {
       ...tempAssessment,
       demographics
     };
     
+    // Start processing sequence immediately after demographics
+    setAssessmentComplete(false);
+    setShowProcessing(true);
+    
     try {
       console.log("Saving assessment with demographics:", finalAssessment);
-      // Save assessment directly without any payment processing
+      // Save assessment during processing
       await saveAssessment(finalAssessment);
       
-      console.log("Assessment saved successfully, calling onComplete");
+      console.log("Assessment saved successfully");
       
-      toast({
-        title: "Assessment Complete",
-        description: "Your assessment has been saved successfully.",
-      });
-      
-      // Reset local completion state so the demographics screen doesn't persist
-      setAssessmentComplete(false);
-      setTempAssessment(null);
-      
-      // Call onComplete after a short delay to allow toast to show
-      setTimeout(() => {
-        console.log("Calling onComplete callback with final assessment");
-        onComplete(finalAssessment);
-      }, 500);
+      // Processing sequence will complete and call onComplete
+      // This is handled in the processing component
+      setTempAssessment(finalAssessment);
       
     } catch (error) {
       console.error("Failed to save assessment:", error);
+      setShowProcessing(false);
+      setAssessmentComplete(true); // Go back to demographics form
       toast({
         title: "Error",
         description: "Failed to save assessment. Please try again.",
@@ -174,24 +170,22 @@ export const useAssessmentCompletion = (
   const handleSkipDemographics = async () => {
     if (!tempAssessment) return;
     
+    // Start processing sequence for skipped demographics too
+    setAssessmentComplete(false);
+    setShowProcessing(true);
+    
     try {
-      // Save assessment directly without any payment processing
+      // Save assessment during processing
       await saveAssessment(tempAssessment);
-      
-      // Reset local completion state so the demographics screen doesn't persist
-      setAssessmentComplete(false);
-      setTempAssessment(null);
-      
-      onComplete(tempAssessment);
-      
-      toast({
-        title: "Assessment Complete",
-        description: "Your assessment has been saved successfully.",
-      });
-      
       console.log("Assessment without demographics saved successfully");
+      
+      // Processing sequence will complete and call onComplete
+      // This maintains the tempAssessment for processing completion
+      
     } catch (error) {
       console.error("Failed to save assessment:", error);
+      setShowProcessing(false);
+      setAssessmentComplete(true); // Go back to demographics form
       toast({
         title: "Error",
         description: "Failed to save assessment. Please try again.",
@@ -200,12 +194,29 @@ export const useAssessmentCompletion = (
     }
   };
 
+  const handleProcessingComplete = () => {
+    if (!tempAssessment) return;
+    
+    console.log("Processing complete, navigating to results");
+    setShowProcessing(false);
+    setTempAssessment(null);
+    
+    toast({
+      title: "Assessment Complete",
+      description: "Your HEARTI™ Leadership assessment results are ready!",
+    });
+    
+    onComplete(tempAssessment);
+  };
+
   return {
     assessmentComplete,
     completeAssessmentQuestions,
     handleDemographicsComplete,
     handleSkipDemographics,
     previousDemographics,
-    tempAssessment // Export the tempAssessment for access in other components
+    tempAssessment, // Export the tempAssessment for access in other components
+    showProcessing,
+    handleProcessingComplete
   };
 };

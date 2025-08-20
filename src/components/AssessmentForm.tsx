@@ -40,7 +40,9 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
     handleSkipDemographics,
     previousDemographics,
     isSubmitting,
-    currentAssessment
+    currentAssessment,
+    showProcessing,
+    handleProcessingComplete
   } = useAssessmentForm(onComplete);
 
   // Handle loading state completion - simplified flow
@@ -50,6 +52,15 @@ const AssessmentForm: React.FC<AssessmentFormProps> = ({ onComplete }) => {
       onComplete(currentAssessment);
     }
   }, [loadingStateComplete, currentAssessment, onComplete]);
+
+  // Show processing state after demographics completion
+  if (showProcessing) {
+    return (
+      <AssessmentLoadingState 
+        onComplete={handleProcessingComplete}
+      />
+    );
+  }
 
   // Loading state while initializing form
   if (loading) {

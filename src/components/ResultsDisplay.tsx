@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import { useLanguage } from '@/contexts/language/LanguageContext';
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -16,6 +17,7 @@ import HabitTabContent from '@/components/results/tabs/HabitTabContent';
 import PaymentGateway from '@/components/PaymentGateway';
 import PremiumTeaser from '@/components/results/PremiumTeaser';
 import { useAssessmentPayment } from '@/hooks/useAssessmentPayment';
+import { usePromoCode } from '@/hooks/usePromoCode';
 
 interface ResultsDisplayProps {
   assessment: HEARTIAssessment;
@@ -41,6 +43,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   const { viewTransitioning } = useViewTransitions();
   const [isClient, setIsClient] = useState(false);
   const [showPaymentGateway, setShowPaymentGateway] = useState(false);
+  const { hasTrialAccess } = usePromoCode();
   const { checkingPayment, hasPaid } = useAssessmentPayment((updatedAssessment) => {
     console.log("Payment completed:", updatedAssessment);
     setShowPaymentGateway(false);
@@ -122,7 +125,27 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
         </div>
 
         <TabsContent value="overview" className="p-0 m-0">
-          <OverviewTabContent assessment={assessment} />
+          <div className="space-y-4">
+            <OverviewTabContent assessment={assessment} />
+            
+            {/* Payment Gateway Link for non-paying users */}
+            {!hasPaid && !hasTrialAccess() && (
+              <div className="p-4 border-t bg-gradient-to-r from-purple/5 to-blue-400/5">
+                <div className="text-center space-y-3">
+                  <h3 className="font-semibold text-lg">Unlock Your Full HEARTI™ Results</h3>
+                  <p className="text-muted-foreground text-sm">
+                    Get detailed analysis, comparison data, development activities, and habit tracking tools
+                  </p>
+                  <Button 
+                    onClick={handleUpgrade}
+                    className="bg-gradient-to-r from-purple to-blue-400 hover:from-purple/90 hover:to-blue-400/90"
+                  >
+                    Unlock Premium Features
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
         </TabsContent>
 
         <TabsContent value="dimensions" className="p-0 m-0">

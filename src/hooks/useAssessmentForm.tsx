@@ -41,7 +41,9 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
     handleDemographicsComplete,
     handleSkipDemographics,
     previousDemographics,
-    tempAssessment // Get access to the tempAssessment from the hook
+    tempAssessment, // Get access to the tempAssessment from the hook
+    showProcessing,
+    handleProcessingComplete
   } = useAssessmentCompletion(answers, currentUser, onComplete);
   
   // Safe function to save progress to prevent errors
@@ -180,6 +182,8 @@ export const useAssessmentForm = (onComplete: (assessment: HEARTIAssessment) => 
     handleSkipDemographics,
     previousDemographics,
     isSubmitting,
-    currentAssessment: tempAssessment // Expose the tempAssessment as currentAssessment
+    currentAssessment: tempAssessment, // Expose the tempAssessment as currentAssessment
+    showProcessing,
+    handleProcessingComplete
   };
 };
