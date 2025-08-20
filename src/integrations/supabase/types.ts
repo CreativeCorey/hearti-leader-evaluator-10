@@ -553,6 +553,19 @@ export type Database = {
           role_scores: Json
         }[]
       }
+      get_assessment_summary: {
+        Args: { assessment_id: string }
+        Returns: {
+          date: string
+          demographics: Json
+          dimension_scores: Json
+          historical_profile_id: string
+          id: string
+          organization_id: string
+          overall_score: number
+          user_id: string
+        }[]
+      }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
         Returns: Database["public"]["Enums"]["user_role"]
@@ -610,6 +623,38 @@ export type Database = {
           role: Database["public"]["Enums"]["user_role"]
           source_unique_id: string
           total_count: number
+        }[]
+      }
+      get_secure_paginated_assessments: {
+        Args: {
+          organization_filter?: string
+          page_limit?: number
+          page_offset?: number
+        }
+        Returns: {
+          answers: Json
+          date: string
+          demographics: Json
+          dimension_scores: Json
+          email: string
+          historical_profile_id: string
+          id: string
+          organization_id: string
+          overall_score: number
+          total_count: number
+          user_id: string
+        }[]
+      }
+      get_user_profile_secure: {
+        Args: { profile_user_id?: string }
+        Returns: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+          organization_id: string
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string
         }[]
       }
       is_authenticated_user: {
