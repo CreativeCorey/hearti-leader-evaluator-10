@@ -620,6 +620,16 @@ export type Database = {
         Args: { answers: Json }
         Returns: boolean
       }
+      validate_promo_code: {
+        Args: { code_input: string }
+        Returns: {
+          code: string
+          id: string
+          is_valid: boolean
+          message: string
+          trial_days: number
+        }[]
+      }
     }
     Enums: {
       user_role: "user" | "admin" | "super_admin"
