@@ -19,7 +19,7 @@ const AuthCallback = () => {
         const queryParams = new URLSearchParams(window.location.search);
         
         // Check if this is a password recovery flow
-        const isRecovery = queryParams.get('type') === 'recovery';
+        const isRecovery = queryParams.get('type') === 'recovery' || queryParams.get('reset') === 'true';
         
         // Log more details for debugging
         console.log('Auth callback URL:', window.location.href);
@@ -40,6 +40,14 @@ const AuthCallback = () => {
           });
         } else if (data.session) {
           console.log('Auth successful, session established');
+          
+          // If this is a password recovery flow, redirect to password reset page
+          if (isRecovery) {
+            console.log('Redirecting to password reset page');
+            navigate('/password-reset', { replace: true });
+            return;
+          }
+          
           toast({
             title: "Authentication Successful",
             description: "You have been signed in successfully.",
