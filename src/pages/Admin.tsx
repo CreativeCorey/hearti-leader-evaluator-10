@@ -11,7 +11,8 @@ import UserManagement from "@/components/admin/UserManagement";
 import UserDataManager from "@/components/admin/UserDataManager";
 import AdminBroadcast from "@/components/admin/AdminBroadcast";
 import ViewModeToggle from "@/components/admin/ViewModeToggle";
-import { Shield, Database, Users, Trash2 } from "lucide-react";
+import PromoCodeManager from "@/components/admin/PromoCodeManager";
+import { Shield, Database, Users, Trash2, Tag } from "lucide-react";
 import { usePaymentStatusCheck } from "@/hooks/payments/usePaymentStatusCheck";
 
 const Admin = () => {
@@ -102,10 +103,14 @@ const Admin = () => {
       </div>
 
       <Tabs defaultValue="user-management" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="user-management" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             Users
+          </TabsTrigger>
+          <TabsTrigger value="promo-codes" className="flex items-center gap-2">
+            <Tag className="h-4 w-4" />
+            Promo Codes
           </TabsTrigger>
           <TabsTrigger value="data-import" className="flex items-center gap-2">
             <Database className="h-4 w-4" />
@@ -124,6 +129,10 @@ const Admin = () => {
         <TabsContent value="user-management" className="space-y-6">
           <UserManagement />
           <AdminBroadcast />
+        </TabsContent>
+
+        <TabsContent value="promo-codes">
+          <PromoCodeManager />
         </TabsContent>
 
         <TabsContent value="data-import">
