@@ -55,14 +55,14 @@ const UserAssessmentDetails = ({
     try {
       setLoading(true);
       
-      // Query different fields based on whether this is a historical user
-      const query = isHistorical 
-        ? supabase.from('assessments').select('*').eq('historical_profile_id', userId)
-        : supabase.from('assessments').select('*').eq('user_id', userId);
-      
-      const { data, error } = await query.order('date', { ascending: false });
+      // Use the secure function to get user assessments with proper admin permissions
+      const { data, error } = await supabase.rpc('get_user_assessments_secure', {
+        target_user_id: userId,
+        is_historical_user: isHistorical
+      });
 
       if (error) {
+        console.error('RPC Error loading assessments:', error);
         throw error;
       }
 
@@ -79,6 +79,7 @@ const UserAssessmentDetails = ({
         email: item.email || ''
       }));
 
+      console.log(`Loaded ${typedAssessments.length} assessments for user ${userId} (historical: ${isHistorical})`);
       setAssessments(typedAssessments);
     } catch (error) {
       console.error('Error loading assessments:', error);
@@ -146,7 +147,14 @@ const UserAssessmentDetails = ({
         {assessments.length === 0 ? (
           <div className="text-center py-8">
             <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <p className="text-muted-foreground">No assessments found for this user.</p>
+            <p className="text-muted-foreground">
+              {loading ? "Loading assessments..." : "No assessments found for this user."}
+            </p>
+            {!loading && (
+              <p className="text-sm text-muted-foreground mt-2">
+                This user may not have completed any assessments yet, or you may not have permission to view their data.
+              </p>
+            )}
           </div>
         ) : (
           <Tabs defaultValue="overview" className="w-full">

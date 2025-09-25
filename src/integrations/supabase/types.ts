@@ -654,6 +654,20 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_user_assessments_secure: {
+        Args: { is_historical_user?: boolean; target_user_id: string }
+        Returns: {
+          answers: Json
+          date: string
+          demographics: Json
+          dimension_scores: Json
+          email: string
+          historical_profile_id: string
+          id: string
+          overall_score: number
+          user_id: string
+        }[]
+      }
       get_user_profile_secure: {
         Args: { profile_user_id?: string }
         Returns: {
