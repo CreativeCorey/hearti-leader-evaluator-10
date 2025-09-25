@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AssessmentTab, HEARTIAssessment } from '@/types';
 import ResultsDisplay from '@/components/results/ResultsDisplay';
-import PaymentGateway from '@/components/PaymentGateway';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import AssessmentForm from '@/components/AssessmentForm';
@@ -76,7 +75,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
     setActiveTab('take');
   };
 
-  const handleAssessmentComplete = (assessment: HEARTIAssessment) => {
+  const handleAssessmentComplete = async (assessment: HEARTIAssessment) => {
     console.log("handleAssessmentComplete called with assessment:", assessment);
     setCompletedAssessment(assessment);
     setShowAssessmentForm(false);
@@ -85,10 +84,21 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
     // Clear any saved progress
     localStorage.removeItem('assessment_progress');
     
-    // If user hasn't paid, show payment gateway
+    // If user hasn't paid, redirect directly to Stripe
     if (!hasPaid) {
-      console.log("User hasn't paid, showing payment gateway");
-      setShowPaymentGateway(true);
+      console.log("User hasn't paid, redirecting to Stripe");
+      
+      // Store assessment data for after payment
+      localStorage.setItem('pending_assessment', JSON.stringify(assessment));
+      
+      // Redirect directly to Stripe monthly subscription
+      const monthlyPaymentUrl = 'https://buy.stripe.com/dRmfZgdKp4B66Rs1JSaIM04';
+      window.open(monthlyPaymentUrl, '_blank');
+      
+      toast({
+        title: "Complete Payment", 
+        description: "Complete your payment to unlock your assessment results.",
+      });
     } else {
       console.log("User has paid, calling onComplete");
       onComplete(assessment);
@@ -96,18 +106,8 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
     }
   };
 
-  // Show payment gateway if requested
-  if (showPaymentGateway) {
-    return <PaymentGateway 
-      assessment={completedAssessment || latestAssessment!} 
-      onPaymentComplete={(updatedAssessment) => {
-        console.log("Payment completed:", updatedAssessment);
-        setShowPaymentGateway(false);
-        onComplete(updatedAssessment);
-        setActiveTab('overview');
-      }} 
-    />;
-  }
+  // Show payment gateway if requested (now removed - direct Stripe redirect)
+  // Payment is now handled via direct Stripe redirect
 
   // Show assessment form when taking assessment
   if (showAssessmentForm || activeTab === 'take') {
@@ -176,13 +176,16 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
                 <p className="text-muted-foreground mb-6 max-w-md">
                   Unlock all assessment features including detailed analysis, coaching recommendations, and habit tracking.
                 </p>
-                <PaymentGateway 
-                  assessment={latestAssessment}
-                  onPaymentComplete={(assessment) => {
-                    onComplete(assessment);
-                    setActiveTab('overview');
+                <button
+                  onClick={() => {
+                    // Redirect directly to Stripe
+                    const monthlyPaymentUrl = 'https://buy.stripe.com/dRmfZgdKp4B66Rs1JSaIM04';
+                    window.open(monthlyPaymentUrl, '_blank');
                   }}
-                />
+                  className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                  Upgrade for $19.99/month
+                </button>
               </div>
             )}
           </div>

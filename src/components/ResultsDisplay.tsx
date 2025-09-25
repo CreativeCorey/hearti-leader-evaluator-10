@@ -76,7 +76,9 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   }
 
   const handleUpgrade = () => {
-    setShowPaymentGateway(true);
+    // Redirect directly to Stripe instead of showing payment dialog
+    const monthlyPaymentUrl = 'https://buy.stripe.com/dRmfZgdKp4B66Rs1JSaIM04';
+    window.open(monthlyPaymentUrl, '_blank');
   };
 
   // Show payment gateway when requested

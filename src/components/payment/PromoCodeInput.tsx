@@ -100,7 +100,7 @@ export const PromoCodeInput: React.FC<PromoCodeInputProps> = ({ onPromoApplied }
           </div>
           
           <div className="text-xs text-muted-foreground">
-            Try: <code className="bg-muted px-1 py-0.5 rounded">HEARTIFriend_COREY</code> for a 3-day trial
+            Contact your administrator for available promo codes
           </div>
         </div>
       </CardContent>

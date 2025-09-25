@@ -71,7 +71,7 @@ const PremiumTeaser: React.FC<PremiumTeaserProps> = ({
             size="lg"
           >
             <Crown className="w-4 h-4 mr-2" />
-            Start for $9.99/month
+            Start for $19.99/month
           </Button>
           
           <p className="text-xs text-muted-foreground">
