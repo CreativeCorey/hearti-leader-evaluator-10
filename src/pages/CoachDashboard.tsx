@@ -180,13 +180,13 @@ const CoachDashboard = () => {
       setLoadingDetails(true);
       setSelectedParticipant(participant);
 
-      const { data, error } = await supabase
-        .from('assessments')
-        .select('*')
-        .eq('user_id', participant.id)
-        .order('date', { ascending: false });
+      const { data, error } = await supabase.rpc('get_user_assessments_secure', {
+        target_user_id: participant.id,
+        is_historical_user: false
+      });
 
       if (error) {
+        console.error('Error loading participant details:', error);
         throw error;
       }
 

@@ -92,20 +92,17 @@ const EnhancedCoachDashboard = () => {
     try {
       setIsLoading(true);
       
-      // Get all users and their assessments
-      const { data: assessments, error } = await supabase
-        .from('assessments')
-        .select(`
-          id,
-          user_id,
-          date,
-          overall_score,
-          dimension_scores,
-          answers
-        `)
-        .order('date', { ascending: false });
+      // Use the secure paginated assessments function for admin access
+      const { data, error } = await supabase.rpc('get_secure_paginated_assessments', {
+        page_offset: 0,
+        page_limit: 1000,
+        organization_filter: userProfile?.organization_id || null
+      });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching assessments:', error);
+        throw error;
+      }
 
       // Get user profiles
       const { data: profiles, error: profilesError } = await supabase
@@ -119,7 +116,7 @@ const EnhancedCoachDashboard = () => {
       const participantMap = new Map<string, ParticipantData>();
       
       profiles?.forEach(profile => {
-        const userAssessments = assessments?.filter(a => a.user_id === profile.id) || [];
+        const userAssessments = data?.filter(a => a.user_id === profile.id) || [];
         const latestAssessment = userAssessments[0];
         
         // Calculate trend
@@ -161,13 +158,15 @@ const EnhancedCoachDashboard = () => {
     try {
       setSelectedParticipant(participant);
       
-      const { data, error } = await supabase
-        .from('assessments')
-        .select('*')
-        .eq('user_id', participant.id)
-        .order('date', { ascending: false });
+      const { data, error } = await supabase.rpc('get_user_assessments_secure', {
+        target_user_id: participant.id,
+        is_historical_user: false
+      });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error loading participant details:', error);
+        throw error;
+      }
 
       const details: AssessmentDetail[] = (data || []).map(assessment => ({
         id: assessment.id,
