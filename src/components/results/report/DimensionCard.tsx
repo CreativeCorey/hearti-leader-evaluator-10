@@ -6,6 +6,7 @@ import { getDimensionReportContent } from '@/utils/calculations';
 import { dimensionIcons } from '../development/DimensionIcons';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useLanguage } from '@/contexts/language/LanguageContext';
+import { SafeHtml } from '@/utils/sanitize';
 
 interface DimensionCardProps {
   dimension: HEARTIDimension;
@@ -63,9 +64,9 @@ const DimensionCard: React.FC<DimensionCardProps> = ({
       
       <CardContent className={`p-6 pdf-dimension-content ${isMobile ? 'overflow-y-auto max-h-[calc(70vh-100px)]' : ''}`}>
         <div className="prose max-w-none">
-          <div className="mb-4" dangerouslySetInnerHTML={{ __html: statusContent }} />
+          <SafeHtml html={statusContent} className="mb-4" />
           
-          <div className="mb-4" dangerouslySetInnerHTML={{ __html: description }} />
+          <SafeHtml html={description} className="mb-4" />
           
           {isMobile ? (
             // For mobile view, collapse sections into an accordion-like structure
@@ -76,7 +77,7 @@ const DimensionCard: React.FC<DimensionCardProps> = ({
                     <DimensionIcon size={18} className="text-gray-500" />
                     {t('results.dimensions.levelsOf')} {dimension}
                   </h4>
-                  <div dangerouslySetInnerHTML={{ __html: levels }} />
+                  <SafeHtml html={levels} />
                 </div>
               )}
               
@@ -86,7 +87,7 @@ const DimensionCard: React.FC<DimensionCardProps> = ({
                     <DimensionIcon size={18} className="text-gray-500" />
                     {t('results.dimensions.developmentTips')}
                   </h4>
-                  <div dangerouslySetInnerHTML={{ __html: tips }} />
+                  <SafeHtml html={tips} />
                 </div>
               )}
             </>
@@ -99,7 +100,7 @@ const DimensionCard: React.FC<DimensionCardProps> = ({
                     <DimensionIcon size={18} className="text-gray-500" />
                     {t('results.dimensions.levelsOf')} {dimension}
                   </h4>
-                  <div dangerouslySetInnerHTML={{ __html: levels }} />
+                  <SafeHtml html={levels} />
                 </div>
               )}
               
@@ -109,7 +110,7 @@ const DimensionCard: React.FC<DimensionCardProps> = ({
                     <DimensionIcon size={18} className="text-gray-500" />
                     {t('results.dimensions.tipsForIncreasing')} {dimension} {t('results.dimensions.leadership')}
                   </h4>
-                  <div dangerouslySetInnerHTML={{ __html: tips }} />
+                  <SafeHtml html={tips} />
                 </div>
               )}
             </>
