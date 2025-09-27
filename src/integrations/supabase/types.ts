@@ -726,6 +726,10 @@ export type Database = {
           updated_at: string
         }[]
       }
+      has_active_subscription: {
+        Args: { user_uuid?: string }
+        Returns: boolean
+      }
       is_authenticated_user: {
         Args: { user_uuid?: string }
         Returns: boolean
