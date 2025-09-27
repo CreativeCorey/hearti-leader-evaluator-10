@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import App from './App'
 import '@/styles/index.css'
-import { ThemeProvider } from './hooks/use-theme.tsx'
+import { ThemeProvider } from './hooks/use-theme'
 import { initNotifications } from './services/notificationService'
 
 const queryClient = new QueryClient({
