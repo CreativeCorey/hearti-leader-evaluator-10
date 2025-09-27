@@ -111,6 +111,48 @@ export type Database = {
           },
         ]
       }
+      coaching_relationships: {
+        Row: {
+          coach_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          participant_id: string
+          updated_at: string
+        }
+        Insert: {
+          coach_id: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          participant_id: string
+          updated_at?: string
+        }
+        Update: {
+          coach_id?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          participant_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coaching_relationships_coach_id_fkey"
+            columns: ["coach_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coaching_relationships_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       habits: {
         Row: {
           completed_dates: Json
@@ -538,6 +580,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      associate_existing_participants_with_coach: {
+        Args: { coach_email: string }
+        Returns: number
+      }
       create_organization_secure: {
         Args: { org_description?: string; org_name: string }
         Returns: string
