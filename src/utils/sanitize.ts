@@ -33,14 +33,15 @@ interface SafeHtmlProps {
 export const SafeHtml: React.FC<SafeHtmlProps> = ({ 
   html, 
   className = '', 
-  component: Component = 'div' 
+  component = 'div' 
 }) => {
   const sanitizedHtml = sanitizeHtml(html);
   
-  return (
-    <Component 
-      className={className}
-      dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
-    />
+  return React.createElement(
+    component,
+    {
+      className,
+      dangerouslySetInnerHTML: { __html: sanitizedHtml }
+    }
   );
 };
