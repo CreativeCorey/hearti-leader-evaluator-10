@@ -1,6 +1,6 @@
 
 import { useAuth } from "@/hooks/use-auth";
-import { Navigate } from "react-router-dom";
+import { Navigate, useSearchParams } from "react-router-dom";
 import AuthCard from "@/components/auth/AuthCard";
 import { useEffect } from "react";
 import { useLanguage } from "@/contexts/language/LanguageContext";
@@ -8,6 +8,7 @@ import { useLanguage } from "@/contexts/language/LanguageContext";
 const Auth = () => {
   const { user } = useAuth();
   const { currentLanguage } = useLanguage();
+  const [searchParams] = useSearchParams();
 
   // Set document title based on language
   useEffect(() => {
@@ -20,6 +21,14 @@ const Auth = () => {
       currentLanguage === 'ar' ? 'المصادقة' : 
       currentLanguage === 'ja' ? '認証' : 'Authentication'}`;
   }, [currentLanguage]);
+
+  // Check if this is a password reset redirect
+  const isPasswordReset = searchParams.get('reset') === 'true';
+  
+  // If this is a password reset flow, redirect to password reset page
+  if (isPasswordReset) {
+    return <Navigate to="/password-reset" replace />;
+  }
 
   // Redirect to home if user is already authenticated
   if (user) {
