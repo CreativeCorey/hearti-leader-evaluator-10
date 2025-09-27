@@ -4,6 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import Layout from './components/Layout';
 import Index from './pages/Index';
 import Auth from './pages/Auth';
+import Intro from './pages/Intro';
 import AuthCallback from './pages/AuthCallback';
 import PasswordReset from './pages/PasswordReset';
 import NotFound from './pages/NotFound';
@@ -25,6 +26,7 @@ function App() {
             <Route element={<Layout><Outlet /></Layout>}>
               <Route element={<AuthGuard />}>
                 <Route index element={<Index />} />
+                <Route path="/intro" element={<Intro />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/coach" element={<EnhancedCoachDashboard />} />
                 <Route path="/admin" element={<Admin />} />

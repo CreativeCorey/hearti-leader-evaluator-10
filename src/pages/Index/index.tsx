@@ -1,5 +1,6 @@
 
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ResultsTabContent from '@/components/results/ResultsTabContent';
 import AssessmentTabs from '@/components/assessment/AssessmentTabs';
@@ -10,6 +11,7 @@ import HeaderSection from '@/components/assessment/HeaderSection';
 import { HEARTIAssessment } from '@/types';
 
 const Index = () => {
+  const navigate = useNavigate();
   const {
     loading,
     profile,
@@ -34,6 +36,14 @@ const Index = () => {
     configuringWorkloadIdentity,
     isMobile
   } = useIndexPage();
+
+  // Check if user should see intro sequence
+  useEffect(() => {
+    const hasSeenIntro = localStorage.getItem('hearti_intro_seen');
+    if (!hasSeenIntro) {
+      navigate('/intro', { replace: true });
+    }
+  }, [navigate]);
 
   // If still loading, show loading state
   if (loading) return <LoadingState />;

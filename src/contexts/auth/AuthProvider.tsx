@@ -118,6 +118,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           variant: "destructive",
         });
       } else {
+        // Clear intro flag so new users see the intro sequence
+        localStorage.removeItem('hearti_intro_seen');
         toast({
           title: "Sign up successful",
           description: "Please check your email for verification link",
