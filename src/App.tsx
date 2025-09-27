@@ -18,6 +18,19 @@ import LanguageProvider from './contexts/language/LanguageProvider';
 import './App.css';
 
 function App() {
+  console.log('App component rendering...');
+  
+  // Emergency fallback for debugging
+  if (typeof window !== 'undefined' && window.location.search.includes('debug=true')) {
+    return (
+      <div style={{ padding: '20px', fontFamily: 'Arial' }}>
+        <h1>Debug Mode - App is Working</h1>
+        <p>React is rendering successfully</p>
+        <p>Current path: {window.location.pathname}</p>
+      </div>
+    );
+  }
+
   return (
     <AuthProvider>
       <LanguageProvider>

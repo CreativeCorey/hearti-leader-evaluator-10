@@ -24,6 +24,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [anonymousId] = useState<string>(getOrCreateAnonymousId());
   const [anonymousMode, setAnonymousMode] = useState<boolean>(isAnonymousAccessEnabled());
 
+  console.log('AuthProvider render:', { user: !!user, isLoading, sessionExists: !!session });
+
   // Initialize auth state - SECURE VERSION: No anonymous access
   useEffect(() => {
     setIsLoading(true);
