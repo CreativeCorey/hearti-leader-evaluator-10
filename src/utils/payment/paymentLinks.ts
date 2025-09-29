@@ -6,15 +6,21 @@ export const STRIPE_PAYMENT_LINKS = {
   annual: "https://buy.stripe.com/4gM4gy9u9gjO4JkgEMaIM02"
 };
 
-// Instructions for setting up Payment Links in Stripe:
-// 1. Go to your Stripe Dashboard
-// 2. Navigate to Products > Payment links
-// 3. Click "Create payment link"
-// 4. Set up your products with the following pricing:
-//    - Monthly: $19.99/month (recurring)
-//    - Annual: $179.88/year (recurring, equivalent to $14.99/month)
-//    - One-time: $199.99 (one-time payment)
-// 5. Configure success/cancel URLs:
-//    - Success URL: https://your-domain.com/payment-success?session_id={CHECKOUT_SESSION_ID}
-//    - Cancel URL: https://your-domain.com/
-// 6. Replace the URLs above with your actual payment link URLs
+// IMPORTANT: Webhook Setup Required for Payment Verification
+// ==========================================================
+// 
+// For payments to be verified, you MUST set up a Stripe webhook:
+//
+// 1. Go to Stripe Dashboard > Developers > Webhooks
+// 2. Click "Add endpoint"
+// 3. Set the endpoint URL to: https://odwkgxdkjyccnkydxvjw.supabase.co/functions/v1/stripe-webhook
+// 4. Select these events to listen for:
+//    - checkout.session.completed (for initial payment)
+//    - invoice.paid (for subscription renewals)
+// 5. Copy the webhook signing secret
+// 6. Add the secret as STRIPE_WEBHOOK_SECRET in your Supabase edge function secrets
+//
+// Additionally, configure your Payment Links:
+// 1. Navigate to Products > Payment links in Stripe Dashboard
+// 2. For each payment link, ensure "Collect customer email" is enabled
+// 3. This allows the webhook to match payments to users in your database
