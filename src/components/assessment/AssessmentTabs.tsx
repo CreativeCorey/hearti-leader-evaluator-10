@@ -84,30 +84,37 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
     // Clear any saved progress
     localStorage.removeItem('assessment_progress');
     
-    // If user hasn't paid, redirect directly to Stripe
+    // Always save the assessment and show results
+    console.log("Saving assessment and switching to overview");
+    onComplete(assessment);
+    setActiveTab('overview');
+    
+    // If user hasn't paid, show payment gateway after a brief delay
     if (!hasPaid) {
-      console.log("User hasn't paid, redirecting to Stripe");
-      
-      // Store assessment data for after payment
-      localStorage.setItem('pending_assessment', JSON.stringify(assessment));
-      
-      // Redirect directly to Stripe monthly subscription
-      const monthlyPaymentUrl = 'https://buy.stripe.com/dRmfZgdKp4B66Rs1JSaIM04';
-      window.open(monthlyPaymentUrl, '_blank');
-      
-      toast({
-        title: "Complete Payment", 
-        description: "Complete your payment to unlock your assessment results.",
-      });
-    } else {
-      console.log("User has paid, calling onComplete");
-      onComplete(assessment);
-      setActiveTab('overview');
+      console.log("User hasn't paid, will show payment gateway");
+      setTimeout(() => {
+        setShowPaymentGateway(true);
+      }, 1500); // Show payment gateway after user sees their summary
     }
   };
 
-  // Show payment gateway if requested (now removed - direct Stripe redirect)
-  // Payment is now handled via direct Stripe redirect
+  // Show payment gateway if user completed assessment but hasn't paid
+  if (showPaymentGateway && completedAssessment) {
+    const PaymentGateway = React.lazy(() => import('@/components/PaymentGateway'));
+    return (
+      <React.Suspense fallback={<div className="flex items-center justify-center min-h-[400px]"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
+        <PaymentGateway
+          assessment={completedAssessment}
+          onPaymentComplete={(updatedAssessment) => {
+            console.log("Payment completed:", updatedAssessment);
+            setShowPaymentGateway(false);
+            onComplete(updatedAssessment);
+            setActiveTab('overview');
+          }}
+        />
+      </React.Suspense>
+    );
+  }
 
   // Show assessment form when taking assessment
   if (showAssessmentForm || activeTab === 'take') {
