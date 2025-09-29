@@ -14,8 +14,6 @@ import { PaymentSuccess } from './payment/PaymentSuccess';
 import { PaymentError } from './payment/PaymentError';
 import { FeaturesList } from './payment/FeaturesList';
 import { PaymentFooter } from './payment/PaymentFooter';
-import { PromoCodeInput } from './payment/PromoCodeInput';
-import { usePromoCode } from '@/hooks/usePromoCode';
 
 interface PaymentGatewayProps {
   assessment: HEARTIAssessment;
@@ -30,7 +28,6 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   const { toast } = useToast();
   const [lastAttemptTime, setLastAttemptTime] = useState<number | null>(null);
   const [initialCheckDone, setInitialCheckDone] = useState(false);
-  const { hasTrialAccess, checkActiveTrialStatus } = usePromoCode();
   
   const { 
     checkingPayment,
@@ -41,14 +38,13 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   
   const { processingPayment, redirectToPayment } = usePaymentLinks();
 
-  // Add an initial payment status check and trial status check
+  // Add an initial payment status check
   useEffect(() => {
     if (!initialCheckDone && user) {
       checkPaymentStatus();
-      checkActiveTrialStatus();
       setInitialCheckDone(true);
     }
-  }, [initialCheckDone, user, checkPaymentStatus, checkActiveTrialStatus]);
+  }, [initialCheckDone, user, checkPaymentStatus]);
 
 
   const handlePayNow = async (paymentType: 'monthly' | 'annual') => {
@@ -85,7 +81,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
     return <LoadingState />;
   }
   
-  if (hasPaid || hasTrialAccess()) {
+  if (hasPaid) {
     return <PaymentSuccess />;
   }
   
@@ -119,14 +115,6 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
           onRefresh={handleRefreshStatus} 
         />
       )}
-      
-      
-      <div className="px-6 space-y-4">
-        <PromoCodeInput onPromoApplied={() => {
-          checkActiveTrialStatus();
-          checkPaymentStatus();
-        }} />
-      </div>
       
       <FeaturesList />
       
