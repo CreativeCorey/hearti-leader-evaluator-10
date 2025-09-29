@@ -140,31 +140,24 @@ export const useAssessmentCompletion = (
       demographics
     };
     
+    // Store the final assessment
+    setTempAssessment(finalAssessment);
+    
     // Start processing sequence immediately after demographics
     setAssessmentComplete(false);
     setShowProcessing(true);
     
-    try {
-      console.log("Saving assessment with demographics:", finalAssessment);
-      // Save assessment during processing
-      await saveAssessment(finalAssessment);
-      
-      console.log("Assessment saved successfully");
-      
-      // Processing sequence will complete and call onComplete
-      // This is handled in the processing component
-      setTempAssessment(finalAssessment);
-      
-    } catch (error) {
-      console.error("Failed to save assessment:", error);
-      setShowProcessing(false);
-      setAssessmentComplete(true); // Go back to demographics form
-      toast({
-        title: "Error",
-        description: "Failed to save assessment. Please try again.",
-        variant: "destructive"
-      });
-    }
+    // Save will happen in background during the loading animation
+    setTimeout(async () => {
+      try {
+        console.log("Saving assessment with demographics in background");
+        await saveAssessment(finalAssessment);
+        console.log("Assessment saved successfully");
+      } catch (error) {
+        console.error("Failed to save assessment:", error);
+        // Don't stop the flow, just log the error
+      }
+    }, 1000);
   };
 
   const handleSkipDemographics = async () => {
@@ -174,24 +167,17 @@ export const useAssessmentCompletion = (
     setAssessmentComplete(false);
     setShowProcessing(true);
     
-    try {
-      // Save assessment during processing
-      await saveAssessment(tempAssessment);
-      console.log("Assessment without demographics saved successfully");
-      
-      // Processing sequence will complete and call onComplete
-      // This maintains the tempAssessment for processing completion
-      
-    } catch (error) {
-      console.error("Failed to save assessment:", error);
-      setShowProcessing(false);
-      setAssessmentComplete(true); // Go back to demographics form
-      toast({
-        title: "Error",
-        description: "Failed to save assessment. Please try again.",
-        variant: "destructive"
-      });
-    }
+    // Save in background during loading animation
+    setTimeout(async () => {
+      try {
+        console.log("Saving assessment without demographics in background");
+        await saveAssessment(tempAssessment);
+        console.log("Assessment without demographics saved successfully");
+      } catch (error) {
+        console.error("Failed to save assessment:", error);
+        // Don't stop the flow, just log the error
+      }
+    }, 1000);
   };
 
   const handleProcessingComplete = () => {

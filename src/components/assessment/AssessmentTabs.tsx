@@ -89,12 +89,12 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
     onComplete(assessment);
     setActiveTab('overview');
     
-    // If user hasn't paid, show payment gateway after a brief delay
+    // If user hasn't paid, show payment gateway after a longer delay to ensure they see results first
     if (!hasPaid) {
       console.log("User hasn't paid, will show payment gateway");
       setTimeout(() => {
         setShowPaymentGateway(true);
-      }, 1500); // Show payment gateway after user sees their summary
+      }, 3000); // Show payment gateway after user sees their summary
     }
   };
 
@@ -108,6 +108,7 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
           onPaymentComplete={(updatedAssessment) => {
             console.log("Payment completed:", updatedAssessment);
             setShowPaymentGateway(false);
+            setCompletedAssessment(null); // Clear completed assessment to prevent loops
             onComplete(updatedAssessment);
             setActiveTab('overview');
           }}

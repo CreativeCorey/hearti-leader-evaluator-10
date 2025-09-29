@@ -57,17 +57,16 @@ const AssessmentLoadingState: React.FC<AssessmentLoadingStateProps> = ({ onCompl
   // Message based on progress
   const getMessage = () => {
     if (progress < 15) {
-      return t('assessment.loading.analyzing');
+      return "Analyzing your responses...";
     } else if (progress < 25) {
-      return t('assessment.loading.building');
+      return "Building your leadership profile...";
     } else if (progress < 85) {
-      // Get proper dimension name with fallback to capitalize the dimension key
       const dimensionKey = dimensions[currentDimension];
       const dimensionName = t(`dimensions.titles.${dimensionKey}`) || 
         dimensionKey.charAt(0).toUpperCase() + dimensionKey.slice(1);
-      return t('assessment.loading.dimension', { dimension: dimensionName });
+      return `Analyzing ${dimensionName} dimension...`;
     } else {
-      return t('assessment.loading.finalizing');
+      return "Creating your personalized development program...";
     }
   };
 
