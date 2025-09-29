@@ -4,8 +4,8 @@ import { HEARTIAssessment } from '@/types';
 
 // Stripe Price IDs for monthly and annual subscriptions
 const STRIPE_PRICES = {
-  monthly: 'price_1QkfOyQWCMFpjF8cZR0o9Wf6',
-  annual: 'price_1QkfPrQWCMFpjF8cNBo8lLLI'
+  monthly: 'price_1Rw6RoCCli0zGv17MTb41FUA',
+  annual: 'price_1RvSLECCli0zGv17dNOcTYYY'
 };
 
 export const usePaymentLinks = () => {
