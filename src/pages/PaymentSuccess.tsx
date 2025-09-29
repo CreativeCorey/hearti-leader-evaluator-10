@@ -28,6 +28,13 @@ const PaymentSuccess = () => {
       try {
         const result = await verifyPayment(sessionId);
         setVerified(result);
+        
+        if (result) {
+          // Redirect to home after 2 seconds on success
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 2000);
+        }
       } catch (err) {
         console.error('Verification error:', err);
         setError('Failed to verify payment');

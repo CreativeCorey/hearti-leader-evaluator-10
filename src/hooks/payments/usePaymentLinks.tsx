@@ -1,6 +1,12 @@
 import { useState } from 'react';
-import { STRIPE_PAYMENT_LINKS } from '@/utils/payment/paymentLinks';
+import { supabase } from '@/integrations/supabase/client';
 import { HEARTIAssessment } from '@/types';
+
+// Stripe Price IDs for monthly and annual subscriptions
+const STRIPE_PRICES = {
+  monthly: 'price_1QkfOyQWCMFpjF8cZR0o9Wf6',
+  annual: 'price_1QkfPrQWCMFpjF8cNBo8lLLI'
+};
 
 export const usePaymentLinks = () => {
   const [processingPayment, setProcessingPayment] = useState(false);
@@ -16,15 +22,25 @@ export const usePaymentLinks = () => {
       localStorage.setItem('pending_assessment', JSON.stringify(assessment));
       localStorage.removeItem('payment_error');
       
-      // Get the payment link
-      const paymentUrl = STRIPE_PAYMENT_LINKS[paymentType];
-      
-      if (!paymentUrl || paymentUrl.includes('YOUR_')) {
-        throw new Error('Payment links not configured. Please set up your Stripe payment links.');
+      // Get user session
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('User not authenticated');
       }
-      
-      // Redirect to Stripe payment link
-      window.open(paymentUrl, '_blank');
+
+      // Create checkout session via edge function
+      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+        body: {
+          priceId: STRIPE_PRICES[paymentType],
+          email: session.user.email
+        }
+      });
+
+      if (error) throw error;
+      if (!data?.url) throw new Error('No checkout URL received');
+
+      // Redirect to Stripe checkout
+      window.location.href = data.url;
       
       return true;
     } catch (error) {
