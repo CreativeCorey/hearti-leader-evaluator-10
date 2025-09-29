@@ -47,7 +47,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           ) : (
             <>
               <CreditCard className="mr-2 h-4 w-4" />
-              Start for $9.99/month
+              Start for $19.99/month
             </>
           )}
         </Button>
@@ -64,9 +64,9 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
               See other payment options
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-[240px]">
+          <DropdownMenuContent className="w-[280px]">
             <DropdownMenuItem onClick={() => onPayNow('annual')}>
-              Annual subscription ($7.99/month, billed yearly)
+              Annual subscription ($14.99/month, billed yearly at $179.88)
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => onPayNow('oneTime')}>
               Full Access - One Payment: $199.99

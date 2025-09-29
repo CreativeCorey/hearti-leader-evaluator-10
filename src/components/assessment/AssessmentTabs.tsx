@@ -89,33 +89,26 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
     onComplete(assessment);
     setActiveTab('overview');
     
-    // If user hasn't paid, show payment gateway after a longer delay to ensure they see results first
+    // If user hasn't paid, redirect directly to Stripe payment after showing results
     if (!hasPaid) {
-      console.log("User hasn't paid, will show payment gateway");
+      console.log("User hasn't paid, redirecting to Stripe payment");
       setTimeout(() => {
-        setShowPaymentGateway(true);
-      }, 3000); // Show payment gateway after user sees their summary
+        // Store assessment data for after payment
+        localStorage.setItem('pending_assessment', JSON.stringify(assessment));
+        
+        // Redirect to Stripe monthly subscription
+        const monthlyPaymentUrl = 'https://buy.stripe.com/dRmfZgdKp4B66Rs1JSaIM04';
+        window.open(monthlyPaymentUrl, '_blank');
+        
+        toast({
+          title: "Complete Payment",
+          description: "Complete your payment in the new tab to unlock full access to your results.",
+        });
+      }, 2000); // Give user 2 seconds to see their summary before opening payment
     }
   };
 
-  // Show payment gateway if user completed assessment but hasn't paid
-  if (showPaymentGateway && completedAssessment) {
-    const PaymentGateway = React.lazy(() => import('@/components/PaymentGateway'));
-    return (
-      <React.Suspense fallback={<div className="flex items-center justify-center min-h-[400px]"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div></div>}>
-        <PaymentGateway
-          assessment={completedAssessment}
-          onPaymentComplete={(updatedAssessment) => {
-            console.log("Payment completed:", updatedAssessment);
-            setShowPaymentGateway(false);
-            setCompletedAssessment(null); // Clear completed assessment to prevent loops
-            onComplete(updatedAssessment);
-            setActiveTab('overview');
-          }}
-        />
-      </React.Suspense>
-    );
-  }
+  // Payment gateway removed - now redirecting directly to Stripe
 
   // Show assessment form when taking assessment
   if (showAssessmentForm || activeTab === 'take') {
