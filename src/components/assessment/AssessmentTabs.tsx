@@ -36,12 +36,9 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
   const [showEmptyState, setShowEmptyState] = useState(false);
   const [showAssessmentForm, setShowAssessmentForm] = useState(false);
   const [isAssessmentInProgress, setIsAssessmentInProgress] = useState(false);
-  const [completedAssessment, setCompletedAssessment] = useState<HEARTIAssessment | null>(null);
-  const [showPaymentGateway, setShowPaymentGateway] = useState(false);
   
   const { checkingPayment, hasPaid, userRole, viewMode, setViewMode } = useAssessmentPayment((updatedAssessment) => {
     console.log("Payment completed:", updatedAssessment);
-    setShowPaymentGateway(false);
     onComplete(updatedAssessment);
   });
 
@@ -77,7 +74,6 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
 
   const handleAssessmentComplete = async (assessment: HEARTIAssessment) => {
     console.log("handleAssessmentComplete called with assessment:", assessment);
-    setCompletedAssessment(assessment);
     setShowAssessmentForm(false);
     setIsAssessmentInProgress(false);
     
@@ -107,8 +103,6 @@ const AssessmentTabs: React.FC<AssessmentTabsProps> = ({
       }, 2000); // Give user 2 seconds to see their summary before opening payment
     }
   };
-
-  // Payment gateway removed - now redirecting directly to Stripe
 
   // Show assessment form when taking assessment
   if (showAssessmentForm || activeTab === 'take') {

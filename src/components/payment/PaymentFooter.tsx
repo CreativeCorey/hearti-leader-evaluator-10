@@ -16,7 +16,7 @@ interface PaymentFooterProps {
   processingPayment: boolean;
   user: User | null;
   lastAttemptTime: number | null;
-  onPayNow: (type: 'monthly' | 'annual' | 'oneTime') => void;
+  onPayNow: (type: 'monthly' | 'annual') => void;
 }
 
 export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayNow }: PaymentFooterProps) => {
@@ -25,7 +25,7 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
   const buttonDisabled = processingPayment || !user || recentAttempt;
   
   
-  const handleMainAction = (type: 'monthly' | 'oneTime') => {
+  const handleMainAction = (type: 'monthly' | 'annual') => {
     onPayNow(type);
   };
   
@@ -67,9 +67,6 @@ export const PaymentFooter = ({ processingPayment, user, lastAttemptTime, onPayN
           <DropdownMenuContent className="w-[280px]">
             <DropdownMenuItem onClick={() => onPayNow('annual')}>
               Annual subscription ($14.99/month, billed yearly at $179.88)
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onPayNow('oneTime')}>
-              Full Access - One Payment: $199.99
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

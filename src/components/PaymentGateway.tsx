@@ -51,7 +51,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   }, [initialCheckDone, user, checkPaymentStatus, checkActiveTrialStatus]);
 
 
-  const handlePayNow = async (paymentType: 'monthly' | 'annual' | 'oneTime') => {
+  const handlePayNow = async (paymentType: 'monthly' | 'annual') => {
     try {
       const now = Date.now();
       setLastAttemptTime(now);

@@ -7,7 +7,7 @@ export const usePaymentLinks = () => {
 
   const redirectToPayment = async (
     assessment: HEARTIAssessment, 
-    paymentType: 'monthly' | 'annual' | 'oneTime'
+    paymentType: 'monthly' | 'annual'
   ) => {
     setProcessingPayment(true);
     
