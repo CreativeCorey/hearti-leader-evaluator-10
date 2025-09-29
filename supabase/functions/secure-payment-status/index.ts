@@ -172,7 +172,8 @@ serve(async (req) => {
       });
     }
   } catch (error) {
-    console.error("Payment status check error:", error.message);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    console.error("Payment status check error:", errorMessage);
     return new Response(JSON.stringify({ 
       error: "Internal server error",
       hasPaid: false,

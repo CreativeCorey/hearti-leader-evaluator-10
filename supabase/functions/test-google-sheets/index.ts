@@ -107,7 +107,8 @@ serve(async (req) => {
             { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
         } catch (parseError) {
-          console.error("Could not parse error response as JSON:", parseError.message);
+          const parseErrorMessage = parseError instanceof Error ? parseError.message : 'Unknown error'
+          console.error("Could not parse error response as JSON:", parseErrorMessage);
           
           return new Response(
             JSON.stringify({ 
@@ -132,23 +133,26 @@ serve(async (req) => {
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     } catch (fetchError) {
-      console.error("Fetch error:", fetchError.message);
+      const fetchErrorMessage = fetchError instanceof Error ? fetchError.message : 'Unknown error'
+      console.error("Fetch error:", fetchErrorMessage);
       
       return new Response(
         JSON.stringify({ 
           error: "Network error connecting to Google Sheets API",
-          message: fetchError.message
+          message: fetchErrorMessage
         }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
   } catch (error) {
-    console.error("Unexpected error in test function:", error.message, error.stack);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    const errorStack = error instanceof Error ? error.stack : undefined
+    console.error("Unexpected error in test function:", errorMessage, errorStack);
     
     return new Response(
       JSON.stringify({ 
         error: "Unexpected error",
-        message: error.message
+        message: errorMessage
       }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

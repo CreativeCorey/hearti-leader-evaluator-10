@@ -73,9 +73,10 @@ Deno.serve(async (req) => {
       
       console.log("Parsed workload identity config successfully");
     } catch (error) {
-      console.error("Failed to parse workload identity config:", error.message);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      console.error("Failed to parse workload identity config:", errorMessage);
       console.error("Config starts with:", workloadIdentityConfig.substring(0, 50));
-      throw new Error(`Invalid workload identity configuration format: ${error.message}. Expected JSON credential file.`);
+      throw new Error(`Invalid workload identity configuration format: ${errorMessage}. Expected JSON credential file.`);
     }
 
     // Get access token using workload identity federation
@@ -139,8 +140,9 @@ Deno.serve(async (req) => {
       
       console.log("Successfully obtained access token via workload identity federation");
     } catch (error) {
-      console.error("Error getting access token:", error.message);
-      throw new Error(`Authentication failed: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      console.error("Error getting access token:", errorMessage);
+      throw new Error(`Authentication failed: ${errorMessage}`);
     }
 
     // Handle different request types
@@ -170,7 +172,8 @@ Deno.serve(async (req) => {
           { headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       } catch (error) {
-        throw new Error(`Test failed: ${error.message}`);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+        throw new Error(`Test failed: ${errorMessage}`);
       }
     }
 
@@ -212,12 +215,8 @@ Deno.serve(async (req) => {
       if (dataRows.length > 50) {
         const backgroundTask = processLargeImport(supabase, headers, dataRows);
         
-        // Use EdgeRuntime.waitUntil to process in background
-        if (typeof EdgeRuntime !== 'undefined' && EdgeRuntime.waitUntil) {
-          EdgeRuntime.waitUntil(backgroundTask);
-        } else {
-          backgroundTask.catch(console.error);
-        }
+        // Process in background (no EdgeRuntime.waitUntil in Deno Deploy)
+        backgroundTask.catch(console.error);
         
         return new Response(
           JSON.stringify({
@@ -282,11 +281,13 @@ Deno.serve(async (req) => {
     throw new Error('Invalid action. Supported actions: test, import, export');
 
   } catch (error) {
-    console.error("Error in edge function:", error.message, error.stack);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    const errorStack = error instanceof Error ? error.stack : undefined
+    console.error("Error in edge function:", errorMessage, errorStack);
     
     return new Response(
       JSON.stringify({ 
-        error: error.message,
+        error: errorMessage,
         message: "Google Sheets operation failed. See function logs for details."
       }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -377,7 +378,8 @@ async function processImportData(supabase: any, headers: string[], dataRows: any
       if (result.assessmentCreated) importedAssessments++;
       if (result.error) errors.push(result.error);
     } catch (error) {
-      errors.push(`Error processing row: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      errors.push(`Error processing row: ${errorMessage}`);
     }
   }
 
@@ -527,7 +529,8 @@ async function processRow(supabase: any, row: any) {
     assessmentCreated = true;
 
   } catch (error) {
-    return { profileCreated, assessmentCreated, error: `Error processing row: ${error.message}` };
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    return { profileCreated, assessmentCreated, error: `Error processing row: ${errorMessage}` };
   }
 
   return { profileCreated, assessmentCreated, error };
@@ -542,7 +545,7 @@ function formatAssessmentForSheet(assessmentData: any) {
   
   const answers = Array.isArray(assessmentData.answers) ? assessmentData.answers : [];
   const answerMap: { [key: number]: number } = {};
-  answers.forEach(answer => {
+  answers.forEach((answer: any) => {
     if (answer && typeof answer === 'object' && 'questionId' in answer && 'score' in answer) {
       answerMap[answer.questionId] = answer.score;
     }

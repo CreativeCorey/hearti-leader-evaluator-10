@@ -156,23 +156,27 @@ serve(async (req) => {
 
       } catch (error) {
         results.failed++
-        results.errors.push(`Error processing ${assessment.user_email}: ${error.message}`)
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+        results.errors.push(`Error processing ${assessment.user_email}: ${errorMessage}`)
       }
     }
 
-    // Log the import activity
-    await supabaseClient
-      .from('data_access_logs')
-      .insert({
-        user_id: user.id,
-        action: 'bulk_import',
-        details: {
-          total_assessments: assessments.length,
-          successful: results.successful,
-          failed: results.failed
-        }
-      })
-      .catch(() => {}) // Don't fail the import if logging fails
+    // Log the import activity (ignore errors)
+    try {
+      await supabaseClient
+        .from('data_access_logs')
+        .insert({
+          user_id: user.id,
+          action: 'bulk_import',
+          details: {
+            total_assessments: assessments.length,
+            successful: results.successful,
+            failed: results.failed
+          }
+        })
+    } catch {
+      // Don't fail the import if logging fails
+    }
 
     return new Response(
       JSON.stringify(results),
@@ -184,12 +188,13 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Bulk import error:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Internal server error'
     return new Response(
       JSON.stringify({ 
-        error: error.message || 'Internal server error',
+        error: errorMessage,
         successful: 0,
         failed: 0,
-        errors: [error.message || 'Internal server error']
+        errors: [errorMessage]
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

@@ -112,15 +112,15 @@ serve(async (req) => {
     console.log(`Processing ${answers.length} answers`);
     
     // Create a map of question IDs to scores
-    const answerMap = {};
-    answers.forEach(answer => {
+    const answerMap: { [key: number]: number } = {};
+    answers.forEach((answer: any) => {
       if (answer && typeof answer === 'object' && 'questionId' in answer && 'score' in answer) {
         answerMap[answer.questionId] = answer.score;
       }
     });
     
     // Get question scores
-    const getQuestionScore = (questionId) => {
+    const getQuestionScore = (questionId: number) => {
       const score = answerMap[questionId];
       return score !== undefined ? score.toString() : "";
     };
@@ -266,15 +266,18 @@ serve(async (req) => {
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     } catch (error) {
-      console.error("Error syncing to Google Sheet:", error.message);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      console.error("Error syncing to Google Sheet:", errorMessage);
       throw error;
     }
   } catch (error) {
-    console.error("Error in edge function:", error.message, error.stack);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    const errorStack = error instanceof Error ? error.stack : undefined
+    console.error("Error in edge function:", errorMessage, errorStack);
     
     return new Response(
       JSON.stringify({ 
-        error: error.message,
+        error: errorMessage,
         message: "Failed to sync assessment to Google Sheet. See function logs for details."
       }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }

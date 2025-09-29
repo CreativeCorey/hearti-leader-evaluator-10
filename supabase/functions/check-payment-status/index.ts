@@ -139,9 +139,10 @@ serve(async (req) => {
       throw dbError; // Re-throw other errors
     }
   } catch (error) {
-    console.error("Payment status check error:", error.message);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    console.error("Payment status check error:", errorMessage);
     return new Response(JSON.stringify({ 
-      error: error.message,
+      error: errorMessage,
       hasPaid: false,
       paymentDetails: null,
       timestamp: Date.now() // Return timestamp for cache control

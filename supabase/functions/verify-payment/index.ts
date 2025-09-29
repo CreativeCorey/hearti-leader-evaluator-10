@@ -103,7 +103,8 @@ serve(async (req) => {
         }
       } catch (dbError) {
         // If there's an error updating the payments table, log it but continue
-        console.log("Error updating payment record, continuing:", dbError.message);
+        const dbErrorMessage = dbError instanceof Error ? dbError.message : 'Unknown error'
+        console.log("Error updating payment record, continuing:", dbErrorMessage);
       }
     }
 

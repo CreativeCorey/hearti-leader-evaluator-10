@@ -94,7 +94,8 @@ serve(async (req) => {
         origin = headerOrigin;
         logStep("Using origin from headers after JSON parse failure", { origin });
       } else {
-        logStep("Using default origin after parsing error", { origin, error: error.message });
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+        logStep("Using default origin after parsing error", { origin, error: errorMessage });
       }
     }
 

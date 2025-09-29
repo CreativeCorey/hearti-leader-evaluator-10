@@ -95,13 +95,8 @@ Deno.serve(async (req) => {
       // Start background processing
       const backgroundTask = processLargeImport(supabase, headers, dataRows);
       
-      // Use EdgeRuntime.waitUntil to process in background
-      if (typeof EdgeRuntime !== 'undefined' && EdgeRuntime.waitUntil) {
-        EdgeRuntime.waitUntil(backgroundTask);
-      } else {
-        // Fallback for environments that don't support EdgeRuntime
-        backgroundTask.catch(console.error);
-      }
+      // Process in background (no EdgeRuntime.waitUntil in Deno Deploy)
+      backgroundTask.catch(console.error);
       
       // Return immediate response
       return new Response(
@@ -128,10 +123,11 @@ Deno.serve(async (req) => {
 
   } catch (error) {
     console.error('Import error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message,
+        error: errorMessage,
       }),
       {
         status: 500,
@@ -179,7 +175,8 @@ async function processLargeImport(supabase: any, headers: string[], dataRows: an
         if (result.assessmentCreated) importedAssessments++;
         if (result.error) errors.push(result.error);
       } catch (error) {
-        errors.push(`Error processing row: ${error.message}`);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+        errors.push(`Error processing row: ${errorMessage}`);
       }
     }
     
@@ -219,7 +216,8 @@ async function processImportData(supabase: any, headers: string[], dataRows: any
       if (result.assessmentCreated) importedAssessments++;
       if (result.error) errors.push(result.error);
     } catch (error) {
-      errors.push(`Error processing row: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      errors.push(`Error processing row: ${errorMessage}`);
     }
   }
 
@@ -445,7 +443,8 @@ async function processRow(supabase: any, row: any) {
     assessmentCreated = true;
 
   } catch (error) {
-    return { profileCreated, assessmentCreated, error: `Error processing row: ${error.message}` };
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    return { profileCreated, assessmentCreated, error: `Error processing row: ${errorMessage}` };
   }
 
   return { profileCreated, assessmentCreated, error };
