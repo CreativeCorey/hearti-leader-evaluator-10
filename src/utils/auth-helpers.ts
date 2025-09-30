@@ -156,7 +156,7 @@ export const sendMagicLink = async (email: string) => {
 
 // Helper for password reset
 export const sendPasswordReset = async (email: string) => {
-  const redirectUrl = `${window.location.origin}/password-reset`;
+  const redirectUrl = `${window.location.origin}/auth/callback?type=recovery`;
   console.log("Password reset redirect URL:", redirectUrl);
   
   return await supabase.auth.resetPasswordForEmail(email, {
