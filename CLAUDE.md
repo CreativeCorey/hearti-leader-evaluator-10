@@ -137,3 +137,59 @@ Auto-generated TypeScript types: `src/integrations/supabase/types.ts`
 - No CI/CD — build locally with npm run build, upload manually
 - Redirects handled by Cloudflare (not .htaccess)
 - Related sites also on Bluehost: prismwork.com, heartiquotient.com
+
+## Final Approved Question Set (v2.4 — DO NOT REVERT)
+
+HUMILITY (H5 reverse):
+H1: "I'm comfortable saying I'm still figuring something out."
+H2: "When something is outside my expertise, I ask for help."
+H3: "I actively look for people who are strong where I'm not."
+H4: "Not having all the answers doesn't shake my confidence."
+H5: "I claim credit even when others contributed equally." REVERSE
+
+EMPATHY (E5 reverse):
+E1: "Before I decide, I think about how it affects the other people involved."
+E2: "When someone's altered their behavior, I get curious about what's really going on."
+E3: "I can hear that something landed badly without backing down from my decision."
+E4: "I can understand someone's struggle without taking it on as mine."
+E5: "When a conversation becomes tense, I'm more focused on what I'm going to say than on actually hearing them." REVERSE
+
+ACCOUNTABILITY (A5 reverse):
+A1: "The people I lead know exactly what I expect and how I'll measure it."
+A2: "When I commit to something, I do it."
+A3: "When something feels off between me and someone on my team, I name it."
+A4: "I hold others accountable without micromanaging."
+A5: "When things go wrong, I look for who's at fault before looking for what to fix." REVERSE
+
+RESILIENCY (R5 reverse):
+R1: "After a hard week, I can actually decompress — not just grin and bear it through the next one."
+R2: "I can close the laptop and actually let the day go."
+R3: "When the ground shifts, I adjust instead of forcing the original plan."
+R4: "I catch my own warning signs before I hit a wall."
+R5: "I measure my leadership effectiveness by how much I can endure." REVERSE
+
+TRANSPARENCY (T5 reverse):
+T1: "I don't let unspoken friction build — I address it."
+T2: "I can say 'I don't know yet' without people losing confidence in me."
+T3: "When a conversation goes badly, I go back and clean it up."
+T4: "The people I work with understand why what they do matters."
+T5: "I keep information to myself until I'm sure people need to know it." REVERSE
+
+INCLUSIVITY (I3 reverse):
+I1: "I create space for people to disagree with me — and they actually use it."
+I2: "I've used my influence in the past year to open a door for someone from an underrepresented group."
+I3: "DEI work feels like a distraction from the real work." REVERSE
+I4: "I actively bring quieter voices into decisions, not just the loudest ones in the room."
+I5: "I change how I communicate based on who I'm talking to, not just what I'm saying."
+
+GRACE INDEX (G6 reverse):
+G1: "When something breaks down, I don't automatically assume it's on me."
+G2: "I check whether something is actually mine to carry before I pick it up."
+G3: "After I mess something up, I can move forward without it weighing me down."
+G4: "My inner voice pushes me forward — it doesn't tear me down."
+G5: "I can end the day and actually rest, even when things are unfinished."
+G6: "I hold myself to a standard I would never apply to anyone else." REVERSE
+
+TOTAL: 31 questions. 7 reverse-scored. One reverse per dimension.
+Each dimension protected against gaming.
+Do not change question text, reverse flags, or IDs without explicit approval from Corey.
