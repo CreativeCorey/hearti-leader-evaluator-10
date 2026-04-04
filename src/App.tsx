@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import { GatePage } from './pages/GatePage'
 import { AssessmentPage } from './pages/AssessmentPage'
+import { TabulationPage } from './pages/TabulationPage'
+import { DemographicsPage } from './pages/DemographicsPage'
 import { ResultsPage } from './pages/ResultsPage'
 import { HabitsPage } from './pages/HabitsPage'
 import { EnterpriseGatePage } from './pages/EnterpriseGatePage'
 import type { AssessmentResult } from './lib/supabase'
 
-export type AppPage = 'gate' | 'enterprise-gate' | 'assessment' | 'results' | 'habits'
+export type AppPage = 'gate' | 'enterprise-gate' | 'assessment' | 'tabulation' | 'demographics' | 'results' | 'habits'
 
 export interface UserSession {
   email: string
@@ -48,7 +50,7 @@ export default function App() {
 
   const handleAssessmentComplete = (r: AssessmentResult) => {
     setResult(r)
-    setPage('results')
+    setPage('tabulation')
   }
 
   const handleViewHabits = () => {
@@ -72,6 +74,18 @@ export default function App() {
         <AssessmentPage
           session={session}
           onComplete={handleAssessmentComplete}
+        />
+      )}
+      {page === 'tabulation' && result && (
+        <TabulationPage
+          result={result}
+          onComplete={() => setPage('demographics')}
+        />
+      )}
+      {page === 'demographics' && result && (
+        <DemographicsPage
+          result={result}
+          onComplete={() => setPage('results')}
         />
       )}
       {page === 'results' && result && (

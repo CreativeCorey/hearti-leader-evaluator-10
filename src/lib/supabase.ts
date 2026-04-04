@@ -65,6 +65,19 @@ export async function getUserResults(email: string): Promise<AssessmentResult[]>
   return data as AssessmentResult[]
 }
 
+export async function updateDemographics(id: string, data: {
+  management_level?: string
+  company_size?: string
+  industry?: string
+  age_range?: string
+}): Promise<void> {
+  const { error } = await supabase
+    .from('assessment_results')
+    .update(data)
+    .eq('id', id)
+  if (error) throw error
+}
+
 // ─── Enterprise token validation ─────────────────────────────────────────────
 
 export async function validateEnterpriseToken(token: string): Promise<boolean> {

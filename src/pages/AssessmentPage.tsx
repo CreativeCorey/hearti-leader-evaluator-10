@@ -23,11 +23,11 @@ function buildScreens(questions: Question[], instrument: 'snapshot' | 'enterpris
 }
 
 const SCALE = [
-  { value: 1, label: 'Strongly\nDisagree' },
-  { value: 2, label: 'Disagree' },
-  { value: 3, label: 'Neutral' },
-  { value: 4, label: 'Agree' },
-  { value: 5, label: 'Strongly\nAgree' },
+  { value: 1, label: 'Nearly\nNever' },
+  { value: 2, label: 'Rarely' },
+  { value: 3, label: 'Sometimes' },
+  { value: 4, label: 'Often' },
+  { value: 5, label: 'Almost\nAlways' },
 ]
 
 export function AssessmentPage({ session, onComplete }: Props) {
@@ -105,6 +105,17 @@ export function AssessmentPage({ session, onComplete }: Props) {
     onComplete(result)
   }, [session, questions, onComplete])
 
+  const handleBack = useCallback(() => {
+    if (animating) return
+    if (qIdx > 0) {
+      setQIdx(qIdx - 1)
+    } else if (screenIdx > 0) {
+      const prevScreen = screens[screenIdx - 1]
+      setScreenIdx(screenIdx - 1)
+      setQIdx(prevScreen.length - 1)
+    }
+  }, [animating, qIdx, screenIdx, screens])
+
   const handleAnswer = useCallback((value: number) => {
     if (!currentQ || animating) return
     const newResponses = { ...responses, [currentQ.id]: value }
@@ -126,12 +137,17 @@ export function AssessmentPage({ session, onComplete }: Props) {
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Backspace' || e.key === 'ArrowLeft') {
+        const isFirst = screenIdx === 0 && qIdx === 0
+        if (!isFirst) handleBack()
+        return
+      }
       const num = parseInt(e.key)
       if (num >= 1 && num <= 5) handleAnswer(num)
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [handleAnswer])
+  }, [handleAnswer, handleBack, screenIdx, qIdx])
 
   if (saving) {
     return (
@@ -146,29 +162,23 @@ export function AssessmentPage({ session, onComplete }: Props) {
 
   return (
     <div className="assessment-page">
+      {!(screenIdx === 0 && qIdx === 0) && (
+        <button className="assessment-back" onClick={handleBack}>
+          ← Back
+        </button>
+      )}
+
       <div className="assessment-header">
         <div className="progress-track">
           <div className="progress-fill" style={{ width: `${progress}%` }} />
         </div>
         <div className="progress-meta">
-          <span style={{ color: pillarMeta?.color }}>{pillarMeta?.name}</span>
           <span>{answeredCount} of {totalQs}</span>
         </div>
       </div>
 
-      <div className="pillar-label" style={{ borderColor: pillarMeta?.color }}>
-        <span className="pillar-letter" style={{ color: pillarMeta?.color }}>{pillar}</span>
-        <span className="pillar-desc">{pillarMeta?.description}</span>
-      </div>
-
       <div className={`question-block ${animating ? 'fading' : 'visible'}`}>
-        <div className="question-count">
-          {qIdx + 1} of {currentScreen.length}
-        </div>
         <h2 className="question-text">{currentQ.text}</h2>
-        {currentQ.reverse && (
-          <div className="reverse-indicator">Consider carefully</div>
-        )}
       </div>
 
       <div className={`scale-row ${animating ? 'fading' : 'visible'}`}>

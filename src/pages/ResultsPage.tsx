@@ -17,7 +17,9 @@ const HEARTI_PILLARS: Pillar[] = ['H', 'E', 'A', 'R', 'T', 'I']
 
 export function ResultsPage({ result, onViewHabits, onRetake }: Props) {
   const spectraRef = useRef<SpectraHandle>(null)
+  const shareSpectraRef = useRef<SpectraHandle>(null)
   const [copied, setCopied] = useState(false)
+  const [copiedLink, setCopiedLink] = useState(false)
   const [sharing, setSharing] = useState(false)
 
   const band = result.band as ScoringBand
@@ -30,44 +32,76 @@ export function ResultsPage({ result, onViewHabits, onRetake }: Props) {
 
   const strength = sortedPillars[0]
   const vulnerability = sortedPillars[sortedPillars.length - 1]
+  const strengthPillar = strength.pillar as Pillar
 
   const handleShare = async () => {
     setSharing(true)
-    const dataUrl = spectraRef.current?.toDataURL()
+    const dataUrl = shareSpectraRef.current?.toDataURL()
     if (!dataUrl) { setSharing(false); return }
 
-    // Convert to blob and share
-    const res = await fetch(dataUrl)
-    const blob = await res.blob()
-    const file = new File([blob], 'my-hearti-spectra.png', { type: 'image/png' })
+    const isMobile = /iPhone|iPad|Android/i.test(navigator.userAgent)
 
-    if (navigator.share && navigator.canShare({ files: [file] })) {
-      await navigator.share({
-        title: 'My HEARTI Leader Snapshot',
-        text: `My leadership strength is ${PILLAR_META[strength.pillar as Pillar].name}. Find out yours at heartiquotient.com`,
-        files: [file],
-      }).catch(() => {})
-    } else {
-      // Fallback: download
-      const a = document.createElement('a')
-      a.href = dataUrl
-      a.download = 'my-hearti-spectra.png'
-      a.click()
+    if (isMobile && navigator.share) {
+      const res = await fetch(dataUrl)
+      const blob = await res.blob()
+      const file = new File([blob], 'my-hearti-spectra.png', { type: 'image/png' })
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file] }).catch(() => {})
+        setSharing(false)
+        return
+      }
     }
+
+    const a = document.createElement('a')
+    a.href = dataUrl
+    a.download = 'my-hearti-spectra.png'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
     setSharing(false)
   }
 
+  const resultUrl = result.id
+    ? `${window.location.origin}?result=${result.id}`
+    : window.location.href
+
+  const teaserText = `Just found out my leadership strength and growth edge. 10 minutes. Free. What's yours? heartiquotient.com #leadership #HEARTI`
+
   const handleCopyLink = async () => {
-    const url = result.id
-      ? `${window.location.origin}?result=${result.id}`
-      : window.location.href
-    await navigator.clipboard.writeText(url)
+    await navigator.clipboard.writeText(teaserText)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
 
+  const handleCopyResultLink = async () => {
+    await navigator.clipboard.writeText(resultUrl)
+    setCopiedLink(true)
+    setTimeout(() => setCopiedLink(false), 2000)
+  }
+
+  const handleLinkedIn = async () => {
+    const linkedInTeaserText = `Just discovered my leadership strength is ${PILLAR_META[strengthPillar].name}. Curious what yours is? Free 10-minute assessment → heartiquotient.com #leadership #HEARTI`
+    await navigator.clipboard.writeText(linkedInTeaserText)
+    const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://heartiquotient.com')}`
+    window.open(linkedInUrl, '_blank', 'width=600,height=600')
+  }
+
   return (
     <div className="results-page">
+      {/* Hidden off-screen share chart (blurred teaser) */}
+      <div style={{ position: 'absolute', left: '-9999px', top: 0, pointerEvents: 'none' }}>
+        <SpectraChart
+          ref={shareSpectraRef}
+          scores={result.pillar_scores}
+          size={340}
+          animate={false}
+          showLabels={true}
+          strengthPillar={strengthPillar}
+          showCTA={true}
+          blurred={true}
+        />
+      </div>
+
       {/* Header */}
       <div className="results-header">
         <div className="results-logo">HEARTI</div>
@@ -95,6 +129,7 @@ export function ResultsPage({ result, onViewHabits, onRetake }: Props) {
             size={300}
             animate
             showLabels
+            strengthPillar={strength.pillar}
           />
         </div>
 
@@ -172,23 +207,67 @@ export function ResultsPage({ result, onViewHabits, onRetake }: Props) {
           </div>
           <p className="grace-description">{graceBand.description}</p>
           <p className="grace-note">Grace Index is developmental feedback, not a judgment.</p>
+          <div className="grace-explainer">
+            <div className="grace-explainer-title">What is the Grace Index?</div>
+            <p className="grace-explainer-body">
+              The Grace Index measures how you relate to responsibility when things go wrong.
+              It is not about whether you hold yourself accountable — it is about whether you
+              can do so without self-punishment, over-absorption, or burnout.
+            </p>
+            <p className="grace-explainer-body">
+              Leaders with low Grace scores tend to internalize failure, carry weight that
+              isn't theirs, and struggle to reset after mistakes. This creates a compounding
+              cost: the harder you are on yourself, the less capacity you have for the
+              leadership your team actually needs.
+            </p>
+            <p className="grace-explainer-body">
+              Leaders with high Grace scores can acknowledge mistakes, repair quickly, and
+              return to steadiness — without collapsing or hardening. This is not softness.
+              It is the psychological infrastructure that makes sustainable leadership possible.
+            </p>
+            <div className="grace-explainer-note">
+              Grace Index is scored separately from your HEARTI dimensions. It is developmental
+              feedback about your relationship with accountability — not a judgment of your
+              leadership effectiveness.
+            </div>
+          </div>
         </div>
       )}
 
       {/* Share section */}
       <div className="share-section">
         <div className="share-title">Share your Spectra</div>
-        <p className="share-desc">
-          Your leadership shape is unique. Share the graphic — scores are yours alone.
-        </p>
-        <div className="share-actions">
-          <button className="share-btn share-primary" onClick={handleShare} disabled={sharing}>
-            {sharing ? 'Preparing…' : 'Download Spectra graphic'}
+        <div className="share-actions" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.6rem' }}>
+          <button
+            className="share-btn"
+            style={{ background: '#1D9E75', color: '#fff', border: 'none' }}
+            onClick={handleShare}
+            disabled={sharing}
+          >
+            {sharing ? 'Preparing…' : 'Download graphic'}
           </button>
-          <button className="share-btn share-secondary" onClick={handleCopyLink}>
-            {copied ? 'Link copied!' : 'Copy shareable link'}
+          <button
+            className="share-btn"
+            style={{ background: '#0A66C2', color: '#fff', border: 'none' }}
+            onClick={handleLinkedIn}
+          >
+            Copy + Share to LinkedIn →
+          </button>
+          <button
+            className="share-btn share-secondary"
+            onClick={handleCopyLink}
+          >
+            {copied ? 'Copied!' : 'Copy for Instagram / Threads'}
           </button>
         </div>
+        <p className="share-hint">LinkedIn &amp; Instagram: text is copied to your clipboard — paste it into your post.</p>
+        <button
+          className="cta-btn cta-btn-ghost"
+          style={{ marginTop: '0.75rem', width: '100%' }}
+          onClick={handleCopyResultLink}
+        >
+          {copiedLink ? 'Copied!' : 'Copy result link'}
+        </button>
       </div>
 
       {/* CTA section */}
@@ -218,9 +297,11 @@ export function ResultsPage({ result, onViewHabits, onRetake }: Props) {
         </div>
 
         <div className="results-cta-row">
-          <button className="cta-btn cta-btn-secondary" onClick={onViewHabits}>
-            Track leadership habits →
-          </button>
+          {result.instrument === 'enterprise' && (
+            <button className="cta-btn cta-btn-secondary" onClick={onViewHabits}>
+              Track leadership habits →
+            </button>
+          )}
           <button className="cta-btn cta-btn-ghost" onClick={onRetake}>
             Retake assessment
           </button>
