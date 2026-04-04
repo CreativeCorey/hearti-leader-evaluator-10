@@ -30,7 +30,7 @@ export const SNAPSHOT_QUESTIONS: Question[] = [
   { id: 'H1', pillar: 'H', text: 'I am clear about where my leadership strengths create the most value.' },
   { id: 'H2', pillar: 'H', text: 'I ask for support when a situation exceeds my expertise.' },
   { id: 'H3', pillar: 'H', text: 'I partner intentionally to compensate for my limitations.' },
-  { id: 'H4', pillar: 'H', text: 'I do not equate uncertainty with incompetence.' },
+  { id: 'H4', pillar: 'H', text: "I'm comfortable saying I'm still figuring something out." },
   { id: 'H5', pillar: 'H', text: 'I seek recognition even when others contributed equally to the result.', reverse: true },
 
   // EMPATHY (5)
@@ -43,13 +43,13 @@ export const SNAPSHOT_QUESTIONS: Question[] = [
   // ACCOUNTABILITY (5)
   { id: 'A1', pillar: 'A', text: 'Expectations I set are clear and observable.' },
   { id: 'A2', pillar: 'A', text: 'I follow through on commitments I make.' },
-  { id: 'A3', pillar: 'A', text: 'I address misalignment directly rather than carrying it silently.' },
+  { id: 'A3', pillar: 'A', text: "I don't let unspoken friction build — I address it." },
   { id: 'A4', pillar: 'A', text: 'I hold others accountable without micromanaging.' },
   { id: 'A5', pillar: 'A', text: 'When something goes wrong on my team, my first instinct is to identify who is responsible.', reverse: true },
 
   // RESILIENCY (5)
   { id: 'R1', pillar: 'R', text: 'I recover emotionally after high-pressure situations.' },
-  { id: 'R2', pillar: 'R', text: 'I can reset without guilt after demanding days.' },
+  { id: 'R2', pillar: 'R', text: 'I can reset without guilt after a demanding day.' },
   { id: 'R3', pillar: 'R', text: 'I adapt my leadership approach during uncertainty.' },
   { id: 'R4', pillar: 'R', text: 'I notice stress signals before burnout occurs.' },
   { id: 'R5', pillar: 'R', text: 'I measure my leadership effectiveness by how much I can endure.', reverse: true },
@@ -69,12 +69,12 @@ export const SNAPSHOT_QUESTIONS: Question[] = [
   { id: 'I5', pillar: 'I', text: 'I adjust how I communicate based on the cultural backgrounds of the people I work with.' },
 
   // GRACE INDEX (6)
-  { id: 'G1', pillar: 'G', text: 'When something goes wrong, I pause before assuming it\'s my fault.' },
-  { id: 'G2', pillar: 'G', text: 'I can acknowledge mistakes without harsh self-judgment.' },
-  { id: 'G3', pillar: 'G', text: 'I clarify ownership instead of absorbing responsibility.' },
-  { id: 'G4', pillar: 'G', text: 'I recover emotionally after leadership missteps.' },
-  { id: 'G5', pillar: 'G', text: 'I do not use shame to motivate myself.' },
-  { id: 'G6', pillar: 'G', text: 'I allow myself to reset without "earning" rest.' },
+  { id: 'G1', pillar: 'G', text: "When something breaks down, I don't automatically assume it's on me." },
+  { id: 'G2', pillar: 'G', text: "I check whether something is actually mine to carry before I pick it up." },
+  { id: 'G3', pillar: 'G', text: "After I mess something up, I can move forward without it weighing me down." },
+  { id: 'G4', pillar: 'G', text: "My inner voice pushes me forward — it doesn't tear me down." },
+  { id: 'G5', pillar: 'G', text: "I can end the day and actually rest, even when things are unfinished." },
+  { id: 'G6', pillar: 'G', text: "I hold myself to a standard I would never apply to anyone else.", reverse: true },
 ]
 
 // ─── ENTERPRISE INSTRUMENT (58 questions — original HLQ) ─────────────────────

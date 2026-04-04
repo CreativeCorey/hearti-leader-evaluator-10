@@ -5,10 +5,9 @@ import { TabulationPage } from './pages/TabulationPage'
 import { DemographicsPage } from './pages/DemographicsPage'
 import { ResultsPage } from './pages/ResultsPage'
 import { HabitsPage } from './pages/HabitsPage'
-import { EnterpriseGatePage } from './pages/EnterpriseGatePage'
 import type { AssessmentResult } from './lib/supabase'
 
-export type AppPage = 'gate' | 'enterprise-gate' | 'assessment' | 'tabulation' | 'demographics' | 'results' | 'habits'
+export type AppPage = 'gate' | 'assessment' | 'tabulation' | 'demographics' | 'results' | 'habits'
 
 export interface UserSession {
   email: string
@@ -25,13 +24,8 @@ export default function App() {
   // Check URL params for enterprise mode or result deep-link
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    const mode = params.get('mode')
-    const token = params.get('token')
     const rid = params.get('result')
 
-    if (mode === 'enterprise' || token) {
-      setPage('enterprise-gate')
-    }
     if (rid) {
       // Deep-link to results — load from Supabase
       import('./lib/supabase').then(({ getAssessmentResult }) => {
@@ -66,9 +60,6 @@ export default function App() {
     <div className="app-shell">
       {page === 'gate' && (
         <GatePage onComplete={handleGateComplete} />
-      )}
-      {page === 'enterprise-gate' && (
-        <EnterpriseGatePage onComplete={handleGateComplete} />
       )}
       {page === 'assessment' && session && (
         <AssessmentPage

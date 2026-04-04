@@ -156,7 +156,7 @@ export function DemographicsPage({ result, onComplete }: Props) {
             onClick={onComplete}
             disabled={saving}
           >
-            Skip \u2192
+            Skip →
           </button>
         </div>
       </div>

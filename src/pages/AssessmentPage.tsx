@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import type { UserSession } from '../App'
 import type { AssessmentResult } from '../lib/supabase'
 import {
@@ -8,9 +8,18 @@ import {
 } from '../data/questions'
 import { saveAssessmentResult, triggerNurtureEmail } from '../lib/supabase'
 
-interface Props {
-  session: UserSession
-  onComplete: (result: AssessmentResult) => void
+function seededShuffle<T>(arr: T[], seed: number): T[] {
+  const result = [...arr]
+  let s = seed
+  const rand = () => {
+    s = (s * 1664525 + 1013904223) & 0xffffffff
+    return (s >>> 0) / 0x100000000
+  }
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]]
+  }
+  return result
 }
 
 function buildScreens(questions: Question[], instrument: 'snapshot' | 'enterprise') {
@@ -30,20 +39,42 @@ const SCALE = [
   { value: 5, label: 'Almost\nAlways' },
 ]
 
+interface Props {
+  session: UserSession
+  onComplete: (result: AssessmentResult) => void
+}
+
 export function AssessmentPage({ session, onComplete }: Props) {
-  const questions = session.instrument === 'snapshot' ? SNAPSHOT_QUESTIONS : ENTERPRISE_QUESTIONS
+  const questions = useMemo(() => {
+    const seed = Date.now()
+    return seededShuffle(
+      session.instrument === 'snapshot' ? SNAPSHOT_QUESTIONS : ENTERPRISE_QUESTIONS,
+      seed
+    )
+  }, [])
+
   const screens = buildScreens(questions, session.instrument)
 
-  const [screenIdx, setScreenIdx] = useState(0)
-  const [qIdx, setQIdx] = useState(0)
+  const [currentIdx, setCurrentIdx] = useState(0)
   const [responses, setResponses] = useState<Record<string, number>>({})
   const [animating, setAnimating] = useState(false)
   const [saving, setSaving] = useState(false)
 
+  const totalQs = questions.length
+
+  // Derive screen/question position from flat index
+  const getScreenPos = (idx: number) => {
+    let remaining = idx
+    for (let si = 0; si < screens.length; si++) {
+      if (remaining < screens[si].length) return { screenIdx: si, qIdx: remaining }
+      remaining -= screens[si].length
+    }
+    return { screenIdx: screens.length - 1, qIdx: screens[screens.length - 1].length - 1 }
+  }
+
+  const { screenIdx, qIdx } = getScreenPos(currentIdx)
   const currentScreen = screens[screenIdx]
   const currentQ = currentScreen?.[qIdx]
-  const totalScreens = screens.length
-  const totalQs = questions.length
   const answeredCount = Object.keys(responses).length
   const progress = Math.round((answeredCount / totalQs) * 100)
 
@@ -69,7 +100,6 @@ export function AssessmentPage({ session, onComplete }: Props) {
     const strengthPillar = sorted[0][0]
     const vulnerabilityPillar = sorted[sorted.length - 1][0]
 
-    // Fix TS2322: enterprise_token must be string | null, not string | undefined
     const result: AssessmentResult = {
       email: session.email,
       first_name: session.firstName,
@@ -105,17 +135,6 @@ export function AssessmentPage({ session, onComplete }: Props) {
     onComplete(result)
   }, [session, questions, onComplete])
 
-  const handleBack = useCallback(() => {
-    if (animating) return
-    if (qIdx > 0) {
-      setQIdx(qIdx - 1)
-    } else if (screenIdx > 0) {
-      const prevScreen = screens[screenIdx - 1]
-      setScreenIdx(screenIdx - 1)
-      setQIdx(prevScreen.length - 1)
-    }
-  }, [animating, qIdx, screenIdx, screens])
-
   const handleAnswer = useCallback((value: number) => {
     if (!currentQ || animating) return
     const newResponses = { ...responses, [currentQ.id]: value }
@@ -124,22 +143,18 @@ export function AssessmentPage({ session, onComplete }: Props) {
 
     setTimeout(() => {
       setAnimating(false)
-      if (qIdx < currentScreen.length - 1) {
-        setQIdx(qIdx + 1)
-      } else if (screenIdx < totalScreens - 1) {
-        setScreenIdx(screenIdx + 1)
-        setQIdx(0)
+      if (currentIdx < totalQs - 1) {
+        setCurrentIdx(prev => prev + 1)
       } else {
         finalize(newResponses)
       }
     }, 280)
-  }, [currentQ, animating, responses, qIdx, screenIdx, currentScreen, totalScreens, finalize])
+  }, [currentQ, animating, responses, currentIdx, totalQs, finalize])
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Backspace' || e.key === 'ArrowLeft') {
-        const isFirst = screenIdx === 0 && qIdx === 0
-        if (!isFirst) handleBack()
+      if ((e.key === 'Backspace' || e.key === 'ArrowLeft') && currentIdx > 0) {
+        setCurrentIdx(prev => prev - 1)
         return
       }
       const num = parseInt(e.key)
@@ -147,7 +162,7 @@ export function AssessmentPage({ session, onComplete }: Props) {
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [handleAnswer, handleBack, screenIdx, qIdx])
+  }, [handleAnswer, currentIdx])
 
   if (saving) {
     return (
@@ -162,13 +177,12 @@ export function AssessmentPage({ session, onComplete }: Props) {
 
   return (
     <div className="assessment-page">
-      {!(screenIdx === 0 && qIdx === 0) && (
-        <button className="assessment-back" onClick={handleBack}>
-          ← Back
-        </button>
-      )}
-
       <div className="assessment-header">
+        {currentIdx > 0 && (
+          <button className="assessment-back" onClick={() => setCurrentIdx(prev => prev - 1)}>
+            ← Back
+          </button>
+        )}
         <div className="progress-track">
           <div className="progress-fill" style={{ width: `${progress}%` }} />
         </div>

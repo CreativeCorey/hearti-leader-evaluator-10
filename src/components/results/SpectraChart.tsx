@@ -81,7 +81,7 @@ export const SpectraChart = forwardRef<SpectraHandle, Props>(
           else ctx.lineTo(pt.x, pt.y)
         }
         ctx.closePath()
-        ctx.strokeStyle = level === 5 ? 'rgba(75,63,160,0.3)' : 'rgba(75,63,160,0.15)'
+        ctx.strokeStyle = level === 5 ? 'rgba(75,63,160,0.25)' : 'rgba(75,63,160,0.12)'
         ctx.lineWidth = level === 5 ? 1.2 : 0.8
         ctx.stroke()
       }
@@ -105,7 +105,7 @@ export const SpectraChart = forwardRef<SpectraHandle, Props>(
         else ctx.lineTo(pt.x, pt.y)
       })
       ctx.closePath()
-      ctx.fillStyle = blurred ? 'rgba(75,63,160,0.35)' : 'rgba(75,63,160,0.15)'
+      ctx.fillStyle = blurred ? 'rgba(75,63,160,0.40)' : 'rgba(75,63,160,0.15)'
       ctx.fill()
       ctx.strokeStyle = '#4B3FA0'
       ctx.lineWidth = blurred ? 2.5 : 2

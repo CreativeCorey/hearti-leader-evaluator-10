@@ -93,11 +93,7 @@ export function GatePage({ onComplete }: Props) {
         <div className="gate-pillar-chip gate-pillar-grace">+ Grace Index</div>
       </div>
 
-      <div className="gate-enterprise-link">
-        <a href="?mode=enterprise" className="gate-enterprise-a">
-          Have an enterprise access code? →
-        </a>
-      </div>
+
     </div>
   )
 }
