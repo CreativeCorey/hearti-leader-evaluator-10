@@ -54,16 +54,16 @@ export const SpectraChart = forwardRef<SpectraHandle, Props>(
         ctx.fillRect(0, 0, canvasWidth, canvasHeight)
       }
 
-      const cx = canvasWidth / 2
-      const cy = size / 2
+      const chartCx = canvasWidth / 2
+      const chartCy = size / 2
       const maxR = (size / 2) - (showLabels ? 52 : 28)
       const n = PILLARS.length
 
       const angleFor = (i: number) => (Math.PI * 2 * i) / n - Math.PI / 2
 
       const pointAt = (i: number, r: number) => ({
-        x: cx + Math.cos(angleFor(i)) * r,
-        y: cy + Math.sin(angleFor(i)) * r,
+        x: chartCx + Math.cos(angleFor(i)) * r,
+        y: chartCy + Math.sin(angleFor(i)) * r,
       })
 
       const scoreR = (pillar: Pillar) => {
@@ -90,7 +90,7 @@ export const SpectraChart = forwardRef<SpectraHandle, Props>(
       for (let i = 0; i < n; i++) {
         const outer = pointAt(i, maxR)
         ctx.beginPath()
-        ctx.moveTo(cx, cy)
+        ctx.moveTo(chartCx, chartCy)
         ctx.lineTo(outer.x, outer.y)
         ctx.strokeStyle = 'rgba(75,63,160,0.15)'
         ctx.lineWidth = 0.8
@@ -126,6 +126,21 @@ export const SpectraChart = forwardRef<SpectraHandle, Props>(
         ctx.stroke()
       })
 
+      // Strength letter at center — drawn after data points, on top of polygon
+      if (strengthPillar && PILLAR_META[strengthPillar as Pillar]) {
+        console.log('Drawing strength letter:', strengthPillar, 'at', chartCx, chartCy, 'blurred:', blurred)
+        const color = PILLAR_META[strengthPillar as Pillar].color
+        ctx.beginPath()
+        ctx.arc(chartCx, chartCy, 22, 0, Math.PI * 2)
+        ctx.fillStyle = color + '22'
+        ctx.fill()
+        ctx.font = 'bold 28px Georgia, serif'
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.fillStyle = color
+        ctx.fillText(strengthPillar, chartCx, chartCy)
+      }
+
       // Labels
       if (showLabels) {
         PILLARS.forEach((p, i) => {
@@ -145,20 +160,6 @@ export const SpectraChart = forwardRef<SpectraHandle, Props>(
             ctx.fillText((scores[p] ?? 0).toFixed(2), pt.x, pt.y + 9)
           }
         })
-      }
-
-      // Block A — strength letter at center (hidden when blurred)
-      if (strengthPillar && !blurred && PILLAR_META[strengthPillar as Pillar]) {
-        const color = PILLAR_META[strengthPillar as Pillar].color
-        ctx.beginPath()
-        ctx.arc(cx, cy, 22, 0, Math.PI * 2)
-        ctx.fillStyle = color + '22'
-        ctx.fill()
-        ctx.font = 'bold 28px Georgia, serif'
-        ctx.textAlign = 'center'
-        ctx.textBaseline = 'middle'
-        ctx.fillStyle = color
-        ctx.fillText(strengthPillar, cx, cy)
       }
 
       // Block B — CTA strip and text at bottom

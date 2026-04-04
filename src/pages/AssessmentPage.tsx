@@ -10,14 +10,15 @@ import { saveAssessmentResult, triggerNurtureEmail } from '../lib/supabase'
 
 function seededShuffle<T>(arr: T[], seed: number): T[] {
   const result = [...arr]
-  let s = seed
-  const rand = () => {
-    s = (s * 1664525 + 1013904223) & 0xffffffff
-    return (s >>> 0) / 0x100000000
-  }
+  let s = (seed ^ 0xdeadbeef) >>> 0
   for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]]
+    s = Math.imul(s ^ (s >>> 15), s | 1)
+    s ^= s + Math.imul(s ^ (s >>> 7), s | 61)
+    s = ((s ^ (s >>> 14)) >>> 0)
+    const j = s % (i + 1)
+    const tmp = result[i]
+    result[i] = result[j]
+    result[j] = tmp
   }
   return result
 }
@@ -46,12 +47,15 @@ interface Props {
 
 export function AssessmentPage({ session, onComplete }: Props) {
   const questions = useMemo(() => {
-    const seed = Date.now()
-    return seededShuffle(
+    const seed = (Date.now() ^ (Math.random() * 0x100000000)) >>> 0
+    const shuffled = seededShuffle(
       session.instrument === 'snapshot' ? SNAPSHOT_QUESTIONS : ENTERPRISE_QUESTIONS,
       seed
     )
+    return shuffled
   }, [])
+
+  console.log('Q order check:', questions.slice(0, 6).map(q => q.id).join(', '))
 
   const screens = buildScreens(questions, session.instrument)
 

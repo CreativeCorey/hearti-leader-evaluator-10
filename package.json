@@ -7,6 +7,9 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "deploy": "bash deploy.sh",
+    "deploy:hearti": "bash deploy.sh hearti",
+    "deploy:all": "bash deploy.sh all",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {

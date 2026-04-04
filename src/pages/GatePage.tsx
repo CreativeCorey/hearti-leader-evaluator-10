@@ -13,7 +13,16 @@ export function GatePage({ onComplete }: Props) {
 
   const handleSubmit = async () => {
     if (!firstName.trim()) { setError('Please enter your first name.'); return }
-    if (!email.trim() || !email.includes('@')) { setError('Please enter a valid work email.'); return }
+    const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/
+    if (!email.trim() || !emailRegex.test(email.trim())) {
+      setError('Please enter a valid email address.')
+      return
+    }
+    const parts = email.trim().split('@')
+    if (parts.length !== 2 || parts[0].length < 1 || !parts[1].includes('.') || parts[1].split('.').pop()!.length < 2) {
+      setError('Please enter a valid work email address.')
+      return
+    }
     setError('')
     setLoading(true)
     setTimeout(() => {
