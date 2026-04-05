@@ -4,7 +4,7 @@ import type { AssessmentResult } from '../lib/supabase'
 import {
   SNAPSHOT_QUESTIONS, ENTERPRISE_QUESTIONS, PILLAR_META,
   calcPillarScore, calcGraceScore, calcTotalScore, getBand,
-  type Pillar, type Question
+  type Pillar
 } from '../data/questions'
 import { saveAssessmentResult, triggerNurtureEmail } from '../lib/supabase'
 
@@ -23,14 +23,6 @@ function seededShuffle<T>(arr: T[], seed: number): T[] {
   return result
 }
 
-function buildScreens(questions: Question[], instrument: 'snapshot' | 'enterprise') {
-  if (instrument === 'snapshot') {
-    const pillars: Pillar[] = ['H', 'E', 'A', 'R', 'T', 'I', 'G']
-    return pillars.map(p => questions.filter(q => q.pillar === p)).filter(s => s.length > 0)
-  }
-  const pillars: Pillar[] = ['H', 'E', 'A', 'R', 'T', 'I']
-  return pillars.map(p => questions.filter(q => q.pillar === p)).filter(s => s.length > 0)
-}
 
 const SCALE = [
   { value: 1, label: 'Nearly\nNever' },
@@ -55,34 +47,17 @@ export function AssessmentPage({ session, onComplete }: Props) {
     return shuffled
   }, [])
 
-  console.log('Q order check:', questions.slice(0, 6).map(q => q.id).join(', '))
-
-  const screens = buildScreens(questions, session.instrument)
-
-  const [currentIdx, setCurrentIdx] = useState(0)
+const [currentIdx, setCurrentIdx] = useState(0)
   const [responses, setResponses] = useState<Record<string, number>>({})
   const [animating, setAnimating] = useState(false)
   const [saving, setSaving] = useState(false)
 
   const totalQs = questions.length
-
-  // Derive screen/question position from flat index
-  const getScreenPos = (idx: number) => {
-    let remaining = idx
-    for (let si = 0; si < screens.length; si++) {
-      if (remaining < screens[si].length) return { screenIdx: si, qIdx: remaining }
-      remaining -= screens[si].length
-    }
-    return { screenIdx: screens.length - 1, qIdx: screens[screens.length - 1].length - 1 }
-  }
-
-  const { screenIdx, qIdx } = getScreenPos(currentIdx)
-  const currentScreen = screens[screenIdx]
-  const currentQ = currentScreen?.[qIdx]
+  const currentQ = questions[currentIdx]
   const answeredCount = Object.keys(responses).length
   const progress = Math.round((answeredCount / totalQs) * 100)
 
-  const pillar = currentScreen?.[0]?.pillar as Pillar
+  const pillar = currentQ?.pillar as Pillar
   const pillarMeta = pillar ? PILLAR_META[pillar] : null
 
   const finalize = useCallback(async (allResponses: Record<string, number>) => {
@@ -219,11 +194,11 @@ export function AssessmentPage({ session, onComplete }: Props) {
       <p className="keyboard-hint">Press 1–5 to answer quickly</p>
 
       <div className="screen-dots">
-        {screens.map((_, i) => (
+        {questions.map((_, i) => (
           <div
             key={i}
-            className={`dot${i === screenIdx ? ' active' : i < screenIdx ? ' done' : ''}`}
-            style={i === screenIdx ? { background: pillarMeta?.color } : {}}
+            className={`dot${i === currentIdx ? ' active' : i < currentIdx ? ' done' : ''}`}
+            style={i === currentIdx ? { background: pillarMeta?.color } : {}}
           />
         ))}
       </div>

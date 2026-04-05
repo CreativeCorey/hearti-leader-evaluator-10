@@ -89,8 +89,7 @@ export function ResultsPage({ result, onViewHabits, onRetake }: Props) {
   return (
     <div className="results-page">
       {/* Hidden off-screen share chart (blurred teaser) */}
-      {(() => { console.log('Share chart strengthPillar:', strengthPillar, 'scores:', Object.keys(result.pillar_scores)); return null })()}
-      <div style={{ position: 'absolute', left: '-9999px', top: 0, pointerEvents: 'none' }}>
+<div style={{ position: 'absolute', left: '-9999px', top: 0, pointerEvents: 'none' }}>
         <SpectraChart
           ref={shareSpectraRef}
           scores={result.pillar_scores}

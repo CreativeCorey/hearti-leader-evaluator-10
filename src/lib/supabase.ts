@@ -73,7 +73,7 @@ export async function updateDemographics(id: string, data: {
 }): Promise<void> {
   const { error } = await supabase
     .from('assessment_results')
-    .update(data)
+    .update({ ...data, demographics_completed: true })
     .eq('id', id)
   if (error) throw error
 }

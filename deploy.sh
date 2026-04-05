@@ -14,8 +14,13 @@ set -e
 
 TARGET="${1:-hearti}"
 
-# Load credentials from .env.local
-export $(grep -v '^#' .env.local | xargs)
+# Load credentials from .env.local (handles special chars in passwords)
+while IFS='=' read -r key value; do
+  [[ -z "$key" || "$key" == \#* ]] && continue
+  key=$(echo "$key" | xargs)
+  [[ -z "$key" ]] && continue
+  export "$key=$value"
+done < .env.local
 
 # ─── Deploy hearti.app ────────────────────────────────────────────────────────
 deploy_hearti() {
@@ -59,6 +64,22 @@ deploy_hearti() {
   done
 
   echo "✓ hearti.app deployed"
+
+  # Auto-purge Cloudflare cache after deploy
+  if [ -n "$CF_ZONE_ID" ] && [ -n "$CF_API_TOKEN" ]; then
+    echo "→ Purging Cloudflare cache for hearti.app..."
+    PURGE_RESULT=$(curl -s -X POST \
+      "https://api.cloudflare.com/client/v4/zones/${CF_ZONE_ID}/purge_cache" \
+      -H "Authorization: Bearer ${CF_API_TOKEN}" \
+      -H "Content-Type: application/json" \
+      --data '{"purge_everything":true}')
+    if echo "$PURGE_RESULT" | grep -q '"success":true'; then
+      echo "✓ Cloudflare cache purged"
+    else
+      echo "⚠ Cache purge failed — purge manually in Cloudflare dashboard"
+      echo "$PURGE_RESULT"
+    fi
+  fi
 }
 
 # ─── Deploy heartiquotient.com ───────────────────────────────────────────────

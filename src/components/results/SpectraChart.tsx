@@ -128,8 +128,7 @@ export const SpectraChart = forwardRef<SpectraHandle, Props>(
 
       // Strength letter at center — drawn after data points, on top of polygon
       if (strengthPillar && PILLAR_META[strengthPillar as Pillar]) {
-        console.log('Drawing strength letter:', strengthPillar, 'at', chartCx, chartCy, 'blurred:', blurred)
-        const color = PILLAR_META[strengthPillar as Pillar].color
+const color = PILLAR_META[strengthPillar as Pillar].color
         ctx.beginPath()
         ctx.arc(chartCx, chartCy, 22, 0, Math.PI * 2)
         ctx.fillStyle = color + '22'

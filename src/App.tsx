@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { GatePage } from './pages/GatePage'
 import { AssessmentPage } from './pages/AssessmentPage'
 import { TabulationPage } from './pages/TabulationPage'
@@ -37,24 +37,27 @@ export default function App() {
     }
   }, [])
 
-  const handleGateComplete = (sess: UserSession) => {
+  const handleGateComplete = useCallback((sess: UserSession) => {
     setSession(sess)
     setPage('assessment')
-  }
+  }, [])
 
-  const handleAssessmentComplete = (r: AssessmentResult) => {
+  const handleAssessmentComplete = useCallback((r: AssessmentResult) => {
     setResult(r)
     setPage('tabulation')
-  }
+  }, [])
 
-  const handleViewHabits = () => {
+  const handleTabulationComplete = useCallback(() => setPage('demographics'), [])
+  const handleDemographicsComplete = useCallback(() => setPage('results'), [])
+
+  const handleViewHabits = useCallback(() => {
     if (session || result) setPage('habits')
-  }
+  }, [session, result])
 
-  const handleRetake = () => {
+  const handleRetake = useCallback(() => {
     setResult(null)
     setPage('gate')
-  }
+  }, [])
 
   return (
     <div className="app-shell">
@@ -70,13 +73,13 @@ export default function App() {
       {page === 'tabulation' && result && (
         <TabulationPage
           result={result}
-          onComplete={() => setPage('demographics')}
+          onComplete={handleTabulationComplete}
         />
       )}
       {page === 'demographics' && result && (
         <DemographicsPage
           result={result}
-          onComplete={() => setPage('results')}
+          onComplete={handleDemographicsComplete}
         />
       )}
       {page === 'results' && result && (

@@ -55,8 +55,8 @@ export function DemographicsPage({ result, onComplete }: Props) {
           age_range: ageRange || undefined,
         })
       }
-    } catch {
-      // Non-blocking — proceed regardless
+    } catch (err) {
+      console.error('Demographics update failed:', err)
     }
     onComplete()
   }
